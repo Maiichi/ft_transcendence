@@ -12,7 +12,12 @@
 ### API :
 ### signup
 - `localhost:3000/api/auth/signup`
-
+####  body 
+> form-encoded 
+> {
+>  email: "example@email.com",
+>  password: "password"
+> }
 
 ### signin
-- `localhost:3000/api/auth/signup`
+- `localhost:3000/api/auth/signin`
