@@ -2,7 +2,6 @@ import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from "./dto";
 import * as argon from 'argon2'
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 
@@ -75,6 +74,18 @@ export class AuthService
         });
         return {
             access_token : token
+        };
+    }
+
+    googleLogin(req: any)
+    {
+        console.log(req.user)
+        if (!req.user){
+            return 'no user from 42oauth';
+        } 
+        return {
+            message: 'User info from 42oauth',
+            user: req.user
         };
     }
 }
