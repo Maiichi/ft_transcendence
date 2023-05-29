@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { AuthDto } from "./dto";
 import { AuthGuard } from "@nestjs/passport";
+import { Request, Response } from "express";
 
 @Controller('auth')
 export class AuthController
@@ -21,22 +21,28 @@ export class AuthController
     //     return this.authService.signin(dto);
     // }
 
-    @UseGuards(AuthGuard('42'))
+    // @UseGuards(AuthGuard('42'))
+
     @Get("login")
     login42(@Req() req: any)
     {
-        console.log("req ==" + req);
         console.log("Hello from login42 ----");
-        // return 'Logged in with 42-intra';
+        return "LOGIN"
     }
 
-    @UseGuards(AuthGuard('42'))
-    @Get("login/callback")
-    login42Redirect(@Req() req: any)
+    @Get('/logged')
+    welcome()
     {
-        console.log("Hello from login42 callback ----");
-        return this.authService.googleLogin(req);
+        return "Logged successfully"
+    //    return this.authService.redirectAfterLogin(req, res);
     }
 
+    
+    @UseGuards(AuthGuard('42'))
+    @Get("callback")
+    async login42Redirect(@Req() req: Request, @Res() res:Response)
+    {
+        return await this.authService.authenticate(req, res);
+    }
 
 }
