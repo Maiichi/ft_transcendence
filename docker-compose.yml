@@ -1,17 +1,5 @@
 version: '3.8'
 services:
-  # test-db:
-  #   image: postgres:13
-  #   container_name: postgres_test
-  #   restart: on-failure
-  #   environment:
-  #     POSTGRES_USER: ${POSTGRES_USER}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #     POSTGRES_DB: ${POSTGRES_DB}
-  #   ports:
-  #     - 5434:5432
-  #   networks:
-  #     - NET1
   postgres:
     image: postgres:13
     restart: on-failure
@@ -26,11 +14,12 @@ services:
     networks:
       - NET1
   backend:
+    container_name: backend
     build:
       context: ./backend
       target: development
     ports:
-      - 3000:3003
+      - 5000:5000
     depends_on:
       - postgres
     links:
@@ -41,6 +30,14 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - NET1
   # jenkins:
   #   image: jenkins/jenkins:lts
   #   ports:
@@ -48,14 +45,6 @@ services:
   #     - "50000:50000"
   #   volumes:
   #     - jenkins_home:/var/jenkins_home
-  # adminer:
-  #   image: adminer
-  #   container_name: adminer
-  #   restart: always
-  #   ports:
-  #     - 8080:8080
-  #   networks:
-  #     - NET1
 volumes:
   # jenkins_home:
     db_data:
