@@ -1,23 +1,18 @@
 
+##### before running the project make sure you have changed the backend/.env file to
+- DATABASE_URL="postgresql://user:password@postgres:5432/ft_tran?schema=public"
+- 
 ### How to run the project 
 `docker-compose up`
 
-### How to run e2e test 
-`docker-compose up test-db && cd backend && yarn test:e2e`
-
-### check if test are persisting successfully run 
-`yarn dotenv -e .env.test prisma studio`
-
+### check if test are persisting successfully (adminer service page)
+- `localhost:8080`
+####  information to input in adminer service page 
+>  Systeme:     postgreSQL,
+>  Serveur:     postgres
+>  Utilisateur: user
+>  mot de pass: password
 
 ### API :
-### signup
-- `localhost:3000/api/auth/signup`
-####  body 
-> form-encoded 
-> {
->  email: "example@email.com",
->  password: "password"
-> }
-
-### signin
-- `localhost:3000/api/auth/signin`
+### login
+- `localhost:3000/api/auth/callback`
