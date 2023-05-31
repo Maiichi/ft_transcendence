@@ -10,18 +10,18 @@ import { UserService } from './user.service';
 export class UserController 
 {
     constructor(private userService: UserService) {}
-    @Get('me')
-    getMe(@GetUser() user:User)
-    {
-        return user;
-    }
+    // @Get('me')
+    // getMe(@GetUser() user:User)
+    // {
+    //     return user;
+    // }
 
-    @Patch()
-    editUser(
-        @GetUser()  user: User, 
-        @Body() dto: EditUserDto) 
-    {
-        const userId: number = user.id;
-        return this.userService.editUser(userId, dto);
-    }
+    // @Patch()
+    // editUser(
+    //     @GetUser()  user: User, 
+    //     @Body() dto: EditUserDto) 
+    // {
+    //     const userId: number = user.id;
+    //     return this.userService.editUser(userId, dto);
+    // }
 }
