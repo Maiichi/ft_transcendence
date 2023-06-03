@@ -23,7 +23,7 @@ export class AuthService
 
         const secret = this.config.get('JWT_SECRET');
         const token = await this.jwt.signAsync(payload,{
-            expiresIn : '15m',
+            expiresIn : '1d',
             secret : secret
         });
         return token;
@@ -55,7 +55,8 @@ export class AuthService
             res.setHeader('Authorization', `Bearer ${token}`);
             // return res.redirect(`http://localhost:3000`);
             /* need to be redirected to Home page after login */
-            return res.redirect('/api/auth/logged');
+            // return res.redirect('/api/auth/logged');
+            res.send({token});
         } catch (error) {
             console.log("Error code ==" + error.code)
             if (error instanceof  Prisma.PrismaClientKnownRequestError){
