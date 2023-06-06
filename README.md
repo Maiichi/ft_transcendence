@@ -70,3 +70,4 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 | `file`      | `file` | **Required**. image to be uploaded for the tagret user |
 
 ### EXAMPLE
+<p><img align="center" src="https://raw.githubusercontent.com/Maiichi/ft_transcendence/swagger-api-docs/images/Swager_example.png" alt="swagger" /></p>
