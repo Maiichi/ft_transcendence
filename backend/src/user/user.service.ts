@@ -25,69 +25,98 @@ export class UserService {
         }
     }
 
-    async editUsername(userId: number, dto: EditUserDto)
+    async editUsername(userId: number, dto: EditUserDto, res: any)
     {
         try {
-            const usernameExist = await this.findUserByUsername(dto.userName);
-            if (!usernameExist)
+            // check if the {id} provided in the URL belongs to an existing user
+            const userExist = await this.findUserById(userId);
+            if (userExist)
             {
-                const user = await this.prisma.user.update({
-                    where: {intraId: userId} ,
-                    data : {
-                        userName : dto.userName
-                    }
-                }).catch(() =>{
-                    return `User not found with the ID = ${userId}`;
-                });
-                return user;
+                // check the username provided is already exist or not
+                const usernameExist = await this.findUserByUsername(dto.userName);
+                if (!usernameExist)
+                {
+                    // perform the update
+                    await this.prisma.user.update({
+                        where: {intraId: userId} ,
+                        data : {
+                            userName : dto.userName
+                        }
+                    }).catch((err) =>{
+                        return res.status(400).json({ status : 400, message : err })
+                    });
+                    return  res.status(200).json({
+                                status: 200,
+                                message : 'Username updated successfully'
+                            });
+                }
+                else
+                    return res.status(400).json({
+                        status : 400,
+                        message : `Username already exist !`
+                    });
             }
             else
-                return "Username already exist";
+            {
+                return res.status(400).json({
+                    status : 400,
+                    message : `User not found with the ID = ${userId}`
+                });
+            }
+
         } catch (error) {
-            throw error;
+            return res.status(404).json({
+                status: 404,
+                message : `ID provided in the URL is not a number`
+            });
         }
     }
 
-    async editAvatar(username:string, avatar: any, dto: EditUserDto)
-    {
+    // function to upload avatar for the user
+    async editAvatar(username:string, avatar: any, dto: EditUserDto, res: any)
+    {   
         const allowedFileTypes = ['jpg', 'jpeg', 'png']; // Define the allowed file extensions
         const maxFileSize = 5 * 1024 * 1024; // Define the maximum file size in bytes (e.g., 5MB)
-        /*
-        {
-            fieldname: 'file',
-            originalname: 'detailed-hand-drawn-design-table-tennis-logo_23-2148660288-_1_.png',
-            encoding: '7bit',
-            mimetype: 'image/png',
-            destination: './../uploads',
-            filename: 'file-1685521256052-457153060.png',
-            path: '../uploads/file-1685521256052-457153060.png',
-            size: 749227
-        }
-        */
         try {
-            console.log("file size ==" + avatar.size);
-            console.log("max size ==" + maxFileSize);
+            // get File extention
             const isNotAllowed = !allowedFileTypes.includes(avatar.originalname.split(".").pop());
-            if (isNotAllowed)
-                return "File extention is not allowed";
-            if (maxFileSize < avatar.size)
-                return "File size is big";
+            // find user by username if it exists
             const usernameExist = await this.findUserByUsername(username);
             if (usernameExist)
             {
-                const user = await this.prisma.user.update({
+                if (isNotAllowed)
+                    return res.status(415).json({
+                        status: 415,
+                        message: "File extention is not allowed"
+                    })
+                if (maxFileSize < avatar.size)
+                    return res.status(415).json({
+                        status: 415,
+                        message: "File size is big"
+                    })
+                await this.prisma.user.update({
                     where: {userName: username} ,
                     data : {
                         avatar_url : avatar.path
                     }
+                }).then((resp) =>{
+                    if (resp)
+                        return res.status(200).json({
+                            status: 200,
+                            message: 'Avatar updated successfully'
+                        })
                 })
-                console.log("file uploaded successfully");
-                return user;
             }
             else
-                return `User not found with the username = ${username}`;
+                return res.status(400).json({
+                    status: 400,
+                    message: `User not found with the username = ${username}`
+                })
         } catch (error) {
-            return {error : error.message}
+            res.status(404).json({
+                status: 404,
+                message: error.message
+            })
         }
     }
 
