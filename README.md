@@ -22,7 +22,7 @@
 #### Swagger
 Swagger is a tool that can be used to document and describe REST APIs. It can be used to generate documentation, client SDKs, and test cases for your APIs.
 
-#### Before running the project make sure you have updated your package.json file 
+#### :stop_sign: Before running the project make sure you have updated your package.json file 
     yarn install
 
 ### SWAGGER URL (to test API's)
@@ -31,11 +31,11 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 ## API Reference
 
 ### AUTHENTICATION API's
-* type this URL `localhost:port/api/auth/callback` on the browser, after you will be redirected to the 42-api, then press authorize and you will be redirected to another page with the ``token`` of your authentication, keep the ``token`` for future use.
+* :warning: type this URL `localhost:port/api/auth/callback` on the browser, after you will be redirected to the 42-api, then press authorize and you will be redirected to another page with the ``token`` of your authentication, keep the ``token`` for future use.
 
 ### USER API's
 
-* before running the USER api's make sure you have the `token` you get previously and go the green lock `Autorize` and put it there.
+* :warning: before running the USER api's make sure you have the `token` you get previously and go the green lock `Autorize` and put it there.
 
 #### Get user by username
 
@@ -45,7 +45,7 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `username` | `string` | get a user by it's username |
+| `username` | `string` | **Header**. get a user by it's username |
 
 #### Update the user by ID
 
@@ -55,8 +55,8 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `id`      | `string` | **Required**. Id of tha target user to update |
-| `username`      | `string` | **Required**. the new username |
+| `id`      | `string` | **Header**. Id of tha target user to update |
+| `username`      | `string` | **Body**. the new username |
 
 
 #### Upload the user avatar
@@ -66,8 +66,8 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `username`      | `string` | **Required**. the username of the target user|
-| `file`      | `file` | **Required**. image to be uploaded for the tagret user |
+| `username`      | `string` | **Header**. the username of the target user|
+| `file`      | `file` | **Body**. image to be uploaded for the tagret user |
 
 ### EXAMPLE (Click on the Authorize and put your token there)
 <p><img align="center" src="https://raw.githubusercontent.com/Maiichi/ft_transcendence/swagger-api-docs/images/Swager_example.png" alt="swagger" /></p>
