@@ -1,0 +1,4 @@
+{
+  "pattern": "^(develop){1}$|^(full|front|back)/(feat|fix|hotfix|refacto|release)(/.+)?$",
+  "errorMsg": "You should respect this branch name format : develop or <type>/<scope>/<name> \n For example  : \n 1) develop \n 2) front/feat/login \n "
+}
