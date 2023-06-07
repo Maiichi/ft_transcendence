@@ -69,5 +69,5 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 | `username`      | `string` | **Required**. the username of the target user|
 | `file`      | `file` | **Required**. image to be uploaded for the tagret user |
 
-### EXAMPLE
+### EXAMPLE (Click on the Authorize and put your token there)
 <p><img align="center" src="https://raw.githubusercontent.com/Maiichi/ft_transcendence/swagger-api-docs/images/Swager_example.png" alt="swagger" /></p>
