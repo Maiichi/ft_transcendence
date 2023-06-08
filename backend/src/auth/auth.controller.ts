@@ -2,7 +2,9 @@ import { Body, Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
 import { Request, Response } from "express";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController
 {
@@ -23,6 +25,8 @@ export class AuthController
     }
 
     
+    @ApiBearerAuth()
+    @ApiOperation({summary: 'type "localhost:PORT/api/auth/callback" on the browser and get Token and put it on the green lock {authorize} to perfrom USER requests'})
     @UseGuards(AuthGuard('42'))
     @Get("callback")
     async login42Redirect(@Req() req: Request, @Res() res:Response)
