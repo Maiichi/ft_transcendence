@@ -13,6 +13,6 @@ async function bootstrap() {
 	// 	origin: ['https://api.intra.42.fr', 'http://localhost:3000'],
 	// 	credentials: true,
 	// });
-  await app.listen(5000);
+  await app.listen(process.env.BACKEND_PORT);
 }
 bootstrap();
