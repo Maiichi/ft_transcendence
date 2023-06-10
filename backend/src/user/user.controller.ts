@@ -8,6 +8,7 @@ import { Response, response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterExceptionFilter } from './multer/multer.filter';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiSecurity, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
+import { MulterField } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
 
 @ApiTags('User')
@@ -24,10 +25,10 @@ export class UserController
     @ApiOkResponse({description : "get a user by username"})
     @ApiBadRequestResponse({description : 'User does not exist'})
     @ApiUnauthorizedResponse({description : 'Unauthorized'})
-    profile(@Param('username') username: string , @GetUser() user: User)
+    profile(@Param('username') username: string , @GetUser() user: User,@Res() res: Response)
     {
         try {
-            return this.userService.getUserByUsername(username);
+            return this.userService.getUserByUsername(username, res);
         } catch (error) {
             return error;
         }   
@@ -44,18 +45,17 @@ export class UserController
     @ApiNotFoundResponse({description : 'ID in not a number'})
     @ApiUnauthorizedResponse({description : 'Unauthorized'})
     @ApiParam({name : 'id'})
-    editUsername(@Param('id') id: any, @Body() dto: EditUserDto, @Res() res: Response)
+    editUsername(@Param('id') id: number, @Body() dto: EditUserDto, @Res() res: Response)
     {
         try {
-            const userId: number = parseInt(id);
-            return this.userService.editUsername(userId, dto, res);    
+            return this.userService.editUsername(Number(id), dto, res);    
         } catch (error) {
             return res.send({error : error})
         }
     }
 
     // PATCH /api/users/:username/upload
-    @Patch(':username/upload')
+    @Patch(':id/upload')
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -68,19 +68,19 @@ export class UserController
             },
         },
     })
-    @ApiOperation({ summary : 'Update user avatar by username'})
-    @ApiBadRequestResponse({description : 'Username does not exist'})
+    @ApiOperation({ summary : 'Update user avatar by ID'})
+    @ApiBadRequestResponse({description : 'Id does not exist'})
     @ApiNotFoundResponse({description : 'Error'})
     @ApiUnsupportedMediaTypeResponse({description : 'Unsupported Media Type | File extention is not allowed | File size is big'})
     @ApiUnauthorizedResponse({description : 'Unauthorized'})
     @UseInterceptors(FileInterceptor('file'))
-    // @UseFilters(MulterExceptionFilter) // Apply the custom exception filter ---> it didnt work so i handled file error on the service layer
-    async uploadAvatar(@Param('username') username: string, @UploadedFile() file: any, @Body() dto: EditUserDto, @Res() res: Response)
+    @UseFilters(MulterExceptionFilter) // Apply the custom exception filter ---> it didnt work so i handled file error on the service layer
+    async uploadAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body() dto: EditUserDto, @Res() res: Response)
     {
         try {
             // Handle the uploaded file here
             // You can access the file properties using file.originalname, file.buffer, file.mimetype, etc.
-            return await this.userService.editAvatar(username, file, dto, res);
+            return await this.userService.editAvatar(Number(id), file, dto, res);
         } catch (error) {
             return res.send({error : error})
         }

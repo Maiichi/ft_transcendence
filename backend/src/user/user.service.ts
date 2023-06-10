@@ -7,21 +7,32 @@ export class UserService {
 
     constructor(private prisma: PrismaService) {}
 
-    async getUserByUsername(username: string)
+    async getUserByUsername(username: string, res: any)
     {
         try {
             const user = await this.findUserByUsername(username);
             if (!user)
-                return "User does not exist";
+                return res.status(400).json({
+                    status: 400,
+                    message: "username not found"
+                });
             else
             {
                 const getUser = await this.prisma.user.findUnique({
                     where : {userName : username}
                 })
-                return getUser;
+                return res.status(200).json({
+                    status: 200,
+                    message: getUser
+                })
+                // return getUser;
             }
         } catch (error) {
-            throw error;
+            return res.status(404).json({
+                status: 404,
+                message: error
+            }); 
+            // throw error;
         }
     }
 
@@ -67,13 +78,13 @@ export class UserService {
         } catch (error) {
             return res.status(404).json({
                 status: 404,
-                message : `ID provided in the URL is not a number`
+                message : `ID is NaN`
             });
         }
     }
 
     // function to upload avatar for the user
-    async editAvatar(username:string, avatar: any, dto: EditUserDto, res: any)
+    async editAvatar(userId: number, avatar: any, dto: EditUserDto, res: any)
     {   
         const allowedFileTypes = ['jpg', 'jpeg', 'png']; // Define the allowed file extensions
         const maxFileSize = 5 * 1024 * 1024; // Define the maximum file size in bytes (e.g., 5MB)
@@ -81,8 +92,9 @@ export class UserService {
             // get File extention
             const isNotAllowed = !allowedFileTypes.includes(avatar.originalname.split(".").pop());
             // find user by username if it exists
-            const usernameExist = await this.findUserByUsername(username);
-            if (usernameExist)
+            const userExist = await this.findUserById(userId);
+            // const usernameExist = await this.findUserByUsername(username);
+            if (userExist)
             {
                 if (isNotAllowed)
                     return res.status(415).json({
@@ -95,7 +107,7 @@ export class UserService {
                         message: "File size is big"
                     })
                 await this.prisma.user.update({
-                    where: {userName: username} ,
+                    where: {intraId: userId} ,
                     data : {
                         avatar_url : avatar.path
                     }
@@ -110,7 +122,7 @@ export class UserService {
             else
                 return res.status(400).json({
                     status: 400,
-                    message: `User not found with the username = ${username}`
+                    message: `User not found with the id = ${userId}`
                 })
         } catch (error) {
             res.status(404).json({
@@ -125,7 +137,7 @@ export class UserService {
         try {
             const user = await this.prisma.user.findUnique({
                 where : {intraId: userId}
-            });
+            })
             return user ? true : false;
         } catch (error) {
             throw error
