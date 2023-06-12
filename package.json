@@ -1,19 +1,34 @@
 {
-  "name": "root",
+  "name": "Root",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/Maiichi/ft_transcendence.git",
   "author": "ibouroum",
+  "private": true,
   "license": "MIT",
   "devDependencies": {
     "husky": "^7.0.4"
   },
   "scripts": {
-    "prepareStart": "rm -rf node_modules && yarn && yarn prepare && chmod ug+x .husky/*",
-    "prepare": "husky install"
+    "prepareStart": "yarn clean:full && bolt && yarn prepare && chmod ug+x .husky/*",
+    "prepare": "husky install",
+    "clean:full": "rm -rf node_modules && rm -rf Client/node_modules && rm -rf backend/node_modules"
   },
   "dependencies": {
     "@commitlint/cli": "^16.0.1",
-    "@commitlint/config-conventional": "^16.0.0"
+    "@commitlint/config-conventional": "^16.0.0",
+    "bolt": "^0.24.10"
+  },
+  "bolt": {
+    "workspaces": [
+      "Client/*",
+      "backend/*"
+    ]
+  },
+  "workspaces": {
+    "packages": [
+      "Client",
+      "backend"
+    ]
   }
 }
