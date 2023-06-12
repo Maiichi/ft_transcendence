@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -18,11 +18,11 @@ services:
     build:
       context: ./backend
       target: development
+    env_file:
+      - ./backend/.env
     ports:
-      - 5000:5000
+      - ${BACKEND_PORT}:${BACKEND_PORT}
     depends_on:
-      - postgres
-    links:
       - postgres
     networks:
       - NET1
@@ -38,15 +38,7 @@ services:
       - 8080:8080
     networks:
       - NET1
-  # jenkins:
-  #   image: jenkins/jenkins:lts
-  #   ports:
-  #     - "8080:8080"
-  #     - "50000:50000"
-  #   volumes:
-  #     - jenkins_home:/var/jenkins_home
 volumes:
-  # jenkins_home:
     db_data:
 
 networks:
