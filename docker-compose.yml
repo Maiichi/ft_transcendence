@@ -18,26 +18,30 @@ services:
     build:
       context: ./backend
       target: development
-    env_file:
-      - ./backend/.env
     ports:
-      - ${BACKEND_PORT}:${BACKEND_PORT}
+      - "127.0.0.1:${BACKEND_PORT}:5001"
+      - "127.0.0.1:5555:5555" #for prisma Database Management
     depends_on:
       - postgres
     networks:
       - NET1
-    command: run.sh
     volumes:
       - ./backend:/app
       - /app/node_modules
-  adminer:
-    image: adminer
-    container_name: adminer
-    restart: always
+  client:
+    container_name: client
+    build:
+      context: ./Client
+      target: development
     ports:
-      - 8080:8080
+      - "127.0.0.1:${FRONTEND_PORT}:3001"
+    depends_on:
+      - backend
     networks:
       - NET1
+    volumes:
+      - ./Client:/app
+      - /app/node_modules
 volumes:
     db_data:
 
