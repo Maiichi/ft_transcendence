@@ -3,7 +3,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { Response } from "express";
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { UserService } from "src/user/user.service";
+import { authenticator } from "otplib";
+import { toDataURL } from "qrcode";
 
 @Injectable()
 export class AuthService
@@ -11,14 +14,15 @@ export class AuthService
     constructor(
         private prisma: PrismaService,
         private jwt: JwtService,
-        private config: ConfigService       
+        private config: ConfigService,
+        private userService: UserService
     ){}
 
     async signToken(userId: number, email: string) : Promise <string>
     {
         const payload = {
             sub: userId,
-            email
+            email,
         };
 
         const secret = this.config.get('JWT_SECRET');
@@ -50,7 +54,7 @@ export class AuthService
                     userName: userName,
                 },
             });
-            const tokenPromise = this.signToken(user.intraId , user.email);
+            const tokenPromise = this.signToken(user.id , user.email);
             const token = await tokenPromise;
             res.setHeader('Authorization', `Bearer ${token}`);
             // return res.redirect(`http://localhost:3000`);
@@ -58,7 +62,6 @@ export class AuthService
             // return res.redirect('/api/auth/logged');
             res.send({token});
         } catch (error) {
-            console.log("Error code ==" + error.code)
             if (error instanceof  Prisma.PrismaClientKnownRequestError){
                 if (error.code === 'P2002'){
                     throw new ForbiddenException('Credentials taken');
@@ -86,8 +89,104 @@ export class AuthService
             })
         } catch (error) {
             // The user is not authenticated.
-            console.log("ERROR HERE\n");
             console.log(error)
         }
+    }
+
+    /* ************************** 2FA ************************ */
+
+    async enableTwoFactor(user: User, res: Response)
+    {
+        try {
+            const isEnabled = await this.userService.isTwoFactorEnabled(user.intraId);
+            if (!isEnabled)
+            {
+                await this.prisma.user.update({
+                    where : { intraId: user.intraId },
+                    data : { 
+                        twoFactorActivate : true
+                    }
+                })
+                .then(() =>{
+                    res.status(200).json({
+                        status: 200,
+                        message: 'Two Factor is enabled successfully'
+                    })
+                })
+            }     
+            else
+                res.send({error : 'Two Factor authentication already enabled'});      
+        } catch (error) {
+            res.status(500).json({
+                error : error
+            })
+        }
+    }
+
+    async disableTwoFactor(user: User, res: Response)
+    {
+        try {
+            const isEnabled = await this.userService.isTwoFactorEnabled(user.intraId);
+            if (isEnabled)
+            {
+                await this.prisma.user.update({
+                    where : { intraId : user.intraId },
+                    data: {
+                        twoFactorActivate : false,
+                        twoFactorSecret : null
+                    }
+                })
+                .then(() =>{
+                    res.status(200).json({
+                        status : 200,
+                        message : 'Two Factor Auth is disabled successfully'
+                    })
+                })
+            }
+            else
+                return res.send({message: 'Two Factor Auth is already disabled'})
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({
+                status : 500,
+                message : error
+            })
+        }
+    }
+    
+    async generateTwoFactor(res: Response, userId: number) {
+        try {
+          const user = await this.userService.getUserById(userId);
+          if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+          const isEnabled = await this.userService.isTwoFactorEnabled(userId);
+          if (!isEnabled)
+            return res.status(404).json({message : 'two factor auth not enabled !'});
+          const secret = authenticator.generateSecret();
+          const otpauthUrl = authenticator.keyuri(
+            user.username,
+            process.env.APP_NAME,
+            secret,
+          );
+          const url = await toDataURL(otpauthUrl);
+          await this.userService.setTwoFactorSecret(userId, secret);
+          return res.send({
+            url : url
+          });
+        } catch (error) {
+          return res.status(500).json({
+            status: 500,
+            message: error.toString(), // Convert the error object to a string
+          });
+        }
+    }
+
+    async verifyTwoFactor(code: string, secret: string)
+    {   
+        return await authenticator.verify({
+            token : code,
+            secret: secret
+        });
     }
 }

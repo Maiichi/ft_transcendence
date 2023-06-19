@@ -28,6 +28,33 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 ### AUTHENTICATION API's
 * :warning: type this URL `localhost:port/api/auth/callback` on the browser, after you will be redirected to the 42-api, then press authorize and you will be redirected to another page with the ``token`` of your authentication, keep the ``token`` for future use.
 
+### TWO FACTOR AUTHENTICATION API's
+
+#### enable 2FA
+```http
+  POST /api/auth/2fa/enable
+```
+
+#### generate 2FA codeQR
+```http
+  POST /api/auth/2fa/generate
+```
+
+#### verify 2FA codeQR
+```http
+  POST /api/auth/2fa/veriy
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `code` | `string` | **Body**. the code given by scanning QR code |
+
+
+#### disable 2FA
+```http
+  POST /api/auth/2fa/disable
+```
+
 ### USER API's
 
 * :warning: before running the USER api's make sure you have the `token` you get previously and go the green lock `Autorize` and put it there.
@@ -63,6 +90,7 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 | :-------- | :------- | :-------------------------------- |
 | `id`      | `number` | **URL**. Id of the target user|
 | `file`      | `file` | **Body**. image to be uploaded for the tagret user |
+
 
 ### EXAMPLE (Click on the Authorize and put your token there)
 <p><img align="center" src="https://raw.githubusercontent.com/Maiichi/ft_transcendence/develop/images/Swager_example.png" alt="swagger" /></p>

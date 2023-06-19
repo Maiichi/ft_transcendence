@@ -21,6 +21,7 @@ export class UserController
 
     // GET /api/users/:username
     @Get(':username')
+    @UseGuards(JwtGuard)
     @ApiOperation({ summary : 'Get user by username'})
     @ApiOkResponse({description : "get a user by username"})
     @ApiBadRequestResponse({description : 'User does not exist'})
@@ -36,6 +37,7 @@ export class UserController
     
     // PATCH /api/users/:id/update
     @Patch(':id/update')
+    @UseGuards(JwtGuard)
     @ApiOperation({ summary : 'Update user by ID'})
     @ApiBody({
         schema: { properties: { userName: { type: 'string' } } },
@@ -56,6 +58,7 @@ export class UserController
 
     // PATCH /api/users/:username/upload
     @Patch(':id/upload')
+    @UseGuards(JwtGuard)
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
