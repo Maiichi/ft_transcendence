@@ -7,6 +7,18 @@ export class UserService {
 
     constructor(private prisma: PrismaService) {}
 
+    async getUser(intraId: number)
+    {
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: {intraId : intraId}
+            });
+            return user;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getUserByUsername(username: string, res: any)
     {
         try {
@@ -155,4 +167,57 @@ export class UserService {
             throw error
         }
     }
+
+    async getUserById(userId: number)
+    {
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: {intraId : userId}
+            });
+            if (!user)
+                return "user not found !";
+            return user;
+        } catch (error) {
+            console.log("error ==" + error);
+            return error;
+        }
+    }
+
+
+    async isTwoFactorEnabled(userId: number) 
+    {
+        try {
+            const user = await this.getUser(userId);
+            return user.twoFactorActivate;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async isSecretExist(userId: number)
+    {
+        try {
+            const user = await this.getUser(userId);
+            return user.twoFactorSecret ? true : false;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async setTwoFactorSecret(userId: number, secret: string)
+    {
+        try {
+            const user = await this.prisma.user.update({
+                where: {intraId : userId},
+                data : {
+                    twoFactorSecret : secret
+                }
+            })
+            return user ? true : false;
+        } catch (error) {
+            console.log("set secret error ==" + error);
+            return error
+        }
+    }
+
 }
