@@ -18,17 +18,5 @@
     "@commitlint/cli": "^16.0.1",
     "@commitlint/config-conventional": "^16.0.0",
     "bolt": "^0.24.10"
-  },
-  "bolt": {
-    "workspaces": [
-      "Client/*",
-      "backend/*"
-    ]
-  },
-  "workspaces": {
-    "packages": [
-      "Client",
-      "backend"
-    ]
   }
 }

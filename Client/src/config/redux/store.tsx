@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import counterSlice from "../../packages/feat-Home/components/CounterSlice";
+import todosSlice from "../../packages/feat-Home/components/TodosSlice";
 // ...
 
 export const store = configureStore({
   reducer: {
     counter: counterSlice,
+    todos: todosSlice
   },
 });
 
