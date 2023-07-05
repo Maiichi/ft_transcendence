@@ -34,7 +34,7 @@ services:
       context: ./Client
       target: development
     ports:
-      - "127.0.0.1:${FRONTEND_PORT}:3001"
+      - "127.0.0.1:${FRONTEND_PORT}:3000"
     depends_on:
       - backend
     networks:
