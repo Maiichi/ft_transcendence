@@ -11,19 +11,22 @@ datasource db {
 }
 
 model User {
-  id          Int         @id @default(autoincrement())
-  intraId     Int         @unique
+  id                  Int         @id @default(autoincrement())
+  intraId             Int         @unique
 
-  email       String      @unique
-  firstName   String      @db.VarChar(255)
-  lastName    String      @db.VarChar(255)
- 
-  userName    String      @unique @db.VarChar(255)
+  email               String      @unique
+  firstName           String      @db.VarChar(255)
+  lastName            String      @db.VarChar(255)
 
-  avatar_url  String?     @db.VarChar(255)
+  userName            String      @unique @db.VarChar(255)
 
-  createdAt   DateTime    @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime?   @updatedAt      @db.Timestamp(6)
+  avatar_url          String?     @db.VarChar(255)
+
+  createdAt           DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime?   @updatedAt      @db.Timestamp(6)
+
+  twoFactorActivate   Boolean?    @default(false)
+  twoFactorSecret     String?     @db.VarChar(255)
 
   @@map("users")
 }
