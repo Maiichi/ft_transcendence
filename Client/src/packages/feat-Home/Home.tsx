@@ -1,42 +1,22 @@
-import { DataLoader } from "../../config";
-import { HomeAdapter } from "./components/HomeAdapter";
-import { IHomeAdapter } from "./components/types";
-
-// const apis: Promise<IHomeAdapter> = new Promise(
-//   (resolve: (value: IHomeAdapter) => void, reject: (error: Error) => void) => {
-//     setTimeout(() => {
-//       resolve({ value: "foo" });
-//     }, 1000);
-//   }
-// );
-
-const apis = (): Promise<IHomeAdapter> =>
-  new Promise(
-    (
-      resolve: (value: IHomeAdapter) => void,
-      reject: (error: Error) => void
-    ) => {
-      setTimeout(() => {
-        resolve({ value: "foo" });
-      }, 1000);
-    }
-  );
+import { useAppDispatch, useAppSelector } from "../../config/redux/hooks";
+import {
+  CounterState,
+  decrement,
+  increment,
+  incrementByAmount,
+} from "./components/CounterSlice";
 
 export const Home = () => {
+  const state: CounterState = useAppSelector((state) => state.counter);
+  const dispatch = useAppDispatch();
+
   return (
     <>
-      <DataLoader<IHomeAdapter>
-        loader={apis}
-        skeleton={() => <HomeAdapter.skeletonView />}
-        error={() => <HomeAdapter.errorView />}
-        render={(data) => {
-          return (
-            <>
-              <HomeAdapter.mainView value={data.value} />
-            </>
-          );
-        }}
-      />
+      <p>{state.value}</p>
+      <button onClick={() => dispatch(increment())}>"+" </button>
+      <button onClick={() => dispatch(decrement())}>"-" </button>
+      <button onClick={() => dispatch(incrementByAmount(2))}>"=" </button>
+      <p>{state.nbr}</p>
     </>
   );
 };
