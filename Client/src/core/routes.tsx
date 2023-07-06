@@ -1,16 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Home } from "../packages";
+import { Test, Home } from "../packages";
 
 import { NotFoundError } from "./errors";
 export const routes = createBrowserRouter([
   {
-    path: "/",
-    element: <Home />,
+    path: "/test",
+    element: <Test />,
     errorElement: <NotFoundError />,
   },
   {
     path: "/",
-    element: "",
-    errorElement: "",
+    element: <Home />,
+    errorElement: <NotFoundError />,
   },
 ]);
