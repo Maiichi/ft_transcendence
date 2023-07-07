@@ -28,7 +28,7 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-      - images_uploads:/app/images_uploads/ # Mount shared volume for image uploads
+      - images_uploads:/app/images_uploads/ # shared volume for image uploads
   client:
     container_name: client
     build:
@@ -43,7 +43,7 @@ services:
     volumes:
       - ./Client:/app
       - /app/node_modules
-      - images_uploads:/app/images_uploads/ # Mount shared volume for image uploads
+      - images_uploads:/app/images_uploads/ # shared volume for image uploads
 volumes:
     db_data:
     images_uploads:

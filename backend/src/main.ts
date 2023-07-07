@@ -15,6 +15,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  
   const config = new DocumentBuilder()
     .setTitle('Transcendence Manager API')
     .setDescription(

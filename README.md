@@ -98,7 +98,7 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `id`      | `number` | **URL**. Id of the target user|
+| `id`      | `number` | **URL**.  Id of the target user|
 
 
 ### EXAMPLE (Click on the Authorize and put your token there)
