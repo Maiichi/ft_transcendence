@@ -1,15 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Req, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 import { EditUserDto } from './dto';
 import { UserService } from './user.service';
-import { Response, response } from 'express';
+import { Response, Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterExceptionFilter } from './multer/multer.filter';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiSecurity, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
-import { MulterField } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-
 
 @ApiTags('User')
 @UseGuards(JwtGuard)
@@ -18,7 +16,6 @@ import { MulterField } from '@nestjs/platform-express/multer/interfaces/multer-o
 export class UserController
 {
     constructor(private userService: UserService) {}
-
     // GET /api/users/:username
     @Get(':username')
     @UseGuards(JwtGuard)
@@ -26,7 +23,7 @@ export class UserController
     @ApiOkResponse({description : "get a user by username"})
     @ApiBadRequestResponse({description : 'User does not exist'})
     @ApiUnauthorizedResponse({description : 'Unauthorized'})
-    profile(@Param('username') username: string , @GetUser() user: User,@Res() res: Response)
+    profile(@Param('username') username: string, @Res() res: Response)
     {
         try {
             return this.userService.getUserByUsername(username, res);
@@ -56,8 +53,8 @@ export class UserController
         }
     }
 
-    // PATCH /api/users/:username/upload
-    @Patch(':id/upload')
+    // PATCH /api/users/:username/upload-avatar
+    @Patch(':id/upload-avatar')
     @UseGuards(JwtGuard)
     @ApiConsumes('multipart/form-data')
     @ApiBody({
@@ -77,13 +74,43 @@ export class UserController
     @ApiUnsupportedMediaTypeResponse({description : 'Unsupported Media Type | File extention is not allowed | File size is big'})
     @ApiUnauthorizedResponse({description : 'Unauthorized'})
     @UseInterceptors(FileInterceptor('file'))
-    @UseFilters(MulterExceptionFilter) // Apply the custom exception filter ---> it didnt work so i handled file error on the service layer
-    async uploadAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body() dto: EditUserDto, @Res() res: Response)
+    @UseFilters(MulterExceptionFilter) // Apply the custom exception filter
+    async uploadAvatar(@Param('id') id: number, @UploadedFile() file:  Express.Multer.File, @Res() res: Response)
     {
         try {
+            if (!file)
+                throw new BadRequestException();
             // Handle the uploaded file here
             // You can access the file properties using file.originalname, file.buffer, file.mimetype, etc.
-            return await this.userService.editAvatar(Number(id), file, dto, res);
+            return await this.userService.editAvatar(Number(id), file, res);
+        } catch (error) {
+            return res.send({error : error});
+        }
+    }
+
+    @Get(':id/avatar/')
+    @UseGuards(JwtGuard)
+    @ApiOperation({ summary: 'Get User Avatar' })
+    @ApiParam({ name: 'id', description: 'User ID' })
+    @ApiResponse({
+        status: 200,
+        description: 'OK',
+        content: {
+            '*/*': {
+                schema: {
+                type: 'string',
+                format: 'binary',
+                },
+            },
+        },
+    })
+    @ApiResponse({ status: 404, description: 'Not Found' })
+    @ApiUnauthorizedResponse({description : 'Unauthorized'})
+    @ApiBadRequestResponse({description : 'Id does not exist'})
+    async getAvatar(@Param('id') id: number ,@Res() res: Response)
+    {
+        try {
+            return await this.userService.getUserAvatar(Number(id), res);
         } catch (error) {
             return res.send({error : error})
         }
