@@ -1,13 +1,11 @@
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Req, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { User } from '@prisma/client';
-import { GetUser } from '../auth/decorator';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard';
 import { EditUserDto } from './dto';
 import { UserService } from './user.service';
 import { Response, Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterExceptionFilter } from './multer/multer.filter';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiSecurity, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
 
 @ApiTags('User')
 @UseGuards(JwtGuard)
@@ -88,6 +86,7 @@ export class UserController
         }
     }
 
+    // GET /api/users/:id/avatar
     @Get(':id/avatar/')
     @UseGuards(JwtGuard)
     @ApiOperation({ summary: 'Get User Avatar' })

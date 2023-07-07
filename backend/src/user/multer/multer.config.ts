@@ -7,8 +7,9 @@ const allowedFileTypes = ['.jpg', '.jpeg', '.png']; // Define the allowed file e
 const maxFileSize = 4 * 1024 * 1024; // Define the maximum file size in bytes (e.g., 5MB)
 
 export const multerConfig = {
+  // this destination will works only inside the container
   storage: diskStorage({
-    destination: '/app/images_uploads',
+    destination: '../images_uploads',
     filename: (req, file, callback) => {
       const uniqueSuffix = Date.now();
       const extension = extname(file.originalname);

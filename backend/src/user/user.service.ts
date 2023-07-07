@@ -4,11 +4,13 @@ import { EditUserDto } from './dto';
 import * as path from 'path';
 import { Response } from 'express';
 
+
 @Injectable()
 export class UserService {
 
     constructor(private prisma: PrismaService) {}
 
+    // function to get the user using it's IntraID
     async getUser(intraId: number)
     {
         try {
@@ -21,6 +23,7 @@ export class UserService {
         }
     }
 
+    // function to get the user by it's username
     async getUserByUsername(username: string, res: Response)
     {
         try {
@@ -50,6 +53,7 @@ export class UserService {
         }
     }
 
+    // function to update the username of the user
     async editUsername(userId: number, dto: EditUserDto, res: Response)
     {
         try {
@@ -159,7 +163,7 @@ export class UserService {
         }
     }
 
-
+    // function to check if the user exist using it's ID
     async findUserById(userId: number)
     {
         try {
@@ -172,6 +176,7 @@ export class UserService {
         }
     }
 
+    // function to check if the user exist using it's username
     async findUserByUsername(username: string)
     {
         try {
@@ -183,7 +188,8 @@ export class UserService {
             throw error
         }
     }
-
+    
+    // function to get the user by ID
     async getUserById(userId: number)
     {
         try {
