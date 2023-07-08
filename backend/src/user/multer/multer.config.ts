@@ -9,7 +9,7 @@ const maxFileSize = 4 * 1024 * 1024; // Define the maximum file size in bytes (e
 export const multerConfig = {
   // this destination will works only inside the container
   storage: diskStorage({
-    destination: '../images_uploads',
+    destination: 'images_uploads',
     filename: (req, file, callback) => {
       const uniqueSuffix = Date.now();
       const extension = extname(file.originalname);

@@ -8,6 +8,6 @@ COPY [ "package.json","yarn.lock*" , "./" ]
 
 COPY . .
 
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 CMD ["yarn", "start"]

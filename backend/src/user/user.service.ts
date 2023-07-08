@@ -146,7 +146,7 @@ export class UserService {
             if (userExist)
             {
                 const user = await this.getUser(userId);
-                const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url); // Update the path to match the actual upload directory
+                const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
                 res.sendFile(filePath);
             }
             else
