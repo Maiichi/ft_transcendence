@@ -17,7 +17,7 @@ import { multerConfig } from './user/multer/multer.config';
     }),
     MulterModule.register(multerConfig),
     AuthModule,
-    PrismaModule, UserModule,
+    PrismaModule, UserModule
   ],
   controllers: [UserController],
   providers : [UserService]

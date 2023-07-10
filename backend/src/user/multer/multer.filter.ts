@@ -9,10 +9,10 @@ export class MulterExceptionFilter implements ExceptionFilter {
 
     const status = exception.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
     const message = exception.message;
+    
     response.status(status).json({
       statusCode: status,
       message: message,
     });
   }
 }
-
