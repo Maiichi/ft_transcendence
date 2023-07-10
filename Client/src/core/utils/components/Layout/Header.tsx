@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { ReactElement } from "react";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 interface MenuTabs {
   redirect: string;
@@ -12,7 +11,12 @@ interface TabProps {
   isActive: boolean;
 }
 export const Header = () => {
-  const [activeTab, setActiveTab] = useState("");
+  const [activeTab, setActiveTab] = useState<string>("");
+  const navigate = useNavigate();
+  const handleClick = (item: MenuTabs) => {
+    setActiveTab(item.activeTab);
+    navigate(item.redirect);
+  };
   useEffect(() => {}, [activeTab]);
   const Menu: MenuTabs[] = [
     {
@@ -27,7 +31,7 @@ export const Header = () => {
     },
     {
       activeTab: "game",
-      redirect: "/game",
+      redirect: "/",
       render: <p>Game</p>,
     },
   ];
@@ -35,12 +39,8 @@ export const Header = () => {
     <Root>
       {Menu.map((item) => (
         <Tab
-          isActive={activeTab == item.activeTab ? true : false}
-          onClick={() => {
-            console.log("Ddscsd");
-            setActiveTab(item.activeTab);
-            redirect("/test");
-          }}
+          isActive={activeTab === item.activeTab}
+          onClick={() => handleClick(item)}
         >
           {item.render}
         </Tab>

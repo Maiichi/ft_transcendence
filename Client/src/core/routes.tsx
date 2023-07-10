@@ -1,16 +1,32 @@
-import { createBrowserRouter } from "react-router-dom";
 import { Test, Home } from "../packages";
 
 import { NotFoundError } from "./errors";
-export const routes = createBrowserRouter([
+import { Header } from "./utils";
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div>
+      <Header />
+      {children}
+    </div>
+  );
+};
+export const routes = [
   {
     path: "/test",
-    element: <Test />,
+    element: (
+      <Layout>
+        <Test />
+      </Layout>
+    ),
     errorElement: <NotFoundError />,
   },
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <Layout>
+        <Home />
+      </Layout>
+    ),
     errorElement: <NotFoundError />,
   },
-]);
+];
