@@ -1,16 +1,19 @@
 import { RouterProvider } from "react-router-dom";
-import { routes } from "./core";
 import { Provider } from "react-redux";
-import { store } from "./core/redux/store";
+import { routes, store, Header } from "./core";
+import styled from "styled-components";
 
 function App() {
   return (
-    <div>
+    <Root>
       <Provider store={store}>
+        <Header />
         <RouterProvider router={routes} />
       </Provider>
-    </div>
+    </Root>
   );
 }
+
+const Root = styled.div``;
 
 export default App;
