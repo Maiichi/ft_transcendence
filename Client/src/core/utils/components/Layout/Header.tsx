@@ -1,11 +1,16 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { Button } from "@mui/material";
+
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
+import { useState, useEffect } from "react";
+
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { SimpleDialog } from "../Dialog";
 interface MenuTabs {
-  redirect: string;
+  redirect?: string;
   render: JSX.Element;
-  activeTab: string;
+  activeTab?: string;
 }
 interface TabProps {
   isActive: boolean;
@@ -13,12 +18,40 @@ interface TabProps {
 export const Header = () => {
   const [activeTab, setActiveTab] = useState<string>("");
   const navigate = useNavigate();
-  const handleClick = (item: MenuTabs) => {
-    setActiveTab(item.activeTab);
-    navigate(item.redirect);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
   };
+
   useEffect(() => {}, [activeTab]);
-  const Menu: MenuTabs[] = [
+  const ProfileClick = () => {
+    console.log("Profile");
+    setOpen(true);
+  };
+  const NotifClick = () => {
+    console.log("Notifications");
+  };
+
+  const RightMenu: MenuTabs[] = [
+    {
+      render: (
+        <CircleNotificationsIcon
+          style={{ color: "#f2bb13" }}
+          onClick={NotifClick}
+        />
+      ),
+    },
+    {
+      render: (
+        <ImgProfile
+          src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
+          onClick={ProfileClick}
+        />
+      ),
+    },
+  ];
+  const LeftMenu: MenuTabs[] = [
     {
       activeTab: "Home",
       redirect: "/",
@@ -35,16 +68,34 @@ export const Header = () => {
       render: <p>Game</p>,
     },
   ];
+
+  const TabComponent = (item: MenuTabs) => {
+    const tabClick = (item: MenuTabs) => {
+      item.activeTab && setActiveTab(item.activeTab);
+      item.redirect && navigate(item.redirect);
+    };
+    return (
+      <Tab
+        isActive={item.activeTab ? activeTab === item.activeTab : true}
+        onClick={() => tabClick(item)}
+      >
+        {item.render}
+      </Tab>
+    );
+  };
   return (
     <Root>
-      {Menu.map((item) => (
-        <Tab
-          isActive={activeTab === item.activeTab}
-          onClick={() => handleClick(item)}
-        >
-          {item.render}
-        </Tab>
-      ))}
+      <Left>
+        {LeftMenu.map((item: MenuTabs) => (
+          <TabComponent {...item} />
+        ))}
+      </Left>
+      <Right>
+        {RightMenu.map((item: MenuTabs) => (
+          <TabComponent {...item} />
+        ))}
+      </Right>
+      <SimpleDialog open={open} onClose={handleClose} />
     </Root>
   );
 };
@@ -60,8 +111,20 @@ const Root = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
+const Left = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const Right = styled.div`
+  display: flex;
+  align-items: center;
+`;
 const Tab = styled.div<TabProps>`
-  color: ${(props) =>
-    props.isActive ? "rgb(214, 220, 234)" : "rgb(214, 220, 234)"};
-  opacity: ${(props) => (props.isActive ? 1 : 0.5)};
+  color: ${(props) => (props.isActive ? "#f2bb13" : "rgb(214, 220, 234)")};
+  margin: 25px;
+`;
+const ImgProfile = styled.img`
+  width: 33px;
+  height: 34px;
+  margin-top: 5px;
 `;
