@@ -1,9 +1,5 @@
-import { Button } from "@mui/material";
-
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import { useState, useEffect } from "react";
-
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { SimpleDialog } from "../Dialog";

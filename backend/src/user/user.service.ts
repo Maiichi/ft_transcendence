@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditUserDto } from './dto';
+import * as path from 'path';
+import { Response } from 'express';
+
 
 @Injectable()
 export class UserService {
 
     constructor(private prisma: PrismaService) {}
 
+    // function to get the user using it's IntraID
     async getUser(intraId: number)
     {
         try {
@@ -19,7 +23,8 @@ export class UserService {
         }
     }
 
-    async getUserByUsername(username: string, res: any)
+    // function to get the user by it's username
+    async getUserByUsername(username: string, res: Response)
     {
         try {
             const user = await this.findUserByUsername(username);
@@ -48,7 +53,8 @@ export class UserService {
         }
     }
 
-    async editUsername(userId: number, dto: EditUserDto, res: any)
+    // function to update the username of the user
+    async editUsername(userId: number, dto: EditUserDto, res: Response)
     {
         try {
             // check if the {id} provided in the URL belongs to an existing user
@@ -96,32 +102,18 @@ export class UserService {
     }
 
     // function to upload avatar for the user
-    async editAvatar(userId: number, avatar: any, dto: EditUserDto, res: any)
+    async editAvatar(userId: number, avatar: Express.Multer.File, res: Response)
     {   
-        const allowedFileTypes = ['jpg', 'jpeg', 'png']; // Define the allowed file extensions
-        const maxFileSize = 5 * 1024 * 1024; // Define the maximum file size in bytes (e.g., 5MB)
         try {
-            // get File extention
-            const isNotAllowed = !allowedFileTypes.includes(avatar.originalname.split(".").pop());
             // find user by username if it exists
             const userExist = await this.findUserById(userId);
             // const usernameExist = await this.findUserByUsername(username);
             if (userExist)
             {
-                if (isNotAllowed)
-                    return res.status(415).json({
-                        status: 415,
-                        message: "File extention is not allowed"
-                    })
-                if (maxFileSize < avatar.size)
-                    return res.status(415).json({
-                        status: 415,
-                        message: "File size is big"
-                    })
                 await this.prisma.user.update({
                     where: {intraId: userId} ,
                     data : {
-                        avatar_url : avatar.path
+                        avatar_url : avatar.filename
                     }
                 }).then((resp) =>{
                     if (resp)
@@ -144,6 +136,34 @@ export class UserService {
         }
     }
 
+    //function to get the user Avatar
+    async getUserAvatar(userId: number, res: Response)
+    {
+        try {
+            // find user by username if it exists
+            const userExist = await this.findUserById(userId);
+            // const usernameExist = await this.findUserByUsername(username);
+            if (userExist)
+            {
+                const user = await this.getUser(userId);
+                const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
+                res.sendFile(filePath);
+            }
+            else
+                return res.status(400).json({
+                    status: 400,
+                    message: `User not found with the id = ${userId}`
+                })
+
+        } catch (error) {
+            res.status(404).json({
+                status: 404,
+                message: error.message
+            })
+        }
+    }
+
+    // function to check if the user exist using it's ID
     async findUserById(userId: number)
     {
         try {
@@ -156,6 +176,7 @@ export class UserService {
         }
     }
 
+    // function to check if the user exist using it's username
     async findUserByUsername(username: string)
     {
         try {
@@ -167,7 +188,8 @@ export class UserService {
             throw error
         }
     }
-
+    
+    // function to get the user by ID
     async getUserById(userId: number)
     {
         try {

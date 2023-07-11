@@ -91,6 +91,15 @@ Swagger is a tool that can be used to document and describe REST APIs. It can be
 | `id`      | `number` | **URL**. Id of the target user|
 | `file`      | `file` | **Body**. image to be uploaded for the tagret user |
 
+#### Get the user avatar
+```http
+  GET /api/users/${id}/avatar
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `number` | **URL**.  Id of the target user|
+
 
 ### EXAMPLE (Click on the Authorize and put your token there)
 <p><img align="center" src="https://raw.githubusercontent.com/Maiichi/ft_transcendence/develop/images/Swager_example.png" alt="swagger" /></p>
