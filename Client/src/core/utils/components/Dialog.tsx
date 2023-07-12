@@ -1,16 +1,35 @@
-import Avatar from "@mui/material/Avatar";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Dialog from "@mui/material/Dialog";
+import {
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  DialogTitle,
+  Dialog,
+} from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import AddIcon from "@mui/icons-material/Add";
 import { blue } from "@mui/material/colors";
+import { makeStyles } from "@mui/styles";
 
 const emails = ["username@gmail.com", "user02@gmail.com"];
+
+const useStyles = makeStyles({
+  myButton: {
+    height: "unset !important",
+    position: "fixed",
+    top: "43px",
+    right: "3px",
+    // color: "white",
+    // "&:hover": {
+    //   backgroundColor: "darkred",
+    // },
+  },
+  myButto: {
+    margin: "unset !important",
+  },
+});
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -19,6 +38,8 @@ export interface SimpleDialogProps {
 
 export const SimpleDialog = (props: SimpleDialogProps) => {
   const { onClose, open } = props;
+  const classes = useStyles();
+
   const handleClose = () => {
     onClose();
   };
@@ -28,7 +49,11 @@ export const SimpleDialog = (props: SimpleDialogProps) => {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open}>
+    <Dialog
+      onClose={handleClose}
+      open={open}
+      classes={{ container: classes.myButton, paper: classes.myButto }}
+    >
       <DialogTitle>Set backup account</DialogTitle>
       <List sx={{ pt: 0 }}>
         {emails.map((email) => (

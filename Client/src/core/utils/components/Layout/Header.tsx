@@ -2,8 +2,12 @@ import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { SimpleDialog } from "../Dialog";
+import { PopperComponent } from "..";
+import { PopperPlacementType } from "@mui/material/Popper";
+import { Typography } from "@mui/material";
+
 interface MenuTabs {
+  id: string;
   redirect?: string;
   render: JSX.Element;
   activeTab?: string;
@@ -12,53 +16,71 @@ interface TabProps {
   isActive: boolean;
 }
 export const Header = () => {
-  const [activeTab, setActiveTab] = useState<string>("");
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<string>("");
   const [open, setOpen] = useState(false);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+  const [anchorEl, setAnchorEl] = useState<any | null>(null);
+  const [placement, setPlacement] = useState<PopperPlacementType>();
+  const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
   useEffect(() => {}, [activeTab]);
-  const ProfileClick = () => {
+  const handleClick =
+    (newPlacement: PopperPlacementType, childPopper: JSX.Element) =>
+    (event: React.MouseEvent<any>) => {
+      console.log(event);
+      setAnchorEl(event.currentTarget);
+      setOpen((prev) => placement !== newPlacement || !prev);
+      setPlacement(newPlacement);
+      setChildPopper(childPopper);
+    };
+
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
+
+  const ProfilePopper = () => {
     console.log("Profile");
-    setOpen(true);
+    return <Typography sx={{ p: 2 }}>Profile Popper.</Typography>;
   };
-  const NotifClick = () => {
+  const NotificationPopper = () => {
     console.log("Notifications");
+    return <Typography sx={{ p: 2 }}>Notifications Popper.</Typography>;
   };
 
   const RightMenu: MenuTabs[] = [
     {
+      id: "notif",
       render: (
         <CircleNotificationsIcon
           style={{ color: "#f2bb13" }}
-          onClick={NotifClick}
+          onClick={handleClick("bottom-end", <ProfilePopper />)}
         />
       ),
     },
     {
+      id: "profile",
       render: (
         <ImgProfile
           src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
-          onClick={ProfileClick}
+          onClick={handleClick("bottom-end", <NotificationPopper />)}
         />
       ),
     },
   ];
   const LeftMenu: MenuTabs[] = [
     {
+      id: "home",
       activeTab: "Home",
       redirect: "/",
       render: <>Home</>,
     },
     {
+      id: "test",
       activeTab: "test",
       redirect: "/test",
       render: <p>Login</p>,
     },
     {
+      id: "game",
       activeTab: "game",
       redirect: "/",
       render: <p>Game</p>,
@@ -72,6 +94,7 @@ export const Header = () => {
     };
     return (
       <Tab
+        key={item.id}
         isActive={item.activeTab ? activeTab === item.activeTab : true}
         onClick={() => tabClick(item)}
       >
@@ -79,6 +102,7 @@ export const Header = () => {
       </Tab>
     );
   };
+
   return (
     <Root>
       <Left>
@@ -91,7 +115,13 @@ export const Header = () => {
           <TabComponent {...item} />
         ))}
       </Right>
-      <SimpleDialog open={open} onClose={handleClose} />
+      {/* <SimpleDialog open={open} onClose={handleClose} /> */}
+      <PopperComponent
+        anchorEl={anchorEl}
+        open={open}
+        placement={placement}
+        ChildComponent={ChildPopper}
+      />
     </Root>
   );
 };
