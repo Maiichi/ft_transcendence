@@ -10,58 +10,80 @@ interface MenuTabs {
   id: string;
   redirect?: string;
   render: JSX.Element;
-  activeTab?: string;
+  activeTab?: ActiveTabs;
 }
 interface TabProps {
   isActive: boolean;
 }
+type ActiveTabs = "notif" | "profile" | "home" | "game" | "test";
 export const Header = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("");
   const [open, setOpen] = useState(false);
+  const [anchors, setAnchors] = useState<any>([]);
   const [anchorEl, setAnchorEl] = useState<any | null>(null);
   const [placement, setPlacement] = useState<PopperPlacementType>();
   const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
   useEffect(() => {}, [activeTab]);
+
+  const handleClose = (e: any) => {
+    console.log(anchorEl);
+    setOpen(false);
+  };
+
+  // document.addEventListener("click", handleClose, true);
+  // useEffect(() => {
+  //   document.addEventListener("click", handleClose, true);
+  //   return () => {
+  //     document.removeEventListener("click", handleClose, true);
+  //   };
+  // }, []);
+
   const handleClick =
-    (newPlacement: PopperPlacementType, childPopper: JSX.Element) =>
+    (
+      newPlacement: PopperPlacementType,
+      childPopper: JSX.Element,
+      activeCick: ActiveTabs
+    ) =>
     (event: React.MouseEvent<any>) => {
-      console.log(event);
-      setAnchorEl(event.currentTarget);
-      setOpen((prev) => placement !== newPlacement || !prev);
-      setPlacement(newPlacement);
+      let target = event.currentTarget;
       setChildPopper(childPopper);
+      setOpen((prev) => (activeCick == activeTab ? !prev : true));
+      setAnchorEl(target);
+      // anchors.indexOf(target) == -1 && setAnchors([...anchors, target]);
+      // anchors.forEach((element: any) => {
+      //   console.log(element, target, element == target);
+      // });
+      // console.log(anchors.indexOf(target), anchors);
+      console.log(event.target, event.currentTarget);
+      setPlacement(newPlacement);
     };
 
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
-
   const ProfilePopper = () => {
-    console.log("Profile");
     return <Typography sx={{ p: 2 }}>Profile Popper.</Typography>;
   };
   const NotificationPopper = () => {
-    console.log("Notifications");
     return <Typography sx={{ p: 2 }}>Notifications Popper.</Typography>;
   };
 
   const RightMenu: MenuTabs[] = [
     {
       id: "notif",
+      activeTab: "notif",
       render: (
         <CircleNotificationsIcon
           style={{ color: "#f2bb13" }}
-          onClick={handleClick("bottom-end", <ProfilePopper />)}
+          onClick={handleClick("bottom-end", <NotificationPopper />, "notif")}
         />
       ),
     },
     {
       id: "profile",
+      activeTab: "profile",
       render: (
         <ImgProfile
           src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
-          onClick={handleClick("bottom-end", <NotificationPopper />)}
+          onClick={handleClick("bottom-end", <ProfilePopper />, "profile")}
         />
       ),
     },
@@ -69,7 +91,7 @@ export const Header = () => {
   const LeftMenu: MenuTabs[] = [
     {
       id: "home",
-      activeTab: "Home",
+      activeTab: "home",
       redirect: "/",
       render: <>Home</>,
     },
