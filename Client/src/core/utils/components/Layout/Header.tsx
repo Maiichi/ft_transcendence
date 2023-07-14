@@ -5,12 +5,13 @@ import styled from "styled-components";
 import { PopperComponent } from "..";
 import { PopperPlacementType } from "@mui/material/Popper";
 import { Typography } from "@mui/material";
+import DensityMediumIcon from "@mui/icons-material/DensityMedium";
 
 interface MenuTabs {
   id: string;
   redirect?: string;
   render: JSX.Element;
-  activeTab?: ActiveTabs;
+  activeTab: ActiveTabs;
 }
 interface TabProps {
   isActive: boolean;
@@ -20,24 +21,14 @@ export const Header = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [anchors, setAnchors] = useState<any>([]);
   const [anchorEl, setAnchorEl] = useState<any | null>(null);
   const [placement, setPlacement] = useState<PopperPlacementType>();
   const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
   useEffect(() => {}, [activeTab]);
-
   const handleClose = (e: any) => {
-    console.log(anchorEl);
     setOpen(false);
   };
-
-  // document.addEventListener("click", handleClose, true);
-  // useEffect(() => {
-  //   document.addEventListener("click", handleClose, true);
-  //   return () => {
-  //     document.removeEventListener("click", handleClose, true);
-  //   };
-  // }, []);
+  document.addEventListener("click", handleClose, true);
 
   const handleClick =
     (
@@ -46,16 +37,9 @@ export const Header = () => {
       activeCick: ActiveTabs
     ) =>
     (event: React.MouseEvent<any>) => {
-      let target = event.currentTarget;
       setChildPopper(childPopper);
-      setOpen((prev) => (activeCick == activeTab ? !prev : true));
-      setAnchorEl(target);
-      // anchors.indexOf(target) == -1 && setAnchors([...anchors, target]);
-      // anchors.forEach((element: any) => {
-      //   console.log(element, target, element == target);
-      // });
-      // console.log(anchors.indexOf(target), anchors);
-      console.log(event.target, event.currentTarget);
+      setOpen(true);
+      setAnchorEl(event.currentTarget);
       setPlacement(newPlacement);
     };
 
@@ -72,8 +56,9 @@ export const Header = () => {
       activeTab: "notif",
       render: (
         <CircleNotificationsIcon
-          style={{ color: "#f2bb13" }}
-          onClick={handleClick("bottom-end", <NotificationPopper />, "notif")}
+          id="notif"
+          style={{ color: "#f2bb13", margin: "25px" }}
+          onClick={handleClick("bottom", <NotificationPopper />, "notif")}
         />
       ),
     },
@@ -82,6 +67,8 @@ export const Header = () => {
       activeTab: "profile",
       render: (
         <ImgProfile
+          id="profile"
+          style={{ margin: "25px" }}
           src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
           onClick={handleClick("bottom-end", <ProfilePopper />, "profile")}
         />
@@ -127,6 +114,12 @@ export const Header = () => {
 
   return (
     <Root>
+      <PopperComponent
+        anchorEl={anchorEl}
+        open={open}
+        placement={placement}
+        ChildComponent={ChildPopper}
+      />
       <Left>
         {LeftMenu.map((item: MenuTabs) => (
           <TabComponent {...item} />
@@ -134,28 +127,21 @@ export const Header = () => {
       </Left>
       <Right>
         {RightMenu.map((item: MenuTabs) => (
-          <TabComponent {...item} />
+          <div>{item.render}</div>
         ))}
       </Right>
-      {/* <SimpleDialog open={open} onClose={handleClose} /> */}
-      <PopperComponent
-        anchorEl={anchorEl}
-        open={open}
-        placement={placement}
-        ChildComponent={ChildPopper}
-      />
     </Root>
   );
 };
 const Root = styled.div`
-  padding: 10px;
+  padding: 15px;
   background-color: rgb(8, 27, 75);
   color: rgb(214, 220, 234);
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
   display: flex;
-  height: 20px;
+  height: 25px;
   align-items: center;
   justify-content: space-between;
 `;
