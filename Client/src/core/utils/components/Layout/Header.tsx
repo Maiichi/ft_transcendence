@@ -28,7 +28,14 @@ export const Header = () => {
   const handleClose = (e: any) => {
     setOpen(false);
   };
-  document.addEventListener("click", handleClose, true);
+
+  useEffect(() => {
+    document.addEventListener("click", handleClose, true);
+
+    return () => {
+      document.removeEventListener("click", handleClose, true);
+    };
+  }, []);
 
   const handleClick =
     (
@@ -57,7 +64,7 @@ export const Header = () => {
       render: (
         <CircleNotificationsIcon
           id="notif"
-          style={{ color: "#f2bb13", margin: "25px" }}
+          style={{ color: "#f2bb13" }}
           onClick={handleClick("bottom", <NotificationPopper />, "notif")}
         />
       ),
@@ -68,7 +75,7 @@ export const Header = () => {
       render: (
         <ImgProfile
           id="profile"
-          style={{ margin: "25px" }}
+          style={{}}
           src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
           onClick={handleClick("bottom-end", <ProfilePopper />, "profile")}
         />
@@ -80,7 +87,7 @@ export const Header = () => {
       id: "home",
       activeTab: "home",
       redirect: "/",
-      render: <>Home</>,
+      render: <p>Home</p>,
     },
     {
       id: "test",
@@ -127,23 +134,24 @@ export const Header = () => {
       </Left>
       <Right>
         {RightMenu.map((item: MenuTabs) => (
-          <div>{item.render}</div>
+          <TabRight>{item.render}</TabRight>
         ))}
       </Right>
     </Root>
   );
 };
 const Root = styled.div`
-  padding: 15px;
+padding: 0 10px;
   background-color: rgb(8, 27, 75);
   color: rgb(214, 220, 234);
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
   display: flex;
-  height: 25px;
   align-items: center;
   justify-content: space-between;
+  
+  }
 `;
 const Left = styled.div`
   display: flex;
@@ -155,10 +163,18 @@ const Right = styled.div`
 `;
 const Tab = styled.div<TabProps>`
   color: ${(props) => (props.isActive ? "#f2bb13" : "rgb(214, 220, 234)")};
-  margin: 25px;
+  border-bottom: ${(props) => props.isActive && "2px solid"};
+  margin-right: 20px;
+  &:hover {
+    margin-right: 20px;
+    border-bottom: 2px solid;
+    color: rgb(242, 187, 19) !important;
+  }
+`;
+const TabRight = styled.div`
+  margin-left: 20px;
 `;
 const ImgProfile = styled.img`
   width: 33px;
   height: 34px;
-  margin-top: 5px;
 `;

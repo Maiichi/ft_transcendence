@@ -5,20 +5,16 @@ import styled from "styled-components";
 
 function App() {
   return (
-    <Root>
-      <Provider store={store}>
-        <BrowserRouter>
-          <Routes>
-            {routes.map((item) => (
-              <Route path={item.path} element={item.element} />
-            ))}
-          </Routes>
-        </BrowserRouter>
-      </Provider>
-    </Root>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          {routes.map((item) => (
+            <Route path={item.path} element={item.element} />
+          ))}
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   );
 }
-
-const Root = styled.div``;
 
 export default App;

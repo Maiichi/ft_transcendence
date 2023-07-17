@@ -9,9 +9,7 @@ export const Home = () => {
 
   return (
     <>
-      <button style={{ margin: "200px" }} onClick={handleClick}>
-        sss
-      </button>
+      <button onClick={handleClick}>sss</button>
     </>
   );
 };
