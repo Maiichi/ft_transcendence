@@ -1,6 +1,4 @@
 import Popper from "@mui/material/Popper";
-import Typography from "@mui/material/Typography";
-
 import Fade from "@mui/material/Fade";
 import Paper from "@mui/material/Paper";
 interface Props {
@@ -17,7 +15,13 @@ export const PopperComponent = ({
   ChildComponent,
 }: Props) => {
   return (
-    <Popper open={open} anchorEl={anchorEl} placement={placement} transition>
+    <Popper
+      open={open}
+      anchorEl={anchorEl}
+      placement={placement}
+      transition
+      sx={{ paddingTop: "20px" }}
+    >
       {({ TransitionProps }) => (
         <Fade {...TransitionProps} timeout={350}>
           <Paper>{ChildComponent}</Paper>
