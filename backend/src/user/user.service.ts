@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditUserDto } from './dto';
 import * as path from 'path';
@@ -240,6 +240,24 @@ export class UserService {
             console.log("set secret error ==" + error);
             return error
         }
+    }
+
+
+    /* update User Status */
+    async updateUserStatus(userId: number, status: string)
+    {
+        const user = await this.getUser(userId);
+        if (user)
+        {
+            await this.prisma.user.update({
+                where: {intraId : userId},
+                data : {
+                    status : status
+                }
+            });
+        }
+        else
+            throw new NotFoundException(`userId ${userId} not found`)
     }
 
 }

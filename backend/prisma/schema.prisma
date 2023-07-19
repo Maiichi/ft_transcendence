@@ -21,12 +21,30 @@ model User {
   userName            String      @unique @db.VarChar(255)
 
   avatar_url          String?     @db.VarChar(255)
+  status              String      @default("OFFLINE")
+  twoFactorActivate   Boolean?    @default(false)
+  twoFactorSecret     String?     @db.VarChar(255)
+
+  rooms               Room[]
+  adminInRooms        Room[]      @relation("admins")
+  memberInRooms       Room[]      @relation("members")
+
 
   createdAt           DateTime    @default(now()) @db.Timestamp(6)
   updatedAt           DateTime?   @updatedAt      @db.Timestamp(6)
 
-  twoFactorActivate   Boolean?    @default(false)
-  twoFactorSecret     String?     @db.VarChar(255)
-
   @@map("users")
+}
+
+model Room {
+    id                Int         @id @default(autoincrement())
+    name              String      @db.VarChar()
+    type              String
+    owner             User        @relation(fields: [owner_id], references: [intraId])
+    owner_id          Int
+    members           User[]      @relation("members")
+    admins            User[]      @relation("admins")
+    password          String      @db.VarChar()
+    createdAt         DateTime    @default(now()) @db.Timestamp(6)
+    updatedAt         DateTime?   @updatedAt      @db.Timestamp(6)
 }
