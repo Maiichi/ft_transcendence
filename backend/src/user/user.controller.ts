@@ -26,7 +26,7 @@ export class UserController
         try {
             return this.userService.getUserByUsername(username, res);
         } catch (error) {
-            return error;
+            return res.send({error : error});
         }   
     }
     

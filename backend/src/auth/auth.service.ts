@@ -149,7 +149,7 @@ export class AuthService
             return res.status(404).json({message : 'two factor auth not enabled !'});
         const secret = authenticator.generateSecret();
         const otpauthUrl = authenticator.keyuri(
-            user.username,
+            user.userName,
             process.env.APP_NAME,
             secret,
         );
