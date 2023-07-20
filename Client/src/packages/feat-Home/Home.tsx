@@ -7,9 +7,5 @@ export const Home = () => {
     navigate("/test");
   };
 
-  return (
-    <>
-      <button onClick={handleClick}>sss</button>
-    </>
-  );
+  return <>Welcome</>;
 };

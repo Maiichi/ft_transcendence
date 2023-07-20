@@ -1,11 +1,13 @@
 import Popper from "@mui/material/Popper";
 import Fade from "@mui/material/Fade";
 import Paper from "@mui/material/Paper";
+import React from "react";
 interface Props {
   anchorEl: HTMLImageElement | HTMLButtonElement;
   open: boolean;
   placement: any;
   ChildComponent: JSX.Element;
+  style?: React.CSSProperties;
 }
 
 export const PopperComponent = ({
@@ -13,6 +15,7 @@ export const PopperComponent = ({
   open,
   placement,
   ChildComponent,
+  style,
 }: Props) => {
   return (
     <Popper
@@ -24,7 +27,7 @@ export const PopperComponent = ({
     >
       {({ TransitionProps }) => (
         <Fade {...TransitionProps} timeout={350}>
-          <Paper>{ChildComponent}</Paper>
+          <Paper sx={style}>{ChildComponent}</Paper>
         </Fade>
       )}
     </Popper>

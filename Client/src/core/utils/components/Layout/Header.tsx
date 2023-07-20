@@ -1,12 +1,17 @@
-import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { PopperComponent } from "..";
+import { PopperComponent, SearchComponent } from "..";
 import { PopperPlacementType } from "@mui/material/Popper";
 import { Typography } from "@mui/material";
 import DensityMediumIcon from "@mui/icons-material/DensityMedium";
-
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { makeStyles } from "@material-ui/styles";
+import { useSize } from "../../hooks";
+import SearchIcon from "@mui/icons-material/Search";
+import DehazeIcon from "@mui/icons-material/Dehaze";
+import VideogameAssetIcon from "@mui/icons-material/VideogameAsset";
 interface MenuTabs {
   id: string;
   redirect?: string;
@@ -17,8 +22,25 @@ interface TabProps {
   isActive: boolean;
 }
 type ActiveTabs = "notif" | "profile" | "home" | "game" | "test";
+const useStyles = makeStyles({
+  iconBase: {
+    borderRadius: "6px",
+
+    height: "25px",
+    transition: "all 0.2s ease-in-out 0s",
+    background: "rgb(237, 231, 246)",
+    color: "rgb(94, 53, 177)",
+    "&:hover": {
+      background: "rgb(94, 53, 177)",
+      color: "rgb(214, 220, 234)",
+    },
+  },
+});
 export const Header = () => {
   const navigate = useNavigate();
+  const classes = useStyles();
+  const { isMobile, isTab } = useSize();
+  console.log(isMobile, isTab);
   const [activeTab, setActiveTab] = useState<string>("");
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<any | null>(null);
@@ -62,9 +84,9 @@ export const Header = () => {
       id: "notif",
       activeTab: "notif",
       render: (
-        <CircleNotificationsIcon
+        <NotificationsNoneIcon
           id="notif"
-          style={{ color: "#f2bb13" }}
+          className={classes.iconBase}
           onClick={handleClick("bottom", <NotificationPopper />, "notif")}
         />
       ),
@@ -75,33 +97,14 @@ export const Header = () => {
       render: (
         <ImgProfile
           id="profile"
-          style={{}}
+          style={{ marginLeft: " 20px" }}
           src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
           onClick={handleClick("bottom-end", <ProfilePopper />, "profile")}
         />
       ),
     },
   ];
-  const LeftMenu: MenuTabs[] = [
-    {
-      id: "home",
-      activeTab: "home",
-      redirect: "/",
-      render: <p>Home</p>,
-    },
-    {
-      id: "test",
-      activeTab: "test",
-      redirect: "/test",
-      render: <p>Login</p>,
-    },
-    {
-      id: "game",
-      activeTab: "game",
-      redirect: "/",
-      render: <p>Game</p>,
-    },
-  ];
+  const LeftMenu: MenuTabs[] = [];
 
   const TabComponent = (item: MenuTabs) => {
     const tabClick = (item: MenuTabs) => {
@@ -122,27 +125,44 @@ export const Header = () => {
   return (
     <Root>
       <PopperComponent
+        style={{
+          backgroundColor: "rgb(255, 255, 255)",
+          color: "rgb(54, 65, 82)",
+          borderRadius: "12px",
+          overflow: "hidden",
+          border: "none rgba(144, 202, 249, 0.145)",
+        }}
         anchorEl={anchorEl}
         open={open}
         placement={placement}
         ChildComponent={ChildPopper}
       />
-      <Left>
-        {LeftMenu.map((item: MenuTabs) => (
-          <TabComponent {...item} />
-        ))}
-      </Left>
-      <Right>
-        {RightMenu.map((item: MenuTabs) => (
-          <TabRight>{item.render}</TabRight>
-        ))}
-      </Right>
+      {!isMobile && (
+        <VideogameAssetIcon
+          className={classes.iconBase}
+          onClick={() => console.log("clicked")}
+        />
+      )}
+      {isMobile ? (
+        <RightMo>
+          <DehazeIcon
+            className={classes.iconBase}
+            onClick={() => console.log("clicked")}
+          />
+          <SearchIcon
+            className={classes.iconBase}
+            onClick={() => console.log("clicked")}
+          />
+        </RightMo>
+      ) : (
+        <SearchComponent />
+      )}
+      <Right>{RightMenu.map((item: MenuTabs) => item.render)}</Right>
     </Root>
   );
 };
 const Root = styled.div`
-padding: 0 10px;
-  background-color: rgb(8, 27, 75);
+  padding: 5px 10px;
   color: rgb(214, 220, 234);
   font-size: 14px;
   font-weight: 500;
@@ -150,30 +170,32 @@ padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
-  }
 `;
-const Left = styled.div`
-  display: flex;
-  align-items: center;
-`;
+
 const Right = styled.div`
   display: flex;
   align-items: center;
 `;
-const Tab = styled.div<TabProps>`
-  color: ${(props) => (props.isActive ? "#f2bb13" : "rgb(214, 220, 234)")};
-  border-bottom: ${(props) => props.isActive && "2px solid"};
-  margin-right: 20px;
-  &:hover {
-    margin-right: 20px;
-    border-bottom: 2px solid;
-    color: rgb(242, 187, 19) !important;
+const RightMo = styled.div`
+  @media screen and (max-width: 425px) {
+  }
+  @media screen and (min-width: 425px) and (max-width: 768px) {
   }
 `;
-const TabRight = styled.div`
-  margin-left: 20px;
+
+const Tab = styled.div<TabProps>`
+  color: ${(props) =>
+    props.isActive ? "rgb(94, 53, 177)" : "rgb(54, 65, 82)"};
+  background: rgb(237, 231, 246);
+  color: rgb(94, 53, 177);
+  letter-spacing: 0em;
+  font-weight: 400;
+  line-height: 1.5em;
+  font-family: Roboto, sans-serif;
+  font-size: 0.875rem;
+  margin-right: 20px;
 `;
+
 const ImgProfile = styled.img`
   width: 33px;
   height: 34px;
