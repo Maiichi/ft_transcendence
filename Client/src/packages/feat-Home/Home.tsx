@@ -1,13 +1,11 @@
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../core";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
-  // const state: CounterState = useAppSelector((state) => state.counter);
-  // const todos: TodosState = useAppSelector((state) => state.todos);
-  // const dispatch = useAppDispatch();
-  // useEffect(() => {
-  //   dispatch(fetchTodos(4));
-  // }, [dispatch]);
+  const navigate = useNavigate();
 
-  return <>Hello world</>;
+  const handleClick = () => {
+    navigate("/test");
+  };
+
+  return <>Welcome</>;
 };

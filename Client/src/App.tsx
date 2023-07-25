@@ -1,15 +1,19 @@
-import { RouterProvider } from "react-router-dom";
-import { routes } from "./core";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store } from "./core/redux/store";
+import { routes, store } from "./core";
+import styled from "styled-components";
 
 function App() {
   return (
-    <div>
-      <Provider store={store}>
-        <RouterProvider router={routes} />
-      </Provider>
-    </div>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          {routes.map((item) => (
+            <Route path={item.path} element={item.element} />
+          ))}
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   );
 }
 
