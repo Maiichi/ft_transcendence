@@ -8,6 +8,7 @@ import { UserService } from "src/user/user.service";
 import { UpdateRoomDto } from "../dto/update.room.dto";
 import { User } from "@prisma/client";
 import { JoinRoomDto } from "../dto/join.room.dto";
+import { SetRoomAdmin, kickMember } from "../dto/update.user.membership.dto";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
@@ -18,6 +19,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     private connectedClients = new Map<string, User>();
     private userSocket       = new Map<number, string[]>();
+    private BlackListedTokens= new Map<string, number>();
 
     constructor(
         private chatService: ChatService,
@@ -59,19 +61,41 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
-    deleteUserDisconnected(intraId: number)
-    {
+    // deleteUserDisconnected(intraId: number)
+    // {
+    //     this.connectedClients.forEach((mapUser, mapId) => {
+    //         if (mapUser.intraId === intraId) {
+    //           this.connectedClients.delete(mapId);
+    //         }
+    //     });
+    // }
+
+    deleteUserDisconnected(intraId: number) {
+        const disconnectedSockets = [];
         this.connectedClients.forEach((mapUser, mapId) => {
             if (mapUser.intraId === intraId) {
-              this.connectedClients.delete(mapId);
+            disconnectedSockets.push(mapId);
             }
         });
+
+        disconnectedSockets.forEach(socketId => {
+            this.connectedClients.delete(socketId);
+        });
     }
+
+    // disconnectAllUserSocket(intraId: number)
+    // {
+
+    // }
+
+
 
     async handleConnection(client: Socket) {
         const token = client.handshake.headers.authorization;
         try {
             const decodedToken = await this.jwtService.verify(token,{secret:process.env.JWT_SECRET});
+            // if (this.BlackListedTokens.has(token))
+            //     throw new WsException(`Token is black listed please re-login`);
             const user = await this.userService.getUser(decodedToken.sub);
             if (!user)
                 throw new  WsException('User not found.');
@@ -95,15 +119,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
+
+    // TODO: need to be tested to check if the user is logged of from all the tabs
     handleDisconnect(client: Socket) {
         try {
+            const token = client.handshake.headers.authorization;
             const user = this.connectedClients.get(client.id);
             if (user) {
                 this.deleteUserSockets(user.intraId);
                 this.deleteUserDisconnected(user.intraId);
                 // this.connectedClients.delete(client.id);
                 this.userService.updateUserStatus(user.intraId, 'OFFLINE');
+                // TODO: the token need to be hashed before it persisted in the black-list of tokens
+                // this.BlackListedTokens.set(token, user.intraId);
                 this.server.emit('userDisconnected', { userId: client.id });
+                client.disconnect();
                 console.log(user.userName + ' is Disconnected ' + client.id);
             }
             else
@@ -116,10 +146,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     @SubscribeMessage('createRoom')
     async createRoom(client: Socket, createRoomDto: CreateRoomDto) {
         try {
-            const room = await this.chatService.createRoom(createRoomDto);
+            // get current User 
+            console.log("here")
+            const currentUser = this.findUserByClientSocketId(client.id);
+            console.log("here 1")
+            const room = await this.chatService.createRoom(createRoomDto, currentUser.intraId);
+            console.log("here 2")
             console.log("client == " + client.id);
             console.log("room create successfully");
             this.server.emit('roomCreated', room);    
+            console.log("here 3")
         } catch (error) {
             console.log('err ||', error.message);
         }
@@ -180,4 +216,39 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             return response;
         }
     }
+
+
+    // set room Admins
+    @SubscribeMessage('setRoomAdmin')
+    async setRoomAdmin(@ConnectedSocket() client: Socket, @MessageBody() body: SetRoomAdmin)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.chatService.setAdminToRoom(body, currentUser.intraId);
+            this.server.emit('setRoomAdmin');
+        } catch (error) {
+            console.log("Subs error =" + error.message)
+        }
+    }
+    // remove Channel Admins
+
+    // mute member
+    // ban member
+    // kick member
+    @SubscribeMessage('kickMember')
+    async kickMember(@ConnectedSocket() client: Socket, @MessageBody() body: kickMember)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.chatService.kickMember(body, currentUser.intraId);
+            this.server.emit('kickMember');
+        } catch (error) {
+            console.log("Subs error =" + error.message)
+        }
+    }
+    // @SubscribeMessage('sendMessage')
+    // async sendMessage(@ConnectedSocket() client: Socket)
+    // {
+
+    // }
 }

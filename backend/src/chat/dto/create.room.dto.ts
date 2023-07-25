@@ -5,9 +5,6 @@ import { IsNumber, IsOptional, IsString } from "class-validator"
         @IsString()
         name: string;
 
-        @IsNumber()
-        ownerId: number;
-
         @IsString()
         type: string;
 

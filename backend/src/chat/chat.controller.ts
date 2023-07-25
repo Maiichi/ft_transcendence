@@ -12,19 +12,19 @@ export class ChatController
     )
     {}
     // getRooms
-    @Get('/rooms')
-    async getRooms()
-    {
-        try {
-            return this.chatService.getAllRooms();
-        } catch (error) {
-            const response = {
-                success: false,
-                message: error.message
-            }
-            return response;
-        }
-    }
+    // @Get('/rooms')
+    // async getRooms()
+    // {
+    //     try {
+    //         return this.chatService.getAllRoomsInfos();
+    //     } catch (error) {
+    //         const response = {
+    //             success: false,
+    //             message: error.message
+    //         }
+    //         return response;
+    //     }
+    // }
     
     // getConversation 2 user
 

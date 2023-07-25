@@ -54,7 +54,7 @@ export class AuthService
                     userName: userName,
                 },
             });
-            const tokenPromise = this.signToken(user.id , user.email);
+            const tokenPromise = this.signToken(user.intraId , user.email);
             const token = await tokenPromise;
             res.setHeader('Authorization', `Bearer ${token}`);
             // return res.redirect(`http://localhost:3000`);
