@@ -21,7 +21,7 @@ interface MenuTabs {
 interface TabProps {
   isActive: boolean;
 }
-type ActiveTabs = "notif" | "profile" | "home" | "game" | "test";
+type ActiveTabs = "notif" | "profile" | "search";
 const useStyles = makeStyles({
   iconBase: {
     borderRadius: "6px",
@@ -40,7 +40,7 @@ export const Header = () => {
   const navigate = useNavigate();
   const classes = useStyles();
   const { isMobile, isTab } = useSize();
-  console.log(isMobile, isTab);
+
   const [activeTab, setActiveTab] = useState<string>("");
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<any | null>(null);
@@ -52,20 +52,22 @@ export const Header = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleClose, true);
-
+    console.log("sdq: ", activeTab);
+    activeTab != "search" &&
+      document.addEventListener("click", handleClose, true);
     return () => {
       document.removeEventListener("click", handleClose, true);
     };
-  }, []);
+  }, [activeTab]);
 
-  const handleClick =
+  const popperClick =
     (
       newPlacement: PopperPlacementType,
       childPopper: JSX.Element,
       activeCick: ActiveTabs
     ) =>
     (event: React.MouseEvent<any>) => {
+      setActiveTab(activeCick);
       setChildPopper(childPopper);
       setOpen(true);
       setAnchorEl(event.currentTarget);
@@ -78,6 +80,9 @@ export const Header = () => {
   const NotificationPopper = () => {
     return <Typography sx={{ p: 2 }}>Notifications Popper.</Typography>;
   };
+  const SearchPopper = () => {
+    return <Typography sx={{ p: 2 }}>Search Popper.</Typography>;
+  };
 
   const RightMenu: MenuTabs[] = [
     {
@@ -87,7 +92,7 @@ export const Header = () => {
         <NotificationsNoneIcon
           id="notif"
           className={classes.iconBase}
-          onClick={handleClick("bottom", <NotificationPopper />, "notif")}
+          onClick={popperClick("bottom", <NotificationPopper />, "notif")}
         />
       ),
     },
@@ -99,7 +104,7 @@ export const Header = () => {
           id="profile"
           style={{ marginLeft: " 20px" }}
           src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
-          onClick={handleClick("bottom-end", <ProfilePopper />, "profile")}
+          onClick={popperClick("bottom-end", <ProfilePopper />, "profile")}
         />
       ),
     },
@@ -151,7 +156,12 @@ export const Header = () => {
           />
           <SearchIcon
             className={classes.iconBase}
-            onClick={() => console.log("clicked")}
+            style={{ marginLeft: "10px" }}
+            onClick={popperClick(
+              "bottom",
+              <SearchComponent clear={true} setOpen={setOpen} />,
+              "search"
+            )}
           />
         </RightMo>
       ) : (
