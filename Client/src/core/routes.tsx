@@ -1,16 +1,18 @@
 import styled from "styled-components";
 import { Test, Home } from "../packages";
-
+import { CoreState } from "./CoreSlice";
 import { NotFoundError } from "./errors";
+import { useAppDispatch, useAppSelector } from "./redux";
 import { Header, NavBar } from "./utils";
 import { useSize } from "./utils/hooks";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { isMobile, isTab } = useSize();
+  const state: CoreState = useAppSelector((state) => state.core);
   return (
     <>
       <Header />
       <Root>
-        {!isMobile && <NavBar />}
+        {state.displayNavbar && !isMobile && <NavBar />}
         <Children> {children}</Children>
       </Root>
     </>

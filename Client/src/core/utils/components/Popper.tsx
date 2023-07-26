@@ -7,7 +7,8 @@ interface Props {
   open: boolean;
   placement: any;
   ChildComponent: JSX.Element;
-  style?: React.CSSProperties;
+  paperStyle?: React.CSSProperties;
+  popperStyle?: React.CSSProperties;
 }
 
 export const PopperComponent = ({
@@ -15,7 +16,8 @@ export const PopperComponent = ({
   open,
   placement,
   ChildComponent,
-  style,
+  paperStyle,
+  popperStyle,
 }: Props) => {
   return (
     <Popper
@@ -23,11 +25,11 @@ export const PopperComponent = ({
       anchorEl={anchorEl}
       placement={placement}
       transition
-      sx={{ paddingTop: "20px" }}
+      sx={popperStyle}
     >
       {({ TransitionProps }) => (
         <Fade {...TransitionProps} timeout={350}>
-          <Paper sx={style}>{ChildComponent}</Paper>
+          <Paper sx={paperStyle}>{ChildComponent}</Paper>
         </Fade>
       )}
     </Popper>

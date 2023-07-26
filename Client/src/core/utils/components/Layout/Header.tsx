@@ -1,22 +1,21 @@
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { PopperComponent, SearchComponent } from "..";
-import { PopperPlacementType } from "@mui/material/Popper";
-import { Typography } from "@mui/material";
-import DensityMediumIcon from "@mui/icons-material/DensityMedium";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { Typography, PopperPlacementType } from "@mui/material";
 import { makeStyles } from "@material-ui/styles";
-import { useSize } from "../../hooks";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import SearchIcon from "@mui/icons-material/Search";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import VideogameAssetIcon from "@mui/icons-material/VideogameAsset";
+import { Drawer, NavBar, PopperComponent, SearchComponent } from "..";
+import { useSize } from "../../hooks";
+import { useAppDispatch } from "../../../redux";
+import { setDisplayNavbar } from "../../../CoreSlice";
+type Anchor = "top" | "left" | "bottom" | "right";
 interface MenuTabs {
   id: string;
   redirect?: string;
   render: JSX.Element;
-  activeTab: ActiveTabs;
 }
 interface TabProps {
   isActive: boolean;
@@ -25,7 +24,6 @@ type ActiveTabs = "notif" | "profile" | "search";
 const useStyles = makeStyles({
   iconBase: {
     borderRadius: "6px",
-
     height: "25px",
     transition: "all 0.2s ease-in-out 0s",
     background: "rgb(237, 231, 246)",
@@ -36,21 +34,57 @@ const useStyles = makeStyles({
     },
   },
 });
+const ProfilePopper = () => {
+  return <Typography sx={{ p: 2 }}>Profile Popper.</Typography>;
+};
+const NotificationPopper = () => {
+  return <Typography sx={{ p: 2 }}>Notifications Popper.</Typography>;
+};
+
 export const Header = () => {
+  const [state, setState] = useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
+
+  const toggleDrawer =
+    (anchor: Anchor, open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event &&
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+      setState({ ...state, [anchor]: open });
+    };
+  console.log("Header");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const classes = useStyles();
   const { isMobile, isTab } = useSize();
-
   const [activeTab, setActiveTab] = useState<string>("");
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<any | null>(null);
   const [placement, setPlacement] = useState<PopperPlacementType>();
   const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
-  useEffect(() => {}, [activeTab]);
+  const [popperStyle, setPopperStyle] = useState<React.CSSProperties>();
+  // const [drawerstate, setDrawerState] = useState({
+  //   top: false,
+  //   left: false,
+  //   bottom: false,
+  //   right: false,
+  // });
   const handleClose = (e: any) => {
     setOpen(false);
   };
-
+  useEffect(() => {
+    setOpen(false);
+  }, [isMobile]);
   useEffect(() => {
     console.log("sdq: ", activeTab);
     activeTab != "search" &&
@@ -64,9 +98,11 @@ export const Header = () => {
     (
       newPlacement: PopperPlacementType,
       childPopper: JSX.Element,
-      activeCick: ActiveTabs
+      activeCick: ActiveTabs,
+      popperStyle?: React.CSSProperties
     ) =>
     (event: React.MouseEvent<any>) => {
+      setPopperStyle(popperStyle);
       setActiveTab(activeCick);
       setChildPopper(childPopper);
       setOpen(true);
@@ -87,60 +123,52 @@ export const Header = () => {
   const RightMenu: MenuTabs[] = [
     {
       id: "notif",
-      activeTab: "notif",
       render: (
         <NotificationsNoneIcon
           id="notif"
           className={classes.iconBase}
-          onClick={popperClick("bottom", <NotificationPopper />, "notif")}
+          onClick={popperClick("bottom", <NotificationPopper />, "notif", {
+            paddingTop: "10px",
+          })}
         />
       ),
     },
     {
       id: "profile",
-      activeTab: "profile",
       render: (
         <ImgProfile
           id="profile"
           style={{ marginLeft: " 20px" }}
           src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
-          onClick={popperClick("bottom-end", <ProfilePopper />, "profile")}
+          onClick={popperClick("bottom-end", <ProfilePopper />, "profile", {
+            paddingTop: "5px",
+          })}
         />
       ),
     },
   ];
-  const LeftMenu: MenuTabs[] = [];
-
-  const TabComponent = (item: MenuTabs) => {
-    const tabClick = (item: MenuTabs) => {
-      item.activeTab && setActiveTab(item.activeTab);
-      item.redirect && navigate(item.redirect);
-    };
-    return (
-      <Tab
-        key={item.id}
-        isActive={item.activeTab ? activeTab === item.activeTab : true}
-        onClick={() => tabClick(item)}
-      >
-        {item.render}
-      </Tab>
-    );
-  };
 
   return (
     <Root>
       <PopperComponent
-        style={{
+        paperStyle={{
           backgroundColor: "rgb(255, 255, 255)",
           color: "rgb(54, 65, 82)",
           borderRadius: "12px",
           overflow: "hidden",
           border: "none rgba(144, 202, 249, 0.145)",
         }}
+        popperStyle={popperStyle}
         anchorEl={anchorEl}
         open={open}
         placement={placement}
         ChildComponent={ChildPopper}
+      />
+      <Drawer
+        anchor={"left"}
+        state={state}
+        children={<NavBar />}
+        toggleDrawer={toggleDrawer}
       />
       {!isMobile && (
         <VideogameAssetIcon
@@ -148,22 +176,33 @@ export const Header = () => {
           onClick={() => console.log("clicked")}
         />
       )}
+
       {isMobile ? (
-        <RightMo>
-          <DehazeIcon
-            className={classes.iconBase}
-            onClick={() => console.log("clicked")}
-          />
+        <DehazeIcon
+          className={classes.iconBase}
+          onClick={toggleDrawer("left", true)}
+        />
+      ) : (
+        <DehazeIcon
+          className={classes.iconBase}
+          onClick={() => dispatch(setDisplayNavbar(false))}
+        />
+      )}
+      {isMobile ? (
+        <MobileDisplay>
           <SearchIcon
             className={classes.iconBase}
             style={{ marginLeft: "10px" }}
             onClick={popperClick(
               "bottom",
               <SearchComponent clear={true} setOpen={setOpen} />,
-              "search"
+              "search",
+              {
+                paddingTop: "14px",
+              }
             )}
           />
-        </RightMo>
+        </MobileDisplay>
       ) : (
         <SearchComponent />
       )}
@@ -186,24 +225,11 @@ const Right = styled.div`
   display: flex;
   align-items: center;
 `;
-const RightMo = styled.div`
+const MobileDisplay = styled.div`
   @media screen and (max-width: 425px) {
   }
   @media screen and (min-width: 425px) and (max-width: 768px) {
   }
-`;
-
-const Tab = styled.div<TabProps>`
-  color: ${(props) =>
-    props.isActive ? "rgb(94, 53, 177)" : "rgb(54, 65, 82)"};
-  background: rgb(237, 231, 246);
-  color: rgb(94, 53, 177);
-  letter-spacing: 0em;
-  font-weight: 400;
-  line-height: 1.5em;
-  font-family: Roboto, sans-serif;
-  font-size: 0.875rem;
-  margin-right: 20px;
 `;
 
 const ImgProfile = styled.img`
