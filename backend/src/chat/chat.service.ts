@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRoomDto } from './dto/create.room.dto';
 import { UserService } from 'src/user/user.service';
@@ -6,8 +6,8 @@ import { UpdateRoomDto } from './dto/update.room.dto';
 import { WsException } from '@nestjs/websockets';
 import { JoinRoomDto } from './dto/join.room.dto';
 import { verify , hash } from 'argon2'
-import { SetRoomAdmin, kickMember } from './dto/update.user.membership.dto';
-import { error } from 'console';
+import { addMinutes } from 'date-fns'
+import { SetRoomAdminDto, KickMemberDto, MuteMemberDto, LeaveRoomDto } from './dto/update.user.membership.dto';
 
 @Injectable()
 export class ChatService 
@@ -23,7 +23,7 @@ export class ChatService
             where: {id : roomId}
         });
         if (!room)
-            throw new NotFoundException(`roomId ${roomId} does not exist`);
+            throw new WsException(`roomId ${roomId} does not exist`);
         return room;
     }
 
@@ -186,6 +186,7 @@ export class ChatService
                 password: hashedPass
             }
         });
+        console.log("room updated successfully")
         return roomUpdate;
     }
 
@@ -202,6 +203,7 @@ export class ChatService
         if (!room)
             throw new WsException(`room ${body.id} not found`);
         const isMember = await this.isMember(userId, room.id)
+        console.log("isMem in join === " + isMember)
         if (isMember)
             throw new WsException(`user is already member on the room`);
         if (room.type === 'private' && !body.password)
@@ -234,7 +236,35 @@ export class ChatService
         return newMembership;
     }
 
-    async setAdminToRoom(body: SetRoomAdmin, userId: number)
+    /*
+        leaveRoom JSON
+        {
+            "roomId" : 3,
+        }
+    */
+    // function to leave a room
+    async leaveRoom(body: LeaveRoomDto, userId: number)
+    {
+        const room = await this.getRoomById(body.roomId);
+        const user = await this.userService.getUser(userId);
+        if(!user)
+            throw new WsException(`userId = ${userId} does not exist !`);
+        // check if the user is already a member in this room
+        // getMemberShip
+        const membership = await this.getMembership(userId, room.id);
+        if (!membership)
+            throw new WsException (`no membership between ${userId} and ${room.id}`);
+        const updatedMembership = await this.prisma.roomMembership.delete({
+            where: {
+                id: membership.id
+            }
+        });
+
+        console.log(`${user.userName} has left ${room.name} room`);
+        return updatedMembership;
+    }
+
+    async setAdminToRoom(body: SetRoomAdminDto, userId: number)
     {
         const room = await this.getRoomById(body.roomId);
         // console.log("ROOM ==" + JSON.stringify(room));
@@ -247,17 +277,13 @@ export class ChatService
                 throw new WsException(`userId = ${body.userId} does not exist !`);
         // check if the user is who wants to set an admin is also an admin
         const isAdmin = await this.isAdmin(userId, room.id);
-        if (!isAdmin) {
+        if (!isAdmin)
             throw new WsException(`User with intraId ${userId} is not an admin in the room, so he can't set an admin`);
-        } 
         // check if the user is already a member in this room
-        const isMember = await this.isMember(body.userId, room.id)
-        if (!isMember)
-            throw new WsException(`User id ${body.userId} not in the room`);
         // getMemberShip
         const membership = await this.getMembership(body.userId, room.id);
         if (!membership)
-            throw new error (`no membership between ${body.userId} and ${room.id}`);
+            throw new WsException (`no membership between ${body.userId} and ${room.id}`);
         // set new Admin
         const newAdmin = await this.prisma.roomMembership.update({
             where: {
@@ -272,18 +298,88 @@ export class ChatService
     }
 
     // TODO: need improvement
-    async kickMember(body: kickMember, userId: number)
+    /*
+        kick JSON
+        {
+            "userId" : 90682,
+            "roomId" : 3,
+        }
+    */
+    async kickMember(body: KickMemberDto, userId: number)
     {
         const room = await this.getRoomById(body.roomId);
         // console.log("ROOM ==" + JSON.stringify(room));
         if (!room)
             throw new WsException(`room ${body.roomId} not found`);
+        // check if the user that will performs the kick exists
+        const kicker = await this.userService.getUser(userId);
+        if (!kicker)
+            throw new WsException(`userId (kicker) = ${userId} does not exist !`);
+        // check if the user that will be kicked is exists
+        const user = await this.userService.getUser(body.userId);
+        // console.log("USER == " + JSON.stringify(user));
+        if(!user)
+            throw new WsException(`userId = ${body.userId} does not exist !`);
+        // check if the user that will be kicked is a member in the room or not
+        const membership = await this.getMembership(body.userId, room.id);
+        if (!membership)
+            throw new WsException(`no membership between ${body.userId} and ${room.id}`);
+         // check if the user that will performs the kick is an Admin
+        const isAdmin = await this.isAdmin(userId, room.id);
+        if (!isAdmin)
+            throw new WsException(`User with intraId ${userId} is not an admin in the room, so he can't kick a member`);
+        // check if the user that will be kicked is a the owner of the room
+        const isOwner = await this.isOwner(body.userId, room.id);
+        if (isOwner)
+            throw new WsException(`You can't kick the owner of the room`)
+        const updatedMembership = await this.prisma.roomMembership.delete({
+            where : {
+                id: membership.id
+            }
+        })
+        console.log("memeber kicked successfully");
+        return updatedMembership;
+    }
+
+    async muteMember(userId: number, body: MuteMemberDto)
+    {
+        const room = await this.getRoomById(body.roomId);
+        // console.log("ROOM ==" + JSON.stringify(room));
+        if (!room)
+            throw new WsException(`room ${body.roomId} not found`);
+        const kicker = await this.userService.getUser(userId);
+        if (!kicker)
+            throw new WsException(`userId (kicker) = ${userId} does not exist !`);
         // check if the user in the body exists
         const user = await this.userService.getUser(body.userId);
         // console.log("USER == " + JSON.stringify(user));
         if(!user)
             throw new WsException(`userId = ${body.userId} does not exist !`);
-    
+        const membership = await this.getMembership(body.userId, room.id);
+        if (!membership)
+            throw new WsException(`no membership between ${body.userId} and ${room.id}`);
+        // check if the user that will be muted is the owner of the room
+        const isOwner = await this.isOwner(body.userId, room.id);
+        if (isOwner)
+            throw new WsException(`You can't mute the owner of the room`)
+        const isMuted = await this.isMuted(body.userId, room.id);
+        if (isMuted)
+            throw new WsException(`This user is already muted. Wait until his muted time ends.`)
+        // calculate time mute based on the DTO
+        const now = new Date();
+        const endMutedTime = addMinutes(now, body.timeMute);
+        console.log("endMutedTime = " + endMutedTime);
+        const updateMembership = await this.prisma.roomMembership.update({
+            where : {
+                id: membership.id
+            },
+            data : {
+                isMute: true,
+                timeMute: endMutedTime
+            }
+        })
+        console.log("User muted successfully");
+        return updateMembership;
     }
     // async unSetAdminOfRoom(body: SetRoomAdmin, userId: number)
     // {
@@ -306,10 +402,26 @@ export class ChatService
     //         throw new WsException(`User id ${body.userId} not in the room`);
     // }
 
+
+    // isOwner
+    async isOwner(userId: number, roomId: number)
+    {
+        const isOwner = await this.prisma.roomMembership.findFirst({
+            where : {
+                userId: userId,
+                roomId: roomId
+            },
+            select : {
+                isOwner: true
+            }
+        });
+        return isOwner.isOwner;
+    }
+
     // isAdmin
     async isAdmin(userId: number, roomId: number)
     {
-        const check = await this.prisma.roomMembership.findFirst({
+        const isAdmin = await this.prisma.roomMembership.findFirst({
             where: {
                 userId: userId,
                 roomId: roomId
@@ -318,7 +430,7 @@ export class ChatService
                 isAdmin: true
             }
         })
-        return check ? true : false;
+        return isAdmin.isAdmin;
     }
 
     // isMember
@@ -348,7 +460,8 @@ export class ChatService
                 isMute: true
             }
         })
-        return isMuted ? true : false;
+        
+        return isMuted.isMute;
     }
     // isBanned
     async isBanned(userId: number, roomId: number)
@@ -362,7 +475,7 @@ export class ChatService
                 isBanned: true
             }
         })
-        return isBanned ? true : false;
+        return isBanned.isBanned;
     }
     // getMembership
     async getMembership(userId: number, roomId: number)

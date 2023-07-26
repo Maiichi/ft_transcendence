@@ -1,7 +1,7 @@
-import { IsArray, IsNumber, IsObject, IsOptional, IsString } from "class-validator";
+import { IsNumber } from "class-validator";
 
 
-export class SetRoomAdmin
+export class SetRoomAdminDto
 {
     @IsNumber()
     roomId: number;
@@ -10,11 +10,29 @@ export class SetRoomAdmin
     userId: number
 }
 
-export class kickMember
+export class KickMemberDto
 {
     @IsNumber()
     roomId: number;
 
     @IsNumber()
     userId: number
+}
+
+export class MuteMemberDto
+{
+    @IsNumber()
+    timeMute: number;
+
+    @IsNumber()
+    userId: number;
+
+    @IsNumber()
+    roomId: number;
+}
+
+export class LeaveRoomDto
+{
+    @IsNumber()
+    roomId: number;
 }

@@ -2,13 +2,12 @@ import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect,
 import { Server, Socket } from 'socket.io';
 import { CreateRoomDto } from "../dto/create.room.dto";
 import { ChatService } from "../chat.service";
-import { NotFoundException, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import { UpdateRoomDto } from "../dto/update.room.dto";
 import { User } from "@prisma/client";
 import { JoinRoomDto } from "../dto/join.room.dto";
-import { SetRoomAdmin, kickMember } from "../dto/update.user.membership.dto";
+import { KickMemberDto, LeaveRoomDto, MuteMemberDto, SetRoomAdminDto } from "../dto/update.user.membership.dto";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
@@ -88,6 +87,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     // }
 
+    findUserByClientSocketId(clientId: string)
+    {
+        let ret = null
+        this.connectedClients.forEach((user, socketId) => {
+            if (socketId == clientId)
+                ret = user;
+        })
+        return ret;
+    }
 
 
     async handleConnection(client: Socket) {
@@ -160,17 +168,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             console.log('err ||', error.message);
         }
     }
-
-    findUserByClientSocketId(clientId: string)
-    {
-        let ret = null
-        this.connectedClients.forEach((user, socketId) => {
-            if (socketId == clientId)
-                ret = user;
-        })
-        return ret;
-    }
-
     
 
     @SubscribeMessage('updateRoom')
@@ -203,6 +200,59 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
+    // leave room
+    @SubscribeMessage('leaveRoom')
+    async leaveRoom(@ConnectedSocket() client: Socket, @MessageBody() body: LeaveRoomDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.chatService.leaveRoom(body, currentUser.intraId);
+            this.server.emit('leaveRoom');
+        } catch (error) {
+            console.log("Subs error =" + error.message)
+        }
+    }
+
+    // set room Admins
+    @SubscribeMessage('setRoomAdmin')
+    async setRoomAdmin(@ConnectedSocket() client: Socket, @MessageBody() body: SetRoomAdminDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.chatService.setAdminToRoom(body, currentUser.intraId);
+            this.server.emit('setRoomAdmin');
+        } catch (error) {
+            console.log("Subs error =" + error.message)
+        }
+    }
+    // remove Channel Admins
+    
+    // kick member
+    @SubscribeMessage('kickMember')
+    async kickMember(@ConnectedSocket() client: Socket, @MessageBody() body: KickMemberDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.chatService.kickMember(body, currentUser.intraId);
+            this.server.emit('kickMember');
+        } catch (error) {
+            console.log("Subs error =" + error.message)
+        }
+    }
+    
+    // mute member
+    @SubscribeMessage('muteMember')
+    async muteMemeber(@ConnectedSocket() client: Socket, @MessageBody() body: MuteMemberDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.chatService.muteMember(currentUser.intraId, body);
+            this.server.emit('muteMember');
+        } catch (error) {
+            console.log("Subs error =" + error.message);
+        }
+    }
+    
     @SubscribeMessage('logout')
     async logout(@ConnectedSocket() client: Socket)
     {
@@ -217,35 +267,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
-
-    // set room Admins
-    @SubscribeMessage('setRoomAdmin')
-    async setRoomAdmin(@ConnectedSocket() client: Socket, @MessageBody() body: SetRoomAdmin)
-    {
-        try {
-            const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.setAdminToRoom(body, currentUser.intraId);
-            this.server.emit('setRoomAdmin');
-        } catch (error) {
-            console.log("Subs error =" + error.message)
-        }
-    }
-    // remove Channel Admins
-
-    // mute member
     // ban member
-    // kick member
-    @SubscribeMessage('kickMember')
-    async kickMember(@ConnectedSocket() client: Socket, @MessageBody() body: kickMember)
-    {
-        try {
-            const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.kickMember(body, currentUser.intraId);
-            this.server.emit('kickMember');
-        } catch (error) {
-            console.log("Subs error =" + error.message)
-        }
-    }
     // @SubscribeMessage('sendMessage')
     // async sendMessage(@ConnectedSocket() client: Socket)
     // {
