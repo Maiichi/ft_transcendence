@@ -8,6 +8,7 @@ import { JoinRoomDto } from './dto/join.room.dto';
 import { verify , hash } from 'argon2'
 import { addMinutes } from 'date-fns'
 import { SetRoomAdminDto, KickMemberDto, MuteMemberDto, LeaveRoomDto } from './dto/update.user.membership.dto';
+import { SendMessageToUserDto } from './dto/handle.messages.dto';
 
 @Injectable()
 export class ChatService 
@@ -122,8 +123,8 @@ export class ChatService
                     type : type,
                 }
             });
-            // Step 2: Create the new RoomMembership entry
-            await this.prisma.roomMembership.create({
+            // Step 2: Create the new membership entry
+            await this.prisma.membership.create({
                 data: {
                     room: {
                         connect: {
@@ -161,7 +162,7 @@ export class ChatService
             throw new WsException(`room Id ${body.id} does not exist`)
 
         // Check if the user is an admin in the room
-        const isAdmin = await this.prisma.roomMembership.findFirst({
+        const isAdmin = await this.prisma.membership.findFirst({
             where : { 
                 roomId: room.id, 
                 userId: userId
@@ -214,7 +215,7 @@ export class ChatService
             if (!isMatch)
                 throw new WsException(`Passwords don't matchs`);
         }
-        const newMembership = await this.prisma.roomMembership.create({
+        const newMembership = await this.prisma.membership.create({
             data : {
                 room: {
                     connect: {
@@ -254,7 +255,7 @@ export class ChatService
         const membership = await this.getMembership(userId, room.id);
         if (!membership)
             throw new WsException (`no membership between ${userId} and ${room.id}`);
-        const updatedMembership = await this.prisma.roomMembership.delete({
+        const updatedMembership = await this.prisma.membership.delete({
             where: {
                 id: membership.id
             }
@@ -285,7 +286,7 @@ export class ChatService
         if (!membership)
             throw new WsException (`no membership between ${body.userId} and ${room.id}`);
         // set new Admin
-        const newAdmin = await this.prisma.roomMembership.update({
+        const newAdmin = await this.prisma.membership.update({
             where: {
                 id: membership.id
             },
@@ -332,7 +333,7 @@ export class ChatService
         const isOwner = await this.isOwner(body.userId, room.id);
         if (isOwner)
             throw new WsException(`You can't kick the owner of the room`)
-        const updatedMembership = await this.prisma.roomMembership.delete({
+        const updatedMembership = await this.prisma.membership.delete({
             where : {
                 id: membership.id
             }
@@ -369,7 +370,7 @@ export class ChatService
         const now = new Date();
         const endMutedTime = addMinutes(now, body.timeMute);
         console.log("endMutedTime = " + endMutedTime);
-        const updateMembership = await this.prisma.roomMembership.update({
+        const updateMembership = await this.prisma.membership.update({
             where : {
                 id: membership.id
             },
@@ -381,6 +382,8 @@ export class ChatService
         console.log("User muted successfully");
         return updateMembership;
     }
+
+
     // async unSetAdminOfRoom(body: SetRoomAdmin, userId: number)
     // {
     //     const room = await this.getRoomById(body.roomId);
@@ -403,10 +406,74 @@ export class ChatService
     // }
 
 
+    // function to send a private message to specific user
+    /* 
+        Send Message DTO
+        {
+            "receiverId" : 90682,
+            "content" : "Hello i'm ishak"
+        }
+    */
+   // TODO: need to check if the users block each other
+    async sendMessageToUser(body: SendMessageToUserDto, userId: number)
+    {
+        const sender = await this.userService.getUser(userId);
+        if(!sender)
+            throw new WsException(`(sender) userId = ${userId} does not exist !`);
+        const receiver = await this.userService.getUser(body.receiverId);
+        if (!receiver)
+            throw new WsException(`(receiver) userId = ${body.receiverId} does not exist !`);
+        // check if users are blocking each other
+
+        // Check if a conversation already exists between the sender and receiver
+        let conversation = await this.prisma.conversation.findFirst({
+            where: {
+                type: 'direct',
+                participants: {
+                    some: {
+                        intraId: { in: [sender.intraId, sender.intraId] },
+                    },
+                },
+            },
+        });
+
+        // If a conversation doesn't exist, create a new one
+        if (!conversation) {
+            conversation = await this.prisma.conversation.create({
+                data: {
+                    type: 'direct',
+                    participants: {
+                        connect: [
+                            { intraId: sender.intraId }, // Connect the sender
+                            { intraId: receiver.intraId }, // Connect the receiver
+                        ],
+                    },
+                    participantId: {
+                        set : [sender.intraId, receiver.intraId]
+                    },
+                },
+            });
+        }
+
+        // Create the new message and associate it with the sender, receiver, and conversation
+        const message = await this.prisma.message.create({
+            data: {
+            content: body.content,
+            sender: { connect: { intraId: sender.intraId } },
+            chat: { connect: { id: conversation.id } },
+            },
+        });
+        console.log(`${sender.userName} has sent this message : "${message.content}" , to ${receiver.userName}`)
+        return message;
+    }
+
+
+    // getUserPrivateConversation
+
     // isOwner
     async isOwner(userId: number, roomId: number)
     {
-        const isOwner = await this.prisma.roomMembership.findFirst({
+        const isOwner = await this.prisma.membership.findFirst({
             where : {
                 userId: userId,
                 roomId: roomId
@@ -421,7 +488,7 @@ export class ChatService
     // isAdmin
     async isAdmin(userId: number, roomId: number)
     {
-        const isAdmin = await this.prisma.roomMembership.findFirst({
+        const isAdmin = await this.prisma.membership.findFirst({
             where: {
                 userId: userId,
                 roomId: roomId
@@ -451,7 +518,7 @@ export class ChatService
     // isMuted
     async isMuted(userId: number, roomId: number)
     {
-        const isMuted = await this.prisma.roomMembership.findFirst({
+        const isMuted = await this.prisma.membership.findFirst({
             where: {
                 userId: userId,
                 roomId: roomId
@@ -466,7 +533,7 @@ export class ChatService
     // isBanned
     async isBanned(userId: number, roomId: number)
     {
-        const isBanned = await this.prisma.roomMembership.findFirst({
+        const isBanned = await this.prisma.membership.findFirst({
             where: {
                 userId: userId,
                 roomId: roomId
@@ -480,7 +547,7 @@ export class ChatService
     // getMembership
     async getMembership(userId: number, roomId: number)
     {
-        const memberShip = await this.prisma.roomMembership.findFirst({
+        const memberShip = await this.prisma.membership.findFirst({
             where: {
                 userId: userId,
                 roomId: roomId

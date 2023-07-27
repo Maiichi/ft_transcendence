@@ -8,6 +8,7 @@ import { UpdateRoomDto } from "../dto/update.room.dto";
 import { User } from "@prisma/client";
 import { JoinRoomDto } from "../dto/join.room.dto";
 import { KickMemberDto, LeaveRoomDto, MuteMemberDto, SetRoomAdminDto } from "../dto/update.user.membership.dto";
+import { SendMessageToUserDto } from "../dto/handle.messages.dto";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
@@ -267,10 +268,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
+
+    @SubscribeMessage('sendMessageToUser')
+    async sendMessageToUser(@ConnectedSocket() client: Socket, @MessageBody() body: SendMessageToUserDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.chatService.sendMessageToUser(body, currentUser.intraId);
+            this.server.emit('sendMessageToUser');
+        } catch (error) {
+            console.log("Subs error =" + error.message);
+        }
+    }
+
     // ban member
     // @SubscribeMessage('sendMessage')
     // async sendMessage(@ConnectedSocket() client: Socket)
     // {
 
     // }
+
+    
 }

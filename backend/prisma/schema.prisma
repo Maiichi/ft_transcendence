@@ -11,57 +11,100 @@ datasource db {
 }
 
 model User {
-  id                  Int                   @id @default(autoincrement())
-  intraId             Int                   @unique
+  id      Int @id @default(autoincrement())
+  intraId Int @unique
 
-  email               String                @unique
-  firstName           String                @db.VarChar(255)
-  lastName            String                @db.VarChar(255)
+  email     String @unique
+  firstName String @db.VarChar(255)
+  lastName  String @db.VarChar(255)
 
-  userName            String                @unique @db.VarChar(255)
+  userName String @unique @db.VarChar(255)
 
-  avatar_url          String?               @db.VarChar(255)
-  status              String                @default("OFFLINE")
-  twoFactorActivate   Boolean?              @default(false)
-  twoFactorSecret     String?               @db.VarChar(255)
+  avatar_url        String?  @db.VarChar(255)
+  status            String   @default("OFFLINE")
+  twoFactorActivate Boolean? @default(false)
+  twoFactorSecret   String?  @db.VarChar(255)
 
-  roomsMembership     RoomMembership[]      
+  memberships   Membership[]
+  conversations   Conversation[]   @relation("Participants")
 
-  createdAt           DateTime    @default(now()) @db.Timestamp(6)
-  updatedAt           DateTime?   @updatedAt      @db.Timestamp(6)
+  createdAt        DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime?          @updatedAt @db.Timestamp(6)
+  MessagesSent          Message[]
 
   @@map("users")
 }
 
+model Conversation {
+  id               Int                @id @default(autoincrement())
+  type             String // Either "direct" for direct messages, "channel" for public channels, or "private_channel" for private channels
+  participants     User[]             @relation("Participants")
+  participantId    Int[]
+  messages         Message[]
+  createdAt        DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime?          @updatedAt @db.Timestamp(6)
+}
+
+// model UserConversation {
+//   id             Int          @id @default(autoincrement())
+//   user           User         @relation(fields: [intraId], references: [id])
+//   intraId        Int
+//   conversation   Conversation @relation(fields: [conversationId], references: [id])
+//   conversationId Int
+
+//   @@unique([intraId, conversationId])
+// }
+
+model Message {
+  id        Int          @id @default(autoincrement())
+  content   String
+  createdAt DateTime     @default(now()) @db.Timestamp(6)
+  sender    User         @relation(fields: [senderId], references: [intraId])
+  senderId  Int
+  chat      Conversation @relation(fields: [chatId], references: [id])
+  chatId    Int
+}
+
 model Room {
-    id                Int               @id @default(autoincrement())
-    name              String            @db.VarChar()
-    type              String
-
-    members           RoomMembership[]  @relation("membership")
-    password          String            @db.VarChar()
-    createdAt         DateTime          @default(now()) @db.Timestamp(6)
-    updatedAt         DateTime?         @updatedAt      @db.Timestamp(6)
+  id        Int              @id @default(autoincrement())
+  name      String           @db.VarChar()
+  type      String
+  members   Membership[] @relation("membership")
+  password  String           @db.VarChar()
+  createdAt DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt DateTime?        @updatedAt @db.Timestamp(6)
 }
 
-model RoomMembership {
-    id                Int           @id @default(autoincrement())
-    isOwner           Boolean       @default(false)
-    isAdmin           Boolean       @default(false)
-    isBanned          Boolean       @default(false)
-    isMute            Boolean       @default(false)
-    timeMute          DateTime      @default(now())
-    room              Room          @relation("membership", fields: [roomId], references: [id])
-    // roomName          String        @db.VarChar()
-    roomId            Int
-    user              User          @relation(fields: [userId], references: [intraId])
-    userId            Int
+model Membership {
+  id       Int      @id @default(autoincrement())
+  isOwner  Boolean  @default(false)
+  isAdmin  Boolean  @default(false)
+  isBanned Boolean  @default(false)
+  isMute   Boolean  @default(false)
+  timeMute DateTime @default(now())
+  room     Room     @relation("membership", fields: [roomId], references: [id])
+  roomId   Int
+  user     User     @relation(fields: [userId], references: [intraId])
+  userId   Int
 }
 
-// model Message {
-//     id                Int         @id @default(autoincrement())
-//     content           String      @db.VarChar()
-//     sneder_id         User        
-//     receiver_id       User
 
+// model Conversation {
+//   id             Int      @id @default(autoincrement())
+//   name           String?  @db.VarChar()   // Represents the name of the chat (relevant for public and private channels)
+//   type           String   // Either "direct" for direct messages, "channel" for public channels, or "private_channel" for private channels
+//   password       String?  @db.VarChar()   // Password for private channels (set to null for public channels and direct messages)
+//   participants   User[]   @relation("ChatParticipants", fields: [participantId], references: [intraId])
+//   participantId  Int[]
+//   messages       Message[]
+//   createdAt      DateTime @default(now()) @db.Timestamp(6)
+//   updatedAt      DateTime? @updatedAt @db.Timestamp(6)
+// }
+
+// model UserConversation {
+//   id             Int      @id @default(autoincrement())
+//   user           User     @relation(fields: [userId], references: [id])
+//   userId         Int
+//   conversation   Conversation @relation(fields: [conversationId], references: [id])
+//   conversationId Int
 // }
