@@ -1,17 +1,16 @@
-.icon {
-  flex-shrink: 0;
-  display: inline-flex;
-  color: rgb(54, 65, 82);
-  margin-top: auto;
-  margin-bottom: auto;
-  min-width: 36px;
+.css-cveggr-MuiListItemIcon-root:hover {
+  color: rgb(94, 53, 177);
+}
+
+.css-1nxmd3h-MuiListItem-root {
+  background-color: inherit;
+}
+.css-1nxmd3h-MuiListItem-root:hover {
+  color: rgb(94, 53, 177);
+  background-color: rgb(237, 231, 246);
 }
 .title {
-  flex: 1 1 auto;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  margin-right: 20px;
-
+  margin: 0px;
   font-size: 0.875rem;
   font-weight: 500;
   font-family: Roboto, sans-serif;

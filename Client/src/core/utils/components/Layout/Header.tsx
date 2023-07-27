@@ -7,7 +7,7 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import SearchIcon from "@mui/icons-material/Search";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import VideogameAssetIcon from "@mui/icons-material/VideogameAsset";
-import { Drawer, NavBar, PopperComponent, SearchComponent } from "..";
+import { Drawer, ListNav, NavBar, PopperComponent, SearchComponent } from "..";
 import { useSize } from "../../hooks";
 import { useAppDispatch } from "../../../redux";
 import { setDisplayNavbar } from "../../../CoreSlice";
@@ -31,6 +31,23 @@ const useStyles = makeStyles({
     "&:hover": {
       background: "rgb(94, 53, 177)",
       color: "rgb(214, 220, 234)",
+    },
+  },
+  dehazeIcon: {
+    borderRadius: "6px",
+    height: "25px",
+    transition: "all 0.2s ease-in-out 0s",
+    background: "rgb(237, 231, 246)",
+    color: "rgb(94, 53, 177)",
+    "&:hover": {
+      background: "rgb(94, 53, 177)",
+      color: "rgb(214, 220, 234)",
+    },
+    "@media (max-width: 425px)": {
+      background: "rgb(94, 53, 177)",
+    },
+    "  @media (max-width: 768px)": {
+      background: "rgb(94, 53, 177)",
     },
   },
 });
@@ -149,7 +166,16 @@ export const Header = () => {
   ];
 
   return (
-    <Root>
+    <>
+      {isMobile && (
+        <Drawer
+          anchor={"left"}
+          state={state}
+          children={<ListNav toggleDrawer={toggleDrawer} />}
+          toggleDrawer={toggleDrawer}
+        />
+      )}
+
       <PopperComponent
         paperStyle={{
           backgroundColor: "rgb(255, 255, 255)",
@@ -164,50 +190,46 @@ export const Header = () => {
         placement={placement}
         ChildComponent={ChildPopper}
       />
-      <Drawer
-        anchor={"left"}
-        state={state}
-        children={<NavBar />}
-        toggleDrawer={toggleDrawer}
-      />
-      {!isMobile && (
-        <VideogameAssetIcon
-          className={classes.iconBase}
-          onClick={() => console.log("clicked")}
-        />
-      )}
-
-      {isMobile ? (
-        <DehazeIcon
-          className={classes.iconBase}
-          onClick={toggleDrawer("left", true)}
-        />
-      ) : (
-        <DehazeIcon
-          className={classes.iconBase}
-          onClick={() => dispatch(setDisplayNavbar(false))}
-        />
-      )}
-      {isMobile ? (
-        <MobileDisplay>
-          <SearchIcon
+      <Root>
+        {!isMobile && (
+          <VideogameAssetIcon
             className={classes.iconBase}
-            style={{ marginLeft: "10px" }}
-            onClick={popperClick(
-              "bottom",
-              <SearchComponent clear={true} setOpen={setOpen} />,
-              "search",
-              {
-                paddingTop: "14px",
-              }
-            )}
+            onClick={() => console.log("clicked")}
           />
-        </MobileDisplay>
-      ) : (
-        <SearchComponent />
-      )}
-      <Right>{RightMenu.map((item: MenuTabs) => item.render)}</Right>
-    </Root>
+        )}
+
+        {isMobile ? (
+          <DehazeIcon
+            className={classes.iconBase}
+            onClick={toggleDrawer("left", true)}
+          />
+        ) : (
+          <DehazeIcon
+            className={classes.dehazeIcon}
+            onClick={() => dispatch(setDisplayNavbar(false))}
+          />
+        )}
+        {isMobile ? (
+          <MobileDisplay>
+            <SearchIcon
+              className={classes.iconBase}
+              style={{ marginLeft: "10px" }}
+              onClick={popperClick(
+                "bottom",
+                <SearchComponent clear={true} setOpen={setOpen} />,
+                "search",
+                {
+                  paddingTop: "14px",
+                }
+              )}
+            />
+          </MobileDisplay>
+        ) : (
+          <SearchComponent />
+        )}
+        <Right>{RightMenu.map((item: MenuTabs) => item.render)}</Right>
+      </Root>
+    </>
   );
 };
 const Root = styled.div`
@@ -226,6 +248,7 @@ const Right = styled.div`
   align-items: center;
 `;
 const MobileDisplay = styled.div`
+  margin-right: auto;
   @media screen and (max-width: 425px) {
   }
   @media screen and (min-width: 425px) and (max-width: 768px) {

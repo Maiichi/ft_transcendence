@@ -20,7 +20,6 @@ export const counterSlice = createSlice({
   initialState,
   reducers: {
     increment: (state) => {
-      console.log("ss");
       state.value += 1;
     },
     decrement: (state) => {

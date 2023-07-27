@@ -11,13 +11,13 @@ import { fetchTodos } from "./components/TodosThunk";
 
 export const Test = () => {
   const state: CounterState = useAppSelector((state) => state.counter);
-  const todos: TodosState = useAppSelector((state) => state.todos);
+  // const todos: TodosState = useAppSelector((state) => state.todos);
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(fetchTodos(4));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchTodos(4));
+  // }, []);
 
-  console.log(todos);
+  console.log("test");
 
   return (
     <>

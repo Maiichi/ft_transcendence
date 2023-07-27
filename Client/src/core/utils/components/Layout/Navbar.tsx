@@ -2,7 +2,19 @@ import { Chip, Divider, makeStyles } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import "../Navbar.css";
 import styled from "styled-components";
+import Box from "@mui/material/Box";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Button from "@mui/material/Button";
+import List from "@mui/material/List";
 
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+
+type Anchor = "top" | "left" | "bottom" | "right";
 const LeftMenu = [
   {
     id: "home",
@@ -38,6 +50,29 @@ export const NavBar = () => {
     </Root>
   );
 };
+
+export const ListNav = (toggleDrawer?: any) => (
+  <Box
+    sx={{ width: 250 }}
+    role="presentation"
+    // onClick={toggleDrawer && toggleDrawer("left", false)}
+    // onKeyDown={toggleDrawer && toggleDrawer("left", false)}
+  >
+    <List>
+      {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
+        <ListItem key={text} disablePadding>
+          <ListItemButton className="item">
+            <ListItemIcon className="icon">
+              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon>
+            <h5 className="title">{text}</h5>
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
+    <Divider />
+  </Box>
+);
 const Tab = styled.div`
   margin: 0px 0px 4px;
   display: flex;
@@ -54,6 +89,6 @@ const Tab = styled.div`
 const Root = styled.div`
   height: 100vw;
   padding: 16px;
-  background: aliceblue;
+
   border-radius: 5px;
 `;

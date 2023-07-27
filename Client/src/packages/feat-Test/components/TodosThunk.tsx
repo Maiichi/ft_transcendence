@@ -13,7 +13,7 @@ export const fetchTodos = createAsyncThunk<
   number,
   { rejectValue: FetchTodosError }
 >("todos/fetch", async (nbr: number) => {
-  console.log(nbr)
+  // console.log(nbr)
   // Fetch the backend endpoint:
   const response = await fetch(`https://jsonplaceholder.typicode.com/todos`);
   //   if (response.status !== 200) {

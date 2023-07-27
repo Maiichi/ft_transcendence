@@ -3,7 +3,7 @@ import { Test, Home } from "../packages";
 import { CoreState } from "./CoreSlice";
 import { NotFoundError } from "./errors";
 import { useAppDispatch, useAppSelector } from "./redux";
-import { Header, NavBar } from "./utils";
+import { Header, ListNav, NavBar } from "./utils";
 import { useSize } from "./utils/hooks";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { isMobile, isTab } = useSize();
@@ -12,7 +12,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <>
       <Header />
       <Root>
-        {state.displayNavbar && !isMobile && <NavBar />}
+        {state.displayNavbar && !isMobile && <ListNav />}
         <Children> {children}</Children>
       </Root>
     </>
