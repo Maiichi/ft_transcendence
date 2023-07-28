@@ -8,7 +8,10 @@ import { JoinRoomDto } from './dto/join.room.dto';
 import { verify , hash } from 'argon2'
 import { addMinutes } from 'date-fns'
 import { SetRoomAdminDto, KickMemberDto, MuteMemberDto, LeaveRoomDto } from './dto/update.user.membership.dto';
-import { SendMessageToUserDto } from './dto/handle.messages.dto';
+import { SendMessageToRoomDto, SendMessageToUserDto } from './dto/handle.messages.dto';
+import { User } from '@prisma/client';
+import { Response } from 'express';
+import { send } from 'process';
 
 @Injectable()
 export class ChatService 
@@ -405,7 +408,7 @@ export class ChatService
     //         throw new WsException(`User id ${body.userId} not in the room`);
     // }
 
-
+    /********************************************* PRIVATE CONVERSATION ******************************************** */
     // function to send a private message to specific user
     /* 
         Send Message DTO
@@ -431,14 +434,15 @@ export class ChatService
                 type: 'direct',
                 participants: {
                     some: {
-                        intraId: { in: [sender.intraId, sender.intraId] },
+                        intraId: { in: [sender.intraId, receiver.intraId] },
                     },
                 },
             },
         });
 
         // If a conversation doesn't exist, create a new one
-        if (!conversation) {
+        if (!conversation) 
+        {
             conversation = await this.prisma.conversation.create({
                 data: {
                     type: 'direct',
@@ -469,6 +473,93 @@ export class ChatService
 
 
     // getUserPrivateConversation
+    async getUserDirectConversation(conversationId: number, sender: User, res: Response)
+    {
+        if (!sender)
+            throw new NotFoundException(`This user does not exist`);
+        const conversation = await this.getConversationById(conversationId);
+        const conversationMessages = await this.getConversationMessages(conversation.id);
+        console.log("messages == " + JSON.stringify(conversationMessages));
+        return res.json({
+            status: 200,
+            data: conversationMessages
+        });
+    }
+
+    /********************************************* ROOM CONVERSATION ******************************************** */
+
+    /* function to send messages to a specific room */
+    // TODO : need to add BLOCK system
+    // {
+    //     "roomId" : 3,
+    //     "content" : "Hello i'm ishak"
+    // }
+    async sendMessageToRoom(body: SendMessageToRoomDto, userId: number)
+    {
+        const sender = await this.userService.getUser(userId);
+        if(!sender)
+            throw new WsException(`(sender) userId = ${userId} does not exist !`);
+        const room = await this.getRoomById(body.roomId);
+        // console.log("ROOM ==" + JSON.stringify(room));
+        if (!room)
+            throw new WsException(`room ${body.roomId} not found`);
+        const membership = await this.getMembership(userId, room.id);
+        if (!membership)
+            throw new WsException(`no membership between ${userId} and ${room.id}`);
+        const isMuted = await this.isMuted(userId, room.id);
+        if (isMuted)
+            throw new WsException(`You're muted for ${membership.timeMute} please wait until it finishs`);
+        // check block system
+        let conversation = await this.prisma.conversation.findUnique({
+            where: {
+                type: 'channel',
+                roomId: room.id,
+            }
+        });
+        console.log("conversation == " + JSON.stringify(conversation));
+        if (!conversation)
+        {
+            conversation = await this.prisma.conversation.create({
+                data: {
+                    type: 'channel',
+                    participants: {
+                        connect : {
+                            intraId : sender.intraId
+                        }
+                    },
+                    participantId: { set : [sender.intraId] },
+                    room: {
+                        connect : {
+                            id : room.id
+                        }
+                    }
+                }
+            })
+        }
+        // need to check the partipantsId's logic
+        conversation = await this.prisma.conversation.update({
+            where: {
+                id: conversation.id
+            },
+            data: {
+                participants: {
+                    connect : {
+                        intraId : sender.intraId
+                    }
+                },
+                participantId: {push : [sender.intraId]}
+            }
+        });
+        const message = await this.prisma.message.create({
+            data: {
+                content: body.content,
+                sender: { connect : {intraId : sender.intraId} },
+                chat: { connect: {id: conversation.id }}
+            }
+        });
+        console.log(`${sender.userName} has sent this message : "${message.content}" , to room ${room.name}`)
+        return message;
+    }
 
     // isOwner
     async isOwner(userId: number, roomId: number)
@@ -554,5 +645,33 @@ export class ChatService
             },
         })
         return memberShip 
+    }
+
+
+    /***************************************** CONVERSATION FUNCTIONS  HELPERS ***********************************************/
+    
+    async getConversationById(conversationId: number)
+    {   
+        const conversation = this.prisma.conversation.findFirst({
+            where: {
+                id: conversationId
+            }
+        });
+        if (!conversation)
+            throw new NotFoundException(`no Convesation found with id = ${conversationId}`)
+        return conversation;
+    }
+
+    async getConversationMessages(conversationId: number)
+    {
+        const messages = this.prisma.conversation.findFirst({
+            where: {
+                id: conversationId
+            },
+            select: {
+                messages : true
+            }
+        });
+        return messages;
     }
 }

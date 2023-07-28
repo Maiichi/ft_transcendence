@@ -8,7 +8,7 @@ import { UpdateRoomDto } from "../dto/update.room.dto";
 import { User } from "@prisma/client";
 import { JoinRoomDto } from "../dto/join.room.dto";
 import { KickMemberDto, LeaveRoomDto, MuteMemberDto, SetRoomAdminDto } from "../dto/update.user.membership.dto";
-import { SendMessageToUserDto } from "../dto/handle.messages.dto";
+import { SendMessageToRoomDto, SendMessageToUserDto } from "../dto/handle.messages.dto";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
@@ -268,7 +268,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
-
+    // send private message
     @SubscribeMessage('sendMessageToUser')
     async sendMessageToUser(@ConnectedSocket() client: Socket, @MessageBody() body: SendMessageToUserDto)
     {
@@ -276,6 +276,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             const currentUser = this.findUserByClientSocketId(client.id);
             await this.chatService.sendMessageToUser(body, currentUser.intraId);
             this.server.emit('sendMessageToUser');
+        } catch (error) {
+            console.log("Subs error =" + error.message);
+        }
+    }
+
+
+    // send message to room
+    @SubscribeMessage('sendMessageToRoom')
+    async senMessageToRoom(@ConnectedSocket() client: Socket, @MessageBody() body: SendMessageToRoomDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.chatService.sendMessageToRoom(body, currentUser.intraId);
+            this.server.emit('sendMessageToRoom');
         } catch (error) {
             console.log("Subs error =" + error.message);
         }
