@@ -20,9 +20,8 @@ export const SearchComponent = (props: Props) => {
       sx={{
         background: " rgb(248, 250, 252)",
         borderRadius: "12px",
-        paddingLeft: "16px",
-        paddingRight: "16px",
-        p: "2px 4px",
+        
+        p: "0 4px",
         display: "flex",
         alignItems: "center",
       }}

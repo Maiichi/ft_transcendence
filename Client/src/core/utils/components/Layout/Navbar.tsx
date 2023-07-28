@@ -52,9 +52,9 @@ export const NavBar = () => {
 };
 
 export const ListNav = (toggleDrawer?: any) => (
-  <Box
-    sx={{ width: 250 }}
-    role="presentation"
+  <div
+    style={{ width: "200px" }}
+
     // onClick={toggleDrawer && toggleDrawer("left", false)}
     // onKeyDown={toggleDrawer && toggleDrawer("left", false)}
   >
@@ -71,7 +71,7 @@ export const ListNav = (toggleDrawer?: any) => (
       ))}
     </List>
     <Divider />
-  </Box>
+  </div>
 );
 const Tab = styled.div`
   margin: 0px 0px 4px;
@@ -87,7 +87,6 @@ const Tab = styled.div`
   }
 `;
 const Root = styled.div`
-  height: 100vw;
   padding: 16px;
 
   border-radius: 5px;
