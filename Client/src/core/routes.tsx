@@ -1,35 +1,7 @@
-import styled from "styled-components";
-import { Test, Home } from "../packages";
-import { CoreState } from "./CoreSlice";
+import { Test, Home, Game } from "../packages";
 import { NotFoundError } from "./errors";
-import { useAppDispatch, useAppSelector } from "./redux";
-import { Header, ListNav, NavBar } from "./utils";
-import { useSize } from "./utils/hooks";
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { isMobile, isTab } = useSize();
-  const state: CoreState = useAppSelector((state) => state.core);
-  return (
-    <>
-      <Header />
-      <Root>
-        {state.displayNavbar && !isMobile && <ListNav />}
-        <Children> {children}</Children>
-      </Root>
-    </>
-  );
-};
+import { Layout } from "./utils";
 
-const Root = styled.div`
-  display: flex;
-`;
-const Children = styled.div`
-  margin: 0 5px;
-  padding: 5px;
-  background: rgb(238, 242, 246);
-  width: 100%;
-  /* border: none rgba(144, 202, 249, 0.145); */
-  border-radius: 5px;
-`;
 export const routes = [
   {
     path: "/test",
@@ -45,6 +17,15 @@ export const routes = [
     element: (
       <Layout>
         <Home />
+      </Layout>
+    ),
+    errorElement: <NotFoundError />,
+  },
+  {
+    path: "/game",
+    element: (
+      <Layout>
+        <Game />
       </Layout>
     ),
     errorElement: <NotFoundError />,

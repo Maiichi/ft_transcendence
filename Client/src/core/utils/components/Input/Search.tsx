@@ -8,23 +8,43 @@ import SearchIcon from "@mui/icons-material/Search";
 import DirectionsIcon from "@mui/icons-material/Directions";
 import TuneIcon from "@mui/icons-material/Tune";
 import ClearIcon from "@mui/icons-material/Clear";
+import { makeStyles } from "@material-ui/styles";
 interface Props {
   clear?: boolean;
   setOpen?: any;
 }
+const useStyles = makeStyles({
+  paper: {
+    background: " rgb(248, 250, 252)",
+
+    display: "flex",
+    alignItems: "center",
+  },
+  "@media (max-width: 425px)": {
+    paper: {
+      width: "97%",
+      margin: "2px",
+      /* align-items: center, */
+      /* margin-right: auto, */
+
+      background: "#ffffff",
+      // Other styles that apply when the media query matches
+    },
+  },
+});
 export const SearchComponent = (props: Props) => {
   const { clear, setOpen } = props;
+  const classes = useStyles();
   return (
-    <Paper
-      component="form"
-      sx={{
-        background: " rgb(248, 250, 252)",
-        borderRadius: "12px",
-        
-        p: "0 4px",
-        display: "flex",
-        alignItems: "center",
-      }}
+    <div
+      className={classes.paper}
+      // sx={{
+      //   background: " rgb(248, 250, 252)",
+      //   borderRadius: "12px",
+      //   p: "0 4px",
+      //   display: "flex",
+      //   alignItems: "center",
+      // }}
     >
       <IconButton
         type="button"
@@ -66,6 +86,6 @@ export const SearchComponent = (props: Props) => {
           <ClearIcon />
         </IconButton>
       )}
-    </Paper>
+    </div>
   );
 };

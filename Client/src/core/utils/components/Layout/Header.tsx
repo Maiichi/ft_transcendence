@@ -1,13 +1,24 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
 import styled from "styled-components";
 import { Typography, PopperPlacementType } from "@mui/material";
 import { makeStyles } from "@material-ui/styles";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import SearchIcon from "@mui/icons-material/Search";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import HomeIcon from "@mui/icons-material/Home";
 import DehazeIcon from "@mui/icons-material/Dehaze";
-import VideogameAssetIcon from "@mui/icons-material/VideogameAsset";
-import { Drawer, ListNav, NavBar, PopperComponent, SearchComponent } from "..";
+import PermIdentityIcon from "@mui/icons-material/PermIdentity";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
+
+import {
+  Drawer,
+  ListComponent,
+  ListNav,
+  PopperComponent,
+  SearchComponent,
+} from "..";
 import { useSize } from "../../hooks";
 import { useAppDispatch } from "../../../redux";
 import { setDisplayNavbar } from "../../../CoreSlice";
@@ -50,8 +61,27 @@ const useStyles = makeStyles({
     },
   },
 });
+const Menu = [
+  {
+    redirect: "/",
+    render: "Profile",
+    icon: PermIdentityIcon,
+  },
+  {
+    redirect: "/",
+    render: "Account Settings",
+    icon: SettingsIcon,
+  },
+  {
+    redirect: "/logout",
+    render: "Logout",
+    icon: LogoutIcon,
+    style: { color: "#f23f3f" },
+    onclick: () => console.log("Logout"),
+  },
+];
 const ProfilePopper = () => {
-  return <Typography sx={{ p: 2 }}>Profile Popper.</Typography>;
+  return <ListComponent menu={Menu} />;
 };
 const NotificationPopper = () => {
   return <Typography sx={{ p: 2 }}>Notifications Popper.</Typography>;
@@ -64,7 +94,6 @@ export const Header = () => {
     bottom: false,
     right: false,
   });
-
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -78,23 +107,16 @@ export const Header = () => {
       }
       setState({ ...state, [anchor]: open });
     };
-  console.log("Header");
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const classes = useStyles();
-  const { isMobile, isTab } = useSize();
+  const { isMobile } = useSize();
   const [activeTab, setActiveTab] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<any | null>(null);
   const [placement, setPlacement] = useState<PopperPlacementType>();
   const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
   const [popperStyle, setPopperStyle] = useState<React.CSSProperties>();
-  // const [drawerstate, setDrawerState] = useState({
-  //   top: false,
-  //   left: false,
-  //   bottom: false,
-  //   right: false,
-  // });
+
   const handleClose = (e: any) => {
     setOpen(false);
   };
@@ -102,7 +124,6 @@ export const Header = () => {
     setOpen(false);
   }, [isMobile]);
   useEffect(() => {
-    console.log("sdq: ", activeTab);
     activeTab != "search" &&
       document.addEventListener("click", handleClose, true);
     return () => {
@@ -126,16 +147,6 @@ export const Header = () => {
       setPlacement(newPlacement);
     };
 
-  const ProfilePopper = () => {
-    return <Typography sx={{ p: 2 }}>Profile Popper.</Typography>;
-  };
-  const NotificationPopper = () => {
-    return <Typography sx={{ p: 2 }}>Notifications Popper.</Typography>;
-  };
-  const SearchPopper = () => {
-    return <Typography sx={{ p: 2 }}>Search Popper.</Typography>;
-  };
-
   const RightMenu: MenuTabs[] = [
     {
       id: "notif",
@@ -143,9 +154,14 @@ export const Header = () => {
         <NotificationsNoneIcon
           id="notif"
           className={classes.iconBase}
-          onClick={popperClick("bottom", <NotificationPopper />, "notif", {
-            paddingTop: "10px",
-          })}
+          onClick={popperClick(
+            "bottom-start",
+            <NotificationPopper />,
+            "notif",
+            {
+              paddingTop: "24px",
+            }
+          )}
         />
       ),
     },
@@ -156,8 +172,8 @@ export const Header = () => {
           id="profile"
           style={{ marginLeft: " 20px" }}
           src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
-          onClick={popperClick("bottom-end", <ProfilePopper />, "profile", {
-            paddingTop: "5px",
+          onClick={popperClick("bottom-start", <ProfilePopper />, "profile", {
+            paddingTop: "10px",
           })}
         />
       ),
@@ -178,7 +194,7 @@ export const Header = () => {
         paperStyle={{
           backgroundColor: "rgb(255, 255, 255)",
           color: "rgb(54, 65, 82)",
-          borderRadius: "12px",
+          borderRadius: "10px",
           overflow: "hidden",
           border: "none rgba(144, 202, 249, 0.145)",
         }}
@@ -204,7 +220,10 @@ export const Header = () => {
                 <SearchComponent clear={true} setOpen={setOpen} />,
                 "search",
                 {
-                  paddingTop: "14px",
+                  padding: "5px 10px",
+                  marginTop: "-34px!important",
+                  background: "#ffffff",
+                  width: "-webkit-fill-available",
                 }
               )}
             />
