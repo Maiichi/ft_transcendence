@@ -43,11 +43,10 @@ const useStyles = makeStyles({
       background: "rgb(94, 53, 177)",
       color: "rgb(214, 220, 234)",
     },
-    "@media (max-width: 425px)": {
-      background: "rgb(94, 53, 177)",
-    },
-    "  @media (max-width: 768px)": {
-      background: "rgb(94, 53, 177)",
+  },
+  "@media (max-width: 768px)": {
+    dehazeIcon: {
+      // Other styles that apply when the media query matches
     },
   },
 });
@@ -175,7 +174,6 @@ export const Header = () => {
           toggleDrawer={toggleDrawer}
         />
       )}
-
       <PopperComponent
         paperStyle={{
           backgroundColor: "rgb(255, 255, 255)",
@@ -191,29 +189,16 @@ export const Header = () => {
         ChildComponent={ChildPopper}
       />
       <Root>
-        {!isMobile && (
-          <VideogameAssetIcon
-            className={classes.iconBase}
-            onClick={() => console.log("clicked")}
-          />
-        )}
+        {isMobile ? (
+          <>
+            <DehazeIcon
+              className={classes.iconBase}
+              onClick={toggleDrawer("left", true)}
+            />
 
-        {isMobile ? (
-          <DehazeIcon
-            className={classes.iconBase}
-            onClick={toggleDrawer("left", true)}
-          />
-        ) : (
-          <DehazeIcon
-            className={classes.dehazeIcon}
-            onClick={() => dispatch(setDisplayNavbar(false))}
-          />
-        )}
-        {isMobile ? (
-          <MobileDisplay>
             <SearchIcon
               className={classes.iconBase}
-              style={{ marginLeft: "10px" }}
+              style={{ marginLeft: "10px", marginRight: "auto" }}
               onClick={popperClick(
                 "bottom",
                 <SearchComponent clear={true} setOpen={setOpen} />,
@@ -223,9 +208,18 @@ export const Header = () => {
                 }
               )}
             />
-          </MobileDisplay>
+          </>
         ) : (
-          <SearchComponent />
+          <>
+            <Left>
+              <DehazeIcon
+                className={classes.iconBase}
+                onClick={() => dispatch(setDisplayNavbar(false))}
+              />
+              <>LOGO</>
+            </Left>
+            <SearchComponent />
+          </>
         )}
         <Right>{RightMenu.map((item: MenuTabs) => item.render)}</Right>
       </Root>
@@ -247,12 +241,10 @@ const Right = styled.div`
   display: flex;
   align-items: center;
 `;
-const MobileDisplay = styled.div`
-  margin-right: auto;
-  @media screen and (max-width: 425px) {
-  }
-  @media screen and (min-width: 425px) and (max-width: 768px) {
-  }
+const Left = styled.div`
+  width: 100px;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const ImgProfile = styled.img`
