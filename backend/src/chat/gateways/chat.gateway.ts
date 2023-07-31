@@ -156,15 +156,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     async createRoom(client: Socket, createRoomDto: CreateRoomDto) {
         try {
             // get current User 
-            console.log("here")
             const currentUser = this.findUserByClientSocketId(client.id);
-            console.log("here 1")
             const room = await this.chatService.createRoom(createRoomDto, currentUser.intraId);
-            console.log("here 2")
-            console.log("client == " + client.id);
-            console.log("room create successfully");
             this.server.emit('roomCreated', room);    
-            console.log("here 3")
         } catch (error) {
             console.log('err ||', error.message);
         }
@@ -195,7 +189,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             const currentUser = this.findUserByClientSocketId(client.id);
             await this.chatService.joinRoom(body, currentUser.intraId);
             this.server.emit('joinRoom');
-            console.log("room updated successfully");
         } catch (error) {
             console.log(error.message)
         }

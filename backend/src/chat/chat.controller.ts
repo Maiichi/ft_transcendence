@@ -28,24 +28,44 @@ export class ChatController
     //         return response;
     //     }
     // }
+
+    // getUserRooms
+    @Get('/rooms')
+    async getUserRooms(@GetUser() user: User, @Res() res: Response)
+    {
+        try {
+            return await this.chatService.getUserRooms(user, res);
+        } catch (error) {
+            console.log("controller level == " + error.message)
+            res.send({error: error})
+        }
+    }
     
     // getConversation 2 user
     @Get('/:id/conversation')
     async getUserDirectConversation(@Param('id') conversationId: number ,@GetUser() sender: User, @Res() res: Response)
     {
         try {
-            return this.chatService.getUserDirectConversation(Number(conversationId) ,sender, res);
+            return await this.chatService.getUserDirectConversation(Number(conversationId) ,sender, res);
         } catch (error) {
-            res.send({error: error})
             console.log("controller level == " + error.message)
+            res.send({error: error})
         }
     }
     // getAllConversation
 
     // getRoomMessages
-
-    //getRoomMembers
-
+    // getRoomConversation
+    @Get('/room/:id/conversation')
+    async getRoomConversation(@Param('id') roomId: number, @GetUser() user: User, @Res() res: Response)
+    {
+        try {
+            return await this.chatService.getRoomConversation(Number(roomId), user, res);
+        } catch (error) {
+            console.log("controller level == " + error.message)
+            res.send({error: error.message})
+        }
+    }
 
     // updateRoom
 

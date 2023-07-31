@@ -11,7 +11,6 @@ import { SetRoomAdminDto, KickMemberDto, MuteMemberDto, LeaveRoomDto } from './d
 import { SendMessageToRoomDto, SendMessageToUserDto } from './dto/handle.messages.dto';
 import { User } from '@prisma/client';
 import { Response } from 'express';
-import { send } from 'process';
 
 @Injectable()
 export class ChatService 
@@ -103,50 +102,53 @@ export class ChatService
     // function to create a new room
     async createRoom(createRoomDto: CreateRoomDto, userId: number)
     {
-        try {
-            const {name, type, password} = createRoomDto;
-            const user = await this.userService.getUser(userId);
-            if(!user)
-                throw new WsException(`userId = ${userId} does not exist !`);
-            console.log("user ==" + JSON.stringify(user));
-            const roomExist = await this.getRoomByName(name);
-            if (roomExist)
-                throw new WsException(`room name ${name} already exist !`);
-            if (type !== "public" && (!password?.length || password.length < 4))
-                    throw new WsException(`password must have at least 4 characters!`);
-            if (type === "public" && password)
-                throw new WsException(`public rooms should not have a password !`);
-            // const hashedPass: string | undefined = type === "private" && password ? await hash(password) : undefined;
-            if (type == "private" && password)
-                var hashedPass: string = await hash(password);
-            const newRoom = await this.prisma.room.create({
-                data : {
-                    name : name,
-                    password : hashedPass || "",
-                    type : type,
-                }
-            });
-            // Step 2: Create the new membership entry
-            await this.prisma.membership.create({
-                data: {
-                    room: {
-                        connect: {
-                            id: newRoom.id,
-                        },
+        // try {
+        const {name, type, password} = createRoomDto;
+        if (!createRoomDto.name || !createRoomDto.type)
+            throw new WsException(`name and type are required !`);
+        const user = await this.userService.getUser(userId);
+        if(!user)
+            throw new WsException(`userId = ${userId} does not exist !`);
+        // console.log("user ==" + JSON.stringify(user));
+        const roomExist = await this.getRoomByName(name);
+        if (roomExist)
+            throw new WsException(`room name ${name} already exist !`);
+        if (type !== "public" && (!password?.length || password.length < 4))
+                throw new WsException(`password must have at least 4 characters!`);
+        if (type === "public" && password)
+            throw new WsException(`public rooms should not have a password !`);
+        // const hashedPass: string | undefined = type === "private" && password ? await hash(password) : undefined;
+        if (type == "private" && password)
+            var hashedPass: string = await hash(password);
+        const newRoom = await this.prisma.room.create({
+            data : {
+                name : name,
+                password : hashedPass || "",
+                type : type,
+            }
+        });
+        // Step 2: Create the new membership entry
+        await this.prisma.membership.create({
+            data: {
+                room: {
+                    connect: {
+                        id: newRoom.id,
                     },
-                    user: {
-                        connect: {
-                            intraId: userId,
-                        },
-                    },
-                    isOwner: true,
-                    isAdmin: true,
                 },
-            });
-            return newRoom;
-        } catch (error) {
-            console.log("error || " + error)
-        }
+                user: {
+                    connect: {
+                        intraId: userId,
+                    },
+                },
+                isOwner: true,
+                isAdmin: true,
+            },
+        });
+        console.log(`${user.userName} has created a ${newRoom.name} room`)
+        return newRoom;
+        // } catch (error) {
+        //     console.log("error || " + error)
+        // }
     }
 
     /* DTO update
@@ -200,18 +202,21 @@ export class ChatService
     }
     */
     // join room
+    // TODO: need to add the user to the room conversation
     async joinRoom(body: JoinRoomDto, userId: number)
     {
+        if (!body.id)
+            throw new WsException('id field is required !')
         const room = await this.getRoomById(body.id);
         // console.log("ROOM ==" + JSON.stringify(room));
         if (!room)
             throw new WsException(`room ${body.id} not found`);
         const isMember = await this.isMember(userId, room.id)
-        console.log("isMem in join === " + isMember)
+        // console.log("isMem in join === " + isMember)
         if (isMember)
             throw new WsException(`user is already member on the room`);
         if (room.type === 'private' && !body.password)
-            throw new WsException(`password of this room is missed !`);
+            throw new WsException(`password is required for this room !`);
         if (room.type == 'private' && body.password)
         {
             const isMatch = await verify(room.password, body.password);
@@ -236,7 +241,8 @@ export class ChatService
                 isMute: false,
             }
         })
-        console.log("join room service");
+        // console.log("join room service");
+        console.log(`${userId} has joined the room ${room.name}`)
         return newMembership;
     }
 
@@ -247,8 +253,11 @@ export class ChatService
         }
     */
     // function to leave a room
+    // TODO: need to remove the user from the room conversation
     async leaveRoom(body: LeaveRoomDto, userId: number)
     {
+        if (!body.roomId)
+            throw new WsException('room Id is reauired !')
         const room = await this.getRoomById(body.roomId);
         const user = await this.userService.getUser(userId);
         if(!user)
@@ -270,6 +279,8 @@ export class ChatService
 
     async setAdminToRoom(body: SetRoomAdminDto, userId: number)
     {
+        if (!body.roomId || !body.userId)
+            throw new WsException('roomId OR userId are missed !');
         const room = await this.getRoomById(body.roomId);
         // console.log("ROOM ==" + JSON.stringify(room));
         if (!room)
@@ -301,7 +312,7 @@ export class ChatService
         return newAdmin;
     }
 
-    // TODO: need improvement
+    // TODO: need improvement || need to remove the user kicked from the room conversation
     /*
         kick JSON
         {
@@ -311,6 +322,8 @@ export class ChatService
     */
     async kickMember(body: KickMemberDto, userId: number)
     {
+        if (!body.roomId || !body.userId)
+            throw new WsException('roomId or userId is missed !')
         const room = await this.getRoomById(body.roomId);
         // console.log("ROOM ==" + JSON.stringify(room));
         if (!room)
@@ -333,6 +346,7 @@ export class ChatService
         if (!isAdmin)
             throw new WsException(`User with intraId ${userId} is not an admin in the room, so he can't kick a member`);
         // check if the user that will be kicked is a the owner of the room
+        // TODO : change isOwner to isAdmin
         const isOwner = await this.isOwner(body.userId, room.id);
         if (isOwner)
             throw new WsException(`You can't kick the owner of the room`)
@@ -341,12 +355,14 @@ export class ChatService
                 id: membership.id
             }
         })
-        console.log("memeber kicked successfully");
+        console.log(`${user.userName} has been kicked successfully from ${room.name}`);
         return updatedMembership;
     }
 
     async muteMember(userId: number, body: MuteMemberDto)
     {
+        if (!body.roomId || !body.userId || !body.timeMute)
+            throw new WsException('some fields are missed !!')
         const room = await this.getRoomById(body.roomId);
         // console.log("ROOM ==" + JSON.stringify(room));
         if (!room)
@@ -426,6 +442,7 @@ export class ChatService
         const receiver = await this.userService.getUser(body.receiverId);
         if (!receiver)
             throw new WsException(`(receiver) userId = ${body.receiverId} does not exist !`);
+        // check if a user sends a message to him self
         // check if users are blocking each other
 
         // Check if a conversation already exists between the sender and receiver
@@ -451,9 +468,6 @@ export class ChatService
                             { intraId: sender.intraId }, // Connect the sender
                             { intraId: receiver.intraId }, // Connect the receiver
                         ],
-                    },
-                    participantId: {
-                        set : [sender.intraId, receiver.intraId]
                     },
                 },
             });
@@ -503,10 +517,10 @@ export class ChatService
         // console.log("ROOM ==" + JSON.stringify(room));
         if (!room)
             throw new WsException(`room ${body.roomId} not found`);
-        const membership = await this.getMembership(userId, room.id);
+        const membership = await this.getMembership(sender.intraId, room.id);
         if (!membership)
-            throw new WsException(`no membership between ${userId} and ${room.id}`);
-        const isMuted = await this.isMuted(userId, room.id);
+            throw new WsException(`no membership between ${sender.userName} and ${room.id}`);
+        const isMuted = await this.isMuted(sender.intraId, room.id);
         if (isMuted)
             throw new WsException(`You're muted for ${membership.timeMute} please wait until it finishs`);
         // check block system
@@ -527,7 +541,6 @@ export class ChatService
                             intraId : sender.intraId
                         }
                     },
-                    participantId: { set : [sender.intraId] },
                     room: {
                         connect : {
                             id : room.id
@@ -536,7 +549,6 @@ export class ChatService
                 }
             })
         }
-        // need to check the partipantsId's logic
         conversation = await this.prisma.conversation.update({
             where: {
                 id: conversation.id
@@ -546,8 +558,7 @@ export class ChatService
                     connect : {
                         intraId : sender.intraId
                     }
-                },
-                participantId: {push : [sender.intraId]}
+                }
             }
         });
         const message = await this.prisma.message.create({
@@ -561,6 +572,49 @@ export class ChatService
         return message;
     }
 
+    // need to check BLOCK system
+    async getRoomConversation(roomId: number, user: User, res: Response)
+    {
+        const room = await this.getRoomById(roomId);
+        console.log("room Id ==" + JSON.stringify(room))
+        if (!room)
+            throw new NotFoundException(`room Id ${roomId} does not exist`)
+        const membership = await this.getMembership(user.intraId, room.id);
+        if (!membership)
+            throw new NotFoundException(`no membership between ${user.intraId} and ${room.id}`);
+        const roomConversation = await this.getRoomConversationById(roomId);
+        const roomMessages = await this.getRoomMessages(roomConversation.id);
+        return res.json({
+            status: 200,
+            data: roomMessages
+        })
+    }
+    /********************************************************************************************************* */
+
+    async getUserRooms(user: User, res: Response)
+    {
+        const rooms = await this.prisma.user.findMany({
+            where : {
+                intraId : user.intraId
+            },
+            select : {
+                memberships : {
+                    where : {
+                       isBanned : false,
+                    },
+                    select: {
+                        room: true,
+                    }
+                },
+            }
+        });
+        return res.json({
+            status: 200,
+            data: rooms
+        });
+    }
+
+    /********************************************************************************************************* */
     // isOwner
     async isOwner(userId: number, roomId: number)
     {
@@ -646,7 +700,7 @@ export class ChatService
         })
         return memberShip 
     }
-
+    /********************************************************************************************************* */
 
     /***************************************** CONVERSATION FUNCTIONS  HELPERS ***********************************************/
     
@@ -674,4 +728,36 @@ export class ChatService
         });
         return messages;
     }
+
+    /******************************************************************************************************************** */
+    async getRoomConversationById(roomId: number)
+    {
+        const roomConversation = await this.prisma.room.findUnique({
+            where: {
+                id : roomId
+            },
+            select : {
+                conversation : true
+            }
+        });
+        if (!roomConversation)
+            console.log("this room has no conversation")
+        return roomConversation.conversation;
+    }
+
+    async getRoomMessages(conversationId: number)
+    {
+        // const userBlocked = await this.getUserBlocked();
+        const messages = this.prisma.conversation.findUnique({
+            where: {
+                id: conversationId
+            },
+            select: {
+                messages: true
+            }
+        });
+        return messages;
+    }
+    /******************************************************************************************************************** */
+
 }

@@ -22,11 +22,10 @@ model User {
      twoFactorActivate   Boolean?                 @default(false)
      twoFactorSecret     String?                  @db.VarChar(255)  
      memberships         Membership[]
-     conversations       Conversation[]           @relation("Participants")     
-     // roomConversation    RoomConversation[]
+     conversations       Conversation[]                
      createdAt           DateTime                 @default(now()) @db.Timestamp(6)
      updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
-     MessagesSent        Message[]
+     Messages            Message[]
 
      @@map("users")
 }
@@ -34,9 +33,8 @@ model User {
 model Conversation {
      id                  Int                      @id @default(autoincrement())
      type                String // Either "direct" for direct messages, "channel" for public channels, or "private_channel" for private channels
-     participants        User[]                   @relation("Participants")
-     participantId       Int[]
-     room                Room?                    @relation(fields: [roomId], references: [id])
+     participants        User[]                   
+     room                Room?                    @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
      roomId              Int?                     @unique
      messages            Message[]
      createdAt           DateTime                 @default(now()) @db.Timestamp(6)
@@ -44,25 +42,13 @@ model Conversation {
 
 }
 
-// model RoomConversation {
-//      id                  Int                      @id @default(autoincrement())
-//      participants        User[]                   @relation("Partipants")
-//      participantId       Int[]
-//      messages            Message[]
-//      room                Room
-//      roomId              Int
-//      createdAt           DateTime                 @default(now()) @db.Timestamp(6)
-//      updatedAt           DateTime?                @updatedAt @db.Timestamp(6)   
-// }
-
-
 model Message {
      id                  Int                      @id @default(autoincrement())
      content             String
      createdAt           DateTime                 @default(now()) @db.Timestamp(6)
-     sender              User                     @relation(fields: [senderId], references: [intraId])
+     sender              User                     @relation(fields: [senderId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
      senderId            Int
-     chat                Conversation             @relation(fields: [chatId], references: [id])
+     chat                Conversation             @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
      chatId              Int
 }
 
@@ -84,9 +70,8 @@ model Membership {
      isBanned            Boolean                  @default(false)
      isMute              Boolean                  @default(false)
      timeMute            DateTime                 @default(now())
-     room                Room                     @relation("membership", fields: [roomId], references: [id])
+     room                Room                     @relation("membership", fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
      roomId              Int
-     user                User                     @relation(fields: [userId], references: [intraId])
+     user                User                     @relation(fields: [userId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
      userId              Int
 }
-
