@@ -1,4 +1,4 @@
-import { IsNumber } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 
 
 export class SetRoomAdminDto
@@ -30,6 +30,17 @@ export class MuteMemberDto
     @IsNumber()
     roomId: number;
 }
+
+export class JoinRoomDto
+    {
+        @IsNumber()
+        id: number;
+
+        @IsString()
+        @IsOptional()
+        password: string;
+
+    }
 
 export class LeaveRoomDto
 {

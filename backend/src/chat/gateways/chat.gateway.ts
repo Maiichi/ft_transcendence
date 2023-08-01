@@ -1,14 +1,16 @@
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer, WsException } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
-import { CreateRoomDto } from "../dto/create.room.dto";
+import { User } from "@prisma/client";
 import { ChatService } from "../chat.service";
 import { JwtService } from "@nestjs/jwt";
+import { BlacklistService } from "src/user/blacklist/blacklist.service";
 import { UserService } from "src/user/user.service";
-import { UpdateRoomDto } from "../dto/update.room.dto";
-import { User } from "@prisma/client";
-import { JoinRoomDto } from "../dto/join.room.dto";
-import { KickMemberDto, LeaveRoomDto, MuteMemberDto, SetRoomAdminDto } from "../dto/update.user.membership.dto";
-import { SendMessageToRoomDto, SendMessageToUserDto } from "../dto/handle.messages.dto";
+import { MessageService } from "../message/message.service";
+import { RoomService } from "../room/room.service";
+import { SendMessageToRoomDto, SendMessageToUserDto } from "../message/dto/handle.messages.dto";
+import { CreateRoomDto,  UpdateRoomDto } from "../room/dto/room.dto";
+import { BlockUserDto, UnBlockUserDto } from "../../user/blacklist/dto/handle.block.dto";
+import { KickMemberDto, LeaveRoomDto, MuteMemberDto, JoinRoomDto, SetRoomAdminDto } from "../room/dto/membership.dto";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
@@ -22,9 +24,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     private BlackListedTokens= new Map<string, number>();
 
     constructor(
-        private chatService: ChatService,
-        private jwtService : JwtService,
-        private userService: UserService
+        private chatService:        ChatService,
+        private blacklistService:   BlacklistService,
+        private jwtService :        JwtService,
+        private userService:        UserService,
+        private roomService:        RoomService,
+        private messageService:     MessageService
     ){}
     
     
@@ -157,7 +162,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         try {
             // get current User 
             const currentUser = this.findUserByClientSocketId(client.id);
-            const room = await this.chatService.createRoom(createRoomDto, currentUser.intraId);
+            const room = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
             this.server.emit('roomCreated', room);    
         } catch (error) {
             console.log('err ||', error.message);
@@ -171,7 +176,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         try {
             // get current User 
             const currentUser = this.findUserByClientSocketId(client.id);
-            const roomUpdated = await this.chatService.updateRoomById(body, currentUser.intraId);
+            const roomUpdated = await this.roomService.updateRoomById(body, currentUser.intraId);
             this.server.emit('roomUpdated', roomUpdated);
             console.log("room updated successfully");
         } catch (error) {
@@ -187,7 +192,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.joinRoom(body, currentUser.intraId);
+            await this.roomService.joinRoom(body, currentUser.intraId);
             this.server.emit('joinRoom');
         } catch (error) {
             console.log(error.message)
@@ -200,7 +205,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.leaveRoom(body, currentUser.intraId);
+            await this.roomService.leaveRoom(body, currentUser.intraId);
             this.server.emit('leaveRoom');
         } catch (error) {
             console.log("Subs error =" + error.message)
@@ -213,7 +218,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.setAdminToRoom(body, currentUser.intraId);
+            await this.roomService.setAdminToRoom(body, currentUser.intraId);
             this.server.emit('setRoomAdmin');
         } catch (error) {
             console.log("Subs error =" + error.message)
@@ -227,7 +232,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.kickMember(body, currentUser.intraId);
+            await this.roomService.kickMember(body, currentUser.intraId);
             this.server.emit('kickMember');
         } catch (error) {
             console.log("Subs error =" + error.message)
@@ -240,7 +245,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.muteMember(currentUser.intraId, body);
+            await this.roomService.muteMember(currentUser.intraId, body);
             this.server.emit('muteMember');
         } catch (error) {
             console.log("Subs error =" + error.message);
@@ -267,7 +272,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.sendMessageToUser(body, currentUser.intraId);
+            await this.messageService.sendMessageToUser(body, currentUser.intraId);
             this.server.emit('sendMessageToUser');
         } catch (error) {
             console.log("Subs error =" + error.message);
@@ -281,19 +286,39 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
-            await this.chatService.sendMessageToRoom(body, currentUser.intraId);
+            await this.messageService.sendMessageToRoom(body, currentUser.intraId);
             this.server.emit('sendMessageToRoom');
         } catch (error) {
             console.log("Subs error =" + error.message);
         }
     }
 
-    // ban member
-    // @SubscribeMessage('sendMessage')
-    // async sendMessage(@ConnectedSocket() client: Socket)
-    // {
+    // block user
+    @SubscribeMessage('blockUser')
+    async blockUser(@ConnectedSocket() client: Socket, @MessageBody() body: BlockUserDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.blacklistService.blockUser(body, currentUser.intraId);
+            this.server.emit('blockUser');
+        } catch (error) {
+            console.log("Subs error =" + error.message);
+        }
+    }
 
-    // }
+    @SubscribeMessage('unBlockUser')
+    async unBlockUser(@ConnectedSocket() client: Socket, @MessageBody() body: UnBlockUserDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.blacklistService.unBlockUser(body, currentUser.intraId);
+            this.server.emit('unBlockUser'); 
+        } catch (error) {
+            console.log("Subs error =" + error.message);
+        }
+    }
+    // ban member
+
 
     
 }

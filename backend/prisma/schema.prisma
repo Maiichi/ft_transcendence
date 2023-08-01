@@ -26,6 +26,8 @@ model User {
      createdAt           DateTime                 @default(now()) @db.Timestamp(6)
      updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
      Messages            Message[]
+     blockedByMe         Blacklist[]              @relation("BlockedByMe")
+     blockedMe           Blacklist[]              @relation("BlockedMe")
 
      @@map("users")
 }
@@ -74,4 +76,13 @@ model Membership {
      roomId              Int
      user                User                     @relation(fields: [userId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
      userId              Int
+}
+
+model Blacklist {
+     id                  Int                      @id @default(autoincrement())
+     blocker             User                     @relation("BlockedByMe", fields: [blockerById], references: [intraId])
+     blockerById         Int
+     blocked             User                     @relation("BlockedMe", fields: [blockedById], references: [intraId])
+     blockedById         Int
+     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
 }
