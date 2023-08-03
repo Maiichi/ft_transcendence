@@ -1,21 +1,21 @@
+import { Injectable } from "@nestjs/common";
 import { WsException } from "@nestjs/websockets";
+import { addMinutes } from "date-fns";
+import { hash, verify } from "argon2";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UserService } from "src/user/user.service";
-import { CreateRoomDto, UpdateRoomDto } from "./dto/room.dto";
-import { MuteMemberDto, KickMemberDto, LeaveRoomDto, JoinRoomDto, SetRoomAdminDto } from "./dto/membership.dto";
-import { hash, verify } from "argon2";
 import { ChatService } from "../chat.service";
-import { addMinutes } from "date-fns";
-import { Injectable } from "@nestjs/common";
+import { MuteMemberDto, KickMemberDto, LeaveRoomDto, JoinRoomDto, SetRoomAdminDto } from "./dto/membership.dto";
+import { CreateRoomDto, UpdateRoomDto } from "./dto/room.dto";
 
 
 @Injectable()
 export class RoomService
 {
     constructor(
-        private prisma:         PrismaService,
-        private userService:    UserService,
-        private chatService:    ChatService
+        private prisma:             PrismaService,
+        private userService:        UserService,
+        private chatService:        ChatService,
     ){}
 
     async getRoomById(roomId: number)
@@ -31,20 +31,10 @@ export class RoomService
     // TODO : need to be refactored (remove trycatch block)
     async getRoomByName(roomName: string) 
     {
-        try {
-            const room = await this.prisma.room.findFirst({
-                where : {name : roomName}
-            });
-            if (!room)
-                return null;
-            return room;
-        } catch (error) {
-            const response = {
-                success: false,
-                message: error.message
-            };
-            return response;
-        }
+        const room = await this.prisma.room.findFirst({
+            where : {name : roomName}
+        });
+        return room;
     }
 
    
@@ -200,7 +190,7 @@ export class RoomService
     }
     */
     // join room
-    // TODO: need to add the user to the room conversation
+    // TODO: need to add the user to the room conversation || done
     async joinRoom(body: JoinRoomDto, userId: number)
     {
         if (!body.id)
@@ -237,6 +227,22 @@ export class RoomService
                 isAdmin: false,
                 isBanned: false,
                 isMute: false,
+            }
+        })
+        const getConversationByRoomId = await this.getConversationByRoomId(room.id);
+        console.log("conversation == " + JSON.stringify(getConversationByRoomId));
+        console.log("conversationId == " + JSON.stringify(getConversationByRoomId.id));
+        console.log("userID == " + userId);
+        await this.prisma.conversation.update({
+            where : {
+                id: getConversationByRoomId.id
+            },
+            data : {
+                participants : {
+                    connect : {
+                        intraId : userId
+                    }
+                }
             }
         })
         // console.log("join room service");
@@ -497,4 +503,14 @@ export class RoomService
         })
         return isBanned.isBanned;
     }
+
+    async getConversationByRoomId(roomId: number)
+   {
+        const conversation = await this.prisma.conversation.findFirst({
+            where : {
+                roomId : roomId,
+            }
+        });
+        return conversation;
+   }
 }

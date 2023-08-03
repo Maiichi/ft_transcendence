@@ -29,6 +29,11 @@ model User {
      blockedByMe         Blacklist[]              @relation("BlockedByMe")
      blockedMe           Blacklist[]              @relation("BlockedMe")
 
+     sentRequests        FriendRequest[]          @relation("senderRequests")
+     receivedRequests    FriendRequest[]          @relation("receiverRequests")
+     friends             User[]                   @relation("friends")
+     friendsOf           User[]                   @relation("friends")
+
      @@map("users")
 }
 
@@ -85,4 +90,16 @@ model Blacklist {
      blocked             User                     @relation("BlockedMe", fields: [blockedById], references: [intraId])
      blockedById         Int
      createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+}
+
+model FriendRequest {
+     id                  Int                      @id @default(autoincrement())
+     sender              User                     @relation("senderRequests", fields: [senderId], references: [intraId])
+     senderId            Int
+     receiver            User                     @relation("receiverRequests", fields: [receiverId], references: [intraId])
+     receiverId          Int
+     accepted            Boolean
+     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+
+     @@unique([senderId, receiverId])
 }

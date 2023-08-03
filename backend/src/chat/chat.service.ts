@@ -7,7 +7,6 @@ export class ChatService
 {
     constructor(
         private prisma: PrismaService,
-
     ) {}
 
     

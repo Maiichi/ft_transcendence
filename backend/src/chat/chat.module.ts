@@ -6,10 +6,11 @@ import { ChatGateway } from './gateways/chat.gateway';
 import { JwtService } from '@nestjs/jwt';
 import { BlacklistService } from 'src/user/blacklist/blacklist.service';
 import { RoomService } from './room/room.service';
-import { MessageService } from './message/message.service';
+import { FriendService } from 'src/user/friend/friend.service';
+import { MessageService } from "src/chat/message/message.service";
 
 @Module({
   controllers: [ChatController],
-  providers: [ChatService, UserService, JwtService ,ChatGateway, BlacklistService, RoomService, MessageService]
+  providers: [ChatService, UserService, JwtService ,ChatGateway, BlacklistService, RoomService, FriendService, MessageService]
 })
 export class ChatModule {}

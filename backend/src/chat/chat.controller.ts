@@ -38,19 +38,19 @@ export class ChatController
             return await this.messageService.getUserRooms(user, res);
         } catch (error) {
             console.log("controller level == " + error.message)
-            res.send({error: error})
+            res.send({error: error.message})
         }
     }
     
-    // getConversation 2 user
+    // getConversation between 2 user
     @Get('/:id/conversation')
     async getUserDirectConversation(@Param('id') conversationId: number ,@GetUser() sender: User, @Res() res: Response)
     {
         try {
             return await this.messageService.getUserDirectConversation(Number(conversationId) ,sender, res);
         } catch (error) {
-            console.log("controller level == " + error.message)
-            res.send({error: error})
+            // console.log("controller level == " + error.message)
+            res.send({error: error.message})
         }
     }
     // getAllConversation
@@ -63,7 +63,7 @@ export class ChatController
         try {
             return await this.messageService.getRoomConversation(Number(roomId), user, res);
         } catch (error) {
-            console.log("controller level == " + error.message)
+            // console.log("controller level == " + error.message)
             res.send({error: error.message})
         }
     }

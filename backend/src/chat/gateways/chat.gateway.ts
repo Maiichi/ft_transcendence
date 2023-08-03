@@ -11,6 +11,8 @@ import { SendMessageToRoomDto, SendMessageToUserDto } from "../message/dto/handl
 import { CreateRoomDto,  UpdateRoomDto } from "../room/dto/room.dto";
 import { BlockUserDto, UnBlockUserDto } from "../../user/blacklist/dto/handle.block.dto";
 import { KickMemberDto, LeaveRoomDto, MuteMemberDto, JoinRoomDto, SetRoomAdminDto } from "../room/dto/membership.dto";
+import { AcceptFriendRequestDto, SendFriendRequestDto } from "src/user/friend/dto/friend.dto";
+import { FriendService } from "src/user/friend/friend.service";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
@@ -29,7 +31,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         private jwtService :        JwtService,
         private userService:        UserService,
         private roomService:        RoomService,
-        private messageService:     MessageService
+        private messageService:     MessageService,
+        private friendService:      FriendService
     ){}
     
     
@@ -320,5 +323,27 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     // ban member
 
 
-    
+    @SubscribeMessage('sendFriendRequest')
+    async sendFriendRequest(@ConnectedSocket() client: Socket, @MessageBody() body: SendFriendRequestDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.friendService.sendFriendRequest(body, currentUser.intraId);
+            this.server.emit('sendFriendRequest');
+        } catch (error) {
+            console.log("send error = " + error.message);
+        }
+    }
+
+    @SubscribeMessage('acceptFriendRequest')
+    async acceptFriendRequest(@ConnectedSocket() client: Socket, @MessageBody() body: AcceptFriendRequestDto)
+    {
+        try {
+            const currentUser = this.findUserByClientSocketId(client.id);
+            await this.friendService.acceptFriendRequest(body, currentUser.intraId);
+            this.server.emit('acceptFriendRequest');
+        } catch (error) {
+            console.log("accept error = " + error.message);
+        }
+    }
 }
