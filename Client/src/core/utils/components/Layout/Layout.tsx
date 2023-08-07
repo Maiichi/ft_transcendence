@@ -20,17 +20,16 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 
 const Root = styled.div`
   display: flex;
+  position: absolute;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
 `;
 const Children = styled.div<{ displayNavbar: boolean }>`
-  margin: 8px 5px;
-  padding: 5px;
   background: rgb(238, 242, 246);
-  width: 100%;
-  position: fixed;
-  height: -webkit-fill-available;
-  margin-left: ${(p) => (p.displayNavbar ? "200px" : "0px")};
+  width: -webkit-fill-available;
+
   border-radius: 5px;
-  @media (max-width: 425px) {
-    margin: 10px 5px;
+  margin: 1vw;
+  @media (max-width: 426px) {
   }
 `;
