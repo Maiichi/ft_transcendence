@@ -1,24 +1,9 @@
-import { Avatar, Divider } from "@mui/material";
-import { useEffect } from "react";
+import { Avatar, FormControlLabel, Switch, TextField } from "@mui/material";
+import { useState } from "react";
 import styled from "styled-components";
-import { useAppDispatch, useAppSelector } from "../../core";
-import {
-  CounterState,
-  decrement,
-  increment,
-  incrementByAmount,
-} from "./components/CounterSlice";
-import { TodosState } from "./components/TodosSlice";
-import { fetchTodos } from "./components/TodosThunk";
 
 export const Profile = () => {
-  const state: CounterState = useAppSelector((state) => state.counter);
-  // const todos: TodosState = useAppSelector((state) => state.todos);
-  const dispatch = useAppDispatch();
-  // useEffect(() => {
-  //   dispatch(fetchTodos(4));
-  // }, []);
-
+  const [twoFact, setTwoFact] = useState<boolean>(false);
   return (
     <Root>
       <Title style={{ fontSize: "2rem" }}>Account</Title>
@@ -29,14 +14,60 @@ export const Profile = () => {
             alt="Remy Sharp"
             src="/static/images/avatar/1.jpg"
           />
-
           <Title style={{ fontSize: "1rem" }}>Bouroummana Ismail</Title>
           <H5>ibouroum</H5>
-          <hr />
-
-          <Button>Upload Picture</Button>
+          <Divider />
+          <ButtonAvatar>Upload Picture</ButtonAvatar>
         </CardAvatar>
-        <CardInfos>Infos</CardInfos>
+        <CardForm>
+          <Title style={{ fontSize: "1rem" }}>Profile</Title>
+          <H5>The informations can be edited</H5>
+          <TextField
+            sx={{ margin: "10px 0px", width: "60%" }}
+            required
+            id="firstname"
+            label="Firstname"
+            variant="outlined"
+            defaultValue="Ismail"
+          />
+          <TextField
+            sx={{ margin: "10px 0px", width: "60%" }}
+            required
+            id="lastname"
+            label="Lastname"
+            variant="outlined"
+            defaultValue="Bouroummana"
+          />
+          <TextField
+            sx={{ margin: "10px 0px", width: "60%" }}
+            required
+            id="username"
+            label="Username"
+            variant="outlined"
+            defaultValue="ibouroum"
+          />
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={twoFact}
+                onChange={() => setTwoFact(!twoFact)}
+                name="2FA"
+              />
+            }
+            label="Two Factor Authentication"
+          />
+          <TextField
+            sx={{ margin: "10px 0px", width: "60%" }}
+            required
+            id="outlined-basic"
+            label="Phone"
+            variant="outlined"
+            defaultValue="+212689912489"
+          />
+          <Divider />
+          <ButtonForm>Save Details</ButtonForm>
+        </CardForm>
       </Cards>
     </Root>
   );
@@ -49,56 +80,41 @@ const Cards = styled.div`
   display: flex;
 `;
 const CardAvatar = styled.div`
-  width: 40%;
+  width: 35%;
+  height: fit-content;
   margin-right: 5px;
-  padding: 32px 24px;
+  padding: 32px 24px 6px 32px;
   background-color: rgb(255, 255, 255);
   color: rgb(17, 25, 39);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  /* overflow: hidden; */
+
   border-radius: 20px;
   align-items: center;
   display: flex;
   flex-direction: column;
 `;
-const CardInfos = styled.div`
+const CardForm = styled.div`
   width: 65%;
   margin-left: 5px;
-  padding: 32px 24px;
+
   background-color: rgb(255, 255, 255);
   color: rgb(17, 25, 39);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
   border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px 10px 32px;
 `;
 const Title = styled.h4`
   margin: 0px;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 700;
-
+  margin-top: 16px;
+  margin-bottom: 5px;
   line-height: 1.2;
 `;
-const Ava = styled.div`
-  position: relative;
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  line-height: 1;
-  border-radius: 50%;
-  overflow: hidden;
-  user-select: none;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0px;
-  height: 80px;
-  margin-bottom: 16px;
-  width: 80px;
-`;
-const Button = styled.button`
+
+const ButtonAvatar = styled.button`
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
@@ -136,6 +152,26 @@ const Button = styled.button`
     background-color: rgba(99, 102, 241, 0.04);
   }
 `;
+const ButtonForm = styled.button`
+  border: 0px;
+  margin: 0px;
+  font-weight: 600;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: rgb(255, 255, 255);
+  background-color: rgb(99, 102, 241);
+  border-radius: 12px;
+  padding: 8px 20px;
+  width: fit-content;
+  margin-left: auto;
+  &:hover {
+    text-decoration: none;
+    background-color: rgb(67, 56, 202);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 10px;
+  }
+`;
 const H5 = styled.h4`
   margin: 0px;
   font-size: 0.875rem;
@@ -144,4 +180,12 @@ const H5 = styled.h4`
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   color: rgb(108, 115, 127);
+`;
+const Divider = styled.hr`
+  margin-top: 15px;
+  width: -webkit-fill-available;
+
+  border-width: 0px 0px thin;
+  border-style: solid;
+  border-color: rgb(242, 244, 247);
 `;
