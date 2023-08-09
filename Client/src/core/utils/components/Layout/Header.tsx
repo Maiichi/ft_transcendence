@@ -63,12 +63,12 @@ const useStyles = makeStyles({
 });
 const Menu = [
   {
-    redirect: "/profile",
+    redirect: "/account/profile",
     render: "Profile",
     icon: PermIdentityIcon,
   },
   {
-    redirect: "/profile",
+    redirect: "/account/settings",
     render: "Account Settings",
     icon: SettingsIcon,
   },

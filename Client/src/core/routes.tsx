@@ -1,4 +1,4 @@
-import { Test, Home, Game, Profile } from "../packages";
+import { Test, Home, Game, Settings, Profile } from "../packages";
 
 import { NotFoundError } from "./errors";
 import { Layout } from "./utils";
@@ -32,7 +32,16 @@ export const routes = [
     errorElement: <NotFoundError />,
   },
   {
-    path: "/profile",
+    path: "/account/settings",
+    element: (
+      <Layout>
+        <Settings />
+      </Layout>
+    ),
+    errorElement: <NotFoundError />,
+  },
+  {
+    path: "/account/profile",
     element: (
       <Layout>
         <Profile />

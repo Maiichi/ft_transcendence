@@ -1,87 +1,13 @@
-import { Avatar, FormControlLabel, Switch, TextField } from "@mui/material";
-import { useState } from "react";
 import styled from "styled-components";
 
-export const Profile = () => {
-  const [twoFact, setTwoFact] = useState<boolean>(false);
-  return (
-    <Root>
-      <Title style={{ fontSize: "2rem" }}>Account</Title>
-      <Cards>
-        <CardAvatar>
-          <Avatar
-            sx={{ width: "80px", height: "80px" }}
-            alt="Remy Sharp"
-            src="/static/images/avatar/1.jpg"
-          />
-          <Title style={{ fontSize: "1rem" }}>Bouroummana Ismail</Title>
-          <H5>ibouroum</H5>
-          <Divider />
-          <ButtonAvatar>Upload Picture</ButtonAvatar>
-        </CardAvatar>
-        <CardForm>
-          <Title style={{ fontSize: "1rem" }}>Profile</Title>
-          <H5>The informations can be edited</H5>
-          <TextField
-            sx={{ margin: "10px 0px", width: "80%" }}
-            required
-            id="firstname"
-            label="Firstname"
-            variant="outlined"
-            defaultValue="Ismail"
-          />
-          <TextField
-            sx={{ margin: "10px 0px", width: "80%" }}
-            required
-            id="lastname"
-            label="Lastname"
-            variant="outlined"
-            defaultValue="Bouroummana"
-          />
-          <TextField
-            sx={{ margin: "10px 0px", width: "80%" }}
-            required
-            id="username"
-            label="Username"
-            variant="outlined"
-            defaultValue="ibouroum"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={twoFact}
-                onChange={() => setTwoFact(!twoFact)}
-                name="2FA"
-              />
-            }
-            label="Two Factor Authentication"
-          />
-          <TextField
-            sx={{ margin: "10px 0px", width: "80%" }}
-            required
-            id="outlined-basic"
-            label="Phone"
-            variant="outlined"
-            defaultValue="+212689912489"
-          />
-          <Divider />
-          <ButtonForm>Save Details</ButtonForm>
-        </CardForm>
-      </Cards>
-    </Root>
-  );
-};
-const Root = styled.div`
-  padding: 10px;
-`;
-const Cards = styled.div`
+export const Cards = styled.div`
   display: flex;
   @media (max-width: 426px) {
     align-items: center;
     flex-direction: column;
   }
 `;
-const CardAvatar = styled.div`
+export const CardAvatar = styled.div`
   width: 35%;
   height: fit-content;
   margin-right: 5px;
@@ -98,7 +24,7 @@ const CardAvatar = styled.div`
     width: 75%;
   }
 `;
-const CardForm = styled.div`
+export const CardForm = styled.div`
   width: 65%;
   margin-left: 5px;
 
@@ -114,7 +40,7 @@ const CardForm = styled.div`
     width: 75%;
   }
 `;
-const Title = styled.h4`
+export const Title = styled.h4`
   margin: 0px;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 700;
@@ -123,7 +49,7 @@ const Title = styled.h4`
   line-height: 1.2;
 `;
 
-const ButtonAvatar = styled.button`
+export const ButtonAvatar = styled.button`
   display: inline-flex;
   -webkit-box-align: center;
   align-items: center;
@@ -161,7 +87,7 @@ const ButtonAvatar = styled.button`
     background-color: rgba(99, 102, 241, 0.04);
   }
 `;
-const ButtonForm = styled.button`
+export const ButtonForm = styled.button`
   border: 0px;
   margin: 0px;
   font-weight: 600;
@@ -181,7 +107,7 @@ const ButtonForm = styled.button`
     box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 10px;
   }
 `;
-const H5 = styled.h4`
+export const H5 = styled.h4`
   margin: 0px;
   font-size: 0.875rem;
   font-weight: 400;
@@ -190,7 +116,7 @@ const H5 = styled.h4`
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   color: rgb(108, 115, 127);
 `;
-const Divider = styled.hr`
+export const Divider = styled.hr`
   margin-top: 15px;
   width: -webkit-fill-available;
 
