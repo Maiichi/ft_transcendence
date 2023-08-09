@@ -22,12 +22,10 @@ const Root = styled.div`
   display: flex;
   position: absolute;
   width: -webkit-fill-available;
-  height: -webkit-fill-available;
 `;
 const Children = styled.div<{ displayNavbar: boolean }>`
   background: rgb(238, 242, 246);
   width: -webkit-fill-available;
-
   border-radius: 5px;
   margin: 1vw;
   @media (max-width: 426px) {

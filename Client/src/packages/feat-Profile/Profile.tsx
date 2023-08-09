@@ -23,7 +23,7 @@ export const Profile = () => {
           <Title style={{ fontSize: "1rem" }}>Profile</Title>
           <H5>The informations can be edited</H5>
           <TextField
-            sx={{ margin: "10px 0px", width: "60%" }}
+            sx={{ margin: "10px 0px", width: "80%" }}
             required
             id="firstname"
             label="Firstname"
@@ -31,7 +31,7 @@ export const Profile = () => {
             defaultValue="Ismail"
           />
           <TextField
-            sx={{ margin: "10px 0px", width: "60%" }}
+            sx={{ margin: "10px 0px", width: "80%" }}
             required
             id="lastname"
             label="Lastname"
@@ -39,14 +39,13 @@ export const Profile = () => {
             defaultValue="Bouroummana"
           />
           <TextField
-            sx={{ margin: "10px 0px", width: "60%" }}
+            sx={{ margin: "10px 0px", width: "80%" }}
             required
             id="username"
             label="Username"
             variant="outlined"
             defaultValue="ibouroum"
           />
-
           <FormControlLabel
             control={
               <Switch
@@ -58,7 +57,7 @@ export const Profile = () => {
             label="Two Factor Authentication"
           />
           <TextField
-            sx={{ margin: "10px 0px", width: "60%" }}
+            sx={{ margin: "10px 0px", width: "80%" }}
             required
             id="outlined-basic"
             label="Phone"
@@ -73,11 +72,14 @@ export const Profile = () => {
   );
 };
 const Root = styled.div`
-  margin: 6vw 4vw;
   padding: 10px;
 `;
 const Cards = styled.div`
   display: flex;
+  @media (max-width: 426px) {
+    align-items: center;
+    flex-direction: column;
+  }
 `;
 const CardAvatar = styled.div`
   width: 35%;
@@ -87,11 +89,14 @@ const CardAvatar = styled.div`
   background-color: rgb(255, 255, 255);
   color: rgb(17, 25, 39);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-
   border-radius: 20px;
   align-items: center;
   display: flex;
   flex-direction: column;
+  @media (max-width: 426px) {
+    margin: 5px 0px;
+    width: 75%;
+  }
 `;
 const CardForm = styled.div`
   width: 65%;
@@ -104,6 +109,10 @@ const CardForm = styled.div`
   display: flex;
   flex-direction: column;
   padding: 32px 24px 10px 32px;
+  @media (max-width: 426px) {
+    margin: 5px 0px;
+    width: 75%;
+  }
 `;
 const Title = styled.h4`
   margin: 0px;
