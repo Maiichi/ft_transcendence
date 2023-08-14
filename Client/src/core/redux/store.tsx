@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import counterSlice from "../../packages/feat-Test/components/CounterSlice";
 import todosSlice from "../../packages/feat-Test/components/TodosSlice";
 import coreSlice from "../CoreSlice";
+import chatIshakSlice from "../../packages/feat-Chat/components/ChatIshak";
 // ...
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
     counter: counterSlice,
     todos: todosSlice,
     core: coreSlice,
+    chat: chatIshakSlice,
   },
 });
 

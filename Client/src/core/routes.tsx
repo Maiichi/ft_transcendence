@@ -1,7 +1,6 @@
-import { Test, Home, Game, Settings, Profile } from "../packages";
-
-import { NotFoundError } from "./errors";
+import { Test, Home, Game, Settings, Profile, Chat } from "../packages";
 import { Layout } from "./utils";
+import { NotFoundError } from "./utils/components/errors";
 
 export const routes = [
   {
@@ -45,6 +44,15 @@ export const routes = [
     element: (
       <Layout>
         <Profile />
+      </Layout>
+    ),
+    errorElement: <NotFoundError />,
+  },
+  {
+    path: "/chat",
+    element: (
+      <Layout>
+        <Chat />
       </Layout>
     ),
     errorElement: <NotFoundError />,

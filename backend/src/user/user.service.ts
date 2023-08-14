@@ -164,21 +164,21 @@ export class UserService {
     }
 
     // function to update STATUS of the user
-    async updateUserStatus(userId: number, status: string)
-    {
-        const user = await this.getUser(userId);
-        if (user)
-        {
-            await this.prisma.user.update({
-                where: {intraId : userId},
-                data : {
-                    status : status
-                }
-            });
-        }
-        else
-            throw new NotFoundException(`userId ${userId} not found`)
-    }
+    // async updateUserStatus(userId: number, status: string)
+    // {
+    //     const user = await this.getUser(userId);
+    //     if (user)
+    //     {
+    //         await this.prisma.user.update({
+    //             where: {intraId : userId},
+    //             data : {
+    //                 status : status
+    //             }
+    //         });
+    //     }
+    //     else
+    //         throw new NotFoundException(`userId ${userId} not found`)
+    // }
 
     async isTwoFactorEnabled(userId: number) 
     {
