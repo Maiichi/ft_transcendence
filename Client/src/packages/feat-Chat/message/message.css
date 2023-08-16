@@ -1,0 +1,45 @@
+.messageBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.messageImg {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    margin: 10px;
+}
+
+.messageTop {
+    display: flex;
+}
+
+.messageText{
+    padding: 10px;
+    border-radius: 20px;
+    background-color: #530770;
+    color: white;
+    max-width: 500px;
+}
+
+.messageBottom {
+    font-size: 12px;
+    text-align: right;
+}
+
+.messageBox.own
+{
+    align-items: flex-end;
+}
+
+.chatBoxHeader {
+    background-color: red;
+    height: 100px;
+    width: 100%;
+}
+
+.chatBox{
+    flex: 5.5;
+}
