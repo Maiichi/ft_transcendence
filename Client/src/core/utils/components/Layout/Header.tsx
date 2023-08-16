@@ -223,7 +223,7 @@ export const Header = () => {
                   padding: "5px 10px",
                   marginTop: "-34px!important",
                   background: "#ffffff",
-                  width: "-webkit-fill-available",
+                  width: "100%",
                 }
               )}
             />
