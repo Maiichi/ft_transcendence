@@ -19,7 +19,7 @@
 .messageText{
     padding: 10px;
     border-radius: 20px;
-    background-color: #530770;
+    background-color: rgb(122, 83, 199);
     color: white;
     max-width: 500px;
 }
@@ -34,12 +34,9 @@
     align-items: flex-end;
 }
 
-.chatBoxHeader {
-    background-color: red;
-    height: 100px;
-    width: 100%;
+.messageBox.own .messageText
+{
+    background-color: lightgray;
+    color: black;
 }
 
-.chatBox{
-    flex: 5.5;
-}

@@ -11,6 +11,7 @@ import { Avatar } from "@mui/material";
 
 import{ Message }from "./message/Message"
 import './chat.css';
+import { ChatUsers } from "./chatUsers/ChatUsers";
 
 export const Chat = () => {
   const state: ChatIshakState = useAppSelector((state) => state.chat);
@@ -31,12 +32,20 @@ export const Chat = () => {
 
   return (
     <Root>
-        <section className="discussions">
+        <div className="discussions">
           <div className="discussion search">
             <div className="searchbar">
               <i className="fa fa-search" aria-hidden="true"></i>
               <input type="text" placeholder="Search..."></input>
             </div>
+          </div>
+          <div className="discussion-room-user">
+            <button className="rooms">
+              RMs
+            </button>
+            <button className="dm">
+                DMs
+            </button>
           </div>
           <div className="discussion message-active">
             <div className="photo">
@@ -59,7 +68,7 @@ export const Chat = () => {
             </div>
             <div className="timer">3 min</div>
           </div>
-        </section>
+        </div>
         <div className="chatBox">
           <div className="chatBoxHeader">
 
@@ -67,12 +76,31 @@ export const Chat = () => {
           <div className="chatBoxWrapper">
               <div className="chatBoxTop">
                 <Message own= {false}/>
-                <Message own={false}/>
+                <Message own/>
+                <Message own= {false}/>
+                <Message own/>
+                <Message own= {false}/>
+                <Message own/>
+                <Message own= {false}/>
+                <Message own/>
+                <Message own= {false}/>
+                <Message own/>
+                <Message own= {false}/>
+                <Message own/>
+                <Message own/>
+                <Message own= {false}/>
+                <Message own/>
+                <Message own/>
+                <Message own= {false}/>
+                <Message own/>
               </div>
           </div>
-          <div className="chatBoxBottom"></div>
+          <div className="chatBoxBottom">
+            <textarea className="chatMessageInput" placeholder="Write your message ..."></textarea>
+            <button className="chatSubmitButtom">Send</button>
+          </div>
         </div>
-       
+        <ChatUsers/>
     </Root>
   );
 };

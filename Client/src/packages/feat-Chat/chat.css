@@ -1,4 +1,5 @@
 .discussions {
+    flex : 2.5;
     width: 35%;
     height: 100%;
     box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
@@ -6,6 +7,7 @@
     background-color: #87a3ec;
     display: inline-block;
     padding : 5px;
+    margin-right: 10px ;
   }
   
   .discussions .discussion {
@@ -71,8 +73,8 @@
       width: 45px;
       height: 45px;
       background: #E6E7ED;
-      -moz-border-radius: 50px;
-      -webkit-border-radius: 50px;
+      /* -moz-border-radius: 50px;
+      -webkit-border-radius: 50px; */
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
@@ -278,3 +280,75 @@
   .clickable {
     cursor: pointer;
   }
+
+
+.chatBoxHeader {
+    background-color: red;
+    height: 10%;
+    width: 100%;
+}
+
+.chatBox{
+    flex: 5.5;
+    height: 100%;
+}
+
+
+.chatBoxWrapper
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 80%;
+}
+
+.chatBoxTop{
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.chatBoxBottom{
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 10%;
+}
+
+.chatMessageInput {
+  width: 80%;
+  height: 50px;
+  padding: 10px;
+  margin: 10px;
+}
+
+.chatSubmitButtom {
+  width: 70px;
+  height: 40px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.discussion-room-user {
+  height: 5%;
+  display: flex;
+  align-items: center;
+}
+
+.rooms, .dm {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 10%;
+  cursor: pointer;
+  height: 100%;
+  background-color: rgb(122, 83, 199);
+  color: rgb(228, 224, 224);
+}
+
+.rooms {
+  border-right: none; /* Remove border on the right side of the "rooms" div */
+}

@@ -1,0 +1,49 @@
+.onlineUsersBox
+{
+  flex : 2;
+  height: 100%;
+  background-color: blueviolet;
+}
+
+.onlineUsersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  background-color: #E0E0E0;
+  height: 10%;
+}
+
+.onlineUserImgContainer {
+    margin-right: 10px;
+    position: relative;
+}
+
+.onlineUserImg{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border : 1px solid white;
+
+}
+
+.onlineUsersBadge
+{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: lime;
+    top: 0;
+    right: 0;
+}
+
+.onlineUsers {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 10px;
+}
+
