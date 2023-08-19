@@ -1,13 +1,13 @@
 .discussions {
     flex : 2.5;
     width: 35%;
-    height: 100%;
+    /* height: 100%; */
     box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
     overflow: hidden;
-    background-color: #87a3ec;
+    background-color: #c3bef7;
     display: inline-block;
     padding : 5px;
-    margin-right: 10px ;
+    border-radius: 20px;
   }
   
   .discussions .discussion {
@@ -18,16 +18,40 @@
     display:flex;
     align-items: center;
     cursor: pointer;
+    border-radius: 20px;
   }
   
-  .discussions .search {
-    display:flex;
+  .discussion-search {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    color: #E0E0E0;
+    justify-content: space-between; /* This will create space between the elements */
+    height: 10%;
+    border: 1px solid;
+    margin-bottom: 10px;
+    border-radius: 20px;
   }
   
-  .discussions .search .searchbar {
+  .chatTitleHolder
+  {
+    flex: 5;
+    margin-left: 10px;
+  }
+
+  .searchIconHolder {
+    flex: 1;
+    text-align: center;
+  }
+
+  .newMessageHolder {
+    flex: 1;
+  }
+
+  .messages-text {
+    margin: 10px; /* Remove default margin for <p> tag */
+    font-size: 40px;
+  }
+
+  /* .discussions .search .searchbar {
     height: 40px;
     background-color: #FFF;
     width: 70%;
@@ -37,7 +61,7 @@
     display:flex;
     align-items: center;
     cursor: pointer;
-  }
+  } */
   
   .discussions .search .searchbar input {
     margin-left: 15px;
@@ -285,12 +309,13 @@
 .chatBoxHeader {
     background-color: red;
     height: 10%;
-    width: 100%;
+    border-radius: 20px;
 }
 
 .chatBox{
     flex: 5.5;
     height: 100%;
+    margin: 0px 10px 0px 10px;
 }
 
 
@@ -308,7 +333,6 @@
 }
 
 .chatBoxBottom{
-  margin-top: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -334,6 +358,7 @@
   height: 5%;
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .rooms, .dm {
@@ -342,13 +367,23 @@
   justify-content: center;
   align-items: center;
   border: 1px solid black;
-  border-radius: 10%;
+  border-radius: 20px;
   cursor: pointer;
   height: 100%;
-  background-color: rgb(122, 83, 199);
-  color: rgb(228, 224, 224);
+  background-color: white;
+  color: black;
+  margin: 0px 3px 0px 3px;
 }
 
-.rooms {
-  border-right: none; /* Remove border on the right side of the "rooms" div */
+
+.active {
+  background-color:  rgb(122, 83, 199); /* Change this to your desired active button color */
+  color: white; /* Change this to your desired text color */
 }
+
+/* Enhance the hover effect for buttons */
+/* .rooms:hover,
+.dm:hover {
+  background-color: #d7c0f6; 
+  color: rgb(122, 83, 199); 
+} */

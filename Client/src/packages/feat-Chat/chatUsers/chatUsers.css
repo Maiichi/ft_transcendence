@@ -2,7 +2,8 @@
 {
   flex : 2;
   height: 100%;
-  background-color: blueviolet;
+  background-color: #c3bef7;
+  border-radius: 20px;
 }
 
 .onlineUsersHeader {
@@ -12,6 +13,7 @@
   color: black;
   background-color: #E0E0E0;
   height: 10%;
+  border-radius: 20px;
 }
 
 .onlineUserImgContainer {
@@ -45,5 +47,25 @@
     font-weight: 500;
     cursor: pointer;
     margin: 10px;
+    max-width: 100%;
 }
 
+.cardHolder{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #E0E0E0;
+  margin: 5px;
+}
+
+.divider
+{
+  background-color: black;
+  height: 2px;
+  margin-top: 20px;
+}
+
+.iconHolder {
+    position: relative;
+    margin-left: auto;
+}
