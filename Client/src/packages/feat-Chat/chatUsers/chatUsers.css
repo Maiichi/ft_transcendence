@@ -19,6 +19,7 @@
 .onlineUserImgContainer {
     margin-right: 10px;
     position: relative;
+    cursor: pointer;
 }
 
 .onlineUserImg{
@@ -45,7 +46,6 @@
     display: flex;
     align-items: center;
     font-weight: 500;
-    cursor: pointer;
     margin: 10px;
     max-width: 100%;
 }
@@ -66,6 +66,42 @@
 }
 
 .iconHolder {
+    display: flex;
     position: relative;
-    margin-left: auto;
+    margin-left: auto;   
+}
+
+.iconSVG {
+    cursor: pointer;
+    border: 1px solid #E0E0E0;
+    margin: 2px;
+}
+
+/* .iconHolder .iconSVG::after {
+  content: attr(data-description);
+  position: absolute;
+  top: -25px;
+  left: 0px;
+  opacity: 0;
+  width: 150px;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.iconHolder .iconSVG:hover::after {
+  opacity: 2;
+} */
+
+.iconHolder .iconSVG::after {
+  content: attr(data-description);
+  position: absolute;
+  top: -25px;
+  left: initial;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  width: 100px;
+  white-space: nowrap;
+}
+
+.iconHolder .iconSVG:hover::after {
+  opacity: 1;
 }

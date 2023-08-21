@@ -7,14 +7,12 @@ import {
 } from "./components/ChatIshak";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { Avatar } from "@mui/material";
 
 import{ Message }from "./message/Message"
 import './chat.css';
 import { ChatUsers } from "./chatUsers/ChatUsers";
-import { Search } from "@mui/icons-material";
-import MapsUgcIcon from '@mui/icons-material/MapsUgc';
-import DriveFileRenameOutlineTwoToneIcon from '@mui/icons-material/DriveFileRenameOutlineTwoTone';
+import { ChatSearchModal } from "./chatSearch/ChatSearchModal";
+import { MessageModal } from "./messageModal/MessageModal";
 
 export const Chat = () => {
   const state: ChatIshakState = useAppSelector((state) => state.chat);
@@ -24,6 +22,7 @@ export const Chat = () => {
   const [name, setName] = useState("");
   const [msg, setMsg] = useState("");
   const [selectedTab, setSelectedTab]  = useState('Dms');
+  
 
   const handleClick = () => {
     dispatch(sendMessage({ name, msg }));
@@ -39,7 +38,7 @@ export const Chat = () => {
       id: 1,
       type: 'Dms',
       name: 'Dave Corlew',
-      message: "Let's meet for a coffee or something today ?",
+      message: "Let",
       timer: '3 min'
     },
     {
@@ -50,6 +49,7 @@ export const Chat = () => {
       timer: '3 min'
     }
   ];
+
   const filteredDiscussions = discussions.filter(
     (discussion) => discussion.type === selectedTab
   );
@@ -63,13 +63,9 @@ export const Chat = () => {
               </p>
               
             </div>
-            <div className="searchIconHolder">
-                <Search></Search>
-            </div>
+            <ChatSearchModal />
             {/* need to add a model when clicking on this ICON */}
-            <div className="newMessageHolder">
-              <DriveFileRenameOutlineTwoToneIcon ></DriveFileRenameOutlineTwoToneIcon>
-            </div>
+            <MessageModal />
           </div>
           <div className="discussion-room-user">
             <button 
@@ -101,7 +97,7 @@ export const Chat = () => {
         </div>
         <div className="chatBox">
           <div className="chatBoxHeader">
-
+              ISHAK ZAIL
           </div>
           <div className="chatBoxWrapper">
               <div className="chatBoxTop">
@@ -134,6 +130,7 @@ export const Chat = () => {
     </Root>
   );
 };
+
 const Root = styled.div`
   margin: 1vw;
   display: flex;
@@ -146,3 +143,17 @@ const Root = styled.div`
   border-radius: 20px:
 
 `;
+
+const boxStyle = {
+  position: 'absolute' as 'absolute',
+  top: '30%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '1px solid #000',
+  boxShadow: 24,
+  p: 4,
+  borderRadius: '20px',
+  height: '400px'
+};
