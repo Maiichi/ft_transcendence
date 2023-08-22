@@ -2,7 +2,7 @@ import { Chip, Divider, makeStyles } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import HomeIcon from "@mui/icons-material/Home";
-import ChatIcon from '@mui/icons-material/Chat';
+import ChatIcon from "@mui/icons-material/Chat";
 import { ListComponent } from "../List";
 
 type Anchor = "top" | "left" | "bottom" | "right";
@@ -23,10 +23,10 @@ const Menu = [
     icon: SportsEsportsIcon,
   },
   {
-    redirect : "/chat",
+    redirect: "/chat",
     render: "Chat",
-    icon: ChatIcon
-  }
+    icon: ChatIcon,
+  },
 ];
 interface ListNavProps {
   toggleDrawer?: (
