@@ -1,0 +1,19 @@
+.css-cveggr-MuiListItemIcon-root:hover {
+  color: rgb(94, 53, 177);
+}
+
+.css-1nxmd3h-MuiListItem-root {
+  background-color: inherit;
+}
+.css-1nxmd3h-MuiListItem-root:hover {
+  color: rgb(94, 53, 177);
+  background-color: rgb(237, 231, 246);
+}
+.title {
+  margin: 0px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: Roboto, sans-serif;
+  line-height: 1.334;
+  color: inherit;
+}
