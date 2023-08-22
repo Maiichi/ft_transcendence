@@ -1,4 +1,11 @@
-import { Avatar, FormControlLabel, Switch, TextField } from "@mui/material";
+import {
+  Avatar,
+  FormControlLabel,
+  LinearProgress,
+  LinearProgressProps,
+  Switch,
+  TextField,
+} from "@mui/material";
 import BalanceIcon from "@mui/icons-material/Balance";
 import { useState } from "react";
 import styled from "styled-components";
@@ -6,7 +13,29 @@ import CircularProgress, {
   CircularProgressProps,
 } from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Box from "@mui/material/Box";
+import Logo from "./federation.png";
+import Picture from "./Picture.png";
+import VerifiedIcon from "@mui/icons-material/Verified";
+import PendingIcon from "@mui/icons-material/Pending";
+
+function LinearProgressWithLabel(
+  props: LinearProgressProps & { value: number }
+) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ width: "100%", mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" color="text.secondary">{`${Math.round(
+          props.value
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
 
 function CircularProgressWithLabel(
   props: CircularProgressProps & { value: number }
@@ -36,31 +65,126 @@ function CircularProgressWithLabel(
   );
 }
 export const Settings = () => {
+  const progress = 60;
   const [twoFact, setTwoFact] = useState<boolean>(false);
   return (
     <Root>
       <Cards>
         <LeftCard>
           <CardAvatar>
-            <Avatar
-              sx={{ width: "50px", height: "50px" }}
-              alt="Remy Sharp"
-              src="/static/images/avatar/1.jpg"
-            />
-            <Title style={{ fontSize: "1rem" }}>Ibouroum</Title>
-            <H5>Total matches : 60</H5>
-            <H5>Wins : 10</H5>
-            <H5>Losses : 50</H5>
-            <H5>Ladder level: 10</H5>
-            <H5>Achievement</H5>
-            <CircularProgressWithLabel value={60} />
-            <BalanceIcon />
+            <div style={{}}>
+              <H5>The federation</H5>
+              <img alt="Remy Sharp" src={Logo} />
+              <H5>#155</H5>
+            </div>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "40px" }}
+            >
+              <div
+                style={{ display: "flex", gap: "20px", alignItems: "center" }}
+              >
+                <img
+                  style={{ width: "80px", height: "80px" }}
+                  alt="Remy Sharp"
+                  src={Picture}
+                />
+                <Title style={{ fontSize: "1rem" }}>Ibouroum</Title>
+                <CircularProgressWithLabel value={60} />
+              </div>
+              <div style={{ display: "flex", gap: "20px" }}>
+                <div style={{}}>
+                  <H5>Wins </H5>
+                  <Title>50 </Title>
+                </div>
+                <div style={{}}>
+                  <H5>Losses </H5>
+                  <Title>10 </Title>
+                </div>
+
+                <div style={{}}>
+                  <H5>Ladder level </H5>
+                  <Title>5 </Title>
+                </div>
+              </div>
+            </div>
           </CardAvatar>
-          <CardAvatar></CardAvatar>
+          <Achievement>
+            <Title>Achievements</Title>
+
+            {[1, 2, 3, 4, 5].map((item) => (
+              <div
+                style={{
+                  display: "flex",
+                  background: "#f0fff0",
+                  margin: "10px",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  style={{ width: "35px", height: "55px" }}
+                  alt="Remy Sharp"
+                  src={Logo}
+                />
+                <div style={{ textAlign: "start" }}>
+                  <Title>Hero</Title>
+                  <H5>Must win 10 games </H5>
+                  <LinearProgressWithLabel value={progress} />
+                </div>
+                {item < 3 ? (
+                  <VerifiedIcon color="success" />
+                ) : (
+                  <PendingIcon color="disabled" />
+                )}
+              </div>
+            ))}
+          </Achievement>
         </LeftCard>
         <RightCard>
-          {/* <Title style={{ fontSize: "1rem" }}>Profile</Title> */}
-          {/* <H5>The informations can be edited</H5> */}
+          <TopPlayers>
+            <Title>Top 5 Players</Title>
+            {/* <Player>
+              <></>
+              <></>
+              <Title>Ladder</Title>
+              <Title>Wins</Title>
+              <Title>Losses</Title>
+              <Title>Achivement</Title>
+            </Player> */}
+            {[1, 2, 3, 4, 5].map((item) => (
+              <Player>
+                <img
+                  style={{ width: "30px", height: "45px", margin: "5px" }}
+                  alt="Remy Sharp"
+                  src={Logo}
+                />
+                <H5># {item}</H5>
+                <img
+                  style={{ width: "30px", height: "30px" }}
+                  alt="Remy Sharp"
+                  src={Picture}
+                />
+                <Title>IZail</Title>
+                <div style={{ display: "flex", gap: "20px" }}>
+                  <div style={{}}>
+                    <Title>5 </Title>
+                    <H5>Ladder </H5>
+                  </div>
+                  <div style={{}}>
+                    <Title>50 </Title>
+                    <H5>Wins </H5>
+                  </div>
+                  <div style={{}}>
+                    <Title>10 </Title>
+                    <H5>Losses </H5>
+                  </div>
+                </div>
+
+                <MoreVertIcon />
+              </Player>
+            ))}
+          </TopPlayers>
+          <MatchHistory>My Last 5 Matches </MatchHistory>
         </RightCard>
       </Cards>
     </Root>
@@ -77,45 +201,59 @@ const Cards = styled.div`
   }
 `;
 const LeftCard = styled.div`
-  width: 40%;
   display: flex;
   flex-direction: column;
   gap: 10px;
   @media (max-width: 426px) {
-    width: 75%;
+  }
+`;
+const RightCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  @media (max-width: 426px) {
   }
 `;
 const CardAvatar = styled.div`
-  height: fit-content;
-  margin-right: 5px;
-  margin-top: 10px
-  padding: 32px 24px 6px 32px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  align-items: center;
-  display: flex;
-  flex-direction: column;
+margin-right: 5px;
+background-color: rgb(255, 255, 255);
+color: rgb(17, 25, 39);
+box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+border-radius: 20px;
+-webkit-box-align: center;
+align-items: center;
+text-align: center;
+display: flex;
+padding: 10px;
+gap: 40px
+
+}
+
   @media (max-width: 426px) {
    
   }
 `;
-const RightCard = styled.div`
-  margin-left: 5px;
-  width: 60%;
-  background-color: rgb(255, 255, 255);
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  padding: 32px 24px 10px 32px;
+
+const Achievement = styled.div`
+margin-right: 5px;
+background-color: rgb(255, 255, 255);
+color: rgb(17, 25, 39);
+box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+border-radius: 20px;
+-webkit-box-align: center;
+align-items: center;
+text-align: center;
+
+padding: 10px;
+gap: 40px
+
+}
+
   @media (max-width: 426px) {
-    margin: 5px 0px;
-    width: 75%;
+   
   }
 `;
+
 const Title = styled.h4`
   margin: 0px;
   font-family: "Plus Jakarta Sans", sans-serif;
@@ -192,11 +330,53 @@ const H5 = styled.h4`
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   color: rgb(108, 115, 127);
 `;
-const Divider = styled.hr`
-  margin-top: 15px;
-  width: -webkit-fill-available;
+const TopPlayers = styled.div`
+margin-right: 5px;
+background-color: rgb(255, 255, 255);
+color: rgb(17, 25, 39);
+box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+border-radius: 20px;
+-webkit-box-align: center;
+align-items: center;
+text-align: center;
 
-  border-width: 0px 0px thin;
-  border-style: solid;
-  border-color: rgb(242, 244, 247);
+padding: 10px;
+
+
+}
+
+  @media (max-width: 426px) {
+   
+  }
+`;
+const MatchHistory = styled.div`
+margin-right: 5px;
+background-color: rgb(255, 255, 255);
+color: rgb(17, 25, 39);
+box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+border-radius: 20px;
+-webkit-box-align: center;
+align-items: center;
+text-align: center;
+display: flex;
+padding: 10px;
+gap: 40px
+
+}
+
+  @media (max-width: 426px) {
+   
+  }
+`;
+const Player = styled.div`
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: start;
+  border-radius: 8.295px;
+  gap: 20px;
+  margin: 10px;
+  justify-content: space-around;
+  background: rgba(156, 163, 175, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 2.07377px 4.14754px 0px;
 `;
