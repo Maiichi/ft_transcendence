@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
+import AddIcon from "@mui/icons-material/Add";
 import {
   ChatIshakState,
   clearState,
@@ -7,12 +8,13 @@ import {
 } from "./components/ChatIshak";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-
-import{ Message }from "./message/Message"
-import './chat.css';
+import Picture from "./Picture.png";
+import { Message } from "./message/Message";
+import "./chat.css";
 import { ChatUsers } from "./chatUsers/ChatUsers";
 import { ChatSearchModal } from "./chatSearch/ChatSearchModal";
 import { MessageModal } from "./messageModal/MessageModal";
+import { Avatar, Badge } from "@mui/material";
 
 export const Chat = () => {
   const state: ChatIshakState = useAppSelector((state) => state.chat);
@@ -21,8 +23,7 @@ export const Chat = () => {
   const chatState = useAppSelector((state) => state.chat);
   const [name, setName] = useState("");
   const [msg, setMsg] = useState("");
-  const [selectedTab, setSelectedTab]  = useState('Dms');
-  
+  const [selectedTab, setSelectedTab] = useState("Dms");
 
   const handleClick = () => {
     dispatch(sendMessage({ name, msg }));
@@ -36,18 +37,32 @@ export const Chat = () => {
   const discussions = [
     {
       id: 1,
-      type: 'Dms',
-      name: 'Dave Corlew',
-      message: "Let",
-      timer: '3 min'
+      type: "Rms",
+      name: "Room 1",
+      message: "Let's meet for a coffee or something today ?",
+      timer: "3 min",
     },
     {
       id: 2,
-      type: 'Rms',
-      name: 'Room 1',
+      type: "Rms",
+      name: "Room 1",
       message: "Let's meet for a coffee or something today ?",
-      timer: '3 min'
-    }
+      timer: "3 min",
+    },
+    {
+      id: 3,
+      type: "Rms",
+      name: "Room 1",
+      message: "Let's meet for a coffee or something today ?",
+      timer: "3 min",
+    },
+    {
+      id: 4,
+      type: "Rms",
+      name: "Room 1",
+      message: "Let's meet for a coffee or something today ?",
+      timer: "3 min",
+    },
   ];
 
   const filteredDiscussions = discussions.filter(
@@ -55,78 +70,106 @@ export const Chat = () => {
   );
   return (
     <Root>
-        <div className="discussions">
-          <div className="discussion-search">
-            <div className="chatTitleHolder">
-              <p className="messages-text">
-                Messages
-              </p>
-              
-            </div>
-            <ChatSearchModal />
-            {/* need to add a model when clicking on this ICON */}
-            <MessageModal />
-          </div>
-          <div className="discussion-room-user">
-            <button 
-              className={`rooms ${selectedTab === 'Dms' ? 'active' : ''}`}
-              onClick={() => setSelectedTab('Dms')}
-            >
-              Dms
-            </button>
-            <button 
-             className={`dm ${selectedTab === 'Rms' ? 'active' : ''}`}
-             onClick={() => setSelectedTab('Rms')}
-            >
-                Rms
-            </button>
-          </div>
-          {filteredDiscussions.map((discussion) => (
+      <div className="discussions">
+        {/* <div> */}
+        {/* <div className="chatTitleHolder"> */}
+        <p className="messages-text">Discussions</p>
+        {/* </div> */}
+        {/* <ChatSearchModal /> */}
+        {/* need to add a model when clicking on this ICON */}
+        {/* <MessageModal /> */}
+        <SearchComponent />
+        {/* </div> */}
+        {/* <div className="discussion-room-user">
+          <button
+            className={`rooms ${selectedTab === "Dms" ? "active" : ""}`}
+            onClick={() => setSelectedTab("Dms")}
+          >
+            Dms
+          </button>
+          <button
+            className={`dm ${selectedTab === "Rms" ? "active" : ""}`}
+            onClick={() => setSelectedTab("Rms")}
+          >
+            Rms
+          </button>
+        </div> */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            color: "rgb(94, 53, 177)",
+          }}
+        >
+          <p>Channels</p>
+          <AddIcon />
+        </div>
+        <div style={{ padding: "0px 15px" }}>
+          {[1, 2, 3, 4, 5].map((item) => (
+            <p># Channel {item}</p>
+          ))}
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            color: "rgb(94, 53, 177)",
+          }}
+        >
+          <p>Direct Messages</p>
+          <AddIcon />
+        </div>
+        <div style={{ padding: "0px 15px" }}>
+          {discussions.map((discussion) => (
             <div key={discussion.id} className="discussion">
-              <div className="photo">
-                <div className="online"></div>
-              </div>
+              <Badge
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                color={discussion.id <= 2 ? "success" : "error"}
+                overlap="circular"
+                variant="dot"
+              >
+                <img className="photo" src={Picture} />
+              </Badge>
+
               <div className="desc-contact">
                 <p className="name">{discussion.name}</p>
                 <p className="message">{discussion.message}</p>
               </div>
-              <div className="timer">{discussion.timer}</div>
+
+              <p>18:00</p>
+
+              {/* <div className="timer">{discussion.timer}</div> */}
             </div>
           ))}
-         
         </div>
-        <div className="chatBox">
-          <div className="chatBoxHeader">
-              ISHAK ZAIL
-          </div>
-          <div className="chatBoxWrapper">
-              <div className="chatBoxTop">
-                <Message own= {false}/>
-                <Message own/>
-                <Message own= {false}/>
-                <Message own/>
-                <Message own= {false}/>
-                <Message own/>
-                <Message own= {false}/>
-                <Message own/>
-                <Message own= {false}/>
-                <Message own/>
-                <Message own= {false}/>
-                <Message own/>
-                <Message own/>
-                <Message own= {false}/>
-                <Message own/>
-                <Message own/>
-                <Message own= {false}/>
-                <Message own/>
-              </div>
-          </div>
-          <div className="chatBoxBottom">
-            <textarea className="chatMessageInput" placeholder="Write your message ..."></textarea>
-            <button className="chatSubmitButtom">Send</button>
+      </div>
+      <div className="chatBox">
+        <div className="chatBoxHeader">ISHAK ZAIL</div>
+        <div className="chatBoxWrapper">
+          <div className="chatBoxTop">
+            {[1, 2, 3, 4].map((item) => (
+              <>
+                <Message own={false} />
+                <Message own />
+              </>
+            ))}
           </div>
         </div>
-        <ChatUsers type={selectedTab}/>
+        <div className="chatBoxBottom">
+          <textarea
+            className="chatMessageInput"
+            placeholder="Write your message ..."
+          ></textarea>
+          <button className="chatSubmitButtom">Send</button>
+        </div>
+      </div>
+      <ChatUsers type={selectedTab} />
     </Root>
   );
 };
@@ -145,15 +188,17 @@ const Root = styled.div`
 `;
 
 const boxStyle = {
-  position: 'absolute' as 'absolute',
-  top: '30%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute" as "absolute",
+  top: "30%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '1px solid #000',
+  bgcolor: "background.paper",
+  border: "1px solid #000",
   boxShadow: 24,
   p: 4,
-  borderRadius: '20px',
-  height: '400px'
+  borderRadius: "20px",
+  height: "400px",
 };
+
+const title = styled.h4``;

@@ -1,349 +1,324 @@
 .discussions {
-    flex : 2.5;
-    width: 35%;
-    /* height: 100%; */
-    box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
-    overflow: hidden;
-    background-color: #c3bef7;
-    display: inline-block;
-    padding : 5px;
-    border-radius: 20px;
-  }
-  
-  .discussions .discussion {
-    width: 100%;
-    height: 90px;
-    background-color: #FAFAFA;
-    border-bottom: solid 1px #E0E0E0;
-    display:flex;
-    align-items: center;
-    cursor: pointer;
-    border-radius: 20px;
-  }
-  
-  .discussion-search {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* This will create space between the elements */
-    height: 10%;
-    border: 1px solid;
-    margin-bottom: 10px;
-    border-radius: 20px;
-  }
-  
-  .chatTitleHolder
-  {
-    flex: 5;
-    margin-left: 10px;
-  }
+  overflow: hidden;
 
-  .searchIconHolder {
-    flex: 1;
-    text-align: center;
-    border-radius: 50px;
-    background-color: #bdbadc;
-    cursor: pointer;
-  }
+  /* display: inline-block; */
+  padding: 5px;
+}
 
+.discussions .discussion {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 10px 0px;
+}
+.discussions .discussion :hover {
+  background-color: #f5f6f7;
+}
 
-  .messages-text {
-    margin: 10px; /* Remove default margin for <p> tag */
-    font-size: 40px;
-  }
+.discussion-search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This will create space between the elements */
+  height: 10%;
+  border: 1px solid;
+  margin-bottom: 10px;
+  border-radius: 20px;
+}
+
+.chatTitleHolder {
+  flex: 5;
+  margin-left: 10px;
+}
+
+.searchIconHolder {
+  flex: 1;
+  text-align: center;
+  border-radius: 50px;
+  background-color: #bdbadc;
+  cursor: pointer;
+}
+
+.messages-text {
+  margin: 10px; /* Remove default margin for <p> tag */
+  font-size: 40px;
+}
 
 .searchbar {
   height: 40px;
-    background-color: #FFF;
-    width: 70%;
-    padding: 0 20px;
-    border-radius: 50px;
-    border: 1px solid #EEEEEE;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+  background-color: #fff;
+  width: 70%;
+  padding: 0 20px;
+  border-radius: 50px;
+  border: 1px solid #eeeeee;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
-  
+
 .searchInput {
-    margin-left: 15px;
-    height:38px;
-    width:100%;
-    border:none;
-    font-family: 'Montserrat', sans-serif;;
+  margin-left: 15px;
+  height: 38px;
+  width: 100%;
+  border: none;
+  font-family: "Montserrat", sans-serif;
 }
 
 .fa-fa-search {
   display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
-    font-size: inherit;
-    text-rendering: auto;
-
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
 }
 
 .modalHeaderSearch {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #E0E0E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e0e0e0;
 }
-  
-  .discussions .message-active {
-    width: 98.5%;
-    height: 90px;
-    background-color: #FFF;
-    border-bottom: solid 1px #E0E0E0;
-  }
-  
-  .discussions .discussion .photo {
-      margin-left:20px;
-      display: block;
-      width: 45px;
-      height: 45px;
-      background: #E6E7ED;
-      /* -moz-border-radius: 50px;
-      -webkit-border-radius: 50px; */
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
-  }
 
-  .online {
-    position: relative;
-    top: 30px;
-    left: 35px;
-    width: 13px;
-    height: 13px;
-    background-color: #8BC34A;
-    border-radius: 13px;
-    border: 3px solid #FAFAFA;
-  }
-  
-  .desc-contact {
-    height: 43px;
-    width:50%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .discussions .discussion .name {
-    margin: 0 0 0 20px;
-    font-family:'Montserrat', sans-serif;
-    font-size: 11pt;
-    color:#515151;
-  }
-  
-  .discussions .discussion .message {
-    margin: 6px 0 0 20px;
-    font-family:'Montserrat', sans-serif;
-    font-size: 9pt;
-    color:#515151;
-  }
-  
-  .timer {
-    margin-left: 25%;
-    font-family:'Open Sans', sans-serif;
-    font-size: 11px;
-    padding: 3px 8px;
-    color: #BBB;
-    background-color: #FFF;
-    border: 1px solid #E5E5E5;
-    border-radius: 15px;
-  }
+.discussions .message-active {
+  width: 98.5%;
+  height: 90px;
+  background-color: #fff;
+  border-bottom: solid 1px #e0e0e0;
+}
 
-  .chat {
-    width: calc(65% - 85px);
-  }
-  
-  .header-chat {
-    background-color: #FFF;
-    height: 90px;
-    box-shadow: 0px 3px 2px rgba(0,0,0,0.100);
-    display:flex;
-    align-items: center;
-  }
-  
-  .chat .header-chat .icon {
-    margin-left: 30px;
-    color:#515151;
-    font-size: 14pt;
-  }
-  
-  .chat .header-chat .name {
-    margin: 0 0 0 20px;
-    text-transform: uppercase;
-    font-family:'Montserrat', sans-serif;
-    font-size: 13pt;
-    color:#515151;
-  }
-  
-  .chat .header-chat .right {
-    position: absolute;
-    right: 40px;
-  }
-  
-  .chat .messages-chat {
-    padding: 25px 35px;
-  }
-  
-  .chat .messages-chat .message {
-    display:flex;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
-  .chat .messages-chat .message .photo {
-      display: block;
-      width: 45px;
-      height: 45px;
-      background: #E6E7ED;
-      -moz-border-radius: 50px;
-      -webkit-border-radius: 50px;
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
-  }
-  
-  .chat .messages-chat .text {
-    margin: 0 35px;
-    background-color: #f6f6f6;
-    padding: 15px;
-    border-radius: 12px;
-  }
-  
-  .text-only {
-    margin-left: 45px;
-  }
-  
-  .time {
-    font-size: 10px;
-    color:lightgrey;
-    margin-bottom:10px;
-    margin-left: 85px;
-  }
-  
-  .response-time {
-    float: right;
-    margin-right: 40px !important;
-  }
-  
-  .response {
-    float: right;
-    margin-right: 0px !important;
-    margin-left:auto; /* flexbox alignment rule */
-  }
-  
-  .response .text {
-    background-color: #e3effd !important;
-  }
-  
-  .footer-chat {
-    width: calc(65% - 66px);
-    height: 80px;
-    display:flex;
-    align-items: center;
-    position:absolute;
-    bottom: 0;
-    background-color: transparent;
-    border-top: 2px solid #EEE;
-    
-  }
-  
-  .chat .footer-chat .icon {
-    margin-left: 30px;
-    color:#C0C0C0;
-    font-size: 14pt;
-  }
-  
-  .chat .footer-chat .send {
-    color:#fff;
-    background-color: #4f6ebd;
-    position: absolute;
-    right: 50px;
-    padding: 12px 12px 12px 12px;
-    border-radius: 50px;
-    font-size: 14pt;
-  }
-  
-  .chat .footer-chat .name {
-    margin: 0 0 0 20px;
-    text-transform: uppercase;
-    font-family:'Montserrat', sans-serif;
-    font-size: 13pt;
-    color:#515151;
-  }
-  
-  .chat .footer-chat .right {
-    position: absolute;
-    right: 40px;
-  }
-  
-  .write-message {
-    border:none !important;
-    width:60%;
-    height: 50px;
-    margin-left: 20px;
-    padding: 10px;
-  }
-  
-  .footer-chat *::-webkit-input-placeholder {
-    color: #C0C0C0;
-    font-size: 13pt;
-  }
-  .footer-chat input *:-moz-placeholder {
-    color: #C0C0C0;
-    font-size: 13pt;
-  }
-  .footer-chat input *::-moz-placeholder {
-    color: #C0C0C0;
-    font-size: 13pt;
-    margin-left:5px;
-  }
-  .footer-chat input *:-ms-input-placeholder {
-    color: #C0C0C0;
-    font-size: 13pt;
-  }
-  
-  .clickable {
-    cursor: pointer;
-  }
+.discussions .discussion .photo {
+  width: 45px;
+  height: 45px;
+}
 
+.online {
+  position: relative;
+  top: 30px;
+  left: 35px;
+  width: 13px;
+  height: 13px;
+  background-color: #8bc34a;
+  border-radius: 13px;
+  border: 3px solid #fafafa;
+}
+
+.desc-contact {
+  max-width: 70%;
+}
+
+.discussions .discussion .name {
+  margin: 0 0 0 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 11pt;
+  color: #515151;
+}
+
+.discussions .discussion .message {
+  margin: 6px 0 0 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 9pt;
+  color: #515151;
+}
+
+.timer {
+  margin-left: 25%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 11px;
+  padding: 3px 8px;
+  color: #bbb;
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 15px;
+}
+
+.chat {
+  width: calc(65% - 85px);
+}
+
+.header-chat {
+  background-color: #fff;
+  height: 90px;
+  box-shadow: 0px 3px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.chat .header-chat .icon {
+  margin-left: 30px;
+  color: #515151;
+  font-size: 14pt;
+}
+
+.chat .header-chat .name {
+  margin: 0 0 0 20px;
+  text-transform: uppercase;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13pt;
+  color: #515151;
+}
+
+.chat .header-chat .right {
+  position: absolute;
+  right: 40px;
+}
+
+.chat .messages-chat {
+  padding: 25px 35px;
+}
+
+.chat .messages-chat .message {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.chat .messages-chat .message .photo {
+  display: block;
+  width: 45px;
+  height: 45px;
+  background: #e6e7ed;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.chat .messages-chat .text {
+  margin: 0 35px;
+  background-color: #f6f6f6;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.text-only {
+  margin-left: 45px;
+}
+
+.time {
+  font-size: 10px;
+  color: lightgrey;
+  margin-bottom: 10px;
+  margin-left: 85px;
+}
+
+.response-time {
+  float: right;
+  margin-right: 40px !important;
+}
+
+.response {
+  float: right;
+  margin-right: 0px !important;
+  margin-left: auto; /* flexbox alignment rule */
+}
+
+.response .text {
+  background-color: #e3effd !important;
+}
+
+.footer-chat {
+  width: calc(65% - 66px);
+  height: 80px;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  background-color: transparent;
+  border-top: 2px solid #eee;
+}
+
+.chat .footer-chat .icon {
+  margin-left: 30px;
+  color: #c0c0c0;
+  font-size: 14pt;
+}
+
+.chat .footer-chat .send {
+  color: #fff;
+  background-color: #4f6ebd;
+  position: absolute;
+  right: 50px;
+  padding: 12px 12px 12px 12px;
+  border-radius: 50px;
+  font-size: 14pt;
+}
+
+.chat .footer-chat .name {
+  margin: 0 0 0 20px;
+  text-transform: uppercase;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13pt;
+  color: #515151;
+}
+
+.chat .footer-chat .right {
+  position: absolute;
+  right: 40px;
+}
+
+.write-message {
+  border: none !important;
+  width: 60%;
+  height: 50px;
+  margin-left: 20px;
+  padding: 10px;
+}
+
+.footer-chat *::-webkit-input-placeholder {
+  color: #c0c0c0;
+  font-size: 13pt;
+}
+.footer-chat input *:-moz-placeholder {
+  color: #c0c0c0;
+  font-size: 13pt;
+}
+.footer-chat input *::-moz-placeholder {
+  color: #c0c0c0;
+  font-size: 13pt;
+  margin-left: 5px;
+}
+.footer-chat input *:-ms-input-placeholder {
+  color: #c0c0c0;
+  font-size: 13pt;
+}
+
+.clickable {
+  cursor: pointer;
+}
 
 .chatBoxHeader {
-    background-color: red;
-    height: 10%;
-    border-radius: 20px;
+  background-color: red;
+  height: 10%;
+  border-radius: 20px;
 }
 
-.chatBox{
-    flex: 5.5;
-    height: 100%;
-    margin: 0px 10px 0px 10px;
+.chatBox {
+  flex: 5.5;
+  height: 100%;
+  margin: 0px 10px 0px 10px;
 }
 
-
-.chatBoxWrapper
-{
+.chatBoxWrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 80%;
 }
 
-.chatBoxTop{
+.chatBoxTop {
   height: 100%;
   overflow-y: scroll;
 }
-  /* Hide scrollbar for Chrome, Safari and Opera */
+/* Hide scrollbar for Chrome, Safari and Opera */
 .chatBoxTop::-webkit-scrollbar {
   display: none;
 }
 /* Hide scrollbar for IE, Edge and Firefox */
 .chatBoxTop {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-.chatBoxBottom{
+.chatBoxBottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -372,7 +347,8 @@
   margin-bottom: 10px;
 }
 
-.rooms, .dm {
+.rooms,
+.dm {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -386,9 +362,12 @@
   margin: 0px 3px 0px 3px;
 }
 
-
 .active {
-  background-color:  rgb(122, 83, 199); /* Change this to your desired active button color */
+  background-color: rgb(
+    122,
+    83,
+    199
+  ); /* Change this to your desired active button color */
   color: white; /* Change this to your desired text color */
 }
 

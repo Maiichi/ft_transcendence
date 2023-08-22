@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Search, PersonAddTwoTone, VideogameAssetTwoTone, MapsUgcTwoTone } from "@mui/icons-material";
+import {
+  Search,
+  PersonAddTwoTone,
+  VideogameAssetTwoTone,
+  MapsUgcTwoTone,
+} from "@mui/icons-material";
 import { Box, Modal } from "@mui/material";
 import "./chatSearch.css";
 
@@ -10,62 +15,59 @@ export const ChatSearchModal = () => {
 
   const discussions = [
     {
-        id: 1,
-        type: 'room',
-        name: 'riyada',
+      id: 1,
+      type: "room",
+      name: "riyada",
     },
     {
-        id: 2,
-        type: 'user',
-        name: 'Ismail Bouroummana'
-    }
+      id: 2,
+      type: "user",
+      name: "Ismail Bouroummana",
+    },
   ];
   const ModalBody = () => {
-
     if (discussions.length > 0) {
       return (
         <div className="modalBody">
-          {discussions.map(discussion => (
+          {discussions.map((discussion) => (
             <>
-              {discussion.type === 'room' &&  (
+              {discussion.type === "room" && (
                 <div className="modalBodyElement">
-                    <div
-                        className="photo"
-                        style={{
-                            backgroundImage:
-                            "url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)",
-                        }}
-                        ></div>
-                        <div className="desc-contact">
-                        <p className="name">{discussion.name}</p>
-                        </div>
-                        <div className="modalSearchIconHolder">
-                            <div className="icon-1">
-                                join
-                            </div>
-                        </div>
-                    </div>    
-              )}
-              {discussion.type === 'user' && (
-                <div className="modalBodyElement">
-                    <div
+                  <div
                     className="photo"
                     style={{
-                        backgroundImage:
+                      backgroundImage:
                         "url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)",
                     }}
-                    ></div>
-                    <div className="desc-contact">
+                  ></div>
+                  <div className="desc-contact">
                     <p className="name">{discussion.name}</p>
+                  </div>
+                  <div className="modalSearchIconHolder">
+                    <div className="icon-1">join</div>
+                  </div>
+                </div>
+              )}
+              {discussion.type === "user" && (
+                <div className="modalBodyElement">
+                  <div
+                    className="photo"
+                    style={{
+                      backgroundImage:
+                        "url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)",
+                    }}
+                  ></div>
+                  <div className="desc-contact">
+                    <p className="name">{discussion.name}</p>
+                  </div>
+                  <div className="modalSearchIconHolder">
+                    <div className="icon-1">
+                      <MapsUgcTwoTone></MapsUgcTwoTone>
                     </div>
-                    <div className="modalSearchIconHolder">
-                        <div className="icon-1">
-                            <MapsUgcTwoTone></MapsUgcTwoTone>
-                        </div>
-                        <div className="icon-1">
-                            <VideogameAssetTwoTone></VideogameAssetTwoTone>
-                        </div>
+                    <div className="icon-1">
+                      <VideogameAssetTwoTone></VideogameAssetTwoTone>
                     </div>
+                  </div>
                 </div>
               )}
             </>
@@ -74,13 +76,11 @@ export const ChatSearchModal = () => {
       );
     } else {
       return (
-        <div className="modalBodyElement">
-          No Users or rooms available.
-        </div>
+        <div className="modalBodyElement">No Users or rooms available.</div>
       );
     }
   };
-  
+
   return (
     <div className="searchIconHolder">
       <Search onClick={handleOpen}></Search>
@@ -91,19 +91,19 @@ export const ChatSearchModal = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={boxStyle}>
-            <div className="modalHeader">
-                <div className="modalHeaderSearch">
-                  <div className="searchbar">
-                      {/* <i className="fa-fa-search" aria-hidden="false"></i> */}
-                      <input
-                      className="searchInput"
-                      type="text"
-                      placeholder="Search..."
-                      ></input>
-                  </div>
-                </div>
+          <div className="modalHeader">
+            <div className="modalHeaderSearch">
+              <div className="searchbar">
+                {/* <i className="fa-fa-search" aria-hidden="false"></i> */}
+                <input
+                  className="searchInput"
+                  type="text"
+                  placeholder="Search..."
+                ></input>
+              </div>
             </div>
-            <ModalBody />
+          </div>
+          <ModalBody />
         </Box>
       </Modal>
     </div>
