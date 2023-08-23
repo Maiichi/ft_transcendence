@@ -1,0 +1,87 @@
+.modalHeader
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.close-button:hover 
+{
+    color: red;
+    border-radius: 20px;
+}
+
+.channelNameHolder{
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.channelDescriptionHolder
+{
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.channel-name-input,
+.channel-desc-input,
+.channel-password-input
+{
+    height: 100%;
+    padding: 10px;
+    border : 1px solid #d5d0d0;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: #F9F9F9;
+}
+
+input.channel-name-input::before 
+{
+    content: "#";
+    white-space: nowrap;
+    position: absolute;
+}
+/* .channel-desc-input {
+    height: 100%;
+    padding: 10px;
+    border : 1px solid #d5d0d0;
+    background-color: #F9F9F9;
+    border-radius: 5px;
+    margin-top: 10px;
+} */
+
+
+.passwordHeaderHolder
+{
+    display: flex;
+    justify-content: space-between;
+    margin: 5px;
+    align-items: baseline;
+}
+
+.passwordHolder 
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.modalFooter {
+    margin: 25px 0px 0px 0px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.button-cancel,
+.button-create
+{
+    height: 40px;
+    width: 100px;
+    border: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.button-create {
+    background-color: rgb(178, 163, 201);
+}

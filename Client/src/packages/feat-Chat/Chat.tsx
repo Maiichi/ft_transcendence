@@ -14,7 +14,8 @@ import "./chat.css";
 import { ChatUsers } from "./chatUsers/ChatUsers";
 import { ChatSearchModal } from "./chatSearch/ChatSearchModal";
 import { MessageModal } from "./messageModal/MessageModal";
-import { Avatar, Badge } from "@mui/material";
+import { Avatar, Badge, Box, Modal } from "@mui/material";
+import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
 
 export const Chat = () => {
   const state: ChatIshakState = useAppSelector((state) => state.chat);
@@ -24,6 +25,7 @@ export const Chat = () => {
   const [name, setName] = useState("");
   const [msg, setMsg] = useState("");
   const [selectedTab, setSelectedTab] = useState("Dms");
+  const [iconChannelOpen, setIconChannelOpen] = useState(false);
 
   const handleClick = () => {
     dispatch(sendMessage({ name, msg }));
@@ -100,23 +102,24 @@ export const Chat = () => {
             alignItems: "center",
             justifyContent: "space-between",
             color: "rgb(94, 53, 177)",
+            margin: "0px 10px 0px 10px",
           }}
         >
           <p>Channels</p>
-          <AddIcon />
+        <CreateChannelModal />
         </div>
         <div style={{ padding: "0px 15px" }}>
           {[1, 2, 3, 4, 5].map((item) => (
             <p># Channel {item}</p>
           ))}
         </div>
-
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             color: "rgb(94, 53, 177)",
+            margin: "0px 10px 0px 10px",
           }}
         >
           <p>Direct Messages</p>

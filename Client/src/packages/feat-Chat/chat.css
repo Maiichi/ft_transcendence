@@ -11,8 +11,10 @@
   justify-content: space-around;
   margin: 10px 0px;
 }
-.discussions .discussion :hover {
-  background-color: #f5f6f7;
+
+.discussion:hover {
+  cursor: pointer;
+  background-color:  #f5f6f7;
 }
 
 .discussion-search {
@@ -377,3 +379,9 @@
   background-color: #d7c0f6; 
   color: rgb(122, 83, 199); 
 } */
+
+
+.icon-add-channel:hover{
+  background-color: rgb(212, 191, 253);
+  border-radius: 20px;
+}
