@@ -29,6 +29,22 @@ export class UserController
             return res.send({error : error});
         }   
     }
+ 
+    // GET /api/users/byid/:id
+    @Get('byid/:id')
+    @UseGuards(JwtGuard)
+    @ApiOperation({ summary : 'Get user by id'})
+    @ApiOkResponse({description : "get a user by id"})
+    @ApiBadRequestResponse({description : 'User does not exist'})
+    @ApiUnauthorizedResponse({description : 'Unauthorized'})
+    userById(@Param('id') id: string, @Res() res: Response)
+    {
+        try {
+            return this.userService.getUserByIntraId(parseInt(id),res);
+        } catch (error) {
+            return res.send({error : error});
+        }   
+    }
     
     // PATCH /api/users/:id/update
     @Patch(':id/update')
