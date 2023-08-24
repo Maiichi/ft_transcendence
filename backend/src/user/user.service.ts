@@ -24,6 +24,27 @@ export class UserService {
         return user;
     }
 
+    async getUserByIntraId(intraId: number, res: Response)
+    {
+        const user = await this.getUser(intraId);
+        if (!user)
+            return res.status(400).json({
+                status: 400,
+                message: "user not found"
+            });
+        else
+        {
+            const getUser = await this.prisma.user.findUnique({
+                where : {intraId : intraId}
+            })
+            return res.status(200).json({
+                status: 200,
+                message: getUser
+            })
+            // return getUser;
+        }
+    }
+
     // function to get the user by it's username
     async getUserByUsername(username: string, res: Response)
     {
@@ -164,21 +185,21 @@ export class UserService {
     }
 
     // function to update STATUS of the user
-    async updateUserStatus(userId: number, status: string)
-    {
-        const user = await this.getUser(userId);
-        if (user)
-        {
-            await this.prisma.user.update({
-                where: {intraId : userId},
-                data : {
-                    status : status
-                }
-            });
-        }
-        else
-            throw new NotFoundException(`userId ${userId} not found`)
-    }
+    // async updateUserStatus(userId: number, status: string)
+    // {
+    //     const user = await this.getUser(userId);
+    //     if (user)
+    //     {
+    //         await this.prisma.user.update({
+    //             where: {intraId : userId},
+    //             data : {
+    //                 status : status
+    //             }
+    //         });
+    //     }
+    //     else
+    //         throw new NotFoundException(`userId ${userId} not found`)
+    // }
 
     async isTwoFactorEnabled(userId: number) 
     {
