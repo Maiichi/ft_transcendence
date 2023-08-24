@@ -14,6 +14,7 @@ export const routes = [
       </Layout>
     ),
     errorElement: <NotFoundError />,
+    requireAuth: true,
   },
   {
     path: "/",
@@ -23,6 +24,7 @@ export const routes = [
       </Layout>
     ),
     errorElement: <NotFoundError />,
+    requireAuth: true,
   },
   {
     path: "/game",
@@ -32,6 +34,7 @@ export const routes = [
       </Layout>
     ),
     errorElement: <NotFoundError />,
+    requireAuth: true,
   },
   {
     path: "/account/settings",
@@ -41,6 +44,7 @@ export const routes = [
       </Layout>
     ),
     errorElement: <NotFoundError />,
+    requireAuth: true,
   },
   {
     path: "/account/profile",
@@ -50,6 +54,7 @@ export const routes = [
       </Layout>
     ),
     errorElement: <NotFoundError />,
+    requireAuth: true,
   },
   {
     path: "/firstlogin",

@@ -78,13 +78,14 @@ const Menu = [
         render: "Account Settings",
         icon: SettingsIcon,
     },
-    {
-        redirect: "/logout",
-        render: "Logout",
-        icon: LogoutIcon,
-        style: { color: "#f23f3f" },
-        onclick: () => console.log("Logout"),
-    },
+    // commented temporary
+    // {
+    //     redirect: "/logout",
+    //     render: "Logout",
+    //     icon: LogoutIcon,
+    //     style: { color: "#f23f3f" },
+    //     onclick: () => console.log("Logout"),
+    // },
 ];
 const ProfilePopper = () => {
     return <ListComponent menu={Menu} />;

@@ -14,7 +14,6 @@ const rootReducer = combineReducers({
     todos: todosSlice,
     auth: authSlice,
     core: coreSlice,
-  },
 });
 
 const persistConfig = {
