@@ -1,3 +1,10 @@
+
+.icon-add-channel:hover{
+    background-color: rgb(212, 191, 253);
+    border-radius: 20px;
+    cursor: pointer;
+}
+
 .modalHeader
 {
     display: flex;

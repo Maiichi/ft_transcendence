@@ -2,7 +2,8 @@
 {
   flex : 2;
   height: 100%;
-  border-radius: 20px;
+  /* border-radius: 20px; */
+  border-left: 1px solid #d7d7d7;
 }
 
 .onlineUsersHeader {
@@ -122,4 +123,9 @@
   cursor: pointer;
   background-color:  #f5f6f7;
   width: calc(40% - 20px);
+}
+
+.title-text
+{
+  margin : 0px 0px 0px 7px;
 }

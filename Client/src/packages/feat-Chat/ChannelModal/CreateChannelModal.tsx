@@ -58,7 +58,7 @@ export const CreateChannelModal = () => {
 
     return (
         <div>
-            <Add className={"icon-add-channel"} style={{ cursor: 'pointer'}} onClick={() => setOpen(true)}/>
+            <Add className={"icon-add-channel"} onClick={() => setOpen(true)}/>
             <Modal
                 open={open}
                 onClose={() => setOpen(false)}

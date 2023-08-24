@@ -103,14 +103,15 @@ export const Chat = () => {
             justifyContent: "space-between",
             color: "rgb(94, 53, 177)",
             margin: "0px 10px 0px 10px",
+            fontWeight: '900'
           }}
         >
           <p>Channels</p>
         <CreateChannelModal />
         </div>
-        <div style={{ padding: "0px 15px" }}>
-          {[1, 2, 3, 4, 5].map((item) => (
-            <p># Channel {item}</p>
+        <div className="channelListHolder">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 2 , 2, 3].map((item) => (
+            <h4 className="channel-name"># Channel {item}</h4>
           ))}
         </div>
         <div
@@ -120,10 +121,11 @@ export const Chat = () => {
             justifyContent: "space-between",
             color: "rgb(94, 53, 177)",
             margin: "0px 10px 0px 10px",
+            fontWeight: '900'
           }}
         >
           <p>Direct Messages</p>
-          <AddIcon />
+          <AddIcon style={{padding: '5px'}} />
         </div>
         <div style={{ padding: "0px 15px" }}>
           {discussions.map((discussion) => (

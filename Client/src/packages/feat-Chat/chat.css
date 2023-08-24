@@ -381,7 +381,20 @@
 } */
 
 
-.icon-add-channel:hover{
-  background-color: rgb(212, 191, 253);
-  border-radius: 20px;
+.channelListHolder
+{
+  padding: 0px 15px;
+  overflow-y: scroll;
+  height: 30%;
+}
+
+
+.channel-name
+{
+  margin: 0px 0px 10px 0px;
+  cursor: pointer;
+}
+
+.channel-name:hover {
+  background-color:  #f5f6f7;
 }
