@@ -1,4 +1,5 @@
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -12,16 +13,20 @@ import { useSize } from "../../hooks";
 import SearchIcon from "@mui/icons-material/Search";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import VideogameAssetIcon from "@mui/icons-material/VideogameAsset";
+import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
+import { useAppDispatch } from "../../../redux";
+import { setToken } from "../../../../packages/feat-Auth/components/authSlice";
 interface MenuTabs {
   id: string;
   redirect?: string;
   render: JSX.Element;
   activeTab: ActiveTabs;
+  requireAuth?: boolean;
 }
 interface TabProps {
   isActive: boolean;
 }
-type ActiveTabs = "notif" | "profile" | "home" | "game" | "test";
+type ActiveTabs = "logout" | "notif" | "profile" | "home" | "game" | "test";
 const useStyles = makeStyles({
   iconBase: {
     borderRadius: "6px",
@@ -46,6 +51,8 @@ export const Header = () => {
   const [anchorEl, setAnchorEl] = useState<any | null>(null);
   const [placement, setPlacement] = useState<PopperPlacementType>();
   const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
+  const isAuthenticated = useAuthentication();
+  const dispatch = useAppDispatch();
   useEffect(() => {}, [activeTab]);
   const handleClose = (e: any) => {
     setOpen(false);
@@ -80,6 +87,7 @@ export const Header = () => {
   };
 
   const RightMenu: MenuTabs[] = [
+    
     {
       id: "notif",
       activeTab: "notif",
@@ -157,7 +165,19 @@ export const Header = () => {
       ) : (
         <SearchComponent />
       )}
-      <Right>{RightMenu.map((item: MenuTabs) => item.render)}</Right>
+      <Right>
+        {RightMenu.map((item: MenuTabs) => item.render)}
+        {isAuthenticated && 
+          <LogoutIcon
+            id="logout"
+            className={classes.iconBase}
+            onClick={() => {
+              dispatch(setToken(null));
+              navigate("/login");
+            }}
+          />
+        }
+        </Right>
     </Root>
   );
 };
