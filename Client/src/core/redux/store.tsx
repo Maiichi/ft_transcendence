@@ -6,11 +6,15 @@ import counterSlice from "../../packages/feat-Test/components/CounterSlice";
 import todosSlice from "../../packages/feat-Test/components/TodosSlice";
 import authSlice from "../../packages/feat-Auth/components/authSlice";
 import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
+import coreSlice from "../CoreSlice";
+// ...
 
 const rootReducer = combineReducers({
     counter: counterSlice,
     todos: todosSlice,
     auth: authSlice,
+    core: coreSlice,
+  },
 });
 
 const persistConfig = {
