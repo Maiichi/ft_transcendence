@@ -1,4 +1,4 @@
-import { LinearProgress, LinearProgressProps } from "@mui/material";
+import { Button, LinearProgress, LinearProgressProps } from "@mui/material";
 
 import styled from "styled-components";
 import CircularProgress, {
@@ -62,6 +62,27 @@ const CircularProgressWithLabel = (
   );
 };
 const AchievementsArr = [
+  {
+    name: "Hero",
+    Description: "Must play 10 games",
+    progress: 100,
+    isValid: true,
+    logo: Logo,
+  },
+  {
+    name: "Hero",
+    Description: "Must play 10 games",
+    progress: 100,
+    isValid: true,
+    logo: Logo,
+  },
+  {
+    name: "Hero",
+    Description: "Must play 10 games",
+    progress: 100,
+    isValid: true,
+    logo: Logo,
+  },
   {
     name: "Hero",
     Description: "Must play 10 games",
@@ -197,7 +218,17 @@ export const Settings = () => {
             </div>
           </CardAvatar>
           <Achievements>
-            <Title>Achievements</Title>
+            <Title
+              style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+                backgroundColor: "#f0f0f0",
+                padding: "10px",
+              }}
+            >
+              Achievements
+            </Title>
 
             {AchievementsArr.map((item) => (
               <Achievement
@@ -259,6 +290,10 @@ export const Settings = () => {
                 <MoreVertIcon />
               </Player>
             ))}
+
+            <Button onClick={() => console.log("Leaderboard")}>
+              See Full Leaderboard
+            </Button>
           </TopPlayers>
           <MatchHistory>
             <Title>My Last 5 Matches </Title>
@@ -363,6 +398,8 @@ const Achievements = styled.div`
   align-items: center;
   text-align: center;
   padding: 10px;
+  max-height: 500px;
+  overflow-y: scroll;
   gap: 40px @media (max-width: 426px) {
 
   }
@@ -383,6 +420,7 @@ const Title = styled.h4`
   margin-top: 16px;
   margin-bottom: 5px;
   line-height: 1.2;
+  flex: 1 1 15%;
 `;
 
 const H5 = styled.h4`
@@ -401,7 +439,7 @@ const TopPlayers = styled.div`
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
   border-radius: 20px;
   -webkit-box-align: center;
-  align-items: center;
+
   text-align: center;
   padding: 10px;
   @media (max-width: 426px) {
