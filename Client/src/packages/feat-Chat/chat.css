@@ -1,8 +1,8 @@
 .discussions {
   overflow: hidden;
-
   /* display: inline-block; */
   padding: 5px;
+  border-right:  1px solid #d7d7d7;
 }
 
 .discussions .discussion {
@@ -287,16 +287,20 @@
   cursor: pointer;
 }
 
-.chatBoxHeader {
-  background-color: red;
-  height: 10%;
-  border-radius: 20px;
+.chatBoxHeader 
+{
+  /* height: 10%; */
+  border-bottom: 1px solid #d7d7d7;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px 0px 10px;
+  align-items: center;
 }
+
 
 .chatBox {
   flex: 5.5;
   height: 100%;
-  margin: 0px 10px 0px 10px;
 }
 
 .chatBoxWrapper {
@@ -304,6 +308,7 @@
   flex-direction: column;
   justify-content: space-between;
   height: 80%;
+  padding: 0px 10px 0px 0px;
 }
 
 .chatBoxTop {

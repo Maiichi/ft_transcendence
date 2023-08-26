@@ -8,7 +8,7 @@ import './createChannelModal.css'
 export const CreateChannelModal = () => {
     const [open, setOpen]           = useState(false);
     const [activate, setActivate]   = useState(false);
-    const [locked, setLocked]       = useState(false);
+    // const [locked, setLocked]       = useState(false);
 
     const toggleActivate = () => {
         setActivate(!activate);

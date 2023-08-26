@@ -16,6 +16,8 @@ import { ChatSearchModal } from "./chatSearch/ChatSearchModal";
 import { MessageModal } from "./messageModal/MessageModal";
 import { Avatar, Badge, Box, Modal } from "@mui/material";
 import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
+import { MoreHoriz, Person, LogoutRounded } from '@mui/icons-material';
+import { ChannelSettingModal } from "./ChannelModal/ChannelSettingModal";
 
 export const Chat = () => {
   const state: ChatIshakState = useAppSelector((state) => state.chat);
@@ -146,16 +148,16 @@ export const Chat = () => {
                 <p className="name">{discussion.name}</p>
                 <p className="message">{discussion.message}</p>
               </div>
-
               <p>18:00</p>
-
               {/* <div className="timer">{discussion.timer}</div> */}
             </div>
           ))}
         </div>
       </div>
       <div className="chatBox">
-        <div className="chatBoxHeader">ISHAK ZAIL</div>
+        <div className="chatBoxHeader">
+          <ChannelSettingModal />
+        </div>
         <div className="chatBoxWrapper">
           <div className="chatBoxTop">
             {[1, 2, 3, 4].map((item) => (
