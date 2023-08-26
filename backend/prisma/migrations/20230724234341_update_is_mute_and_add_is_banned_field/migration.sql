@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "RoomMembership" ADD COLUMN     "isBanned" BOOLEAN NOT NULL DEFAULT false,
+ALTER COLUMN "timeMute" SET DEFAULT CURRENT_TIMESTAMP;

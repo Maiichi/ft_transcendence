@@ -228,4 +228,22 @@ export class UserService {
         return user ? true : false;
     }
 
+
+    /* update User Status */
+    async updateUserStatus(userId: number, status: string)
+    {
+        const user = await this.getUser(userId);
+        if (user)
+        {
+            await this.prisma.user.update({
+                where: {intraId : userId},
+                data : {
+                    status : status
+                }
+            });
+        }
+        else
+            throw new NotFoundException(`userId ${userId} not found`)
+    }
+
 }

@@ -8,6 +8,7 @@ import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
 import { multerConfig } from './user/multer/multer.config';
+import { ChatModule } from './chat/chat.module';
 
 
 @Module({
@@ -17,7 +18,7 @@ import { multerConfig } from './user/multer/multer.config';
     }),
     MulterModule.register(multerConfig),
     AuthModule,
-    PrismaModule, UserModule
+    PrismaModule, UserModule, ChatModule
   ],
   controllers: [UserController],
   providers : [UserService]
