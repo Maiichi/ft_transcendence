@@ -1,13 +1,5 @@
-import {
-  Avatar,
-  FormControlLabel,
-  LinearProgress,
-  LinearProgressProps,
-  Switch,
-  TextField,
-} from "@mui/material";
-import BalanceIcon from "@mui/icons-material/Balance";
-import { useState } from "react";
+import { Button, LinearProgress, LinearProgressProps } from "@mui/material";
+
 import styled from "styled-components";
 import CircularProgress, {
   CircularProgressProps,
@@ -16,13 +8,18 @@ import Typography from "@mui/material/Typography";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Box from "@mui/material/Box";
 import Logo from "./federation.png";
+import Logo1 from "./Logo2.png";
+import Logo2 from "./Logo1.png";
+import Logo3 from "./Logo4.png";
 import Picture from "./Picture.png";
+import Pic from "./Pic.png";
+import Women from "./Women.png";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PendingIcon from "@mui/icons-material/Pending";
 
-function LinearProgressWithLabel(
+const LinearProgressWithLabel = (
   props: LinearProgressProps & { value: number }
-) {
+) => {
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <Box sx={{ width: "100%", mr: 1 }}>
@@ -35,11 +32,11 @@ function LinearProgressWithLabel(
       </Box>
     </Box>
   );
-}
+};
 
-function CircularProgressWithLabel(
+const CircularProgressWithLabel = (
   props: CircularProgressProps & { value: number }
-) {
+) => {
   return (
     <Box sx={{ position: "relative", display: "inline-flex" }}>
       <CircularProgress variant="determinate" {...props} />
@@ -63,10 +60,122 @@ function CircularProgressWithLabel(
       </Box>
     </Box>
   );
-}
+};
+const AchievementsArr = [
+  {
+    name: "Hero",
+    Description: "Must play 10 games",
+    progress: 100,
+    isValid: true,
+    logo: Logo,
+  },
+  {
+    name: "Hero",
+    Description: "Must play 10 games",
+    progress: 100,
+    isValid: true,
+    logo: Logo,
+  },
+  {
+    name: "Hero",
+    Description: "Must play 10 games",
+    progress: 100,
+    isValid: true,
+    logo: Logo,
+  },
+  {
+    name: "Hero",
+    Description: "Must play 10 games",
+    progress: 100,
+    isValid: true,
+    logo: Logo,
+  },
+  {
+    name: "Athlete",
+    Description: "Must win 10 games",
+    progress: 100,
+    isValid: true,
+    logo: Logo1,
+  },
+  {
+    name: "Diamond",
+    Description: "Must win 100 games",
+    progress: 40,
+    isValid: false,
+    logo: Logo2,
+  },
+  {
+    name: "Bronze",
+    Description: "Must play 500 games",
+    progress: 10,
+    isValid: false,
+    logo: Logo3,
+  },
+];
+const Histories = [
+  {
+    user: {
+      name: "izajhk",
+      picture: Pic,
+    },
+    score: [13333333, 4],
+  },
+  {
+    user: {
+      name: "di",
+      picture: Pic,
+    },
+    score: [2, 4],
+  },
+  {
+    user: {
+      name: "johytuytuytuytutyutyn",
+      picture: Pic,
+    },
+    score: [6, 4],
+  },
+  {
+    user: {
+      name: "mbvfbfbark",
+      picture: Women,
+    },
+    score: [1, 2],
+  },
+  {
+    user: {
+      name: "sara",
+      picture: Women,
+    },
+    score: [4, 4],
+  },
+];
+const TopPlayersArr = [
+  {
+    name: "Lionnel",
+    ladder: 100,
+    wins: 50,
+    loss: 10,
+    achievement: Logo2,
+    picture: Women,
+  },
+  {
+    name: "mark",
+    ladder: 90,
+    wins: 40,
+    loss: 15,
+    achievement: Logo1,
+    picture: Picture,
+  },
+  {
+    name: "john",
+    ladder: 75,
+    wins: 50,
+    loss: 40,
+    achievement: Logo3,
+    picture: Pic,
+  },
+];
 export const Settings = () => {
-  const progress = 60;
-  const [twoFact, setTwoFact] = useState<boolean>(false);
   return (
     <Root>
       <Cards>
@@ -108,88 +217,137 @@ export const Settings = () => {
               </div>
             </div>
           </CardAvatar>
-          <Achievement>
-            <Title>Achievements</Title>
+          <Achievements>
+            <Title
+              style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+                backgroundColor: "#f0f0f0",
+                padding: "10px",
+              }}
+            >
+              Achievements
+            </Title>
 
-            {[1, 2, 3, 4, 5].map((item) => (
-              <div
-                style={{
-                  display: "flex",
-                  background: "#f0fff0",
-                  margin: "10px",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                }}
+            {AchievementsArr.map((item) => (
+              <Achievement
+                color={
+                  item.isValid == true ? "#f0fff0" : "rgba(156, 163, 175, 0.1)"
+                }
               >
                 <img
                   style={{ width: "35px", height: "55px" }}
                   alt="Remy Sharp"
-                  src={Logo}
+                  src={item.logo}
                 />
                 <div style={{ textAlign: "start" }}>
-                  <Title>Hero</Title>
-                  <H5>Must win 10 games </H5>
-                  <LinearProgressWithLabel value={progress} />
+                  <Title>{item.name}</Title>
+                  <H5>{item.Description} </H5>
+                  <LinearProgressWithLabel value={item.progress} />
                 </div>
-                {item < 3 ? (
+                {item.isValid ? (
                   <VerifiedIcon color="success" />
                 ) : (
                   <PendingIcon color="disabled" />
                 )}
-              </div>
+              </Achievement>
             ))}
-          </Achievement>
+          </Achievements>
         </LeftCard>
         <RightCard>
           <TopPlayers>
             <Title>Top 5 Players</Title>
-            {/* <Player>
-              <></>
-              <></>
-              <Title>Ladder</Title>
-              <Title>Wins</Title>
-              <Title>Losses</Title>
-              <Title>Achivement</Title>
-            </Player> */}
-            {[1, 2, 3, 4, 5].map((item) => (
+
+            {TopPlayersArr.map((item, index) => (
               <Player>
                 <img
                   style={{ width: "30px", height: "45px", margin: "5px" }}
                   alt="Remy Sharp"
-                  src={Logo}
+                  src={item.achievement}
                 />
-                <H5># {item}</H5>
+                <H5># {index + 1}</H5>
                 <img
                   style={{ width: "30px", height: "30px" }}
                   alt="Remy Sharp"
-                  src={Picture}
+                  src={item.picture}
                 />
-                <Title>IZail</Title>
+                <Title>{item.name}</Title>
                 <div style={{ display: "flex", gap: "20px" }}>
                   <div style={{}}>
-                    <Title>5 </Title>
+                    <Title>{item.ladder} </Title>
                     <H5>Ladder </H5>
                   </div>
                   <div style={{}}>
-                    <Title>50 </Title>
+                    <Title>{item.wins} </Title>
                     <H5>Wins </H5>
                   </div>
                   <div style={{}}>
-                    <Title>10 </Title>
+                    <Title>{item.loss}</Title>
                     <H5>Losses </H5>
                   </div>
                 </div>
-
                 <MoreVertIcon />
               </Player>
             ))}
+
+            <Button onClick={() => console.log("Leaderboard")}>
+              See Full Leaderboard
+            </Button>
           </TopPlayers>
-          <MatchHistory>My Last 5 Matches </MatchHistory>
+          <MatchHistory>
+            <Title>My Last 5 Matches </Title>
+            {Histories.map((item) => (
+              <Score
+                color={
+                  item.score[0] - item.score[1] == 0
+                    ? "rgb(65 128 220)"
+                    : item.score[0] - item.score[1] > 0
+                    ? "rgb(46 125 50)"
+                    : "rgb(231 16 16)"
+                }
+              >
+                <div style={{ flex: "1" }}>
+                  <img
+                    style={{ width: "30px", height: "45px", margin: "5px" }}
+                    alt="Remy Sharp"
+                    src={Picture}
+                  />
+                  <H5>ibouroum </H5>
+                </div>
+                <div style={{ flexBasis: "20%" }}>
+                  <Title style={{ margin: "0" }}>{item.score[0]} </Title>
+                  <H5 style={{ margin: "0" }}>VS</H5>
+                  <Title style={{ margin: "0" }}>{item.score[1]} </Title>
+                </div>
+                <div style={{ flex: "1" }}>
+                  <img
+                    style={{
+                      width: "30px",
+                      height: "45px",
+                      margin: "5px",
+                    }}
+                    alt="Remy Sharp"
+                    src={item.user.picture}
+                  />
+                  <H5>{item.user.name}</H5>
+                </div>
+              </Score>
+            ))}
+          </MatchHistory>
         </RightCard>
       </Cards>
     </Root>
   );
 };
+const Score = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: ${(p) => p.color} 0px 0px 8px 0px;
+  margin: 10px;
+  border-radius: 8px;
+`;
 const Root = styled.div`
   padding: 10px;
 `;
@@ -215,43 +373,44 @@ const RightCard = styled.div`
   }
 `;
 const CardAvatar = styled.div`
-margin-right: 5px;
-background-color: rgb(255, 255, 255);
-color: rgb(17, 25, 39);
-box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-border-radius: 20px;
--webkit-box-align: center;
-align-items: center;
-text-align: center;
-display: flex;
-padding: 10px;
-gap: 40px
-
-}
-
+  margin-right: 5px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(17, 25, 39);
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+  border-radius: 20px;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: center;
+  display: flex;
+  padding: 10px;
+  gap: 40px;
   @media (max-width: 426px) {
-   
+  }
+`;
+
+const Achievements = styled.div`
+  margin-right: 5px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(17, 25, 39);
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+  border-radius: 20px;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  max-height: 500px;
+  overflow-y: scroll;
+  gap: 40px @media (max-width: 426px) {
+
   }
 `;
 
 const Achievement = styled.div`
-margin-right: 5px;
-background-color: rgb(255, 255, 255);
-color: rgb(17, 25, 39);
-box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-border-radius: 20px;
--webkit-box-align: center;
-align-items: center;
-text-align: center;
-
-padding: 10px;
-gap: 40px
-
-}
-
-  @media (max-width: 426px) {
-   
-  }
+  display: flex;
+  background: ${(p) => p.color};
+  margin: 10px;
+  justify-content: space-around;
+  align-items: center;
 `;
 
 const Title = styled.h4`
@@ -261,66 +420,9 @@ const Title = styled.h4`
   margin-top: 16px;
   margin-bottom: 5px;
   line-height: 1.2;
+  flex: 1 1 15%;
 `;
 
-const ButtonAvatar = styled.button`
-  display: inline-flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  position: relative;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-  background-color: transparent;
-  outline: 0px;
-  border: 0px;
-  margin: 0px;
-  cursor: pointer;
-  user-select: none;
-  vertical-align: middle;
-  appearance: none;
-  text-decoration: none;
-  font-weight: 600;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  font-size: 0.875rem;
-  line-height: 1.75;
-  min-width: 64px;
-  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-    color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  color: rgb(99, 102, 241);
-  width: 100%;
-  border-radius: 12px;
-  text-transform: none;
-  padding: 9px 16px;
-  &:hover {
-    text-decoration: none;
-    background-color: rgba(99, 102, 241, 0.04);
-  }
-`;
-const ButtonForm = styled.button`
-  border: 0px;
-  margin: 0px;
-  font-weight: 600;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  font-size: 0.875rem;
-  line-height: 1.75;
-  color: rgb(255, 255, 255);
-  background-color: rgb(99, 102, 241);
-  border-radius: 12px;
-  padding: 8px 20px;
-  width: fit-content;
-  margin-left: auto;
-  &:hover {
-    text-decoration: none;
-    background-color: rgb(67, 56, 202);
-    box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 10px;
-  }
-`;
 const H5 = styled.h4`
   margin: 0px;
   font-size: 0.875rem;
@@ -331,41 +433,28 @@ const H5 = styled.h4`
   color: rgb(108, 115, 127);
 `;
 const TopPlayers = styled.div`
-margin-right: 5px;
-background-color: rgb(255, 255, 255);
-color: rgb(17, 25, 39);
-box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-border-radius: 20px;
--webkit-box-align: center;
-align-items: center;
-text-align: center;
+  margin-right: 5px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(17, 25, 39);
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+  border-radius: 20px;
+  -webkit-box-align: center;
 
-padding: 10px;
-
-
-}
-
+  text-align: center;
+  padding: 10px;
   @media (max-width: 426px) {
-   
   }
 `;
 const MatchHistory = styled.div`
-margin-right: 5px;
-background-color: rgb(255, 255, 255);
-color: rgb(17, 25, 39);
-box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-border-radius: 20px;
--webkit-box-align: center;
-align-items: center;
-text-align: center;
-display: flex;
-padding: 10px;
-gap: 40px
-
-}
-
+  margin-right: 5px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(17, 25, 39);
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+  border-radius: 20px;
+  -webkit-box-align: center;
+  padding: 10px;
+  text-align: center;
   @media (max-width: 426px) {
-   
   }
 `;
 const Player = styled.div`
