@@ -7,6 +7,8 @@ import { Prisma, User } from '@prisma/client';
 import { UserService } from "src/user/user.service";
 import { authenticator } from "otplib";
 import { toDataURL } from "qrcode";
+import { createCipheriv, randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
 
 @Injectable()
 export class AuthService
@@ -33,6 +35,30 @@ export class AuthService
         return token;
     }
 
+    async encryptJwtToken(token: string): Promise<string> {
+        // Generate a random IV for each encryption to make it more secure
+        // Initialization Vector (IV) length for AES-256 is 16 bytes
+        const iv = randomBytes(16);
+
+        // Generate the encryption key from the password using scrypt (promisify for async/await)
+        // AES-256 uses a 32-byte key
+        const key = (await promisify(scrypt)(process.env.ENCRYPTION_SECRET, process.env.ENCRYPTION_SALT, 32)) as Buffer;
+
+        // Create the AES-256 cipher using the generated key and IV
+        const cipher = createCipheriv('aes-256-ctr', key, iv);
+
+        // Encrypt the token using the cipher
+        const encryptedToken = Buffer.concat([cipher.update(token), cipher.final()]);
+
+        // Combine IV and encrypted token to a single buffer
+        const encryptedData = Buffer.concat([iv, encryptedToken]);
+
+        // Convert the encrypted data to a Base64 string for easy transmission
+        const base64EncryptedData = encryptedData.toString('base64');
+
+        return base64EncryptedData;
+    }
+
     // TODO: need to be refactored
     // function called when user authenticate and persist his data on the database
     async authenticate(req: any, res: Response)
@@ -47,6 +73,7 @@ export class AuthService
         let user = await this.prisma.user.findFirst({
             where: {intraId: intra_id}
         })
+        let isFirstLogin = false;
         // save the new user in the db
         if (!user)
         {
@@ -59,14 +86,21 @@ export class AuthService
                     userName: userName,
                 },
             });
+            isFirstLogin = true;
         }
         const tokenPromise = this.signToken(user.intraId , user.email);
         const token = await tokenPromise;
-        res.setHeader('Authorization', `Bearer ${token}`);
-        // return res.redirect(`http://localhost:3000`);
+        // redirect to frontend with encrypted jwt in query param
+        // this.encryptJwtToken(token).then((encryptedToken) => {
+        //     res.redirect(`${process.env.FRONTEND_URL}/login?secT7=${encryptedToken}`);
+        // })
+        //
+
+        res.redirect(`${process.env.FRONTEND_URL}/login?secT7=${token}&first_login=${isFirstLogin}`);
+
         /* need to be redirected to Home page after login */
         // return res.redirect('/api/auth/logged');
-        res.send({token});
+        //res.send({token});
     }
 
     async redirectAfterLogin(req: any, res: Response)
