@@ -19,20 +19,8 @@ export class AuthController
     )
     {}
 
-    @Get("login")
-    login42(@Req() req: any)
-    {
-        console.log("Hello from login42 ----");
-        return "LOGIN"
-    }
 
-    @Get('/logged')
-    welcome()
-    {
-        return "Logged successfully"
-    //    return this.authService.redirectAfterLogin(req, res);
-    }
-    
+    /********************** 42 Authentication Endpoint **********************/
     @ApiBearerAuth()
     @ApiOperation({summary: 'type "localhost:PORT/api/auth/callback" on the browser and get Token and put it on the green lock {authorize} to perfrom USER requests'})
     @UseGuards(AuthGuard('42'))
@@ -41,7 +29,8 @@ export class AuthController
     {
         return await this.authService.authenticate(req, res);
     }
-
+    
+    /********************** Two Factor Authentication Endpoints **********************/
 
     @ApiBearerAuth()
     @ApiOperation({ summary : 'Enable 2FA'})
@@ -76,7 +65,7 @@ export class AuthController
     }
 
 
-    /* Two Factor Authentication Endpoints */
+    
     @ApiBearerAuth()
     @ApiOperation({ summary : 'Generate 2FA code'})
     @ApiCreatedResponse({description : "a generated URL returned"})

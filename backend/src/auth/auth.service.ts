@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
@@ -7,6 +7,8 @@ import { Prisma, User } from '@prisma/client';
 import { UserService } from "src/user/user.service";
 import { authenticator } from "otplib";
 import { toDataURL } from "qrcode";
+import { createCipheriv, randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
 
 @Injectable()
 export class AuthService
@@ -33,19 +35,49 @@ export class AuthService
         return token;
     }
 
+    async encryptJwtToken(token: string): Promise<string> {
+        // Generate a random IV for each encryption to make it more secure
+        // Initialization Vector (IV) length for AES-256 is 16 bytes
+        const iv = randomBytes(16);
+
+        // Generate the encryption key from the password using scrypt (promisify for async/await)
+        // AES-256 uses a 32-byte key
+        const key = (await promisify(scrypt)(process.env.ENCRYPTION_SECRET, process.env.ENCRYPTION_SALT, 32)) as Buffer;
+
+        // Create the AES-256 cipher using the generated key and IV
+        const cipher = createCipheriv('aes-256-ctr', key, iv);
+
+        // Encrypt the token using the cipher
+        const encryptedToken = Buffer.concat([cipher.update(token), cipher.final()]);
+
+        // Combine IV and encrypted token to a single buffer
+        const encryptedData = Buffer.concat([iv, encryptedToken]);
+
+        // Convert the encrypted data to a Base64 string for easy transmission
+        const base64EncryptedData = encryptedData.toString('base64');
+
+        return base64EncryptedData;
+    }
+
+    // TODO: need to be refactored
     // function called when user authenticate and persist his data on the database
     async authenticate(req: any, res: Response)
     {
         if (!req.user)
-            return 'no user from 42oauth';
+            throw new NotFoundException(`No user from 42 OAuth`);
         const intra_id = Number(req.user.id);
         const email = req.user.email;
         const firstName = req.user.first_name; 
         const lastName = req.user.last_name; 
         const userName = req.user.username;
-        try {
-            // save the new user in the db
-            const user = await this.prisma.user.create({
+        let user = await this.prisma.user.findFirst({
+            where: {intraId: intra_id}
+        })
+        let isFirstLogin = false;
+        // save the new user in the db
+        if (!user)
+        {
+            user = await this.prisma.user.create({
                 data :{
                     email : email,
                     intraId: intra_id,
@@ -54,21 +86,21 @@ export class AuthService
                     userName: userName,
                 },
             });
-            const tokenPromise = this.signToken(user.intraId , user.email);
-            const token = await tokenPromise;
-            res.setHeader('Authorization', `Bearer ${token}`);
-            // return res.redirect(`http://localhost:3000`);
-            /* need to be redirected to Home page after login */
-            // return res.redirect('/api/auth/logged');
-            res.send({token});
-        } catch (error) {
-            if (error instanceof  Prisma.PrismaClientKnownRequestError){
-                if (error.code === 'P2002'){
-                    throw new ForbiddenException('Credentials taken');
-                }
-            }
-            throw error;
+            isFirstLogin = true;
         }
+        const tokenPromise = this.signToken(user.intraId , user.email);
+        const token = await tokenPromise;
+        // redirect to frontend with encrypted jwt in query param
+        // this.encryptJwtToken(token).then((encryptedToken) => {
+        //     res.redirect(`${process.env.FRONTEND_URL}/login?secT7=${encryptedToken}`);
+        // })
+        //
+
+        res.redirect(`${process.env.FRONTEND_URL}/login?secT7=${token}&first_login=${isFirstLogin}`);
+
+        /* need to be redirected to Home page after login */
+        // return res.redirect('/api/auth/logged');
+        //res.send({token});
     }
 
     async redirectAfterLogin(req: any, res: Response)
@@ -97,89 +129,69 @@ export class AuthService
 
     async enableTwoFactor(user: User, res: Response)
     {
-        try {
-            const isEnabled = await this.userService.isTwoFactorEnabled(user.intraId);
-            if (!isEnabled)
-            {
-                await this.prisma.user.update({
-                    where : { intraId: user.intraId },
-                    data : { 
-                        twoFactorActivate : true
-                    }
-                })
-                .then(() =>{
-                    res.status(200).json({
-                        status: 200,
-                        message: 'Two Factor is enabled successfully'
-                    })
-                })
-            }     
-            else
-                res.send({error : 'Two Factor authentication already enabled'});      
-        } catch (error) {
-            res.status(500).json({
-                error : error
+        const isEnabled = await this.userService.isTwoFactorEnabled(user.intraId);
+        if (!isEnabled)
+        {
+            await this.prisma.user.update({
+                where : { intraId: user.intraId },
+                data : { 
+                    twoFactorActivate : true
+                }
             })
-        }
+            .then(() =>{
+                res.status(200).json({
+                    status: 200,
+                    message: 'Two Factor is enabled successfully'
+                })
+            })
+        }     
+        else
+            res.send({error : 'Two Factor authentication already enabled'});      
     }
 
     async disableTwoFactor(user: User, res: Response)
     {
-        try {
-            const isEnabled = await this.userService.isTwoFactorEnabled(user.intraId);
-            if (isEnabled)
-            {
-                await this.prisma.user.update({
-                    where : { intraId : user.intraId },
-                    data: {
-                        twoFactorActivate : false,
-                        twoFactorSecret : null
-                    }
+        const isEnabled = await this.userService.isTwoFactorEnabled(user.intraId);
+        if (isEnabled)
+        {
+            await this.prisma.user.update({
+                where : { intraId : user.intraId },
+                data: {
+                    twoFactorActivate : false,
+                    twoFactorSecret : null
+                }
+            })
+            .then(() =>{
+                res.status(200).json({
+                    status : 200,
+                    message : 'Two Factor Auth is disabled successfully'
                 })
-                .then(() =>{
-                    res.status(200).json({
-                        status : 200,
-                        message : 'Two Factor Auth is disabled successfully'
-                    })
-                })
-            }
-            else
-                return res.send({message: 'Two Factor Auth is already disabled'})
-        } catch (error) {
-            console.log(error)
-            res.status(500).json({
-                status : 500,
-                message : error
             })
         }
+        else
+            return res.send({message: 'Two Factor Auth is already disabled'})
     }
     
-    async generateTwoFactor(res: Response, userId: number) {
-        try {
-          const user = await this.userService.getUserById(userId);
-          if (!user) {
+    async generateTwoFactor(res: Response, userId: number)
+    {
+        const user = await this.userService.getUserById(userId);
+        if (!user) {
             return res.status(404).json({ message: 'User not found' });
-          }
-          const isEnabled = await this.userService.isTwoFactorEnabled(userId);
-          if (!isEnabled)
+        }
+        const isEnabled = await this.userService.isTwoFactorEnabled(userId);
+        if (!isEnabled)
             return res.status(404).json({message : 'two factor auth not enabled !'});
-          const secret = authenticator.generateSecret();
-          const otpauthUrl = authenticator.keyuri(
-            user.username,
+        const secret = authenticator.generateSecret();
+        const otpauthUrl = authenticator.keyuri(
+            user.userName,
             process.env.APP_NAME,
             secret,
-          );
-          const url = await toDataURL(otpauthUrl);
-          await this.userService.setTwoFactorSecret(userId, secret);
-          return res.send({
+        );
+        const url = await toDataURL(otpauthUrl);
+        await this.userService.setTwoFactorSecret(userId, secret);
+        return res.send({
             url : url
-          });
-        } catch (error) {
-          return res.status(500).json({
-            status: 500,
-            message: error.toString(), // Convert the error object to a string
-          });
-        }
+        });
     }
 
     async verifyTwoFactor(code: string, secret: string)
