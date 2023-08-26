@@ -55,8 +55,8 @@ export const SearchComponent = (props: Props) => {
       </IconButton>
       <InputBase
         sx={{ ml: 1, flex: 1 }}
-        placeholder="Search Google Maps"
-        inputProps={{ "aria-label": "search google maps" }}
+        placeholder="Search "
+      
       />
       <IconButton
         sx={{

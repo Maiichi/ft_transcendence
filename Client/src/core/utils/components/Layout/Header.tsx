@@ -195,7 +195,20 @@ export const Header = () => {
             ),
         },
     ];
-
+    // <SearchIcon
+            //   className={classes.iconBase}
+            //   style={{ marginLeft: "10px", marginRight: "auto" }}
+            //   onClick={popperClick(
+            //     "bottom",
+            //     <SearchComponent clear={true} setOpen={setOpen} />,
+            //     "search",
+            //     {
+            //       padding: "5px 10px",
+            //       marginTop: "-34px!important",
+            //       background: "#ffffff",
+            //       width: "100%",
+            //     }
+            //   )}
     return (
         <>
             {isMobile && (

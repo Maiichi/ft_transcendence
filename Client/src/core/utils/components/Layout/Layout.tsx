@@ -21,11 +21,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 const Root = styled.div`
   display: flex;
   position: absolute;
-  width: -webkit-fill-available;
+  width: 100%;
 `;
 const Children = styled.div<{ displayNavbar: boolean }>`
   background: rgb(238, 242, 246);
-  width: -webkit-fill-available;
+  width: 100%;
   border-radius: 5px;
   margin: 1vw;
   @media (max-width: 426px) {
