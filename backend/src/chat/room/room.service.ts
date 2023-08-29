@@ -7,6 +7,7 @@ import { UserService } from "src/user/user.service";
 import { ChatService } from "../chat.service";
 import { MuteMemberDto, KickMemberDto, LeaveRoomDto, JoinRoomDto, SetRoomAdminDto } from "./dto/membership.dto";
 import { CreateRoomDto, UpdateRoomDto } from "./dto/room.dto";
+import { User } from "@prisma/client";
 
 
 @Injectable()
@@ -56,6 +57,29 @@ export class RoomService
         }
     }
     
+    // get the rooms where the current user is member in
+    async getUserRooms(user: User, res: Response)
+    {
+        try {
+            const rooms = await this.prisma.user.findMany({
+                where : {
+                    intraId: user.intraId
+                },
+                select: {
+                    memberships : {
+                        where: {
+                            isBanned: false,
+                        },
+                        select : {
+                            room: true
+                        }
+                    },
+                }
+            })
+        } catch (error) {
+            
+        }
+    }
     // async getAllRoomsInfos()
     // {
     //     const rooms = await this.prisma.room.findMany({

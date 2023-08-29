@@ -2,42 +2,38 @@ import { useEffect, useState } from "react";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import AddIcon from "@mui/icons-material/Add";
 import {
-  ChatIshakState,
-  clearState,
-  sendMessage,
-} from "./components/ChatIshak";
+  roomState,
+  setConversation
+} from "./components/rooms/chatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Picture from "./Picture.png";
 import { Message } from "./message/Message";
 import "./chat.css";
 import { ChatUsers } from "./chatUsers/ChatUsers";
-import { ChatSearchModal } from "./chatSearch/ChatSearchModal";
-import { MessageModal } from "./messageModal/MessageModal";
 import { Avatar, Badge, Box, Modal } from "@mui/material";
 import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
 import { MoreHoriz, Person, LogoutRounded } from '@mui/icons-material';
 import { ChannelSettingModal } from "./ChannelModal/ChannelSettingModal";
+import  {getChatRooms}  from "./components/rooms/chatThunk";
+
 
 export const Chat = () => {
-  const state: ChatIshakState = useAppSelector((state) => state.chat);
 
   const dispatch = useAppDispatch();
-  const chatState = useAppSelector((state) => state.chat);
+  const chatRooms = useAppSelector((state) => state.chat.memberships); 
+  const account = useAppSelector((state) => state.auth.user);
+
   const [name, setName] = useState("");
   const [msg, setMsg] = useState("");
   const [selectedTab, setSelectedTab] = useState("Dms");
   const [iconChannelOpen, setIconChannelOpen] = useState(false);
+  
+  useEffect(()=> {
+    dispatch(getChatRooms());
+  }, [dispatch]);
 
-  const handleClick = () => {
-    dispatch(sendMessage({ name, msg }));
-    setMsg("");
-    setName("");
-  };
-  const handleClear = () => {
-    dispatch(clearState());
-  };
-
+  console.log("chat rooons ==" + JSON.stringify(chatRooms));
   const discussions = [
     {
       id: 1,
@@ -53,51 +49,13 @@ export const Chat = () => {
       message: "Let's meet for a coffee or something today ?",
       timer: "3 min",
     },
-    {
-      id: 3,
-      type: "Rms",
-      name: "Room 1",
-      message: "Let's meet for a coffee or something today ?",
-      timer: "3 min",
-    },
-    {
-      id: 4,
-      type: "Rms",
-      name: "Room 1",
-      message: "Let's meet for a coffee or something today ?",
-      timer: "3 min",
-    },
   ];
 
-  const filteredDiscussions = discussions.filter(
-    (discussion) => discussion.type === selectedTab
-  );
   return (
     <Root>
       <div className="discussions">
-        {/* <div> */}
-        {/* <div className="chatTitleHolder"> */}
         <p className="messages-text">Discussions</p>
-        {/* </div> */}
-        {/* <ChatSearchModal /> */}
-        {/* need to add a model when clicking on this ICON */}
-        {/* <MessageModal /> */}
         <SearchComponent />
-        {/* </div> */}
-        {/* <div className="discussion-room-user">
-          <button
-            className={`rooms ${selectedTab === "Dms" ? "active" : ""}`}
-            onClick={() => setSelectedTab("Dms")}
-          >
-            Dms
-          </button>
-          <button
-            className={`dm ${selectedTab === "Rms" ? "active" : ""}`}
-            onClick={() => setSelectedTab("Rms")}
-          >
-            Rms
-          </button>
-        </div> */}
         <div
           style={{
             display: "flex",
@@ -112,8 +70,8 @@ export const Chat = () => {
         <CreateChannelModal />
         </div>
         <div className="channelListHolder">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 2 , 2, 3].map((item) => (
-            <h4 className="channel-name"># Channel {item}</h4>
+          {chatRooms.map((item: any) => (
+            <h4 key={item.room.id} className="channel-name"># {item.room.name} </h4>
           ))}
         </div>
         <div
@@ -129,7 +87,7 @@ export const Chat = () => {
           <p>Direct Messages</p>
           <AddIcon style={{padding: '5px'}} />
         </div>
-        <div style={{ padding: "0px 15px" }}>
+        <div className="DirectMessageListHolder">
           {discussions.map((discussion) => (
             <div key={discussion.id} className="discussion">
               <Badge

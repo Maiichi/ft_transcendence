@@ -6,6 +6,11 @@ import { SearchComponent } from '../../../core';
 
 export const ChannelSettingModal = () => {
     const [open, setOpen] = useState(false);
+    const [openInviteModal, setOpenInviteModal] = useState(false);
+
+    const handleClose = () => {
+        setOpen(!open);
+    }
     return (
         <>
             <p>#Channel 1</p>
@@ -15,32 +20,48 @@ export const ChannelSettingModal = () => {
                 20
                 <Modal
                     open={open}
-                    onClose={() => setOpen(false)}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
+                    onClose={handleClose}
+                    aria-labelledby="modal-search-invite-users-to-room"
+                    aria-describedby="modal-description"
                 >
                     <Box sx={boxStyle}>
                         <div className="modalHeader">
                             <h2>Users</h2>
-                            <Close className={"close-button"} style={{cursor: 'pointer'}} onClick={() => setOpen(false)} />
+                            <button onClick={() => { setOpen(false)}}>X</button>
+                            {/* <Close className={"close-button"} style={{cursor: 'pointer'}} onClick={() => setOpen(false)} /> */}
                         </div>
-                        <div className="modalBody">
+                        <div style={{overflow: 'hidden', maxHeight: '400px'}}>
                            <div className="modal-search">
                                 <SearchComponent />
                            </div>
-                           <div className="modal-invite-user">
+                           <div className="modal-invite-user" onClick={() => setOpenInviteModal(true)}>
                                 <PersonAddAltRounded fontSize='large' />
-                                <h4 style={{marginLeft: '10px'}}>Invite user</h4>
+                                <h4  style={{marginLeft: '10px'}}>Invite user</h4>
+                                {/* <Modal
+                                    open = {openInviteModal}
+                                    onClose={() => {setOpenInviteModal(false)}}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                >
+                                <Box sx={boxStyle}>
+                                    hello
+                                    <button onClick={() => {setOpenInviteModal(false)}} >X</button>
+                                </Box>
+                                </Modal> */}
                            </div>
                            <div className="modal-users">
-                                <p>user 1</p>
-                                <p>user 1</p>
-                                <p>user 1</p>
-                                <p>user 1</p>
-                                <p>user 1</p>
-                                <p>user 1</p>
-                                <p>user 1</p>
-                                <p>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
+                                <p  className='user-element'>user 1</p>
                            </div>
                         </div>  
                     </Box>

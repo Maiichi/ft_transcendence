@@ -229,21 +229,16 @@ export class MessageService
 
    async getUserRooms(user: User, res: Response)
    {
-       const rooms = await this.prisma.user.findMany({
+       const rooms = await this.prisma.membership.findMany({
            where : {
-               intraId : user.intraId
+               userId : user.intraId,
+               isBanned: false,
            },
            select : {
-               memberships : {
-                   where : {
-                      isBanned : false,
-                   },
-                   select: {
-                       room: true,
-                   }
-               },
+                room : true,
            }
        });
+       console.log("rooms ,", JSON.stringify(rooms))
        return res.json({
            status: 200,
            data: rooms
@@ -371,5 +366,22 @@ export class MessageService
             }
         });
         return getMyBlackList;
+    }
+/***************************************** CONVERSATION  ***********************************************/
+
+    async getUserDirectConversations(userId: number)
+    {
+        const conversations = await this.prisma.user.findMany({
+            where : {
+                intraId: userId
+            },
+            select : {
+                conversations : {
+                    where : {
+                        roomId: null
+                    }
+                }
+            }
+        })
     }
 }

@@ -1,6 +1,4 @@
-import React from "react";
 import "./chatUsers.css";
-import { ButtonAvatar, CardAvatar, H5 } from "../../feat-Account/components";
 import { Avatar, Divider, Icon, Popper, Tab, Badge } from "@mui/material";
 import {
   Title,
@@ -12,6 +10,7 @@ import {
   DriveFileRenameOutlineTwoTone,
   VideogameAssetTwoTone,
 } from "@mui/icons-material";
+import { useAppSelector } from "../../../core";
 
 interface Props {
   type: string;
@@ -32,12 +31,16 @@ const usersInRoom = [
 ];
 
 const userConversation = {
-  name: 'Ishak Zail',
-  isOnline: true,
-  isFriend: true
+    name: 'ISHAK ZAIL',
+    isOnline: true,
+    isFriend: true
 };
 
+
+
 export const ChatUsers = ({ type }: Props) => {
+    const account = useAppSelector((state) => state.auth.user);
+    console.log("username ===" + account.userName);
     const color = userConversation.isOnline ? 'green' : 'grey';
     return (
         <div className="onlineUsersBox">
@@ -46,7 +49,7 @@ export const ChatUsers = ({ type }: Props) => {
                 {
                 <>
                 <div className="rightSideHeader">
-                    <h3>{userConversation.name}</h3>
+                    <h3>{account.userName}</h3>
                     <img className="photo-avatar" src="https://www.shareicon.net/data/512x512/2016/05/24/770117_people_512x512.png" alt="" />
                     <div style={{display: 'flex', flexDirection: 'row-reverse', margin: '20px'}}>
                         <h4 style={{margin: '0px'}}>{userConversation.isOnline ? 'Available' : 'Not availabe'}</h4>
@@ -94,7 +97,7 @@ export const ChatUsers = ({ type }: Props) => {
                 />
                 <div className="onlineUsersBadge"></div>
                 </div>
-                <p className="onlineUsersName">Ishak Zail</p>
+                <p className="onlineUsersName">{account.userName}</p>
                 <div className="iconHolder">
                 <div className="iconSVG" data-description="Invite to game">
                     <VideogameAssetTwoTone></VideogameAssetTwoTone>

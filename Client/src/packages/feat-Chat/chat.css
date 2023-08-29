@@ -390,7 +390,14 @@
 {
   padding: 0px 15px;
   overflow-y: scroll;
-  height: 30%;
+  max-height: 35%;
+}
+
+.directMessageListHolder 
+{
+  overflow-y: scroll;
+  padding: "0px 15px";
+  max-height: 35%;
 }
 
 

@@ -84,6 +84,7 @@ export class AuthService
                     lastName: lastName,
                     firstName: firstName,
                     userName: userName,
+                    
                 },
             });
             isFirstLogin = true;
