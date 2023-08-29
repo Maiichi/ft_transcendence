@@ -7,6 +7,7 @@ import todosSlice from "../../packages/feat-Test/components/TodosSlice";
 import authSlice from "../../packages/feat-Auth/components/authSlice";
 import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
+import chatIshakSlice from "../../packages/feat-Chat/components/ChatIshak";
 // ...
 
 const rootReducer = combineReducers({
@@ -14,7 +15,9 @@ const rootReducer = combineReducers({
     todos: todosSlice,
     auth: authSlice,
     core: coreSlice,
-});
+    chat: chatIshakSlice,
+  },
+);
 
 const persistConfig = {
     key: "root", // Key to access your storage

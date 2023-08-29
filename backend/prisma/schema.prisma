@@ -11,22 +11,95 @@ datasource db {
 }
 
 model User {
-  id                  Int         @id @default(autoincrement())
-  intraId             Int         @unique
+     id                  Int                      @id @default(autoincrement())
+     intraId             Int                      @unique 
+     email               String                   @unique
+     firstName           String                   @db.VarChar(255)
+     lastName            String                   @db.VarChar(255)    
+     userName            String                   @unique @db.VarChar(255) 
+     avatar_url          String?                  @db.VarChar(255)
+     status              String                   @default("OFFLINE")
+     twoFactorActivate   Boolean?                 @default(false)
+     twoFactorSecret     String?                  @db.VarChar(255)  
+     memberships         Membership[]
+     conversations       Conversation[]                
+     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+     updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
+     Messages            Message[]
+     blockedByMe         Blacklist[]              @relation("BlockedByMe")
+     blockedMe           Blacklist[]              @relation("BlockedMe")
 
-  email               String      @unique
-  firstName           String      @db.VarChar(255)
-  lastName            String      @db.VarChar(255)
+     sentRequests        FriendRequest[]          @relation("senderRequests")
+     receivedRequests    FriendRequest[]          @relation("receiverRequests")
+     friends             User[]                   @relation("friends")
+     friendsOf           User[]                   @relation("friends")
 
-  userName            String      @unique @db.VarChar(255)
+     @@map("users")
+}
 
-  avatar_url          String?     @db.VarChar(255)
+model Conversation {
+     id                  Int                      @id @default(autoincrement())
+     type                String // Either "direct" for direct messages, "channel" for public channels, or "private_channel" for private channels
+     participants        User[]                   
+     room                Room?                    @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+     roomId              Int?                     @unique
+     messages            Message[]
+     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+     updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
 
-  createdAt           DateTime    @default(now()) @db.Timestamp(6)
-  updatedAt           DateTime?   @updatedAt      @db.Timestamp(6)
+}
 
-  twoFactorActivate   Boolean?    @default(false)
-  twoFactorSecret     String?     @db.VarChar(255)
+model Message {
+     id                  Int                      @id @default(autoincrement())
+     content             String
+     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+     sender              User                     @relation(fields: [senderId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
+     senderId            Int
+     chat                Conversation             @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+     chatId              Int
+}
 
-  @@map("users")
+model Room {
+     id                  Int                      @id @default(autoincrement())
+     name                String                   @db.VarChar()
+     type                String
+     members             Membership[]             @relation("membership")
+     conversation        Conversation?             
+     password            String                   @db.VarChar()
+     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+     updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
+}
+
+model Membership {
+     id                  Int                      @id @default(autoincrement())
+     isOwner             Boolean                  @default(false)
+     isAdmin             Boolean                  @default(false)
+     isBanned            Boolean                  @default(false)
+     isMute              Boolean                  @default(false)
+     timeMute            DateTime                 @default(now())
+     room                Room                     @relation("membership", fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+     roomId              Int
+     user                User                     @relation(fields: [userId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
+     userId              Int
+}
+
+model Blacklist {
+     id                  Int                      @id @default(autoincrement())
+     blocker             User                     @relation("BlockedByMe", fields: [blockerById], references: [intraId])
+     blockerById         Int
+     blocked             User                     @relation("BlockedMe", fields: [blockedById], references: [intraId])
+     blockedById         Int
+     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+}
+
+model FriendRequest {
+     id                  Int                      @id @default(autoincrement())
+     sender              User                     @relation("senderRequests", fields: [senderId], references: [intraId])
+     senderId            Int
+     receiver            User                     @relation("receiverRequests", fields: [receiverId], references: [intraId])
+     receiverId          Int
+     accepted            Boolean
+     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+
+     @@unique([senderId, receiverId])
 }
