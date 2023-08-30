@@ -53,7 +53,17 @@ export class ChatController
             res.send({error: error.message})
         }
     }
-    // getAllConversation
+    // getAlluserConversations
+
+    @Get('/conversations')
+    async getUserDirectCoversation(@GetUser() user: User, @Res() res: Response)
+    {
+        try {
+            return await this.messageService.getUserDirectConversations(user.intraId, res);
+        } catch (error) {
+            res.send({error: error.message})
+        }
+    }
 
     // getRoomMessages
     // getRoomConversation

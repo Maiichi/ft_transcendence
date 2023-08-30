@@ -1,19 +1,37 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Person, LogoutRounded, Close, PersonAddAltRounded } from '@mui/icons-material';
 import { Box, Modal } from '@mui/material';
 import "./channelSettingModal.css"
-import { SearchComponent } from '../../../core';
+import { SearchComponent, useAppDispatch, useAppSelector } from '../../../core';
+import { getDirectConversations } from '../components/conversations/conversationThunk';
 
+// interface conversation {
+//         id: number,
+//         createdAt: string,
+//         type: string,
+//         messages: [],
+//         participants: [] | undefined
+// }
 export const ChannelSettingModal = () => {
+    const dispatch = useAppDispatch();
+    // const conversations: any = useAppSelector((state) => state.conversation.conversations);
+
     const [open, setOpen] = useState(false);
     const [openInviteModal, setOpenInviteModal] = useState(false);
 
     const handleClose = () => {
         setOpen(!open);
     }
+
+    // useEffect(()=> {
+    //     dispatch(getDirectConversations());
+    //   }, [dispatch]);
+    
+    // console.log("conversation in ChannelSetting: ", conversation.type);
+    // console.log("conversation type: ", conversation.type);
     return (
         <>
-            <p>#Channel 1</p>
+            <p>channel</p>
             <div className="icons-holder">
             <div className="channel-members" onClick={() => setOpen(true)}>
                 <Person />

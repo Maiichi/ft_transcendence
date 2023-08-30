@@ -1,30 +1,40 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { getDirectConversations } from "./conversationThunk";
 
 export interface conversationState {
-    memberships : [];
-    isLoading : boolean
+    conversations : [];
+    isLoad : boolean
 }
 
 const initialState: conversationState = {
-    memberships: [],
-    isLoading: false
+    conversations: [],
+    isLoad: false
 };
 
 export const conversationSlice = createSlice({
     name: "conversations",
     initialState,
     reducers : {
-        setConversation: (state, action: PayloadAction<conversationState>) => 
+        setConversations: (state, action: PayloadAction<conversationState>) => 
         {
-            state.memberships = action.payload.memberships;
+            state.conversations = action.payload.conversations;
         },
     },
     extraReducers: (builder) => {
         builder
-            
+            .addCase(getDirectConversations.pending, (state) => {
+                state.isLoad = true;
+            })
+            .addCase(getDirectConversations.fulfilled, (state, action) =>{
+                state.conversations = action.payload;
+                state.isLoad = false;
+            })
+            .addCase(getDirectConversations.rejected, (state) =>{
+                state.isLoad = false;
+            })
     },
 });
 
-export const { setConversation } = conversationSlice.actions;
+export const { setConversations } = conversationSlice.actions;
 
 export default conversationSlice.reducer;

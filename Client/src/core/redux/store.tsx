@@ -8,6 +8,7 @@ import authSlice from "../../packages/feat-Auth/components/authSlice";
 import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
 import chatSlice from "../../packages/feat-Chat/components/rooms/chatSlice";
+import conversationSlice from "../../packages/feat-Chat/components/conversations/conversationSlice";
 // ...
 
 const rootReducer = combineReducers({
@@ -16,13 +17,14 @@ const rootReducer = combineReducers({
     auth: authSlice,
     core: coreSlice,
     chat: chatSlice,
+    conversation: conversationSlice
   },
 );
 
 const persistConfig = {
     key: "root", // Key to access your storage
     storage,
-    whitelist: ["auth", "chat"],
+    whitelist: ["auth"],
     transforms: [decryptionTransform], // Use the custom transform
 };
 

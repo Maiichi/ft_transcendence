@@ -369,19 +369,49 @@ export class MessageService
     }
 /***************************************** CONVERSATION  ***********************************************/
 
-    async getUserDirectConversations(userId: number)
+    async getUserDirectConversations(userId: number, res: Response)
     {
-        const conversations = await this.prisma.user.findMany({
+        const conversations = await this.prisma.user.findUnique({
             where : {
                 intraId: userId
             },
             select : {
                 conversations : {
                     where : {
-                        roomId: null
+                        type: 'direct',
+                    },
+                    select : {
+                        id: true,
+                        createdAt: true,
+                        updatedAt: true,
+                        type: true,
+                        messages: {
+                            select: {
+                                content: true,
+                                createdAt: true,
+                            },
+                            orderBy: {
+                                createdAt: 'desc',
+                            },
+                            take: 1, // Retrieve only the last message
+                        },
+                        participants : {
+                            where : {
+                                NOT : {
+                                    intraId : userId
+                                }
+                            },
+                            select : {
+                                userName: true,
+                                firstName: true,
+                                lastName: true,
+                                status: true,
+                            }
+                        }
                     }
                 }
             }
-        })
+        });
+        res.send({data: conversations});
     }
 }

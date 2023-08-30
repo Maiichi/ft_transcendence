@@ -15,7 +15,7 @@ export const roomSlice = createSlice({
     name: "memberships",
     initialState,
     reducers : {
-        setConversation: (state, action: PayloadAction<roomState>) => 
+        setMemberships: (state, action: PayloadAction<roomState>) => 
         {
             state.memberships = action.payload.memberships;
         },
@@ -35,6 +35,6 @@ export const roomSlice = createSlice({
     },
 });
 
-export const { setConversation } = roomSlice.actions;
+export const { setMemberships } = roomSlice.actions;
 
 export default roomSlice.reducer;

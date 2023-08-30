@@ -11,7 +11,7 @@ export const getChatRooms = createAsyncThunk(
         try {
             // const dispatch = useAppDispatch();
             // const token = useAppSelector((state) => state.auth.token);
-            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzIzNzc4MywiZXhwIjoxNjkzMzI0MTgzfQ.Spc9RRawED55e4yigj4oawOOkc91AqY3RBQKqaagVI8';
+            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzM0MDEzNywiZXhwIjoxNjkzNDI2NTM3fQ.KRZDcysAOZD4Xc7qd8Hd1pBwKFcVhJI6a4aS_X5a-V4';
             const response = await apiRequest(`/chat/rooms`, {
                 method: "GET",
                 headers : {
@@ -24,6 +24,7 @@ export const getChatRooms = createAsyncThunk(
             // return response?.data;
             // const rooms = response?.data.map((item: any) => item.room); // Extract "room" property
             // console.log("rooms ,", rooms);
+            console.log("RESP rooms ===" + JSON.stringify(response));
             return response.data;
         } catch (error) {
             console.log("error in chatThunk", error);
