@@ -17,6 +17,7 @@ import { MoreHoriz, Person, LogoutRounded } from '@mui/icons-material';
 import { ChannelSettingModal } from "./ChannelModal/ChannelSettingModal";
 import  {getChatRooms}  from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
+import { dir } from "console";
 
 
 export const Chat = () => {
@@ -25,11 +26,10 @@ export const Chat = () => {
   const chatRooms = useAppSelector((state) => state.chat.memberships); 
   const account = useAppSelector((state) => state.auth.user);
   const conversations: [] = useAppSelector((state) => state.conversation.conversations);
-  // const [name, setName] = useState("");
-  // const [msg, setMsg] = useState("");
-  const [selectedTab, setSelectedTab] = useState("Dms");
-  // const [iconChannelOpen, setIconChannelOpen] = useState(false);
-  
+
+  const [directConversation, setDirectConversation]   = useState(null);
+  const [channelConversation, setChannelConversation] = useState(null);
+
   useEffect(()=> {
     dispatch(getChatRooms());
     dispatch(getDirectConversations());
@@ -60,8 +60,6 @@ export const Chat = () => {
           const minutes = inputDate.getMinutes().toString().padStart(2, '0');
           return `${hours}:${minutes}`;
       } else if (isYesterday) {
-          // const hours = inputDate.getHours().toString().padStart(2, '0');
-          // const minutes = inputDate.getMinutes().toString().padStart(2, '0');
           return `yesterday`;
       } else {
           const year = inputDate.getFullYear();
@@ -70,9 +68,6 @@ export const Chat = () => {
           return `${year}/${month}/${day}`;
       }
   }
-  
-  console.log("chat rooons ==" + JSON.stringify(chatRooms));
-  // console.log("conversations === " + JSON.stringify(conversations[0].messages[0].content));
   return (
     <Root>
       <div className="discussions">
@@ -93,7 +88,12 @@ export const Chat = () => {
         </div>
         <div className="channelListHolder">
           {chatRooms.map((item: any) => (
-            <h4 key={item.room.id} className="channel-name"># {item.room.name} </h4>
+            <h4 key={item.room.id} 
+                className={`channel-name ${channelConversation === item.id ? 'selected' : ''}`}
+                onClick={() => {setChannelConversation(item.room);setDirectConversation(null)}}
+            >
+              # {item.room.name}  
+            </h4>
           ))}
         </div>
         <div
@@ -115,7 +115,10 @@ export const Chat = () => {
           {
             conversations.map((discussion: any) => (
             
-            <div key={discussion.id} className="discussion">
+            <div key={discussion.id}
+              className={`discussion ${directConversation === discussion.id ? 'selected' : ''}`}
+              onClick={() => {setDirectConversation(discussion); setChannelConversation(null)}} // Update the selected conversation on click
+            >
               <Badge
                 anchorOrigin={{
                   vertical: "bottom",
@@ -132,38 +135,42 @@ export const Chat = () => {
                 <p className="name">{discussion.participants[0].firstName}  {discussion.participants[0].lastName}</p>
                 <p className="message">{ changeMessageLength(discussion.messages[0].content) }</p>
               </div>
-              <p>{convertDateTime(discussion.messages[0].createdAt)}</p>
-              {/* <div className="timer">{discussion.timer}</div> */}
+              <p style={{fontSize: 13}}>{convertDateTime(discussion.messages[0].createdAt)}</p>
             </div>
           ))}
         </div>
       </div>
-      <div className="chatBox">
-        <div className="chatBoxHeader">
-    
-    <ChannelSettingModal
-    
-    />
-        </div>
-        <div className="chatBoxWrapper">
-          <div className="chatBoxTop">
-            {[1, 2, 3, 4].map((item) => (
-              <>
-                <Message own={false} />
-                <Message own />
-              </>
-            ))}
+      <div className={`chatBox ${(directConversation === null && channelConversation === null) ? 'no-conversation-selected' : ''}`}>
+      {(directConversation === null && channelConversation === null) ? (
+          <div className="chatBoxNoConversation">
+            Click on a conversation to start chatting.
           </div>
-        </div>
-        <div className="chatBoxBottom">
-          <textarea
-            className="chatMessageInput"
-            placeholder="Write your message ..."
-          ></textarea>
-          <button className="chatSubmitButtom">Send</button>
-        </div>
+        ) : (
+          <>
+            <div className="chatBoxHeader">
+              <ChannelSettingModal channelConversation={channelConversation} directConversation={directConversation} />
+            </div>
+            <div className="chatBoxWrapper">
+              <div className="chatBoxTop">
+                {[1, 2, 3, 4].map((item) => (
+                  <>
+                    <Message own={false} />
+                    <Message own />
+                  </>
+                ))}
+              </div>
+            </div>
+            <div className="chatBoxBottom">
+              <textarea
+                className="chatMessageInput"
+                placeholder="Write your message ..."
+              ></textarea>
+              <button className="chatSubmitButtom">Send</button>
+            </div>
+          </>
+        )}
       </div>
-      <ChatUsers type={selectedTab} />
+      <ChatUsers channelConversation={channelConversation} directConversation={directConversation} />
     </Root>
   );
 };

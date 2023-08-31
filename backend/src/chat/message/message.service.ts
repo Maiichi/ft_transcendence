@@ -235,7 +235,32 @@ export class MessageService
                isBanned: false,
            },
            select : {
-                room : true,
+                room : {
+                    select : {
+                        id: true,
+                        conversation : true,
+                        members: {
+                            select: {
+                                isAdmin: true,
+                                isBanned: true,
+                                isMute: true,
+                                isOwner: true,
+                                user: {
+                                    select : {
+                                        firstName: true,
+                                        lastName: true,
+                                        userName: true,
+                                    }
+                                }
+                            }
+                        },
+                        name: true,
+                        createdAt: true,
+                        updatedAt: true,
+                        password: true,
+                        type: true,
+                    }
+                },
            }
        });
        console.log("rooms ,", JSON.stringify(rooms))

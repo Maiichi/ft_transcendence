@@ -65,6 +65,7 @@ export const routes = [
       </Layout>
     ),
     errorElement: <NotFoundError />,
+    requireAuth: true,
   },
   {
     path: "/firstlogin",

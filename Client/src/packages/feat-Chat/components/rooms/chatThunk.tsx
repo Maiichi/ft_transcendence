@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../../core/utils/apiRequest";
+import { useAppSelector } from "../../../../core";
 
 type membershipsPayload = {
     memberships: [];
@@ -10,8 +11,7 @@ export const getChatRooms = createAsyncThunk(
     async () => {
         try {
             // const dispatch = useAppDispatch();
-            // const token = useAppSelector((state) => state.auth.token);
-            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzM0MDEzNywiZXhwIjoxNjkzNDI2NTM3fQ.KRZDcysAOZD4Xc7qd8Hd1pBwKFcVhJI6a4aS_X5a-V4';
+            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzQ3NDAxNywiZXhwIjoxNjkzNTYwNDE3fQ.SAMTpTodQR8CAFYihC0i-PjwcAHmbU9E7R6Ear-ZITA';
             const response = await apiRequest(`/chat/rooms`, {
                 method: "GET",
                 headers : {
@@ -24,7 +24,7 @@ export const getChatRooms = createAsyncThunk(
             // return response?.data;
             // const rooms = response?.data.map((item: any) => item.room); // Extract "room" property
             // console.log("rooms ,", rooms);
-            console.log("RESP rooms ===" + JSON.stringify(response));
+            // console.log("RESP rooms ===" + JSON.stringify(response));
             return response.data;
         } catch (error) {
             console.log("error in chatThunk", error);
