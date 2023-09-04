@@ -58,10 +58,10 @@ export const ChannelSettingModal: React.FC<Props> = ({
   };
 
   // console.log("data from props, ", JSON.stringify(selectedConversation))
-  console.log("direct conv =", directConversation);
-  console.log("channel conv =", channelConversation);
+  // console.log("direct conv =", directConversation);
+  // console.log("channel conv =", channelConversation);
 
-  console.log("here");
+  // console.log("here");
 
   return (
         <>

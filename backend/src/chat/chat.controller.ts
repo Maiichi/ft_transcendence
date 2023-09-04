@@ -73,7 +73,7 @@ export class ChatController
         try {
             return await this.messageService.getRoomConversation(Number(roomId), user, res);
         } catch (error) {
-            // console.log("controller level == " + error.message)
+            console.log("controller level == " + error.message)
             res.send({error: error.message})
         }
     }

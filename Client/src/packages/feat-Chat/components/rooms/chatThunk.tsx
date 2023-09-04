@@ -6,12 +6,16 @@ type membershipsPayload = {
     memberships: [];
 }
 
+type MessagesPayload = {
+    messages: [];
+}
+
 export const getChatRooms = createAsyncThunk(
     "chat/rooms",
     async () => {
         try {
             // const dispatch = useAppDispatch();
-            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk5MTg2LCJlbWFpbCI6Im9xYXRpbUBzdHVkZW50LjEzMzcubWEiLCJpYXQiOjE2OTM1ODA3NjAsImV4cCI6MTY5MzY2NzE2MH0.05LShq6mdZ66mXnthokivQMQfKBfo8UPPEYMyUflhqc';
+            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzgyNDAwOSwiZXhwIjoxNjkzOTEwNDA5fQ.6M031er_oRs80a88UQp-8YwWla7ZFbnJF9ejzjiqB-w';
             const response = await apiRequest(`/chat/rooms`, {
                 method: "GET",
                 headers : {
@@ -33,6 +37,25 @@ export const getChatRooms = createAsyncThunk(
     }
 );
 
+export const getChatRoomMessages = createAsyncThunk(
+    "chat/room/messages",
+    async (roomId: number) => {
+        try {
+            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzgyNDAwOSwiZXhwIjoxNjkzOTEwNDA5fQ.6M031er_oRs80a88UQp-8YwWla7ZFbnJF9ejzjiqB-w';
+            const resp = await apiRequest(`/chat/room/${roomId}/conversation`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log("room Data thunk ", resp.data);
+            return resp.data.messages;
+        } catch (error) {
+            console.log("error in getChatRoomMessages", error);
+            throw error;
+        }
+    }
+);
 
 /***Second Parameter of the Async Function (_ and thunkAPI):
 

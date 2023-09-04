@@ -58,7 +58,7 @@ interface Conversation {
 export const ChatUsers = ({ directConversation, channelConversation }: Props) => {
     const account = useAppSelector((state) => state.auth.user);
     const dispatch = useAppDispatch();
-    console.log("username ===" + account.userName);
+    // console.log("username ===" + account.userName);
     
     const color = directConversation?.participants[0].status === 'ONLINE' ? 'green' : 'grey';
     return (

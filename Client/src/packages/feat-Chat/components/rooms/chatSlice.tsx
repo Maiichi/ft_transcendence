@@ -1,14 +1,16 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getChatRooms } from "./chatThunk";
+import { getChatRoomMessages, getChatRooms } from "./chatThunk";
 
 export interface roomState {
     memberships : [];
-    isLoading : boolean
+    messages: [];
+    isLoading : boolean,
 }
 
 const initialState: roomState = {
     memberships: [],
-    isLoading: false
+    messages: [],
+    isLoading: false,
 };
 
 export const roomSlice = createSlice({
@@ -19,10 +21,13 @@ export const roomSlice = createSlice({
         {
             state.memberships = action.payload.memberships;
         },
+        setMessages : (state, action: PayloadAction<roomState>) => {
+            state.messages = action.payload.messages;
+        }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getChatRooms.pending, (state, action) => {
+            .addCase(getChatRooms.pending, (state) => {
                 state.isLoading = true;
             })
             .addCase(getChatRooms.fulfilled, (state, action) => {
@@ -32,9 +37,20 @@ export const roomSlice = createSlice({
             .addCase(getChatRooms.rejected , (state) => {
                 state.isLoading = false
             })
+            .addCase(getChatRoomMessages.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getChatRoomMessages.fulfilled, (state, action) => {
+                state.messages = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(getChatRoomMessages.rejected , (state, action) => {
+                state.messages = [];
+                state.isLoading = false;
+            })
     },
 });
 
-export const { setMemberships } = roomSlice.actions;
+export const { setMemberships, setMessages } = roomSlice.actions;
 
 export default roomSlice.reducer;

@@ -156,6 +156,18 @@ export class RoomService
                 isAdmin: true,
             },
         });
+
+        // step 3 : create a new conversation entry
+        await this.prisma.conversation.create({
+            data : {
+                type: 'channel',
+                room : {
+                    connect : {
+                        id: newRoom.id,
+                    }
+                }
+            }
+        });
         console.log(`${user.userName} has created a ${newRoom.name} room`)
         return newRoom;
         // } catch (error) {

@@ -10,7 +10,6 @@ import {
 const useSocket = (serverUrl: string) => {
   useEffect(() => {
     const socket = initializeSocket(serverUrl);
-
     return () => {
       disconnectSocket();
     };

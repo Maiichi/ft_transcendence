@@ -342,19 +342,24 @@ export class MessageService
                         },
                     },
                     select: {
+                        id: true,
                         createdAt: true,
                         content: true,
                         chatId: true,
                         sender: {
                             select: {
                                 userName: true,
+                                firstName: true,
+                                lastName: true,
+                                avatar_url: true,
+                                intraId: true
                             },
                         },
                     },
                 },
             },
         });
-      
+        console.log("back: messages == ", JSON.stringify(messages));
         return messages;
     }
 

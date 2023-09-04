@@ -18,6 +18,7 @@ import { ChannelSettingModal } from "./ChannelModal/ChannelSettingModal";
 import  {getChatRooms}  from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
 import { dir } from "console";
+import { ChatBox } from "./chatBox/ChatBox";
 
 
 export const Chat = () => {
@@ -140,36 +141,15 @@ export const Chat = () => {
           ))}
         </div>
       </div>
-      <div className={`chatBox ${(directConversation === null && channelConversation === null) ? 'no-conversation-selected' : ''}`}>
-      {(directConversation === null && channelConversation === null) ? (
+      {
+        (directConversation === null && channelConversation === null) ? (
           <div className="chatBoxNoConversation">
             Click on a conversation to start chatting.
           </div>
         ) : (
-          <>
-            <div className="chatBoxHeader">
-              <ChannelSettingModal channelConversation={channelConversation} directConversation={directConversation} />
-            </div>
-            <div className="chatBoxWrapper">
-              <div className="chatBoxTop">
-                {[1, 2, 3, 4].map((item) => (
-                  <>
-                    <Message own={false} />
-                    <Message own />
-                  </>
-                ))}
-              </div>
-            </div>
-            <div className="chatBoxBottom">
-              <textarea
-                className="chatMessageInput"
-                placeholder="Write your message ..."
-              ></textarea>
-              <button className="chatSubmitButtom">Send</button>
-            </div>
-          </>
-        )}
-      </div>
+          <ChatBox channelConversation={channelConversation} directConversation={directConversation} />
+        )
+      }
       <ChatUsers channelConversation={channelConversation} directConversation={directConversation} />
     </Root>
   );
