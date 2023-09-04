@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   postgres:
     image: postgres:13
@@ -45,9 +45,8 @@ services:
       - /app/node_modules
       - images_uploads:/app/images_uploads/ # shared volume for image uploads
 volumes:
-    db_data:
-    images_uploads:
-
+  db_data:
+  images_uploads:
 
 networks:
   NET1:

@@ -8,9 +8,12 @@ import {
 import * as cors from 'cors';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {cors : true});
+  const app = await NestFactory.create(
+    AppModule,
+    { cors: true },
+  );
   app.enableCors({
-    origin: 'http://localhost:3000', // Replace with your client's origin URL
+    origin: 'http://localhost:3003', // Replace with your client's origin URL
     credentials: true,
   });
   // Enable CORS
@@ -24,7 +27,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  
+
   const config = new DocumentBuilder()
     .setTitle('Transcendence Manager API')
     .setDescription(
