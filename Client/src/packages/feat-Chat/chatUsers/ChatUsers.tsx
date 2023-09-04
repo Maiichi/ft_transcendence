@@ -10,7 +10,9 @@ import {
   DriveFileRenameOutlineTwoTone,
   VideogameAssetTwoTone,
 } from "@mui/icons-material";
-import { useAppSelector } from "../../../core";
+import { useAppDispatch, useAppSelector } from "../../../core";
+import { useEffect } from "react";
+import { login } from "../../feat-Auth/components/authThunk";
 
 interface Conversation {
     id: number;
@@ -55,7 +57,9 @@ interface Conversation {
 
 export const ChatUsers = ({ directConversation, channelConversation }: Props) => {
     const account = useAppSelector((state) => state.auth.user);
+    const dispatch = useAppDispatch();
     console.log("username ===" + account.userName);
+    
     const color = directConversation?.participants[0].status === 'ONLINE' ? 'green' : 'grey';
     return (
         <div className="onlineUsersBox">

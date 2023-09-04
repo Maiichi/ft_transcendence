@@ -7,7 +7,7 @@ export const getDirectConversations = createAsyncThunk(
     async () => {
         // const token = useAppSelector((state) => state.auth.token);
         try {
-            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzQ2NTE3OCwiZXhwIjoxNjkzNTUxNTc4fQ._2gYvAwc2HnbfPEzso1266XzEOUcSoYbMx4EQTIgsR0';
+            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk5MTg2LCJlbWFpbCI6Im9xYXRpbUBzdHVkZW50LjEzMzcubWEiLCJpYXQiOjE2OTM1ODA3NjAsImV4cCI6MTY5MzY2NzE2MH0.05LShq6mdZ66mXnthokivQMQfKBfo8UPPEYMyUflhqc';
             // console.log("token ===" + token);
             const resp = await apiRequest(`/chat/conversations`, {
                 method: 'GET',

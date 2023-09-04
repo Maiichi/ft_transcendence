@@ -263,7 +263,7 @@ export class MessageService
                 },
            }
        });
-       console.log("rooms ,", JSON.stringify(rooms))
+    //    console.log("rooms ,", JSON.stringify(rooms))
        return res.json({
            status: 200,
            data: rooms

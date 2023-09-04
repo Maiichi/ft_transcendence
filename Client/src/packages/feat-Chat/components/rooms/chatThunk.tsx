@@ -11,7 +11,7 @@ export const getChatRooms = createAsyncThunk(
     async () => {
         try {
             // const dispatch = useAppDispatch();
-            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzQ3NDAxNywiZXhwIjoxNjkzNTYwNDE3fQ.SAMTpTodQR8CAFYihC0i-PjwcAHmbU9E7R6Ear-ZITA';
+            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjk5MTg2LCJlbWFpbCI6Im9xYXRpbUBzdHVkZW50LjEzMzcubWEiLCJpYXQiOjE2OTM1ODA3NjAsImV4cCI6MTY5MzY2NzE2MH0.05LShq6mdZ66mXnthokivQMQfKBfo8UPPEYMyUflhqc';
             const response = await apiRequest(`/chat/rooms`, {
                 method: "GET",
                 headers : {
