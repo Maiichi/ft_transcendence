@@ -292,7 +292,22 @@ export class MessageService
                 id: conversationId
             },
             select: {
-                messages : true
+                messages : {
+                    select : {
+                        id: true,
+                        content: true,
+                        createdAt: true,
+                        sender : {
+                            select : {
+                                firstName: true,
+                                lastName: true,
+                                userName: true,
+                                intraId: true,
+                                avatar_url: true
+                            }
+                        }
+                    }
+                }
             }
         });
         return messages;

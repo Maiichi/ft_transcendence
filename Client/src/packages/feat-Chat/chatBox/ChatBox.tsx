@@ -4,9 +4,9 @@ import { AppDispatch, useAppSelector } from "../../../core";
 import { ChannelSettingModal } from "../ChannelModal/ChannelSettingModal";
 import { Message } from "../message/Message";
 import "./chatBox.css"
-import { ChatBoxBody } from "./chatBoxBody/ChatBoxBody";
 import { getChatRoomMessages } from "../components/rooms/chatThunk";
 import { useEffect } from "react";
+import { getDirectConversationMessages } from "../components/conversations/conversationThunk";
 
 interface Conversation {
     id: number;
@@ -74,15 +74,18 @@ export const ChatBox: React.FC<Props> = ({
     directConversation, channelConversation
 }) =>{
     const dispatch = useDispatch<AppDispatch>();
-    const account = useAppSelector((state) => state.auth.user); 
+    const account = useAppSelector((state) => state.auth.user);
+    const token: string   = useAppSelector((state) => state.auth.token);
     const roomMessages: [] = useAppSelector((state) => state.chat.messages);
+    const directConversationMessages: [] = useAppSelector((state) => state.conversation.messages);
     
     useEffect(() => {
         if (channelConversation !== null)
-        dispatch(getChatRoomMessages(channelConversation.id));    
+            dispatch(getChatRoomMessages({token, roomId: channelConversation.id}));
+        else if (directConversation !== null)
+            dispatch(getDirectConversationMessages({token, conversationId: directConversation.id}))    
     },[dispatch, channelConversation])
 
-    console.log("roomMessgaes == ", roomMessages);
 
     const isConnectedUser = (intraId: number) => {
         if (account.intraId == intraId)
@@ -90,26 +93,21 @@ export const ChatBox: React.FC<Props> = ({
         return false;
     }
 
-    // Check if the room has messages
-    // const roomHasMessages = roomMessages && roomMessages.length > 0;
-
     return (
         <>
         {
-            (channelConversation === null) ? (
+            (channelConversation === null && directConversation) ? (
                 <div className="chatBox">
                     <div className="chatBoxHeader">
                     <ChannelSettingModal channelConversation={channelConversation} directConversation={directConversation} />
                     </div>
                     <div className="chatBoxWrapper">
                         <div className="chatBoxTop">
-                            {/* {roomMessages.map((item: {sender: {} , content: string} ) => (
+                        {directConversationMessages.map((item: messageData ) => (
                             <>
-
-                                <Message own={false} user={item.sender}  content={item.content} />
-                                <Message own user={item.sender} content={item.content} />
+                                <Message own={isConnectedUser(item.sender.intraId)} data = {item} />
                             </>
-                            ))} */}
+                        ))}
                         </div>
                     </div>
                     <div className="chatBoxBottom">
@@ -130,22 +128,21 @@ export const ChatBox: React.FC<Props> = ({
                         <div className="chatBoxTop">
                             { 
                                 roomMessages.length === 0 ? 
-                                    (
-                                        <div className="empty-conversation">
-                                            <h2>it's always better to start a conversation 	&#128516;</h2>
-                                        </div>
-                                    ) 
-                                    : 
-                                    (
-                                        <>
+                                (
+                                    <div className="empty-conversation">
+                                        <h2>it's always better to start a conversation 	&#128516;</h2>
+                                    </div>
+                                ) 
+                                : 
+                                (
+                                    <>
                                         {roomMessages.map((item: messageData ) => (
                                             <>
-                                                <Message own={isConnectedUser(item.sender.intraId)} user={item.sender}  content={item.content} />
+                                                <Message own={isConnectedUser(item.sender.intraId)} data= {item} />
                                             </>
                                         ))}
-                                        </>
-                                    ) 
-                                
+                                    </>
+                                ) 
                             }
                         </div>
                     </div>
@@ -161,6 +158,5 @@ export const ChatBox: React.FC<Props> = ({
             )
         }
         </>
-        
     );
 }

@@ -17,58 +17,24 @@ import { MoreHoriz, Person, LogoutRounded } from '@mui/icons-material';
 import { ChannelSettingModal } from "./ChannelModal/ChannelSettingModal";
 import  {getChatRooms}  from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
-import { dir } from "console";
 import { ChatBox } from "./chatBox/ChatBox";
-
+import { convertDateTime, changeMessageLength } from "./Utils/utils";
 
 export const Chat = () => {
 
   const dispatch = useAppDispatch();
   const chatRooms = useAppSelector((state) => state.chat.memberships); 
-  const account = useAppSelector((state) => state.auth.user);
+  const token = useAppSelector((state) => state.auth.token);
   const conversations: [] = useAppSelector((state) => state.conversation.conversations);
 
   const [directConversation, setDirectConversation]   = useState(null);
   const [channelConversation, setChannelConversation] = useState(null);
 
   useEffect(()=> {
-    dispatch(getChatRooms());
-    dispatch(getDirectConversations());
+    dispatch(getChatRooms(token));
+    dispatch(getDirectConversations(token));
   }, [dispatch]);
 
-    function changeMessageLength(message: string)
-    {
-      if (message.length > 60)
-      {
-        message = message.substring(0,60);
-        return (message + "...");
-      }
-      return message;
-    }
-    // function to change date format
-    function convertDateTime(dateString: string): string {
-      const now = new Date();
-      const inputDate = new Date(dateString);
-  
-      const isSameDate = now.toDateString() === inputDate.toDateString();
-  
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const isYesterday = yesterday.toDateString() === inputDate.toDateString();
-  
-      if (isSameDate) {
-          const hours = inputDate.getHours().toString().padStart(2, '0');
-          const minutes = inputDate.getMinutes().toString().padStart(2, '0');
-          return `${hours}:${minutes}`;
-      } else if (isYesterday) {
-          return `yesterday`;
-      } else {
-          const year = inputDate.getFullYear();
-          const month = (inputDate.getMonth() + 1).toString().padStart(2, '0');
-          const day = inputDate.getDate().toString().padStart(2, '0');
-          return `${year}/${month}/${day}`;
-      }
-  }
   return (
     <Root>
       <div className="discussions">
@@ -85,7 +51,7 @@ export const Chat = () => {
           }}
         >
           <p>Channels</p>
-        <CreateChannelModal />
+          <CreateChannelModal />
         </div>
         <div className="channelListHolder">
           {chatRooms.map((item: any) => (

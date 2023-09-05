@@ -1,34 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../../core/utils/apiRequest";
-import { useAppSelector } from "../../../../core";
-
-type membershipsPayload = {
-    memberships: [];
-}
-
-type MessagesPayload = {
-    messages: [];
-}
 
 export const getChatRooms = createAsyncThunk(
     "chat/rooms",
-    async () => {
+    async (token: string) => {
         try {
-            // const dispatch = useAppDispatch();
-            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzgyNDAwOSwiZXhwIjoxNjkzOTEwNDA5fQ.6M031er_oRs80a88UQp-8YwWla7ZFbnJF9ejzjiqB-w';
             const response = await apiRequest(`/chat/rooms`, {
                 method: "GET",
                 headers : {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // console.log("REPONSE ==" + JSON.stringify(response.data));
-            // payload.room = response?.message || {};
-            // dispatch(setConversation(response.data));
-            // return response?.data;
-            // const rooms = response?.data.map((item: any) => item.room); // Extract "room" property
-            // console.log("rooms ,", rooms);
-            // console.log("RESP rooms ===" + JSON.stringify(response));
             return response.data;
         } catch (error) {
             console.log("error in chatThunk", error);
@@ -39,16 +21,15 @@ export const getChatRooms = createAsyncThunk(
 
 export const getChatRoomMessages = createAsyncThunk(
     "chat/room/messages",
-    async (roomId: number) => {
+    async ({ token, roomId }: { token: string; roomId: number }) => {
         try {
-            const token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwNjM1LCJlbWFpbCI6Iml6YWlsQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5MzgyNDAwOSwiZXhwIjoxNjkzOTEwNDA5fQ.6M031er_oRs80a88UQp-8YwWla7ZFbnJF9ejzjiqB-w';
             const resp = await apiRequest(`/chat/room/${roomId}/conversation`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log("room Data thunk ", resp.data);
+            // console.log("room Data thunk ", resp.data);
             return resp.data.messages;
         } catch (error) {
             console.log("error in getChatRoomMessages", error);
