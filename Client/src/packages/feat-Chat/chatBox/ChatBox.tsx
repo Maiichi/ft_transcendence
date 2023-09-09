@@ -2,7 +2,7 @@
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../../../core";
 import { ChannelSettingModal } from "../ChannelModal/ChannelSettingModal";
-import { Message } from "../message/Message";
+import { Message } from "./message/Message";
 import "./chatBox.css"
 import { getChatRoomMessages } from "../components/rooms/chatThunk";
 import { useEffect } from "react";
@@ -22,7 +22,7 @@ interface Conversation {
     }[];
   }
   
-  interface Room {
+interface Room {
     id: number;
     members: {
       isAdmin: boolean;
@@ -52,7 +52,7 @@ interface Conversation {
     updatedAt: string;
     password: string;
     type: string;
-  }
+}
 
   interface messageData {
     sender: {
@@ -84,11 +84,10 @@ export const ChatBox: React.FC<Props> = ({
             dispatch(getChatRoomMessages({token, roomId: channelConversation.id}));
         else if (directConversation !== null)
             dispatch(getDirectConversationMessages({token, conversationId: directConversation.id}))    
-    },[dispatch, channelConversation])
-
+    },[dispatch, channelConversation, directConversation])
 
     const isConnectedUser = (intraId: number) => {
-        if (account.intraId == intraId)
+        if (account.intraId === intraId)
             return true;
         return false;
     }

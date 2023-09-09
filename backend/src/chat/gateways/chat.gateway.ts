@@ -14,7 +14,12 @@ import { KickMemberDto, LeaveRoomDto, MuteMemberDto, JoinRoomDto, SetRoomAdminDt
 import { AcceptFriendRequestDto, SendFriendRequestDto } from "src/user/friend/dto/friend.dto";
 import { FriendService } from "src/user/friend/friend.service";
 
-@WebSocketGateway()
+@WebSocketGateway({
+    cors: {
+      origin: '*',
+      credentials: true,
+    },
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
 {   
     @WebSocketServer()
@@ -109,6 +114,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     async handleConnection(client: Socket) {
         const token = client.handshake.headers.authorization;
+        // console.log("(back) token == ", token)
         try {
             const decodedToken = await this.jwtService.verify(token,{secret:process.env.JWT_SECRET});
             // if (this.BlackListedTokens.has(token))
@@ -122,7 +128,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             this.userSocket.get(user.intraId).push(client.id);
             this.userService.updateUserStatus(user.intraId, 'ONLINE');
             this.server.emit('userConnected', {userId: client.id})
-
             console.log(user.userName + ' is Connected ' + client.id)
         } catch (error) {
             client.disconnect();
@@ -138,7 +143,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 
     // TODO: need to be tested to check if the user is logged of from all the tabs
-    handleDisconnect(client: Socket) {
+    async handleDisconnect(client: Socket) {
         try {
             const token = client.handshake.headers.authorization;
             const user = this.connectedClients.get(client.id);
@@ -163,7 +168,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     @SubscribeMessage('createRoom')
     async createRoom(client: Socket, createRoomDto: CreateRoomDto) {
         try {
-            // get current User 
+            // get current User
+            console.log("room data ===", createRoomDto); 
             const currentUser = this.findUserByClientSocketId(client.id);
             const room = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
             this.server.emit('roomCreated', room);    

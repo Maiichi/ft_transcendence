@@ -1,8 +1,6 @@
 import { Test, Home, Game, Settings, Profile, Chat } from "../packages";
 import Login from "../packages/feat-Auth/Login";
 import FirstLogin from "../packages/feat-Auth/components/FirstLogin";
-
-// import { NotFoundError } from "./errors";
 import { Layout } from "./utils";
 import { NotFoundError } from "./utils/components/errors";
 

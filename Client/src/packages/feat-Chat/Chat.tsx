@@ -1,40 +1,43 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import AddIcon from "@mui/icons-material/Add";
-import {
-  roomState,
-  setMemberships
-} from "./components/rooms/chatSlice";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Picture from "./Picture.png";
-import { Message } from "./message/Message";
 import "./chat.css";
 import { ChatUsers } from "./chatUsers/ChatUsers";
-import { Avatar, Badge, Box, Modal } from "@mui/material";
+import { Badge } from "@mui/material";
 import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
-import { MoreHoriz, Person, LogoutRounded } from '@mui/icons-material';
-import { ChannelSettingModal } from "./ChannelModal/ChannelSettingModal";
 import  {getChatRooms}  from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
 import { ChatBox } from "./chatBox/ChatBox";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
+import { SocketContext } from "../../core/socket/socketContext";
+import { listenForSocketEvent } from "../../core/socket/socketManager";
+
 
 export const Chat = () => {
-
   const dispatch = useAppDispatch();
-  const chatRooms = useAppSelector((state) => state.chat.memberships); 
   const token = useAppSelector((state) => state.auth.token);
+  const chatRooms = useAppSelector((state) => state.chat.memberships); 
   const conversations: [] = useAppSelector((state) => state.conversation.conversations);
-
   const [directConversation, setDirectConversation]   = useState(null);
   const [channelConversation, setChannelConversation] = useState(null);
+  const socket = useContext(SocketContext);
 
   useEffect(()=> {
     dispatch(getChatRooms(token));
     dispatch(getDirectConversations(token));
-  }, [dispatch]);
+  }, [dispatch, token]);
 
+  // useEffect(() => {
+  //     listenForSocketEvent(socket, 'userConnected', () => {console.log('tit tit user connect tit iti')})
+  //     return () => {
+  //       socket?.off('userConnected');
+  //     }
+  // })
+
+  // const isConnected = useAppSelector((state) => state.socket.isConnected);
+  // const message = useAppSelector((state) => state.socket.message);
   return (
     <Root>
       <div className="discussions">
@@ -95,7 +98,7 @@ export const Chat = () => {
                 overlap="circular"
                 variant="dot"
               >
-                <img className="photo" src={Picture} />
+                <img className="photo" src={Picture} alt="" />
               </Badge>
 
               <div className="desc-contact">
@@ -110,13 +113,15 @@ export const Chat = () => {
       {
         (directConversation === null && channelConversation === null) ? (
           <div className="chatBoxNoConversation">
-            Click on a conversation to start chatting.
+            <h1> Click on a conversation to start chatting. </h1>
           </div>
         ) : (
-          <ChatBox channelConversation={channelConversation} directConversation={directConversation} />
+          <>
+            <ChatBox channelConversation={channelConversation} directConversation={directConversation} />
+            <ChatUsers channelConversation={channelConversation} directConversation={directConversation} />
+          </>
         )
       }
-      <ChatUsers channelConversation={channelConversation} directConversation={directConversation} />
     </Root>
   );
 };
@@ -134,18 +139,17 @@ const Root = styled.div`
 
 `;
 
-const boxStyle = {
-  position: "absolute" as "absolute",
-  top: "30%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "1px solid #000",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: "20px",
-  height: "400px",
-};
+// const boxStyle = {
+//   position: "absolute" as "absolute",
+//   top: "30%",
+//   left: "50%",
+//   transform: "translate(-50%, -50%)",
+//   width: 400,
+//   bgcolor: "background.paper",
+//   border: "1px solid #000",
+//   boxShadow: 24,
+//   p: 4,
+//   borderRadius: "20px",
+//   height: "400px",
+// };
 
-const title = styled.h4``;

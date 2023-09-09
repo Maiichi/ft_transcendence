@@ -1,5 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../../core/utils/apiRequest";
+import { Socket } from "socket.io-client";
+
+type RoomPayload = {
+    name: string,
+    type: string,
+    description: string,
+    password: string,
+    ownerId: string,
+
+};
 
 export const getChatRooms = createAsyncThunk(
     "chat/rooms",
@@ -38,6 +48,29 @@ export const getChatRoomMessages = createAsyncThunk(
     }
 );
 
+export const createRoom = createAsyncThunk(
+    'chat/room/create',
+    async ({socket, room }: { socket: Socket; room: RoomPayload }) => {
+      try {
+        const roomData = {
+          name: room.name,
+          ownerId: room.ownerId,
+          description: room.description,
+          type: room.type,
+          password: room.password
+        };
+        // Emit the createRoom event to the server
+        socket.emit('createRoom', roomData);
+        // You can also listen for the server's response here if needed
+        // Return the created room data or any other relevant response
+        return roomData;
+      } catch (error) {
+        // Handle error if needed
+        console.log("error in createRoom Thunk ", error);
+        throw error;
+      }
+    }
+);
 /***Second Parameter of the Async Function (_ and thunkAPI):
 
 In an async function defined for a thunk, there are typically two parameters:

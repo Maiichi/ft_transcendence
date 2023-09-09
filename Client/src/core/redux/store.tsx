@@ -9,7 +9,6 @@ import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
 import chatSlice from "../../packages/feat-Chat/components/rooms/chatSlice";
 import conversationSlice from "../../packages/feat-Chat/components/conversations/conversationSlice";
-import socketSlice from "../socket/socketSlice";
 // ...
 
 const rootReducer = combineReducers({
@@ -19,7 +18,6 @@ const rootReducer = combineReducers({
     core: coreSlice,
     chat: chatSlice,
     conversation: conversationSlice,
-    socket: socketSlice
   },
 );
 

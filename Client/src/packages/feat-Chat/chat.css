@@ -350,3 +350,9 @@
 .channel-name:hover {
   background-color:  #f5f6f7;
 }
+
+
+.chatBoxNoConversation {
+  display: grid;
+  place-content: center;
+}

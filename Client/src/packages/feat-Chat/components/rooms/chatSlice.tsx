@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getChatRoomMessages, getChatRooms } from "./chatThunk";
+import { createRoom, getChatRoomMessages, getChatRooms } from "./chatThunk";
 
 export interface roomState {
     memberships : [];
@@ -23,7 +23,14 @@ export const roomSlice = createSlice({
         },
         setMessages : (state, action: PayloadAction<roomState>) => {
             state.messages = action.payload.messages;
-        }
+        },
+        // addMembership: (state, action: PayloadAction<RoomPayload>) => {
+        //     // Add the new membership to the existing memberships array
+        //     state.memberships.push(action.payload);
+        // },
+        // createRoom: (state, action: PayloadAction<roomState>) => {
+        //     state.rooms.push(action.payload);
+        // }
     },
     extraReducers: (builder) => {
         builder
@@ -48,6 +55,16 @@ export const roomSlice = createSlice({
                 state.messages = [];
                 state.isLoading = false;
             })
+            // .addCase(createRoom.fulfilled, (state, action) => {
+            //     state.isLoading = false;
+            //     state.rooms.push(action.payload);
+            // })            
+            // .addCase(createRoom.pending, (state) => {
+            //     state.isLoading = true;
+            // })
+            // .addCase(createRoom.rejected, (state) => {
+            //     state.isLoading = false;
+            // })
     },
 });
 
