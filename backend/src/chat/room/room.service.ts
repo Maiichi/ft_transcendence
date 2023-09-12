@@ -8,7 +8,7 @@ import { ChatService } from "../chat.service";
 import { MuteMemberDto, KickMemberDto, LeaveRoomDto, JoinRoomDto, SetRoomAdminDto } from "./dto/membership.dto";
 import { CreateRoomDto, UpdateRoomDto } from "./dto/room.dto";
 import { User } from "@prisma/client";
-
+import { Response } from 'express';
 
 @Injectable()
 export class RoomService
@@ -168,8 +168,12 @@ export class RoomService
                 }
             }
         });
-        console.log(`${user.userName} has created a ${newRoom.name} room`)
-        return newRoom;
+
+        // retrive the room created 
+        const retrivedRoom = await this.chatService.getRoom(newRoom.id);
+        // console.log(`${user.userName} has created a ${newRoom.name} room`);
+        console.log("retrived room =", JSON.stringify(retrivedRoom));
+        return retrivedRoom;
         // } catch (error) {
         //     console.log("error || " + error)
         // }
@@ -548,5 +552,46 @@ export class RoomService
             }
         });
         return conversation;
+   }
+
+   async getUserMemeberships(user: User, res: Response)
+   {
+        const memberships = await this.prisma.membership.findMany({
+            where : {
+                userId : user.intraId,
+                isBanned: false,
+            },
+            select : {
+                room : {
+                    select : {
+                        id: true,
+                        conversation : true,
+                        members: {
+                            select: {
+                                isAdmin: true,
+                                isBanned: true,
+                                isMute: true,
+                                isOwner: true,
+                                user: {
+                                    select : {
+                                        firstName: true,
+                                        lastName: true,
+                                        userName: true,
+                                    }
+                                }
+                            }
+                        },
+                        name: true,
+                        createdAt: true,
+                        updatedAt: true,
+                        password: true,
+                        type: true,
+                    }
+                },
+            }
+        });
+        return res.send({
+            data: memberships
+        })
    }
 }

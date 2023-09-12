@@ -7,67 +7,12 @@ import "./chatBox.css"
 import { getChatRoomMessages } from "../components/rooms/chatThunk";
 import { useEffect } from "react";
 import { getDirectConversationMessages } from "../components/conversations/conversationThunk";
+import { Conversation, Membership, messageData } from "../Types/types";
 
-interface Conversation {
-    id: number;
-    createdAt: string;
-    updatedAt: string;
-    type: string;
-    messages: { content: string; createdAt: string }[];
-    participants: {
-      userName: string;
-      firstName: string;
-      lastName: string;
-      status: string;
-    }[];
-  }
-  
-interface Room {
-    id: number;
-    members: {
-      isAdmin: boolean;
-      isBanned: boolean;
-      isMute: boolean;
-      isOwner: boolean;
-      user: {
-        firstName: string;
-        lastName: string;
-        userName: string;
-      };
-    }[];
-    conversation : {
-        id: number,
-        createdAt: string,
-        messages: {
-            sender: {},
-            content: string,
-            createdAt: string
-        }[],
-        participants:[],
-        type: string,
-        updatedAt: string
-    }
-    name: string;
-    createdAt: string;
-    updatedAt: string;
-    password: string;
-    type: string;
-}
 
-  interface messageData {
-    sender: {
-        intraId: number,
-        firstName: string,
-        lastName: string,
-        userName: string
-    },
-    content: string,
-    createdAt: string
-}
-  
 interface Props {
     directConversation: Conversation | null
-    channelConversation: Room | null;
+    channelConversation: Membership | null;
 }
   
 export const ChatBox: React.FC<Props> = ({
