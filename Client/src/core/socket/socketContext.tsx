@@ -17,7 +17,7 @@ export const SocketProvider: React.FC<SocketContextProps> = ({ children }) => {
   // console.log("(front) token ====", token);
   // Initialize socket when the component mounts
   useEffect(() => {
-    // console.log("(inside useEffect) token || ", token);
+    // console.log("(inside usedEffect) token || ", token);
     if (token)
     {
       const newSocket = initializeSocket(serverUrl, token);

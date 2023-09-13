@@ -4,9 +4,9 @@ import { Box, Modal } from '@mui/material';
 import Switch from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
 import './createChannelModal.css'
-import { SocketContext, useSocket } from '../../../core/socket/socketContext';
+import { SocketContext } from '../../../core/socket/socketContext';
 import { useAppDispatch, useAppSelector } from '../../../core';
-import { setMemberships } from '../components/rooms/chatSlice';
+import { addMembership, setMemberships } from '../components/rooms/chatSlice';
 import { createRoom } from '../components/rooms/chatThunk';
 import { Socket } from 'socket.io-client';
 
@@ -21,7 +21,6 @@ export const CreateChannelModal = () => {
     const [roomDesc, setRoomDesc]         = useState('');
     // const [roomPrivacy, setRoomPrivacy]   = useState(false);
     const [roomPassword, setRoomPassword] = useState('');
-    const [channelConversation, setChannelConversation] = useState(null);
     // const [locked, setLocked]       = useState(false);
     // console.log("user ", account.intraId);
     const toggleActivate = () => {
@@ -39,31 +38,25 @@ export const CreateChannelModal = () => {
         type: activate ? 'private' : 'public',
         password: roomPassword
       };
-    
+      
+      // need to handle room creation erros
       dispatch(createRoom({ socket: socket as Socket , room: roomData }))
         .then(() => {
           // Handle success if needed
+          socket?.on('roomCreated', (data) => {
+            console.log("data in roomCreated", data)
+            dispatch(addMembership(data));
+          })
+          setRoomDesc('');
+          setRoomName('')
+          setRoomPassword('');
           console.log("room created successfully");
         })
         .catch((error) => {
-          // Handle error if needed
+          console.log("error")
         });
     
       setOpen(false);
-        // try {
-        //     const roomData = {
-        //       name: roomName,
-        //       ownerId: account.intraId,
-        //       description: roomDesc,
-        //       type: activate ? 'private' : 'public',
-        //       password: roomPassword
-        //     };
-        //     socket?.emit('createRoom', roomData);
-
-        // } catch (error) {
-        //   console.log("error =========", error)
-        // }
-        // setOpen(false);
     }
     const AntSwitch = styled(Switch)(({ theme }) => ({
         width: 32,

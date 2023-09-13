@@ -1,8 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { createRoom, getChatRoomMessages, getChatRooms } from "./chatThunk";
+import { createRoom, getChatRoomMessages, getMemberships } from "./chatThunk";
+import { Membership } from "../../Types/types";
 
 export interface roomState {
-    memberships : [];
+    memberships : Membership[];
     messages: [];
     isLoading : boolean,
 }
@@ -24,24 +25,22 @@ export const roomSlice = createSlice({
         setMessages : (state, action: PayloadAction<roomState>) => {
             state.messages = action.payload.messages;
         },
-        // addMembership: (state, action: PayloadAction<RoomPayload>) => {
-        //     // Add the new membership to the existing memberships array
-        //     state.memberships.push(action.payload);
-        // },
-        // createRoom: (state, action: PayloadAction<roomState>) => {
-        //     state.rooms.push(action.payload);
-        // }
+        addMembership: (state, action: PayloadAction<Membership>) => {
+            // Add the new membership to the existing memberships array
+            console.log("payload inside addMembership ==", action.payload);
+            state.memberships.push(action.payload);
+        },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getChatRooms.pending, (state) => {
+            .addCase(getMemberships.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(getChatRooms.fulfilled, (state, action) => {
+            .addCase(getMemberships.fulfilled, (state, action) => {
                 state.memberships = action.payload;
                 state.isLoading = false;
             })
-            .addCase(getChatRooms.rejected , (state) => {
+            .addCase(getMemberships.rejected , (state) => {
                 state.isLoading = false
             })
             .addCase(getChatRoomMessages.pending, (state) => {
@@ -55,19 +54,9 @@ export const roomSlice = createSlice({
                 state.messages = [];
                 state.isLoading = false;
             })
-            // .addCase(createRoom.fulfilled, (state, action) => {
-            //     state.isLoading = false;
-            //     state.rooms.push(action.payload);
-            // })            
-            // .addCase(createRoom.pending, (state) => {
-            //     state.isLoading = true;
-            // })
-            // .addCase(createRoom.rejected, (state) => {
-            //     state.isLoading = false;
-            // })
     },
 });
 
-export const { setMemberships, setMessages } = roomSlice.actions;
+export const { setMemberships, setMessages, addMembership } = roomSlice.actions;
 
 export default roomSlice.reducer;

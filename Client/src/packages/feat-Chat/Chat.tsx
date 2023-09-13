@@ -7,25 +7,24 @@ import "./chat.css";
 import { ChatUsers } from "./chatUsers/ChatUsers";
 import { Badge } from "@mui/material";
 import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
-import  {getChatRooms}  from "./components/rooms/chatThunk";
+import  { getMemberships}  from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
 import { ChatBox } from "./chatBox/ChatBox";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
 import { SocketContext } from "../../core/socket/socketContext";
-import { listenForSocketEvent } from "../../core/socket/socketManager";
 
 
 export const Chat = () => {
   const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.auth.token);
-  const chatRooms = useAppSelector((state) => state.chat.memberships); 
+  const memberships = useAppSelector((state) => state.chat.memberships);
   const conversations: [] = useAppSelector((state) => state.conversation.conversations);
   const [directConversation, setDirectConversation]   = useState(null);
   const [channelConversation, setChannelConversation] = useState(null);
   const socket = useContext(SocketContext);
 
   useEffect(()=> {
-    dispatch(getChatRooms(token));
+    dispatch(getMemberships(token));
     dispatch(getDirectConversations(token));
   }, [dispatch, token]);
 
@@ -57,7 +56,7 @@ export const Chat = () => {
           <CreateChannelModal />
         </div>
         <div className="channelListHolder">
-          {chatRooms.map((item: any) => (
+          {memberships.map((item: any) => (
             <h4 key={item.room.id} 
                 className={`channel-name ${channelConversation === item.id ? 'selected' : ''}`}
                 onClick={() => {setChannelConversation(item.room);setDirectConversation(null)}}

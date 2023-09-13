@@ -27,7 +27,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 
     private connectedClients = new Map<string, User>();
-    private userSocket       = new Map<number, string[]>();
+    private userSockets      = new Map<number, string[]>();
     private BlackListedTokens= new Map<string, number>();
 
     constructor(
@@ -53,15 +53,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     printClientSockets()
     {
         console.log("user sockets {" );
-        this.userSocket.forEach((value, key) =>{
+        this.userSockets.forEach((value, key) =>{
             console.log("user = " + key + " || socketID = " + value);
         })
         console.log("}");
     }
+    
 
     deleteUserSockets(intraId: number)
     {
-        const sockets = this.userSocket.get(intraId);
+        const sockets = this.userSockets.get(intraId);
         if (sockets) 
         {
             sockets.forEach((socketId) => {
@@ -70,9 +71,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
                     socket.disconnect();
                 }
             });
-            this.userSocket.delete(intraId);
+            this.userSockets.delete(intraId);
         }
     }
+
 
     // deleteUserDisconnected(intraId: number)
     // {
@@ -116,6 +118,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         const token = client.handshake.headers.authorization;
         // console.log("(back) token == ", token)
         try {
+            // print Client sockets
+            
             const decodedToken = await this.jwtService.verify(token,{secret:process.env.JWT_SECRET});
             // if (this.BlackListedTokens.has(token))
             //     throw new WsException(`Token is black listed please re-login`);
@@ -123,12 +127,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             if (!user)
                 throw new  WsException('User not found.');
             this.connectedClients.set(client.id, user);
-            if (!this.userSocket.has(user.intraId)) 
-                this.userSocket.set(user.intraId, []);
-            this.userSocket.get(user.intraId).push(client.id);
+            if (!this.userSockets.has(user.intraId)) 
+                this.userSockets.set(user.intraId, []);
+            this.userSockets.get(user.intraId).push(client.id);
             this.userService.updateUserStatus(user.intraId, 'ONLINE');
             this.server.emit('userConnected', {userId: client.id})
             console.log(user.userName + ' is Connected ' + client.id)
+            this.printClients();
+            this.printClientSockets();
         } catch (error) {
             client.disconnect();
             console.log("Client disconnected due to invalid authorization");
@@ -141,7 +147,36 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
-
+    // async handleDisconnect(client: Socket) {
+    //     try {
+    //       const user = this.connectedClients.get(client.id);
+    
+    //       if (user) {
+            
+    //         const intraId = user.intraId;
+            
+    //         // Remove the disconnected socket from the user's socket list
+    //         const userSockets = this.userSockets.get(intraId) || [];
+    //         const filteredSockets = userSockets.filter(socketId => socketId !== client.id);
+    //         this.userSockets.set(intraId, filteredSockets);
+    
+    //         // If the user has no more connected sockets, remove them from the connectedClients map
+    //         if (filteredSockets.length === 0) {
+    //           this.connectedClients.delete(client.id);
+    //           this.userService.updateUserStatus(intraId, 'OFFLINE');
+    //         }
+    
+    //         this.server.emit('userDisconnected', { userId: client.id });
+    //         client.disconnect();
+    //         console.log(user.userName + ' is Disconnected ' + client.id);
+    //       } else {
+    //         throw new WsException(`Cannot find the user`);
+    //       }
+    //     } catch (error) {
+    //       client.emit(error);
+    //     }
+    // }
+    
     // TODO: need to be tested to check if the user is logged of from all the tabs
     async handleDisconnect(client: Socket) {
         try {
@@ -150,6 +185,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             if (user) {
                 this.deleteUserSockets(user.intraId);
                 this.deleteUserDisconnected(user.intraId);
+               
+                this.connectedClients.delete(client.id);
                 // this.connectedClients.delete(client.id);
                 this.userService.updateUserStatus(user.intraId, 'OFFLINE');
                 // TODO: the token need to be hashed before it persisted in the black-list of tokens
@@ -168,15 +205,34 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     @SubscribeMessage('createRoom')
     async createRoom(client: Socket, createRoomDto: CreateRoomDto) {
         try {
-            // get current User
+            // Get the current user
             console.log("room data ===", createRoomDto); 
+            this.printClientSockets();
             const currentUser = this.findUserByClientSocketId(client.id);
-            const room = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
-            this.server.emit('roomCreated', room);    
+            const roomData = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
+            const userSockets: string[] = this.userSockets.get(currentUser.intraId);
+            console.log("userSockerts ===", userSockets);
+            userSockets.forEach((value, key) =>{
+                console.log("user = " + key + " || socketID = " + value);
+                this.server.to(value).emit('roomCreated', roomData);
+            })
         } catch (error) {
             console.log('err ||', error.message);
         }
     }
+
+    // @SubscribeMessage('createRoom')
+    // async createRoom(client: Socket, createRoomDto: CreateRoomDto) {
+    //     try {
+    //         // get current User
+    //         console.log("room data ===", createRoomDto); 
+    //         const currentUser = this.findUserByClientSocketId(client.id);
+    //         const roomData = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
+    //         this.server.emit('roomCreated', roomData);    
+    //     } catch (error) {
+    //         console.log('err ||', error.message);
+    //     }
+    // }
     
 
     @SubscribeMessage('updateRoom')

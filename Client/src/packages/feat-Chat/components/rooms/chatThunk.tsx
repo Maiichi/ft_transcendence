@@ -11,23 +11,42 @@ type RoomPayload = {
 
 };
 
-export const getChatRooms = createAsyncThunk(
-    "chat/rooms",
-    async (token: string) => {
+// export const getChatRooms = createAsyncThunk(
+//     "chat/rooms",
+//     async (token: string) => {
+//         try {
+//             const response = await apiRequest(`/chat/rooms`, {
+//                 method: "GET",
+//                 headers : {
+//                     Authorization: `Bearer ${token}`,
+//                 },
+//             });
+//             return response.data;
+//         } catch (error) {
+//             console.log("error in chatThunk", error);
+//             throw error;
+//         }
+//     }
+// );
+
+export const getMemberships = createAsyncThunk(
+    "chat/memberships",
+    async(token: string) => {
         try {
-            const response = await apiRequest(`/chat/rooms`, {
-                method: "GET",
-                headers : {
-                    Authorization: `Bearer ${token}`,
+            const response = await apiRequest(`/chat/memberships`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`
                 },
             });
+            console.log("getMemberships ==", response.data);
             return response.data;
         } catch (error) {
             console.log("error in chatThunk", error);
             throw error;
         }
     }
-);
+)
 
 export const getChatRoomMessages = createAsyncThunk(
     "chat/room/messages",
@@ -61,9 +80,7 @@ export const createRoom = createAsyncThunk(
         };
         // Emit the createRoom event to the server
         socket.emit('createRoom', roomData);
-        // You can also listen for the server's response here if needed
-        // Return the created room data or any other relevant response
-        return roomData;
+       
       } catch (error) {
         // Handle error if needed
         console.log("error in createRoom Thunk ", error);
