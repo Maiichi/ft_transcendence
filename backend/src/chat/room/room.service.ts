@@ -172,7 +172,7 @@ export class RoomService
         // retrive the room created 
         const retrivedRoom = await this.chatService.getRoom(newRoom.id);
         // console.log(`${user.userName} has created a ${newRoom.name} room`);
-        console.log("retrived room =", JSON.stringify(retrivedRoom));
+        // console.log("retrived room =", JSON.stringify(retrivedRoom));
         return retrivedRoom;
         // } catch (error) {
         //     console.log("error || " + error)
@@ -301,7 +301,7 @@ export class RoomService
     async leaveRoom(body: LeaveRoomDto, userId: number)
     {
         if (!body.roomId)
-            throw new WsException('room Id is reauired !')
+            throw new WsException('room Id is required !')
         const room = await this.getRoomById(body.roomId);
         const user = await this.userService.getUser(userId);
         if(!user)

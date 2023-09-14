@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../../core/utils/apiRequest";
 import { Socket } from "socket.io-client";
+import { Try } from "@mui/icons-material";
 
 type RoomPayload = {
     name: string,
@@ -10,24 +11,6 @@ type RoomPayload = {
     ownerId: string,
 
 };
-
-// export const getChatRooms = createAsyncThunk(
-//     "chat/rooms",
-//     async (token: string) => {
-//         try {
-//             const response = await apiRequest(`/chat/rooms`, {
-//                 method: "GET",
-//                 headers : {
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//             });
-//             return response.data;
-//         } catch (error) {
-//             console.log("error in chatThunk", error);
-//             throw error;
-//         }
-//     }
-// );
 
 export const getMemberships = createAsyncThunk(
     "chat/memberships",
@@ -80,7 +63,6 @@ export const createRoom = createAsyncThunk(
         };
         // Emit the createRoom event to the server
         socket.emit('createRoom', roomData);
-       
       } catch (error) {
         // Handle error if needed
         console.log("error in createRoom Thunk ", error);
@@ -88,6 +70,21 @@ export const createRoom = createAsyncThunk(
       }
     }
 );
+
+export const leaveRoom = createAsyncThunk(
+    'chat/room/leave',
+    async({socket, roomId}: {socket: Socket, roomId: number | undefined}) => {
+        try {
+            socket.emit('leaveRoom', {roomId: roomId});
+            return {
+                roomId: roomId
+            };
+        } catch (error) {
+            console.log("error in leave Room |", error);
+            throw error;
+        }
+    }
+)
 /***Second Parameter of the Async Function (_ and thunkAPI):
 
 In an async function defined for a thunk, there are typically two parameters:

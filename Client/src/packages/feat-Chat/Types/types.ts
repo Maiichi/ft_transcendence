@@ -1,6 +1,3 @@
-
-
-
 export interface Membership {
         id: number;
         members: {
@@ -12,6 +9,7 @@ export interface Membership {
             firstName: string;
             lastName: string;
             userName: string;
+            intraId: number;
           };
         }[];
         conversation : {
@@ -46,6 +44,26 @@ export interface Conversation {
       status: string;
     }[];
   }
+
+  // interface Room {
+  //   id: number;
+  //   members: {
+  //     isAdmin: boolean;
+  //     isBanned: boolean;
+  //     isMute: boolean;
+  //     isOwner: boolean;
+  //     user: {
+  //       firstName: string;
+  //       lastName: string;
+  //       userName: string;
+  //     };
+  //   }[];
+  //   name: string;
+  //   createdAt: string;
+  //   updatedAt: string;
+  //   password: string;
+  //   type: string;
+  // }
 
 export interface messageData {
     sender: {

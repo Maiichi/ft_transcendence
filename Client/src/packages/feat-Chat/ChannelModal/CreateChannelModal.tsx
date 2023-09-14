@@ -4,15 +4,13 @@ import { Box, Modal } from '@mui/material';
 import Switch from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
 import './createChannelModal.css'
-import { SocketContext } from '../../../core/socket/socketContext';
+import { useSocket } from '../../../core/socket/socketContext';
 import { useAppDispatch, useAppSelector } from '../../../core';
-import { addMembership, setMemberships } from '../components/rooms/chatSlice';
 import { createRoom } from '../components/rooms/chatThunk';
 import { Socket } from 'socket.io-client';
 
 
 export const CreateChannelModal = () => {
-    // console.log("(create Channel) socket == ", socket);
     const dispatch = useAppDispatch();
     const account = useAppSelector((state) => state.auth.user);
     const [open, setOpen]                 = useState(false);
@@ -21,15 +19,19 @@ export const CreateChannelModal = () => {
     const [roomDesc, setRoomDesc]         = useState('');
     // const [roomPrivacy, setRoomPrivacy]   = useState(false);
     const [roomPassword, setRoomPassword] = useState('');
+    const [roomCreationError, setRoomCreationError] = useState(null);
     // const [locked, setLocked]       = useState(false);
-    // console.log("user ", account.intraId);
     const toggleActivate = () => {
         setActivate(!activate);
     };
-    // TODO: need to check those lines
-    // const socket = useSocket();
-    const socket = useContext(SocketContext);
-    console.log("socket ===" , socket);
+
+    const closeModal = () => {
+      setOpen(false);
+      if (roomCreationError)
+        setRoomCreationError(null);
+    }
+
+    const socket = useSocket();
     const handleCreateRoom = () => {
       const roomData = {
         name: roomName,
@@ -38,26 +40,27 @@ export const CreateChannelModal = () => {
         type: activate ? 'private' : 'public',
         password: roomPassword
       };
-      
-      // need to handle room creation erros
       dispatch(createRoom({ socket: socket as Socket , room: roomData }))
-        .then(() => {
-          // Handle success if needed
-          socket?.on('roomCreated', (data) => {
-            console.log("data in roomCreated", data)
-            dispatch(addMembership(data));
-          })
-          setRoomDesc('');
-          setRoomName('')
-          setRoomPassword('');
-          console.log("room created successfully");
-        })
-        .catch((error) => {
-          console.log("error")
-        });
-    
+      .catch((err) => {
+        console.log("err ==", err);
+      })
+      setRoomName('');
+      setRoomDesc('');
+      setRoomPassword('')
       setOpen(false);
     }
+
+    useEffect(() => {
+          if (socket) {
+        socket.on('roomCreationError', (data) => {
+          if (data && data.message) {
+            setRoomCreationError(data.message);
+            setOpen(true);
+          }
+        });
+      }
+    }, [socket]);
+
     const AntSwitch = styled(Switch)(({ theme }) => ({
         width: 32,
         height: 20,
@@ -99,13 +102,12 @@ export const CreateChannelModal = () => {
           boxSizing: 'border-box',
         },
       }));
-
     return (
         <div>
             <Add className={"icon-add-channel"} onClick={() => setOpen(true)}/>
             <Modal
                 open={open}
-                onClose={() => setOpen(false)}
+                onClose={closeModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -116,6 +118,11 @@ export const CreateChannelModal = () => {
                         <Close className={"close-button"}/>
                     </div>
                     <div className="modalBody">
+                      {/* Display the error message here */}
+                        {roomCreationError && (
+                          <div className="error-message">{roomCreationError}</div>
+                        )}
+
                         <div className="channelNameHolder">
                             Channel name*
                             <input 
@@ -157,7 +164,7 @@ export const CreateChannelModal = () => {
                         </div>
                     </div>  
                     <div className="modalFooter">
-                        <button className='button-cancel' onClick={() => setOpen(false)}>Cancel</button>
+                        <button className='button-cancel' onClick={closeModal}>Cancel</button>
                         <button 
                           className='button-create'
                           onClick={() => handleCreateRoom()}

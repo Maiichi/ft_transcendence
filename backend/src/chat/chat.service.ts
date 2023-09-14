@@ -20,7 +20,7 @@ export class ChatService
                 isBanned: false
             }
         })
-        console.log("mem ==", JSON.stringify(memberShip));
+        // console.log("mem ==", JSON.stringify(memberShip));
         return memberShip;
     }
 
@@ -41,7 +41,8 @@ export class ChatService
                             select: {
                                 firstName: true,
                                 lastName: true,
-                                userName: true
+                                userName: true,
+                                intraId: true
                             }
                         }
                     },

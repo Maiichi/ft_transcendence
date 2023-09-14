@@ -8,6 +8,8 @@ import { getChatRoomMessages } from "../components/rooms/chatThunk";
 import { useEffect } from "react";
 import { getDirectConversationMessages } from "../components/conversations/conversationThunk";
 import { Conversation, Membership, messageData } from "../Types/types";
+import { useSocket } from "../../../core/socket/socketContext";
+import { removeMembership, setIsConversation } from "../components/rooms/chatSlice";
 
 
 interface Props {
@@ -20,16 +22,29 @@ export const ChatBox: React.FC<Props> = ({
 }) =>{
     const dispatch = useDispatch<AppDispatch>();
     const account = useAppSelector((state) => state.auth.user);
+    const displayConversation = useAppSelector((state) => state.chat.isConversation);
     const token: string   = useAppSelector((state) => state.auth.token);
     const roomMessages: [] = useAppSelector((state) => state.chat.messages);
     const directConversationMessages: [] = useAppSelector((state) => state.conversation.messages);
-    
+    const socket = useSocket();
+
     useEffect(() => {
         if (channelConversation !== null)
             dispatch(getChatRoomMessages({token, roomId: channelConversation.id}));
         else if (directConversation !== null)
             dispatch(getDirectConversationMessages({token, conversationId: directConversation.id}))    
-    },[dispatch, channelConversation, directConversation])
+    },[dispatch, channelConversation, directConversation, displayConversation])
+
+    useEffect(() => {
+        if (socket && channelConversation)
+        {
+            socket.on('roomLeaved', (data) => {
+                dispatch(removeMembership(data));
+                dispatch(setIsConversation(false));
+            });
+            console.log("room should removed from here");
+        }
+    }, [socket, dispatch])
 
     const isConnectedUser = (intraId: number) => {
         if (account.intraId === intraId)
@@ -43,13 +58,13 @@ export const ChatBox: React.FC<Props> = ({
             (channelConversation === null && directConversation) ? (
                 <div className="chatBox">
                     <div className="chatBoxHeader">
-                    <ChannelSettingModal channelConversation={channelConversation} directConversation={directConversation} />
+                        <ChannelSettingModal channelConversation={channelConversation} directConversation={directConversation} />
                     </div>
                     <div className="chatBoxWrapper">
                         <div className="chatBoxTop">
                         {directConversationMessages.map((item: messageData ) => (
                             <>
-                                <Message own={isConnectedUser(item.sender.intraId)} data = {item} />
+                                <Message own={isConnectedUser(item.sender.intraId)} data ={item} />
                             </>
                         ))}
                         </div>
@@ -66,12 +81,12 @@ export const ChatBox: React.FC<Props> = ({
                 <>
                 <div className="chatBox">
                     <div className="chatBoxHeader">
-                    <ChannelSettingModal channelConversation={channelConversation} directConversation={directConversation} />
+                        <ChannelSettingModal channelConversation={channelConversation} directConversation={directConversation} />
                     </div>
                     <div className="chatBoxWrapper">
                         <div className="chatBoxTop">
                             { 
-                                roomMessages.length === 0 ? 
+                                !channelConversation && roomMessages.length === 0 ? 
                                 (
                                     <div className="empty-conversation">
                                         <h2>it's always better to start a conversation 	&#128516;</h2>

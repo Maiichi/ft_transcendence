@@ -11,7 +11,8 @@ import  { getMemberships}  from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
 import { ChatBox } from "./chatBox/ChatBox";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
-import { SocketContext } from "../../core/socket/socketContext";
+import { useSocket } from "../../core/socket/socketContext";
+import { addMembership, setIsConversation } from "./components/rooms/chatSlice";
 
 
 export const Chat = () => {
@@ -19,21 +20,32 @@ export const Chat = () => {
   const token = useAppSelector((state) => state.auth.token);
   const memberships = useAppSelector((state) => state.chat.memberships);
   const conversations: [] = useAppSelector((state) => state.conversation.conversations);
+  const displayConversation: boolean = useAppSelector((state) => state.chat.isConversation);
   const [directConversation, setDirectConversation]   = useState(null);
   const [channelConversation, setChannelConversation] = useState(null);
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
 
   useEffect(()=> {
     dispatch(getMemberships(token));
     dispatch(getDirectConversations(token));
-  }, [dispatch, token]);
+  }, [dispatch, token , directConversation, channelConversation, displayConversation]);
 
-  // useEffect(() => {
-  //     listenForSocketEvent(socket, 'userConnected', () => {console.log('tit tit user connect tit iti')})
-  //     return () => {
-  //       socket?.off('userConnected');
-  //     }
-  // })
+  useEffect(() => {
+    // Attach the 'roomCreated' event listener when the component mounts
+    if (socket) {
+      socket.on('roomCreated', (data) => {
+        // console.log("data in roomCreated", data);
+        // Handle the event data and update your component's state as needed
+        dispatch(addMembership(data));
+      });
+    }
+    // Clean up the event listener when the component unmounts
+    return () => {
+      if (socket) {
+        socket.off('roomCreated');
+      }
+    };
+  }, [socket, dispatch])
 
   // const isConnected = useAppSelector((state) => state.socket.isConnected);
   // const message = useAppSelector((state) => state.socket.message);
@@ -59,7 +71,11 @@ export const Chat = () => {
           {memberships.map((item: any) => (
             <h4 key={item.room.id} 
                 className={`channel-name ${channelConversation === item.id ? 'selected' : ''}`}
-                onClick={() => {setChannelConversation(item.room);setDirectConversation(null)}}
+                onClick={() => {
+                  setChannelConversation(item.room);
+                  setDirectConversation(null)
+                  dispatch(setIsConversation(true));
+                }}
             >
               # {item.room.name}  
             </h4>
@@ -86,7 +102,11 @@ export const Chat = () => {
             
             <div key={discussion.id}
               className={`discussion ${directConversation === discussion.id ? 'selected' : ''}`}
-              onClick={() => {setDirectConversation(discussion); setChannelConversation(null)}} // Update the selected conversation on click
+              onClick={() => {
+                  setDirectConversation(discussion); 
+                  setChannelConversation(null); 
+                  dispatch(setIsConversation(true));
+              }} // Update the selected conversation on click
             >
               <Badge
                 anchorOrigin={{
@@ -110,7 +130,7 @@ export const Chat = () => {
         </div>
       </div>
       {
-        (directConversation === null && channelConversation === null) ? (
+        (displayConversation === false) ? (
           <div className="chatBoxNoConversation">
             <h1> Click on a conversation to start chatting. </h1>
           </div>

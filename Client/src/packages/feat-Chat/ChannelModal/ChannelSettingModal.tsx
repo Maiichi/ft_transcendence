@@ -1,73 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Person,
   LogoutRounded,
   PersonAddAltRounded,
 } from "@mui/icons-material";
 import { Box, Modal } from "@mui/material";
-import { SearchComponent } from "../../../core"; // You might need to import other dependencies here
+import { SearchComponent, useAppDispatch, useAppSelector } from "../../../core"; // You might need to import other dependencies here
 import "./channelSettingModal.css";
-
-interface Conversation {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  type: string;
-  messages: { content: string; createdAt: string }[];
-  participants: {
-    userName: string;
-    firstName: string;
-    lastName: string;
-    status: string;
-  }[];
-}
-
-interface Room {
-  id: number;
-  members: {
-    isAdmin: boolean;
-    isBanned: boolean;
-    isMute: boolean;
-    isOwner: boolean;
-    user: {
-      firstName: string;
-      lastName: string;
-      userName: string;
-    };
-  }[];
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-  password: string;
-  type: string;
-}
+import { Conversation, Membership } from "../Types/types";
+import { useSocket } from "../../../core/socket/socketContext";
+import { leaveRoom } from "../components/rooms/chatThunk";
+import { Socket } from "socket.io-client";
+import { removeMembership, setIsConversation } from "../components/rooms/chatSlice";
 
 interface Props {
   directConversation: Conversation | null
-  channelConversation: Room | null;
+  channelConversation: Membership | null;
 }
 
 export const ChannelSettingModal: React.FC<Props> = ({
   directConversation, channelConversation
 }) => {
+  const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
-  // const [openInviteModal, setOpenInviteModal] = useState(false);
-
+  const [openLeaveModal, setOpenLeaveModal] = useState(false);
   const handleClose = () => {
     setOpen(!open);
   };
-
-  // console.log("data from props, ", JSON.stringify(selectedConversation))
-  // console.log("direct conv =", directConversation);
-  // console.log("channel conv =", channelConversation);
-
-  // console.log("here");
-
+  const handleCloseLeaveRoomModal = () => {
+    setOpenLeaveModal(!openLeaveModal);
+  }
+  const socket = useSocket();
+  const handleLeaveRoom = () => {
+      // dispatch(setIsConversation(false));
+      dispatch(leaveRoom({socket: socket as Socket, roomId: channelConversation?.id}))
+      .then(() => {
+        if (channelConversation)
+          dispatch(removeMembership(channelConversation))
+      })
+      .catch((err) => {
+        console.log("err == ", err);
+      });
+      setOpenLeaveModal(false);
+  }
   return (
         <>
           { channelConversation !== null
-             ? 
-             <>
+              ? 
+              <>
              <h4># {channelConversation.name} </h4>
              <div className="icons-holder">
                 <div className="channel-members" onClick={() => setOpen(true)}>
@@ -111,12 +91,29 @@ export const ChannelSettingModal: React.FC<Props> = ({
                     </Box>
                   </Modal>
                 </div>
-                <LogoutRounded />
+                <LogoutRounded onClick={() => setOpenLeaveModal(true)} style={{cursor: 'pointer'}} />
+                <Modal
+                    open={openLeaveModal}
+                    onClose={handleCloseLeaveRoomModal}
+                    aria-labelledby="modal-search-invite-users-to-room"
+                    aria-describedby="modal-description"
+                  >
+                    <Box sx={boxStyle}>
+                      <div className="modalHeader">
+                        <h3>you want to leave #{channelConversation.name} ?</h3>
+                        {/* <Close className={"close-button"} style={{cursor: 'pointer'}} onClick={() => setOpen(false)} /> */}
+                      </div>
+                      <div className="modalFooter">
+                          <button className='button-cancel' onClick={() => setOpenLeaveModal(false)}>Cancel</button>
+                          <button className='button-leave'onClick={handleLeaveRoom} > Confirm </button>
+                      </div>
+                    </Box>
+                </Modal>
               </div>
               </>
               : 
-                <h4>{directConversation?.participants[0].userName}</h4>
-            }
+              <h4>{directConversation?.participants[0].userName}</h4>
+          }
         </>
   );
 };

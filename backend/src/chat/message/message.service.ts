@@ -216,7 +216,7 @@ export class MessageService
         const roomParticipants = await this.getRoomParticipants(room.id);
         console.log("room participants == " + JSON.stringify(roomParticipants));
         const userBlocked = await this.getBlackListByUserId(user.intraId);
-        console.log("userBlocked = " + JSON.stringify(userBlocked));
+        // console.log("userBlocked = " + JSON.stringify(userBlocked));
         // console.log("User authenticated = " + user.intraId);
         const roomMessages = await this.getRoomMessages(roomConversation.id, user.intraId);
         // console.log("room Messages = " + JSON.stringify(roomMessages));

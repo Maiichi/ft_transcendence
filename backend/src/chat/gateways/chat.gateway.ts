@@ -75,6 +75,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
     }
 
+    // deleteUserSingleSocket()
 
     // deleteUserDisconnected(intraId: number)
     // {
@@ -116,124 +117,112 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     async handleConnection(client: Socket) {
         const token = client.handshake.headers.authorization;
-        // console.log("(back) token == ", token)
         try {
-            // print Client sockets
-            
-            const decodedToken = await this.jwtService.verify(token,{secret:process.env.JWT_SECRET});
-            // if (this.BlackListedTokens.has(token))
-            //     throw new WsException(`Token is black listed please re-login`);
+            const decodedToken = await this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
             const user = await this.userService.getUser(decodedToken.sub);
-            if (!user)
-                throw new  WsException('User not found.');
-            this.connectedClients.set(client.id, user);
-            if (!this.userSockets.has(user.intraId)) 
+            if (!user) {
+                throw new WsException('User not found.');
+            }
+    
+            if (!this.connectedClients.has(client.id)) {
+                this.connectedClients.set(client.id, user);
+            }
+    
+            if (!this.userSockets.has(user.intraId)) {
                 this.userSockets.set(user.intraId, []);
+            }
+    
             this.userSockets.get(user.intraId).push(client.id);
             this.userService.updateUserStatus(user.intraId, 'ONLINE');
-            this.server.emit('userConnected', {userId: client.id})
-            console.log(user.userName + ' is Connected ' + client.id)
-            this.printClients();
-            this.printClientSockets();
+            this.server.emit('userConnected', { userId: client.id });
+            console.log(user.userName + ' is Connected ' + client.id);
+            // this.printClients();
+            // this.printClientSockets();
         } catch (error) {
             client.disconnect();
             console.log("Client disconnected due to invalid authorization");
             const response = {
                 success: false,
                 message: error.message
-            }
+            };
             console.log(response);
-            return (response);
+            return response;
         }
     }
-
+   
+    // TODO: need to be tested to check if the user is logged of from all the tabs
     // async handleDisconnect(client: Socket) {
     //     try {
-    //       const user = this.connectedClients.get(client.id);
-    
-    //       if (user) {
-            
-    //         const intraId = user.intraId;
-            
-    //         // Remove the disconnected socket from the user's socket list
-    //         const userSockets = this.userSockets.get(intraId) || [];
-    //         const filteredSockets = userSockets.filter(socketId => socketId !== client.id);
-    //         this.userSockets.set(intraId, filteredSockets);
-    
-    //         // If the user has no more connected sockets, remove them from the connectedClients map
-    //         if (filteredSockets.length === 0) {
-    //           this.connectedClients.delete(client.id);
-    //           this.userService.updateUserStatus(intraId, 'OFFLINE');
+    //         const user = this.connectedClients.get(client.id);
+    //         if (user) {
+    //             const intraId = user.intraId;
+    //             // here
+    //             // this.deleteUserSockets(intraId);
+    //             this.connectedClients.delete(client.id);
+    //             this.userService.updateUserStatus(intraId, 'OFFLINE');
+    //             client.disconnect();
+    //             console.log(user.userName + ' is Disconnected ' + client.id);
+    //         } else {
+    //             throw new WsException(`cannot find the user`);
     //         }
-    
-    //         this.server.emit('userDisconnected', { userId: client.id });
-    //         client.disconnect();
-    //         console.log(user.userName + ' is Disconnected ' + client.id);
-    //       } else {
-    //         throw new WsException(`Cannot find the user`);
-    //       }
     //     } catch (error) {
-    //       client.emit(error);
+    //         client.emit(error);
     //     }
     // }
-    
-    // TODO: need to be tested to check if the user is logged of from all the tabs
+
     async handleDisconnect(client: Socket) {
         try {
-            const token = client.handshake.headers.authorization;
             const user = this.connectedClients.get(client.id);
             if (user) {
-                this.deleteUserSockets(user.intraId);
-                this.deleteUserDisconnected(user.intraId);
-               
+                const intraId = user.intraId;
+                
+                // Remove the disconnected socket from userSockets
+                const userSockets = this.userSockets.get(intraId) || [];
+                const updatedSockets = userSockets.filter(socketId => socketId !== client.id);
+                
+                if (updatedSockets.length === 0) {
+                    // If there are no more sockets for this user, remove the user entirely
+                    this.userSockets.delete(intraId);
+                } else {
+                    // Update the userSockets map
+                    this.userSockets.set(intraId, updatedSockets);
+                }
+                
+                // Other cleanup tasks for disconnection
                 this.connectedClients.delete(client.id);
-                // this.connectedClients.delete(client.id);
-                this.userService.updateUserStatus(user.intraId, 'OFFLINE');
-                // TODO: the token need to be hashed before it persisted in the black-list of tokens
-                // this.BlackListedTokens.set(token, user.intraId);
-                this.server.emit('userDisconnected', { userId: client.id });
+                this.userService.updateUserStatus(intraId, 'OFFLINE');
                 client.disconnect();
                 console.log(user.userName + ' is Disconnected ' + client.id);
-            }
-            else
+            } else {
                 throw new WsException(`cannot find the user`);
+            }
         } catch (error) {
             client.emit(error);
         }
     }
+    
 
     @SubscribeMessage('createRoom')
     async createRoom(client: Socket, createRoomDto: CreateRoomDto) {
         try {
             // Get the current user
-            console.log("room data ===", createRoomDto); 
-            this.printClientSockets();
+            // console.log("room data ===", createRoomDto); 
+            // this.printClientSockets();
             const currentUser = this.findUserByClientSocketId(client.id);
             const roomData = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
             const userSockets: string[] = this.userSockets.get(currentUser.intraId);
-            console.log("userSockerts ===", userSockets);
-            userSockets.forEach((value, key) =>{
-                console.log("user = " + key + " || socketID = " + value);
+            // console.log("userSockerts ===", userSockets);
+            // console.log("userSockerts length===", userSockets.length);
+            userSockets.forEach((value) =>{
+                // console.log("value (socketId) = " + value);
                 this.server.to(value).emit('roomCreated', roomData);
             })
         } catch (error) {
-            console.log('err ||', error.message);
+            console.log(error.message);
+            client.emit('roomCreationError', { message: error.message });
+            // throw error.message;
         }
     }
-
-    // @SubscribeMessage('createRoom')
-    // async createRoom(client: Socket, createRoomDto: CreateRoomDto) {
-    //     try {
-    //         // get current User
-    //         console.log("room data ===", createRoomDto); 
-    //         const currentUser = this.findUserByClientSocketId(client.id);
-    //         const roomData = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
-    //         this.server.emit('roomCreated', roomData);    
-    //     } catch (error) {
-    //         console.log('err ||', error.message);
-    //     }
-    // }
-    
 
     @SubscribeMessage('updateRoom')
     async updateRoom(@ConnectedSocket() client: Socket, @MessageBody() body: UpdateRoomDto)
@@ -269,11 +258,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     async leaveRoom(@ConnectedSocket() client: Socket, @MessageBody() body: LeaveRoomDto)
     {
         try {
+            // console.log("(back) body == ", body);
             const currentUser = this.findUserByClientSocketId(client.id);
             await this.roomService.leaveRoom(body, currentUser.intraId);
-            this.server.emit('leaveRoom');
+            const userSockets: string[] = this.userSockets.get(currentUser.intraId);
+            userSockets.forEach((value) =>{
+                console.log("value (socketId) = " + value);
+                this.server.to(value).emit('roomLeaved', body.roomId);
+            })
+            // this.server.to(client.id).emit('leaveRoom');
         } catch (error) {
-            console.log("Subs error =" + error.message)
+            console.log("leaveRoom error =" + error.message)
         }
     }
 
