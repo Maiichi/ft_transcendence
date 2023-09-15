@@ -7,26 +7,37 @@ import "./chat.css";
 import { ChatUsers } from "./chatUsers/ChatUsers";
 import { Badge } from "@mui/material";
 import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
-import  { getMemberships}  from "./components/rooms/chatThunk";
+import { getMemberships } from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
 import { ChatBox } from "./chatBox/ChatBox";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
-import { SocketContext } from "../../core/socket/socketContext";
-
+import {
+  disconnectSocket,
+  startConnecting,
+} from "../../core/socket/socketSlice";
+import { batch } from "react-redux";
 
 export const Chat = () => {
+  console.log("chat rendering");
   const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.auth.token);
   const memberships = useAppSelector((state) => state.chat.memberships);
-  const conversations: [] = useAppSelector((state) => state.conversation.conversations);
-  const [directConversation, setDirectConversation]   = useState(null);
+  const conversations: [] = useAppSelector(
+    (state) => state.conversation.conversations
+  );
+  const [directConversation, setDirectConversation] = useState(null);
   const [channelConversation, setChannelConversation] = useState(null);
-  const socket = useContext(SocketContext);
 
-  useEffect(()=> {
+  useEffect(() => {
+
+    dispatch(startConnecting());
     dispatch(getMemberships(token));
     dispatch(getDirectConversations(token));
-  }, [dispatch, token]);
+
+    return () => {
+      dispatch(disconnectSocket());
+    };
+  }, []);
 
   // useEffect(() => {
   //     listenForSocketEvent(socket, 'userConnected', () => {console.log('tit tit user connect tit iti')})
@@ -49,7 +60,7 @@ export const Chat = () => {
             justifyContent: "space-between",
             color: "rgb(94, 53, 177)",
             margin: "0px 10px 0px 10px",
-            fontWeight: '900'
+            fontWeight: "900",
           }}
         >
           <p>Channels</p>
@@ -57,11 +68,17 @@ export const Chat = () => {
         </div>
         <div className="channelListHolder">
           {memberships.map((item: any) => (
-            <h4 key={item.room.id} 
-                className={`channel-name ${channelConversation === item.id ? 'selected' : ''}`}
-                onClick={() => {setChannelConversation(item.room);setDirectConversation(null)}}
+            <h4
+              key={item.room.id}
+              className={`channel-name ${
+                channelConversation === item.id ? "selected" : ""
+              }`}
+              onClick={() => {
+                setChannelConversation(item.room);
+                setDirectConversation(null);
+              }}
             >
-              # {item.room.name}  
+              # {item.room.name}
             </h4>
           ))}
         </div>
@@ -72,28 +89,36 @@ export const Chat = () => {
             justifyContent: "space-between",
             color: "rgb(94, 53, 177)",
             margin: "0px 10px 0px 10px",
-            fontWeight: '900'
+            fontWeight: "900",
           }}
         >
           <p>Direct Messages</p>
           <div>
-            <AddIcon style={{padding: '5px'}} />
+            <AddIcon style={{ padding: "5px" }} />
           </div>
         </div>
         <div className="DirectMessageListHolder">
-          {
-            conversations.map((discussion: any) => (
-            
-            <div key={discussion.id}
-              className={`discussion ${directConversation === discussion.id ? 'selected' : ''}`}
-              onClick={() => {setDirectConversation(discussion); setChannelConversation(null)}} // Update the selected conversation on click
+          {conversations.map((discussion: any) => (
+            <div
+              key={discussion.id}
+              className={`discussion ${
+                directConversation === discussion.id ? "selected" : ""
+              }`}
+              onClick={() => {
+                setDirectConversation(discussion);
+                setChannelConversation(null);
+              }} // Update the selected conversation on click
             >
               <Badge
                 anchorOrigin={{
                   vertical: "bottom",
                   horizontal: "right",
                 }}
-                color={discussion.participants[0].status === "ONLINE" ? "success" : "error"}
+                color={
+                  discussion.participants[0].status === "ONLINE"
+                    ? "success"
+                    : "error"
+                }
                 overlap="circular"
                 variant="dot"
               >
@@ -101,26 +126,37 @@ export const Chat = () => {
               </Badge>
 
               <div className="desc-contact">
-                <p className="name">{discussion.participants[0].firstName}  {discussion.participants[0].lastName}</p>
-                <p className="message">{ changeMessageLength(discussion.messages[0].content) }</p>
+                <p className="name">
+                  {discussion.participants[0].firstName}{" "}
+                  {discussion.participants[0].lastName}
+                </p>
+                <p className="message">
+                  {changeMessageLength(discussion.messages[0].content)}
+                </p>
               </div>
-              <p style={{fontSize: 13}}>{convertDateTime(discussion.messages[0].createdAt)}</p>
+              <p style={{ fontSize: 13 }}>
+                {convertDateTime(discussion.messages[0].createdAt)}
+              </p>
             </div>
           ))}
         </div>
       </div>
-      {
-        (directConversation === null && channelConversation === null) ? (
-          <div className="chatBoxNoConversation">
-            <h1> Click on a conversation to start chatting. </h1>
-          </div>
-        ) : (
-          <>
-            <ChatBox channelConversation={channelConversation} directConversation={directConversation} />
-            <ChatUsers channelConversation={channelConversation} directConversation={directConversation} />
-          </>
-        )
-      }
+      {directConversation === null && channelConversation === null ? (
+        <div className="chatBoxNoConversation">
+          <h1> Click on a conversation to start chatting. </h1>
+        </div>
+      ) : (
+        <>
+          <ChatBox
+            channelConversation={channelConversation}
+            directConversation={directConversation}
+          />
+          <ChatUsers
+            channelConversation={channelConversation}
+            directConversation={directConversation}
+          />
+        </>
+      )}
     </Root>
   );
 };
@@ -151,4 +187,3 @@ const Root = styled.div`
 //   borderRadius: "20px",
 //   height: "400px",
 // };
-
