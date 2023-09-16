@@ -11,7 +11,6 @@ import { Conversation, Membership } from "../Types/types";
 import { useSocket } from "../../../core/socket/socketContext";
 import { leaveRoom } from "../components/rooms/chatThunk";
 import { Socket } from "socket.io-client";
-import { removeMembership, setIsConversation } from "../components/rooms/chatSlice";
 
 interface Props {
   directConversation: Conversation | null
@@ -35,8 +34,8 @@ export const ChannelSettingModal: React.FC<Props> = ({
       // dispatch(setIsConversation(false));
       dispatch(leaveRoom({socket: socket as Socket, roomId: channelConversation?.id}))
       .then(() => {
-        if (channelConversation)
-          dispatch(removeMembership(channelConversation))
+        // if (channelConversation)
+        //   dispatch(removeMembership(channelConversation))
       })
       .catch((err) => {
         console.log("err == ", err);
@@ -72,7 +71,7 @@ export const ChannelSettingModal: React.FC<Props> = ({
                       </div>
                       <div style={{ overflow: "hidden", maxHeight: "400px" }}>
                         <div className="modal-search">
-                          <SearchComponent />
+                          {/* <SearchComponent /> */}
                         </div>
                         <div
                           className="modal-invite-user"

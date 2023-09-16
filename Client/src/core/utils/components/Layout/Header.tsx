@@ -241,7 +241,7 @@ export const Header = () => {
                             onClick={toggleDrawer("left", true)}
                         />
 
-                        <SearchIcon
+                        {/* <SearchIcon
                             className={classes.iconBase}
                             style={{ marginLeft: "10px", marginRight: "auto" }}
                             onClick={popperClick(
@@ -258,7 +258,7 @@ export const Header = () => {
                                     width: "-webkit-fill-available",
                                 }
                             )}
-                        />
+                        /> */}
                     </>
                 ) : (
                     <>
@@ -271,7 +271,7 @@ export const Header = () => {
                             />
                             <>LOGO</>
                         </Left>
-                        <SearchComponent />
+                        {/* <SearchComponent /> */}
                     </>
                 )}
                 <Right>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import {   useEffect, useState } from "react";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import AddIcon from "@mui/icons-material/Add";
 import styled from "styled-components";
@@ -21,6 +21,7 @@ export const Chat = () => {
   const memberships = useAppSelector((state) => state.chat.memberships);
   const conversations: [] = useAppSelector((state) => state.conversation.conversations);
   const displayConversation: boolean = useAppSelector((state) => state.chat.isConversation);
+  const searchQuery = useAppSelector((state) => state.filter.searchQuery);
   const [directConversation, setDirectConversation]   = useState(null);
   const [channelConversation, setChannelConversation] = useState(null);
   const socket = useSocket();
@@ -47,13 +48,24 @@ export const Chat = () => {
     };
   }, [socket, dispatch])
 
+  // Filter chat rooms based on the search query
+  const filteredRooms = memberships.filter((item: any) =>
+    item.room.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+  );
+
+  // Filter conversations based on the search query
+  const filteredConversations = conversations.filter((discussion: any) =>
+    discussion.participants[0].firstName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+
   // const isConnected = useAppSelector((state) => state.socket.isConnected);
   // const message = useAppSelector((state) => state.socket.message);
   return (
     <Root>
       <div className="discussions">
         <p className="messages-text">Discussions</p>
-        <SearchComponent />
+        <SearchComponent onInputUpdate={searchQuery} />
         <div
           style={{
             display: "flex",
@@ -68,7 +80,7 @@ export const Chat = () => {
           <CreateChannelModal />
         </div>
         <div className="channelListHolder">
-          {memberships.map((item: any) => (
+          {filteredRooms.map((item: any) => (
             <h4 key={item.room.id} 
                 className={`channel-name ${channelConversation === item.id ? 'selected' : ''}`}
                 onClick={() => {
@@ -98,7 +110,7 @@ export const Chat = () => {
         </div>
         <div className="DirectMessageListHolder">
           {
-            conversations.map((discussion: any) => (
+            filteredConversations.map((discussion: any) => (
             
             <div key={discussion.id}
               className={`discussion ${directConversation === discussion.id ? 'selected' : ''}`}
