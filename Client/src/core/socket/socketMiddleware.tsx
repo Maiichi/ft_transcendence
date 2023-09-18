@@ -5,12 +5,7 @@ import {
   Middleware,
 } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
-import { initializeSocket } from "./socketManager";
-import {
-  connectionEstablished,
-  disconnectSocket,
-  startConnecting,
-} from "./socketSlice";
+
 export const listenerMiddleware = createListenerMiddleware();
 
 // Add one or more listener entries that look for specific actions.
@@ -53,14 +48,14 @@ export const listenerMiddleware = createListenerMiddleware();
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
   return (next) => (action) => {
-    if (startConnecting.match(action)) {
-      let serverUrl =
-        process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
-      socket = initializeSocket(serverUrl, getState().auth.token);
-      dispatch(connectionEstablished(socket));
-    } else if (disconnectSocket.match(action)) {
-      socket?.disconnect();
-    }
+    // if (startConnecting.match(action)) {
+    //   let serverUrl =
+    //     process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
+    //   socket = initializeSocket(serverUrl, getState().auth.token);
+    //   dispatch(connectionEstablished(socket));
+    // } else if (disconnectSocket.match(action)) {
+    //   socket?.disconnect();
+    // }
     next(action);
   };
 };

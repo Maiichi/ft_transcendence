@@ -4,25 +4,31 @@ import { useAuthentication } from "../packages/feat-Auth/authUtils";
 import { useAppSelector } from "./redux";
 
 interface RequireAuthProps {
-    children: React.ReactElement;
+  children: React.ReactElement;
 }
 
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
-    const isAuthenticated = useAuthentication();
-    const navigate = useNavigate();
-    const isFirstLogin = useAppSelector((state) => state.auth.firstLogin);
+  const isAuthenticated = useAuthentication();
+  console.log(
+    "RequireAuth Rendering",
+    children.props.children.type.name,
+    isAuthenticated
+  );
+  const navigate = useNavigate();
+  const isFirstLogin = useAppSelector((state) => state.auth.firstLogin);
 
-    React.useEffect(() => {
-        if (!isAuthenticated) {
-            navigate("/login");
-        }
-        if (isFirstLogin) {
-            navigate("/firstlogin");
-        }
-    }, [navigate, isAuthenticated]);
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      console.log("!is");
+      navigate("/login");
+    }
+    if (isFirstLogin) {
+      navigate("/firstlogin");
+    }
+  }, [isAuthenticated]);
 
-    // Render the wrapped content if authenticated
-    return children;
+  // Render the wrapped content if authenticated
+  return children;
 };
 
 export default RequireAuth;

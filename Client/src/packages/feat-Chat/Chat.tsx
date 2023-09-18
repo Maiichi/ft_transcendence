@@ -11,10 +11,7 @@ import { getMemberships } from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
 import { ChatBox } from "./chatBox/ChatBox";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
-import {
-  disconnectSocket,
-  startConnecting,
-} from "../../core/socket/socketSlice";
+import { disconnectSocket } from "../../core/socket/socketSlice";
 import { batch } from "react-redux";
 
 export const Chat = () => {
@@ -29,8 +26,7 @@ export const Chat = () => {
   const [channelConversation, setChannelConversation] = useState(null);
 
   useEffect(() => {
-
-    dispatch(startConnecting());
+    // dispatch(startConnecting());
     dispatch(getMemberships(token));
     dispatch(getDirectConversations(token));
 

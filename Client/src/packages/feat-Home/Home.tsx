@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../core";
 
 export const Home = () => {
   const navigate = useNavigate();
-  console.log("Home");
+  const isFirstLogin = useAppSelector((state) => state.auth.token);
+
+  console.log("Home", isFirstLogin);
   const handleClick = () => {
     navigate("/test");
   };

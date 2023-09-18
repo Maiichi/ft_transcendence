@@ -1,7 +1,9 @@
-import io, { Socket } from 'socket.io-client';
+import io, { Socket } from "socket.io-client";
 
-export const initializeSocket = (serverUrl: string, authToken: string): Socket => {
-  console.log("(socketManager) token => ", authToken);
+export const initializeSocket = (
+  serverUrl: string,
+  authToken: string
+): Socket => {
   const socket: Socket = io(serverUrl, {
     extraHeaders: {
       authorization: `${authToken}`,
@@ -10,7 +12,7 @@ export const initializeSocket = (serverUrl: string, authToken: string): Socket =
   return socket;
 };
 
-export const disconnectSocket = (socket: any) => {
+export const disconnectSocket = (socket: Socket) => {
   if (socket) {
     socket.disconnect();
   }
@@ -20,12 +22,20 @@ export const sendSocketEvent = (socket: any, eventName: string, data: any) => {
     socket.emit(eventName, data);
   }
 };
-export const listenForSocketEvent = (socket: any, eventName: string, callback: (data: any) => void) => {
+export const listenForSocketEvent = (
+  socket: any,
+  eventName: string,
+  callback: (data: any) => void
+) => {
   if (socket) {
     socket.on(eventName, callback);
   }
 };
-export const removeSocketListener = (socket: any, eventName: string, callback: (data: any) => void) => {
+export const removeSocketListener = (
+  socket: any,
+  eventName: string,
+  callback: (data: any) => void
+) => {
   if (socket) {
     socket.off(eventName, callback);
   }
