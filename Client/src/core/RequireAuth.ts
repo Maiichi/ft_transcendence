@@ -1,7 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthentication } from "../packages/feat-Auth/authUtils";
-import { useAppSelector } from "./redux";
+import { useAppDispatch, useAppSelector } from "./redux";
+import { ConnectSocket } from "../packages";
 
 interface RequireAuthProps {
   children: React.ReactElement;
@@ -16,12 +17,14 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   );
   const navigate = useNavigate();
   const isFirstLogin = useAppSelector((state) => state.auth.firstLogin);
-
+  const socket = useAppSelector((state) => state.socket);
+  console.log("socket : ",socket)
+  const dispatch = useAppDispatch();
   React.useEffect(() => {
     if (!isAuthenticated) {
       console.log("!is");
       navigate("/login");
-    }
+    } 
     if (isFirstLogin) {
       navigate("/firstlogin");
     }

@@ -16,10 +16,19 @@ const initialState: SocketState = {
   error: null,
 };
 
-const SocketSlice = createSlice({
+const socketSlice = createSlice({
   name: "socket",
   initialState,
   reducers: {
+    ConnectSocket: (state) => {
+      state.isEstablishingConnection = true;
+    },
+    SocketConnected: (state) => {
+      state.isConnected = true;
+    },
+    SocketTest: (state) => {
+      state.isConnected = true;
+    },
     disconnectSocket: (state) => {
       state.isConnected = false;
       state.isEstablishingConnection = false;
@@ -42,6 +51,6 @@ const SocketSlice = createSlice({
   },
 });
 
-export const { disconnectSocket } = SocketSlice.actions;
+export const {SocketTest, ConnectSocket, SocketConnected, disconnectSocket } = socketSlice.actions;
 
-export default SocketSlice.reducer;
+export default socketSlice.reducer;

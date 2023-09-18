@@ -4,6 +4,7 @@ import { RootState } from "../../../core";
 import { initializeSocket } from "../../../core/socket/socketManager";
 import { StartSocketConnection } from "../../../core/socket/socketThunk";
 import { apiRequest } from "../../../core/utils/apiRequest";
+import { ConnectSocket } from "../../feat-Chat";
 
 type LoginPayload = {
   token: string;
@@ -22,7 +23,7 @@ export const login = createAsyncThunk<LoginPayload, LoginPayload>(
           Authorization: `Bearer ${payload.token}`,
         },
       });
-      dispatch(StartSocketConnection(payload.token));
+      
       // console.log("RESP", resp);
       // payload.user = user;
       payload.user = resp?.message || {};

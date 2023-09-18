@@ -12,6 +12,7 @@ import conversationSlice from "../../packages/feat-Chat/components/conversations
 import SocketSlice from "../socket/socketSlice";
 
 import SocketMiddleware from "../socket/socketMiddleware";
+import socketSlice from "../socket/socketSlice";
 // ...
 
 const rootReducer = combineReducers({
@@ -20,7 +21,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   core: coreSlice,
   chat: chatSlice,
-  socket: SocketSlice,
+  socket: socketSlice,
   conversation: conversationSlice,
 });
 
