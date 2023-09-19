@@ -5,6 +5,9 @@ import {
   Middleware,
 } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
+import { ConnectSocket, disconnectSocket, SocketConnected, SocketTest } from "./socketSlice";
+import {  initializeSocket } from "./socketManager";
+import { getMemberships } from "../../packages/feat-Chat/components/rooms/chatThunk";
 
 export const listenerMiddleware = createListenerMiddleware();
 
@@ -48,14 +51,17 @@ export const listenerMiddleware = createListenerMiddleware();
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
   return (next) => (action) => {
-    // if (startConnecting.match(action)) {
-    //   let serverUrl =
-    //     process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
-    //   socket = initializeSocket(serverUrl, getState().auth.token);
-    //   dispatch(connectionEstablished(socket));
-    // } else if (disconnectSocket.match(action)) {
-    //   socket?.disconnect();
-    // }
+    if (ConnectSocket.match(action)) {
+      console.log("dkhel ")
+      let serverUrl =
+        process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
+      socket = initializeSocket(serverUrl, getState().auth.token);
+      dispatch(SocketConnected());
+    } else if (disconnectSocket.match(action)) {
+      socket?.disconnect();
+} else if(SocketTest.match(action)){
+  console.log(socket)
+}
     next(action);
   };
 };
