@@ -28,7 +28,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root", // Key to access your storage
   storage,
-  whitelist: ["auth", "socket"],
+  whitelist: ["auth"],
   transforms: [decryptionTransform], // Use the custom transform
 };
 

@@ -31,7 +31,7 @@ export const Chat = () => {
     dispatch(getDirectConversations(token));
 
     return () => {
-      dispatch(disconnectSocket());
+      // dispatch(disconnectSocket());
     };
   }, []);
 

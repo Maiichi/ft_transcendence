@@ -10,21 +10,17 @@ interface RequireAuthProps {
 
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const isAuthenticated = useAuthentication();
-  console.log(
-    "RequireAuth Rendering",
-    children.props.children.type.name,
-    isAuthenticated
-  );
+  // console.log(
+  //   "RequireAuth Rendering",
+  //   children.props.children.type.name,
+  //   isAuthenticated
+  // );
   const navigate = useNavigate();
   const isFirstLogin = useAppSelector((state) => state.auth.firstLogin);
-  const socket = useAppSelector((state) => state.socket);
-  console.log("socket : ",socket)
-  const dispatch = useAppDispatch();
   React.useEffect(() => {
     if (!isAuthenticated) {
-      console.log("!is");
       navigate("/login");
-    } 
+    }
     if (isFirstLogin) {
       navigate("/firstlogin");
     }
