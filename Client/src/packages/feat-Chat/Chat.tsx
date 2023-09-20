@@ -183,4 +183,3 @@ const Root = styled.div`
 //   borderRadius: "20px",
 //   height: "400px",
 // };
-

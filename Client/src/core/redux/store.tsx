@@ -10,6 +10,7 @@ import coreSlice from "../CoreSlice";
 import chatSlice from "../../packages/feat-Chat/components/rooms/chatSlice";
 import conversationSlice from "../../packages/feat-Chat/components/conversations/conversationSlice";
 import FilterSlice from "../utils/components/Input/SearchSlice";
+import SocketMiddleware from "../socket/socketMiddleware";
 // ...
 
 const rootReducer = combineReducers({
@@ -24,16 +25,18 @@ const rootReducer = combineReducers({
 );
 
 const persistConfig = {
-    key: "root", // Key to access your storage
-    storage,
-    whitelist: ["auth"],
-    transforms: [decryptionTransform], // Use the custom transform
+  key: "root", // Key to access your storage
+  storage,
+  whitelist: ["auth"],
+  transforms: [decryptionTransform], // Use the custom transform
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-    reducer: persistedReducer,
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat([SocketMiddleware]),
 });
 
 export const persistor = persistStore(store);
