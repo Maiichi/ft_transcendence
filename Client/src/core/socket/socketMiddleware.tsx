@@ -1,13 +1,21 @@
 import { Api } from "@mui/icons-material";
 import {
-  configureStore,
-  createListenerMiddleware,
-  Middleware,
+    configureStore,
+    createListenerMiddleware,
+    Middleware,
 } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
-import { ConnectSocket, disconnectSocket, SocketConnected, SocketTest } from "./socketSlice";
-import {  initializeSocket } from "./socketManager";
+import {
+    ConnectSocket,
+    disconnectSocket,
+    SocketConnected,
+} from "./socketSlice";
+import { initializeSocket } from "./socketManager";
 import { getMemberships } from "../../packages/feat-Chat/components/rooms/chatThunk";
+import {
+    addMembership,
+    createRoom,
+} from "../../packages/feat-Chat/components/rooms/chatSlice";
 
 export const listenerMiddleware = createListenerMiddleware();
 
@@ -49,21 +57,43 @@ export const listenerMiddleware = createListenerMiddleware();
 // });
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
-  let socket: Socket;
-  return (next) => (action) => {
-    if (ConnectSocket.match(action)) {
-      console.log("dkhel ")
-      let serverUrl =
-        process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
-      socket = initializeSocket(serverUrl, getState().auth.token);
-      dispatch(SocketConnected());
-    } else if (disconnectSocket.match(action)) {
-      socket?.disconnect();
-} else if(SocketTest.match(action)){
-  console.log(socket)
-}
-    next(action);
-  };
+    let socket: Socket;
+    return (next) => (action) => {
+        switch (action.type) {
+            case ConnectSocket.type:
+                console.log("dkhel ", action.type);
+                let serverUrl =
+                    process.env.REACT_APP_BACKEND_URL ||
+                    "http://localhost:5001";
+                socket = initializeSocket(serverUrl, getState().auth.token);
+                dispatch(SocketConnected());
+                break;
+            case disconnectSocket.type:
+                socket?.disconnect();
+                break;
+            case createRoom.type:
+                socket.emit("createRoom", action.payload);
+                socket.on("roomCreated", (data) => {
+                    // console.log("data in roomCreated", data);
+                    // Handle the event data and update your component's state as needed
+                    dispatch(addMembership(data));
+                });
+                break;
+            default:
+                break;
+        }
+        // if (ConnectSocket.match(action)) {
+
+        //     console.log("dkhel ",action.type);
+        //     let serverUrl =
+        //         process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
+        //     socket = initializeSocket(serverUrl, getState().auth.token);
+        //     dispatch(SocketConnected());
+        // } else if (disconnectSocket.match(action)) {
+        //     socket?.disconnect();
+        // }
+        next(action);
+    };
 };
 
 export default SocketMiddleware;

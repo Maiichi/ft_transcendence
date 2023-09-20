@@ -4,10 +4,8 @@ import { Box, Modal } from "@mui/material";
 import Switch from "@mui/material/Switch";
 import { styled } from "@mui/material/styles";
 import "./createChannelModal.css";
-import { useSocket } from "../../../core/socket/socketContext";
 import { useAppDispatch, useAppSelector } from "../../../core";
-import { createRoom } from "../components/rooms/chatThunk";
-import { Socket } from "socket.io-client";
+import { createRoom } from "../components/rooms/chatSlice";
 
 export const CreateChannelModal = () => {
     const dispatch = useAppDispatch();
@@ -29,7 +27,6 @@ export const CreateChannelModal = () => {
         if (roomCreationError) setRoomCreationError(null);
     };
 
-    const socket = useSocket();
     const handleCreateRoom = () => {
         const roomData = {
             name: roomName,
@@ -38,27 +35,23 @@ export const CreateChannelModal = () => {
             type: activate ? "private" : "public",
             password: roomPassword,
         };
-        dispatch(
-            createRoom({ socket: socket as Socket, room: roomData })
-        ).catch((err) => {
-            console.log("err ==", err);
-        });
+        dispatch(createRoom(roomData));
         setRoomName("");
         setRoomDesc("");
         setRoomPassword("");
         setOpen(false);
     };
 
-    useEffect(() => {
-        if (socket) {
-            socket.on("roomCreationError", (data) => {
-                if (data && data.message) {
-                    setRoomCreationError(data.message);
-                    setOpen(true);
-                }
-            });
-        }
-    }, [socket]);
+    // useEffect(() => {
+    //     if (socket) {
+    //         socket.on("roomCreationError", (data) => {
+    //             if (data && data.message) {
+    //                 setRoomCreationError(data.message);
+    //                 setOpen(true);
+    //             }
+    //         });
+    //     }
+    // }, [socket]);
 
     const AntSwitch = styled(Switch)(({ theme }) => ({
         width: 32,

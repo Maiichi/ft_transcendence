@@ -1,4 +1,4 @@
-import {   useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import AddIcon from "@mui/icons-material/Add";
 import styled from "styled-components";
@@ -7,154 +7,191 @@ import "./chat.css";
 import { ChatUsers } from "./chatUsers/ChatUsers";
 import { Badge } from "@mui/material";
 import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
-import  { getMemberships}  from "./components/rooms/chatThunk";
+import { getMemberships } from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
 import { ChatBox } from "./chatBox/ChatBox";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
-import { useSocket } from "../../core/socket/socketContext";
 import { addMembership, setIsConversation } from "./components/rooms/chatSlice";
 
-
 export const Chat = () => {
-  const dispatch = useAppDispatch();
-  const token = useAppSelector((state) => state.auth.token);
-  const memberships = useAppSelector((state) => state.chat.memberships);
-  const conversations: [] = useAppSelector((state) => state.conversation.conversations);
-  const displayConversation: boolean = useAppSelector((state) => state.chat.isConversation);
-  const searchQuery = useAppSelector((state) => state.filter.searchQuery);
-  const [directConversation, setDirectConversation]   = useState(null);
-  const [channelConversation, setChannelConversation] = useState(null);
-  const socket = useSocket();
+    const dispatch = useAppDispatch();
+    const token = useAppSelector((state) => state.auth.token);
+    const memberships = useAppSelector((state) => state.chat.memberships);
+    const conversations: [] = useAppSelector(
+        (state) => state.conversation.conversations
+    );
+    const displayConversation: boolean = useAppSelector(
+        (state) => state.chat.isConversation
+    );
+    const searchQuery = useAppSelector((state) => state.filter.searchQuery);
+    const [directConversation, setDirectConversation] = useState(null);
+    const [channelConversation, setChannelConversation] = useState(null);
 
-  useEffect(()=> {
-    dispatch(getMemberships(token));
-    dispatch(getDirectConversations(token));
-  }, [dispatch, token , directConversation, channelConversation, displayConversation]);
+    useEffect(() => {
+        dispatch(getMemberships(token));
+        dispatch(getDirectConversations(token));
+    }, [
+        dispatch,
+        token,
+        directConversation,
+        channelConversation,
+        displayConversation,
+    ]);
 
-  useEffect(() => {
-    // Attach the 'roomCreated' event listener when the component mounts
-    if (socket) {
-      socket.on('roomCreated', (data) => {
-        // console.log("data in roomCreated", data);
-        // Handle the event data and update your component's state as needed
-        dispatch(addMembership(data));
-      });
-    }
-    // Clean up the event listener when the component unmounts
-    return () => {
-      if (socket) {
-        socket.off('roomCreated');
-      }
-    };
-  }, [socket, dispatch])
+    // useEffect(() => {
+    //   // Attach the 'roomCreated' event listener when the component mounts
+    //   if (socket) {
+    //     socket.on('roomCreated', (data) => {
+    //       // console.log("data in roomCreated", data);
+    //       // Handle the event data and update your component's state as needed
+    //       dispatch(addMembership(data));
+    //     });
+    //   }
 
-  // Filter chat rooms based on the search query
-  const filteredRooms = memberships.filter((item: any) =>
-    item.room.name.toLowerCase().startsWith(searchQuery.toLowerCase())
-  );
+    //   // Clean up the event listener when the component unmounts
+    //   return () => {
+    //     if (socket) {
+    //       socket.off('roomCreated');
+    //     }
+    //   };
+    // }, [socket, dispatch])
 
-  // Filter conversations based on the search query
-  const filteredConversations = conversations.filter((discussion: any) =>
-    discussion.participants[0].firstName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  
+    // Filter chat rooms based on the search query
+    const filteredRooms = memberships.filter((item: any) =>
+        item.room.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+    );
 
-  // const isConnected = useAppSelector((state) => state.socket.isConnected);
-  // const message = useAppSelector((state) => state.socket.message);
-  return (
-    <Root>
-      <div className="discussions">
-        <p className="messages-text">Discussions</p>
-        <SearchComponent onInputUpdate={searchQuery} />
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            color: "rgb(94, 53, 177)",
-            margin: "0px 10px 0px 10px",
-            fontWeight: '900'
-          }}
-        >
-          <p>Channels</p>
-          <CreateChannelModal />
-        </div>
-        <div className="channelListHolder">
-          {filteredRooms.map((item: any) => (
-            <h4 key={item.room.id} 
-                className={`channel-name ${channelConversation === item.id ? 'selected' : ''}`}
-                onClick={() => {
-                  setChannelConversation(item.room);
-                  setDirectConversation(null)
-                  dispatch(setIsConversation(true));
-                }}
-            >
-              # {item.room.name}  
-            </h4>
-          ))}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            color: "rgb(94, 53, 177)",
-            margin: "0px 10px 0px 10px",
-            fontWeight: '900'
-          }}
-        >
-          <p>Direct Messages</p>
-          <div>
-            <AddIcon style={{padding: '5px'}} />
-          </div>
-        </div>
-        <div className="DirectMessageListHolder">
-          {
-            filteredConversations.map((discussion: any) => (
-            
-            <div key={discussion.id}
-              className={`discussion ${directConversation === discussion.id ? 'selected' : ''}`}
-              onClick={() => {
-                  setDirectConversation(discussion); 
-                  setChannelConversation(null); 
-                  dispatch(setIsConversation(true));
-              }} // Update the selected conversation on click
-            >
-              <Badge
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                color={discussion.participants[0].status === "ONLINE" ? "success" : "error"}
-                overlap="circular"
-                variant="dot"
-              >
-                <img className="photo" src={Picture} alt="" />
-              </Badge>
+    // Filter conversations based on the search query
+    const filteredConversations = conversations.filter((discussion: any) =>
+        discussion.participants[0].firstName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+    );
 
-              <div className="desc-contact">
-                <p className="name">{discussion.participants[0].firstName}  {discussion.participants[0].lastName}</p>
-                <p className="message">{ changeMessageLength(discussion.messages[0].content) }</p>
-              </div>
-              <p style={{fontSize: 13}}>{convertDateTime(discussion.messages[0].createdAt)}</p>
+    // const isConnected = useAppSelector((state) => state.socket.isConnected);
+    // const message = useAppSelector((state) => state.socket.message);
+    return (
+        <Root>
+            <div className="discussions">
+                <p className="messages-text">Discussions</p>
+                <SearchComponent onInputUpdate={searchQuery} />
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        color: "rgb(94, 53, 177)",
+                        margin: "0px 10px 0px 10px",
+                        fontWeight: "900",
+                    }}
+                >
+                    <p>Channels</p>
+                    <CreateChannelModal />
+                </div>
+                <div className="channelListHolder">
+                    {filteredRooms.map((item: any) => (
+                        <h4
+                            key={item.room.id}
+                            className={`channel-name ${
+                                channelConversation === item.id
+                                    ? "selected"
+                                    : ""
+                            }`}
+                            onClick={() => {
+                                setChannelConversation(item.room);
+                                setDirectConversation(null);
+                                dispatch(setIsConversation(true));
+                            }}
+                        >
+                            # {item.room.name}
+                        </h4>
+                    ))}
+                </div>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        color: "rgb(94, 53, 177)",
+                        margin: "0px 10px 0px 10px",
+                        fontWeight: "900",
+                    }}
+                >
+                    <p>Direct Messages</p>
+                    <div>
+                        <AddIcon style={{ padding: "5px" }} />
+                    </div>
+                </div>
+                <div className="DirectMessageListHolder">
+                    {filteredConversations.map((discussion: any) => (
+                        <div
+                            key={discussion.id}
+                            className={`discussion ${
+                                directConversation === discussion.id
+                                    ? "selected"
+                                    : ""
+                            }`}
+                            onClick={() => {
+                                setDirectConversation(discussion);
+                                setChannelConversation(null);
+                                dispatch(setIsConversation(true));
+                            }} // Update the selected conversation on click
+                        >
+                            <Badge
+                                anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                }}
+                                color={
+                                    discussion.participants[0].status ===
+                                    "ONLINE"
+                                        ? "success"
+                                        : "error"
+                                }
+                                overlap="circular"
+                                variant="dot"
+                            >
+                                <img className="photo" src={Picture} alt="" />
+                            </Badge>
+
+                            <div className="desc-contact">
+                                <p className="name">
+                                    {discussion.participants[0].firstName}{" "}
+                                    {discussion.participants[0].lastName}
+                                </p>
+                                <p className="message">
+                                    {changeMessageLength(
+                                        discussion.messages[0].content
+                                    )}
+                                </p>
+                            </div>
+                            <p style={{ fontSize: 13 }}>
+                                {convertDateTime(
+                                    discussion.messages[0].createdAt
+                                )}
+                            </p>
+                        </div>
+                    ))}
+                </div>
             </div>
-          ))}
-        </div>
-      </div>
-      {
-        (displayConversation === false) ? (
-          <div className="chatBoxNoConversation">
-            <h1> Click on a conversation to start chatting. </h1>
-          </div>
-        ) : (
-          <>
-            <ChatBox channelConversation={channelConversation} directConversation={directConversation} />
-            <ChatUsers channelConversation={channelConversation} directConversation={directConversation} />
-          </>
-        )
-      }
-    </Root>
-  );
+            {displayConversation === false ? (
+                <div className="chatBoxNoConversation">
+                    <h1> Click on a conversation to start chatting. </h1>
+                </div>
+            ) : (
+                <>
+                    <ChatBox
+                        channelConversation={channelConversation}
+                        directConversation={directConversation}
+                    />
+                    <ChatUsers
+                        channelConversation={channelConversation}
+                        directConversation={directConversation}
+                    />
+                </>
+            )}
+        </Root>
+    );
 };
 
 const Root = styled.div`

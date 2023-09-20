@@ -1,10 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import jwt, { JwtPayload } from "jwt-decode"; // import dependency
-import { RootState } from "../../../core";
-import { initializeSocket } from "../../../core/socket/socketManager";
-import { StartSocketConnection } from "../../../core/socket/socketThunk";
+
 import { apiRequest } from "../../../core/utils/apiRequest";
-import { ConnectSocket } from "../../feat-Chat";
 
 type LoginPayload = {
   token: string;

@@ -8,7 +8,13 @@ export interface roomState {
     isConversation: boolean;
     isLoading: boolean;
 }
-
+type RoomPayload = {
+    name: string;
+    type: string;
+    description: string;
+    password: string;
+    ownerId: string;
+};
 const initialState: roomState = {
     memberships: [],
     messages: [],
@@ -20,6 +26,12 @@ export const roomSlice = createSlice({
     name: "memberships",
     initialState,
     reducers: {
+        createRoom: (state, action: PayloadAction<RoomPayload>) => {
+            state.isLoading = true;
+        },
+        createRoomSuccess: (state, action: PayloadAction<Membership>) => {
+            state.memberships.push(action.payload);
+        },
         setMemberships: (state, action: PayloadAction<roomState>) => {
             state.memberships = action.payload.memberships;
         },
@@ -75,6 +87,8 @@ export const {
     setMessages,
     addMembership,
     removeMembership,
+    createRoom,
+    createRoomSuccess,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

@@ -2,13 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../../core/utils/apiRequest";
 import { Socket } from "socket.io-client";
 
-type RoomPayload = {
-    name: string;
-    type: string;
-    description: string;
-    password: string;
-    ownerId: string;
-};
+
 
 export const getMemberships = createAsyncThunk(
     "chat/memberships",
@@ -48,26 +42,26 @@ export const getChatRoomMessages = createAsyncThunk(
     }
 );
 
-export const createRoom = createAsyncThunk(
-    "chat/room/create",
-    async ({ socket, room }: { socket: Socket; room: RoomPayload }) => {
-        try {
-            const roomData = {
-                name: room.name,
-                ownerId: room.ownerId,
-                description: room.description,
-                type: room.type,
-                password: room.password,
-            };
-            // Emit the createRoom event to the server
-            socket.emit("createRoom", roomData);
-        } catch (error) {
-            // Handle error if needed
-            console.log("error in createRoom Thunk ", error);
-            throw error;
-        }
-    }
-);
+// export const createRoom = createAsyncThunk(
+//     "chat/room/create",
+//     async (room: RoomPayload ) => {
+//         try {
+//             const roomData = {
+//                 name: room.name,
+//                 ownerId: room.ownerId,
+//                 description: room.description,
+//                 type: room.type,
+//                 password: room.password,
+//             };
+//             // Emit the createRoom event to the server
+            
+//         } catch (error) {
+//             // Handle error if needed
+//             console.log("error in createRoom Thunk ", error);
+//             throw error;
+//         }
+//     }
+// );
 
 export const leaveRoom = createAsyncThunk(
     "chat/room/leave",

@@ -11,7 +11,6 @@ interface RequireAuthProps {
 }
 
 const SocketInit = (props: any) => {
-  console.log("SocketInit");
   const socket = useAppSelector((state) => state.socket);
   const isAuthenticated = useAuthentication();
   const dispatch = useAppDispatch();
