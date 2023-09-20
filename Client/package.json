@@ -34,7 +34,7 @@
   "scripts": {
     "prepareStart": "yarn clean && yarn start",
     "clean": "rm -rf node_modules",
-    "start": "react-scripts start",
+    "start": "PORT=3003 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
