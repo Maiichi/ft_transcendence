@@ -15,10 +15,23 @@ const SocketInit = (props: any) => {
   const isAuthenticated = useAuthentication();
   const dispatch = useAppDispatch();
 
-  if (isAuthenticated && !socket.isConnected) {
-    console.log("connectSocket");
-    dispatch(ConnectSocket());
-  }
+  // if (isAuthenticated && !socket.isConnected) {
+  //   console.log("connectSocket");
+  //   dispatch(ConnectSocket());
+  // }
+  useEffect(() => {
+    if (isAuthenticated && !socket.isConnected) {
+      console.log("connectSocket");
+      dispatch(ConnectSocket());
+    }
+    return () => {
+      // Disconnect the socket when the component unmounts.
+      if (socket.isConnected) {
+        console.log("disconnectSocket");
+        dispatch(disconnectSocket());
+      }
+    };
+  }, [isAuthenticated, dispatch, socket]);
 
   return props.children;
 };

@@ -67,17 +67,17 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                     "http://localhost:5001";
                 socket = initializeSocket(serverUrl, getState().auth.token);
                 dispatch(SocketConnected());
+                socket.on("roomCreated", (data) => {
+                    // console.log("data in roomCreated", data);
+                    // Handle the event data and update your component's state as needed
+                    dispatch(addMembership(data));
+                });
                 break;
             case disconnectSocket.type:
                 socket?.disconnect();
                 break;
             case createRoom.type:
                 socket.emit("createRoom", action.payload);
-                socket.on("roomCreated", (data) => {
-                    // console.log("data in roomCreated", data);
-                    // Handle the event data and update your component's state as needed
-                    dispatch(addMembership(data));
-                });
                 break;
             default:
                 break;
