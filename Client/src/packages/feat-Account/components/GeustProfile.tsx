@@ -22,10 +22,11 @@ import {
     Score,
     Title,
     TopPlayers,
-} from "./../components";
+} from "./../styles";
+
 import Logo from "./../images_uploads/federation.png";
 import Pic from "./../images_uploads/Picture.png";
-import { userInfo } from "../API.d";
+import { useEffect, useState } from "react";
 
 const LinearProgressWithLabel = (
   props: LinearProgressProps & { value: number }
@@ -187,6 +188,17 @@ const TopPlayersArr = [
 ];
 
 const GeustProfile = () => {
+  const [oo, setoo] = useState(false)
+  
+
+  useEffect ( () => {
+    console.log("hi lool")
+  let ii = false
+  console.log(ii)
+  ii =! ii
+  console.log(ii)
+  }, [oo] )
+
   return (
     <Root>
       <Cards>
@@ -196,6 +208,8 @@ const GeustProfile = () => {
               <H5>The federation</H5>
               <img alt="logo" src={Logo} />
               <H5>#155</H5>
+              <button onClick={() => {setoo(!oo)}}></button>
+              <h1>{oo}</h1>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
               <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
@@ -204,7 +218,7 @@ const GeustProfile = () => {
                   alt="Remy Sharp"
                   src={Pic}
                 />
-                <Title style={{ fontSize: "1rem" }}>{userInfo.api.getUsername()}</Title>
+                <Title style={{ fontSize: "1rem" }}>{'username'}</Title>
                 <CircularProgressWithLabel value={60} />
               </div>
               <div style={{ display: "flex", gap: "20px" }}>
@@ -240,7 +254,7 @@ const GeustProfile = () => {
             {AchievementsArr.map((item) => (
               <Achievement
                 color={
-                  item.isValid == true ? "#f0fff0" : "rgba(156, 163, 175, 0.1)"
+                  item.isValid === true ? "#f0fff0" : "rgba(156, 163, 175, 0.1)"
                 }
               >
                 <img
@@ -307,7 +321,7 @@ const GeustProfile = () => {
             {Histories.map((item) => (
               <Score
                 color={
-                  item.score[0] - item.score[1] == 0
+                  item.score[0] - item.score[1] === 0
                     ? "rgb(65 128 220)"
                     : item.score[0] - item.score[1] > 0
                     ? "rgb(46 125 50)"
@@ -320,7 +334,7 @@ const GeustProfile = () => {
                     alt="Remy Sharp"
                     src={Pic}
                   />
-                  <H5>{userInfo.api.getUsername()}</H5>
+                  <H5>{'username'}</H5>
                 </div>
                 <div style={{ flexBasis: "20%" }}>
                   <Title style={{ margin: "0" }}>{item.score[0]} </Title>

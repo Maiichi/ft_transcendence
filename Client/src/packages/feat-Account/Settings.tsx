@@ -1,5 +1,10 @@
-import { Avatar, FormControlLabel, Switch, TextField } from "@mui/material";
-import { useState } from "react";
+import {
+  Avatar,
+  FormControlLabel,
+  Switch,
+  TextField 
+} from '@mui/material'
+import { useState, useEffect } from 'react'
 
 import {
   Title,
@@ -10,10 +15,30 @@ import {
   ButtonAvatar,
   CardForm,
   ButtonForm,
-} from "./components";
+} from './styles'
+import { uinfo, UserInfo } from './API.d'
 
 export const Settings = () => {
+  const [userData, setuserData] = useState<UserInfo|any>({});
   const [twoFact, setTwoFact] = useState<boolean>(false);
+
+
+  let uname = 'mes-sadk'
+  let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwMzE3LCJlbWFpbCI6Im1lcy1zYWRrQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5NTQwMzc4MCwiZXhwIjoxNjk1NDkwMTgwfQ.6ZJ1OAg0hgD1Hyk7a-TF9PbZ1kdnQu4bu_OK9IoBR_A'
+
+
+  useEffect (() => {
+    uinfo(uname, token)
+    .then (res => {
+      if (res?.status === 200)
+        setuserData(res.message)
+      else
+        throw 'Error'
+    }).catch(err => {
+      console.error('Error: ', err)
+    })
+  }, [])
+
   return (
     <>
       <Title style={{ fontSize: "2rem" }}>Account Profile</Title>
@@ -24,8 +49,8 @@ export const Settings = () => {
             alt="Remy Sharp"
             src="/static/images/avatar/1.jpg"
           />
-          <Title style={{ fontSize: "1rem" }}>Bouroummana Ismail</Title>
-          <H5>ibouroum</H5>
+          <Title style={{ fontSize: "1rem" }}>{[userData?.lastName, ' ', userData?.firstName]}</Title>
+          <H5>{uname}</H5>
           <Divider />
           <ButtonAvatar>Upload Picture</ButtonAvatar>
         </CardAvatar>
@@ -38,7 +63,7 @@ export const Settings = () => {
             id="firstname"
             label="Firstname"
             variant="outlined"
-            defaultValue="Ismail"
+            defaultValue={userData?.firstName}
           />
           <TextField
             sx={{ margin: "10px 0px", width: "80%" }}
@@ -46,7 +71,7 @@ export const Settings = () => {
             id="lastname"
             label="Lastname"
             variant="outlined"
-            defaultValue="Bouroummana"
+            defaultValue={userData?.lastName}
           />
           <TextField
             sx={{ margin: "10px 0px", width: "80%" }}
@@ -54,7 +79,7 @@ export const Settings = () => {
             id="username"
             label="Username"
             variant="outlined"
-            defaultValue="ibouroum"
+            defaultValue={uname}
           />
           <FormControlLabel
             control={
@@ -72,7 +97,7 @@ export const Settings = () => {
             id="outlined-basic"
             label="Phone"
             variant="outlined"
-            defaultValue="+212689912489"
+            // defaultValue={}
           />
           <Divider />
           <ButtonForm>Save Details</ButtonForm>
