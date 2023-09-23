@@ -92,3 +92,7 @@ input.channel-name-input::before
 .button-create {
     background-color: rgb(178, 163, 201);
 }
+
+.error-message {
+    color: red;
+}

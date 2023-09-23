@@ -7,7 +7,11 @@ import todosSlice from "../../packages/feat-Test/components/TodosSlice";
 import authSlice from "../../packages/feat-Auth/components/authSlice";
 import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
-import chatIshakSlice from "../../packages/feat-Chat/components/ChatIshak";
+import chatSlice from "../../packages/feat-Chat/components/rooms/chatSlice";
+import conversationSlice from "../../packages/feat-Chat/components/conversations/conversationSlice";
+import FilterSlice from "../utils/components/Input/SearchSlice";
+import SocketMiddleware from "../socket/socketMiddleware";
+import socketSlice from "../socket/socketSlice";
 // ...
 
 const rootReducer = combineReducers({
@@ -15,21 +19,26 @@ const rootReducer = combineReducers({
     todos: todosSlice,
     auth: authSlice,
     core: coreSlice,
-    chat: chatIshakSlice,
+    chat: chatSlice,
+    conversation: conversationSlice,
+    filter: FilterSlice,
+    socket: socketSlice
   },
 );
 
 const persistConfig = {
-    key: "root", // Key to access your storage
-    storage,
-    whitelist: ["auth"],
-    transforms: [decryptionTransform], // Use the custom transform
+  key: "root", // Key to access your storage
+  storage,
+  whitelist: ["auth"],
+  transforms: [decryptionTransform], // Use the custom transform
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-    reducer: persistedReducer,
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat([SocketMiddleware]),
 });
 
 export const persistor = persistStore(store);

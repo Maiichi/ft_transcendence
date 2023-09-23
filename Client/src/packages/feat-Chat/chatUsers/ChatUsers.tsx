@@ -1,6 +1,4 @@
-import React from "react";
 import "./chatUsers.css";
-import { ButtonAvatar, CardAvatar, H5 } from "../../feat-Account/components";
 import { Avatar, Divider, Icon, Popper, Tab, Badge } from "@mui/material";
 import {
   Title,
@@ -12,44 +10,68 @@ import {
   DriveFileRenameOutlineTwoTone,
   VideogameAssetTwoTone,
 } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "../../../core";
+import { useEffect } from "react";
+import { login } from "../../feat-Auth/components/authThunk";
 
-interface Props {
-  type: string;
-}
+interface Conversation {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    type: string;
+    messages: { content: string; createdAt: string }[];
+    participants: {
+      userName: string;
+      firstName: string;
+      lastName: string;
+      status: string;
+      avatar_url: string;
+    }[];
+  }
+  
+  interface Room {
+    id: number;
+    members: {
+      isAdmin: boolean;
+      isBanned: boolean;
+      isMute: boolean;
+      isOwner: boolean;
+      user: {
+        firstName: string;
+        lastName: string;
+        userName: string;
+      };
+    }[];
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+    password: string;
+    type: string;
+  }
+  
+  interface Props {
+    directConversation: Conversation | null
+    channelConversation: Room | null;
+  }
 
-const isFriend = false;
-const usersInRoom = [
-  {
-    name: "Ishak Zail",
-    isOnline: true,
-    isFriend: false,
-  },
-  {
-    name: "Ismail Bouroummana",
-    isOnline: false,
-    isFriend: true,
-  },
-];
 
-const userConversation = {
-  name: 'Ishak Zail',
-  isOnline: true,
-  isFriend: true
-};
+export const ChatUsers = ({ directConversation, channelConversation }: Props) => {
+    const account = useAppSelector((state) => state.auth.user);
 
-export const ChatUsers = ({ type }: Props) => {
-    const color = userConversation.isOnline ? 'green' : 'grey';
+    console.log("ChatUser");
+    
+    const color = directConversation?.participants[0].status === 'ONLINE' ? 'green' : 'grey';
     return (
         <div className="onlineUsersBox">
-        {type === "Dms" ? (
+        {channelConversation === null ? (
             <>
                 {
                 <>
                 <div className="rightSideHeader">
-                    <h3>{userConversation.name}</h3>
+                    <h3>{directConversation?.participants[0].userName}</h3>
                     <img className="photo-avatar" src="https://www.shareicon.net/data/512x512/2016/05/24/770117_people_512x512.png" alt="" />
                     <div style={{display: 'flex', flexDirection: 'row-reverse', margin: '20px'}}>
-                        <h4 style={{margin: '0px'}}>{userConversation.isOnline ? 'Available' : 'Not availabe'}</h4>
+                        <h4 style={{margin: '0px'}}>{directConversation?.participants[0].status === 'ONLINE' ? 'Available' : 'Not availabe'}</h4>
                         <div style={{height: '20px', width: '20px', backgroundColor: color, borderRadius: '20px', marginRight: '5px'}}>
                         </div>
                     </div>
@@ -67,7 +89,7 @@ export const ChatUsers = ({ type }: Props) => {
                     </div>
                     <div className="icon-title">
                         <PersonAddAlt1 /> 
-                        <h4 className="title-text" >{userConversation.isFriend ? 'send Message' : 'Add to friend list'}</h4>
+                        <h4 className="title-text" >{directConversation?.id ? 'send Message' : 'Add to friend list'}</h4>
                     </div>
                     <div className="icon-title">
                         <Block /> 
@@ -94,7 +116,7 @@ export const ChatUsers = ({ type }: Props) => {
                 />
                 <div className="onlineUsersBadge"></div>
                 </div>
-                <p className="onlineUsersName">Ishak Zail</p>
+                <p className="onlineUsersName">{account.userName}</p>
                 <div className="iconHolder">
                 <div className="iconSVG" data-description="Invite to game">
                     <VideogameAssetTwoTone></VideogameAssetTwoTone>
