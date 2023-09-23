@@ -1,184 +1,181 @@
 import { useEffect, useState } from "react";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import AddIcon from "@mui/icons-material/Add";
-import {
-  ChatIshakState,
-  clearState,
-  sendMessage,
-} from "./components/ChatIshak";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Picture from "./Picture.png";
-import { Message } from "./message/Message";
 import "./chat.css";
 import { ChatUsers } from "./chatUsers/ChatUsers";
-import { ChatSearchModal } from "./chatSearch/ChatSearchModal";
-import { MessageModal } from "./messageModal/MessageModal";
-import { Avatar, Badge, Box, Modal } from "@mui/material";
+import { Badge } from "@mui/material";
 import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
-import { MoreHoriz, Person, LogoutRounded } from '@mui/icons-material';
-import { ChannelSettingModal } from "./ChannelModal/ChannelSettingModal";
+import { getMemberships } from "./components/rooms/chatThunk";
+import { getDirectConversations } from "./components/conversations/conversationThunk";
+import { ChatBox } from "./chatBox/ChatBox";
+import { convertDateTime, changeMessageLength } from "./Utils/utils";
+import { setIsConversation } from "./components/rooms/chatSlice";
 
 export const Chat = () => {
-  const state: ChatIshakState = useAppSelector((state) => state.chat);
+    const dispatch = useAppDispatch();
+    const token = useAppSelector((state) => state.auth.token);
+    const memberships = useAppSelector((state) => state.chat.memberships);
+    const conversations: [] = useAppSelector(
+        (state) => state.conversation.conversations
+    );
+    const displayConversation: boolean = useAppSelector(
+        (state) => state.chat.isConversation
+    );
+    const searchQuery = useAppSelector((state) => state.filter.searchQuery);
+    const [directConversation, setDirectConversation] = useState(null);
+    const [channelConversation, setChannelConversation] = useState(null);
 
-  const dispatch = useAppDispatch();
-  const chatState = useAppSelector((state) => state.chat);
-  const [name, setName] = useState("");
-  const [msg, setMsg] = useState("");
-  const [selectedTab, setSelectedTab] = useState("Dms");
-  const [iconChannelOpen, setIconChannelOpen] = useState(false);
+    useEffect(() => {
+        dispatch(getMemberships(token));
+        dispatch(getDirectConversations(token));
+    }, [
+        dispatch,
+        token,
+        directConversation,
+        channelConversation,
+        displayConversation,
+    ]);
 
-  const handleClick = () => {
-    dispatch(sendMessage({ name, msg }));
-    setMsg("");
-    setName("");
-  };
-  const handleClear = () => {
-    dispatch(clearState());
-  };
+    // Filter chat rooms based on the search query
+    const filteredRooms = memberships.filter((item: any) =>
+        item.room.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+    );
 
-  const discussions = [
-    {
-      id: 1,
-      type: "Rms",
-      name: "Room 1",
-      message: "Let's meet for a coffee or something today ?",
-      timer: "3 min",
-    },
-    {
-      id: 2,
-      type: "Rms",
-      name: "Room 1",
-      message: "Let's meet for a coffee or something today ?",
-      timer: "3 min",
-    },
-    {
-      id: 3,
-      type: "Rms",
-      name: "Room 1",
-      message: "Let's meet for a coffee or something today ?",
-      timer: "3 min",
-    },
-    {
-      id: 4,
-      type: "Rms",
-      name: "Room 1",
-      message: "Let's meet for a coffee or something today ?",
-      timer: "3 min",
-    },
-  ];
+    // Filter conversations based on the search query
+    const filteredConversations = conversations.filter((discussion: any) =>
+        discussion.participants[0].firstName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+    );
 
-  const filteredDiscussions = discussions.filter(
-    (discussion) => discussion.type === selectedTab
-  );
-  return (
-    <Root>
-      <div className="discussions">
-        {/* <div> */}
-        {/* <div className="chatTitleHolder"> */}
-        <p className="messages-text">Discussions</p>
-        {/* </div> */}
-        {/* <ChatSearchModal /> */}
-        {/* need to add a model when clicking on this ICON */}
-        {/* <MessageModal /> */}
-        <SearchComponent />
-        {/* </div> */}
-        {/* <div className="discussion-room-user">
-          <button
-            className={`rooms ${selectedTab === "Dms" ? "active" : ""}`}
-            onClick={() => setSelectedTab("Dms")}
-          >
-            Dms
-          </button>
-          <button
-            className={`dm ${selectedTab === "Rms" ? "active" : ""}`}
-            onClick={() => setSelectedTab("Rms")}
-          >
-            Rms
-          </button>
-        </div> */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            color: "rgb(94, 53, 177)",
-            margin: "0px 10px 0px 10px",
-            fontWeight: '900'
-          }}
-        >
-          <p>Channels</p>
-        <CreateChannelModal />
-        </div>
-        <div className="channelListHolder">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 2 , 2, 3].map((item) => (
-            <h4 className="channel-name"># Channel {item}</h4>
-          ))}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            color: "rgb(94, 53, 177)",
-            margin: "0px 10px 0px 10px",
-            fontWeight: '900'
-          }}
-        >
-          <p>Direct Messages</p>
-          <AddIcon style={{padding: '5px'}} />
-        </div>
-        <div style={{ padding: "0px 15px" }}>
-          {discussions.map((discussion) => (
-            <div key={discussion.id} className="discussion">
-              <Badge
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                color={discussion.id <= 2 ? "success" : "error"}
-                overlap="circular"
-                variant="dot"
-              >
-                <img className="photo" src={Picture} />
-              </Badge>
+    // const isConnected = useAppSelector((state) => state.socket.isConnected);
+    // const message = useAppSelector((state) => state.socket.message);
+    return (
+        <Root>
+            <div className="discussions">
+                <p className="messages-text">Discussions</p>
+                <SearchComponent onInputUpdate={searchQuery} />
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        color: "rgb(94, 53, 177)",
+                        margin: "0px 10px 0px 10px",
+                        fontWeight: "900",
+                    }}
+                >
+                    <p>Channels</p>
+                    <CreateChannelModal />
+                </div>
+                <div className="channelListHolder">
+                    {filteredRooms.map((item: any) => (
+                        <h4
+                            key={item.room.id}
+                            className={`channel-name ${
+                                channelConversation === item.id
+                                    ? "selected"
+                                    : ""
+                            }`}
+                            onClick={() => {
+                                setChannelConversation(item.room);
+                                setDirectConversation(null);
+                                dispatch(setIsConversation(true));
+                            }}
+                        >
+                            # {item.room.name}
+                        </h4>
+                    ))}
+                </div>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        color: "rgb(94, 53, 177)",
+                        margin: "0px 10px 0px 10px",
+                        fontWeight: "900",
+                    }}
+                >
+                    <p>Direct Messages</p>
+                    <div>
+                        <AddIcon style={{ padding: "5px" }} />
+                    </div>
+                </div>
+                <div className="DirectMessageListHolder">
+                    {filteredConversations.map((discussion: any) => (
+                        <div
+                            key={discussion.id}
+                            className={`discussion ${
+                                directConversation === discussion.id
+                                    ? "selected"
+                                    : ""
+                            }`}
+                            onClick={() => {
+                                setDirectConversation(discussion);
+                                setChannelConversation(null);
+                                dispatch(setIsConversation(true));
+                            }} // Update the selected conversation on click
+                        >
+                            <Badge
+                                anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                }}
+                                color={
+                                    discussion.participants[0].status ===
+                                    "ONLINE"
+                                        ? "success"
+                                        : "error"
+                                }
+                                overlap="circular"
+                                variant="dot"
+                            >
+                                <img className="photo" src={Picture} alt="" />
+                            </Badge>
 
-              <div className="desc-contact">
-                <p className="name">{discussion.name}</p>
-                <p className="message">{discussion.message}</p>
-              </div>
-              <p>18:00</p>
-              {/* <div className="timer">{discussion.timer}</div> */}
+                            <div className="desc-contact">
+                                <p className="name">
+                                    {discussion.participants[0].firstName}{" "}
+                                    {discussion.participants[0].lastName}
+                                </p>
+                                <p className="message">
+                                    {changeMessageLength(
+                                        discussion.messages[0].content
+                                    )}
+                                </p>
+                            </div>
+                            <p style={{ fontSize: 13 }}>
+                                {convertDateTime(
+                                    discussion.messages[0].createdAt
+                                )}
+                            </p>
+                        </div>
+                    ))}
+                </div>
             </div>
-          ))}
-        </div>
-      </div>
-      <div className="chatBox">
-        <div className="chatBoxHeader">
-          <ChannelSettingModal />
-        </div>
-        <div className="chatBoxWrapper">
-          <div className="chatBoxTop">
-            {[1, 2, 3, 4].map((item) => (
-              <>
-                <Message own={false} />
-                <Message own />
-              </>
-            ))}
-          </div>
-        </div>
-        <div className="chatBoxBottom">
-          <textarea
-            className="chatMessageInput"
-            placeholder="Write your message ..."
-          ></textarea>
-          <button className="chatSubmitButtom">Send</button>
-        </div>
-      </div>
-      <ChatUsers type={selectedTab} />
-    </Root>
-  );
+            {displayConversation === false ? (
+                <div className="chatBoxNoConversation">
+                    <h1> Click on a conversation to start chatting. </h1>
+                </div>
+            ) : (
+                <>
+                    <ChatBox
+                        channelConversation={channelConversation}
+                        directConversation={directConversation}
+                    />
+                    <ChatUsers
+                        channelConversation={channelConversation}
+                        directConversation={directConversation}
+                    />
+                </>
+            )}
+        </Root>
+    );
 };
 
 const Root = styled.div`
@@ -194,18 +191,16 @@ const Root = styled.div`
 
 `;
 
-const boxStyle = {
-  position: "absolute" as "absolute",
-  top: "30%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "1px solid #000",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: "20px",
-  height: "400px",
-};
-
-const title = styled.h4``;
+// const boxStyle = {
+//   position: "absolute" as "absolute",
+//   top: "30%",
+//   left: "50%",
+//   transform: "translate(-50%, -50%)",
+//   width: 400,
+//   bgcolor: "background.paper",
+//   border: "1px solid #000",
+//   boxShadow: 24,
+//   p: 4,
+//   borderRadius: "20px",
+//   height: "400px",
+// };
