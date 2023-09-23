@@ -25,6 +25,7 @@ import { setDisplayNavbar } from "../../../CoreSlice";
 import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
 import { setToken } from "../../../../packages/feat-Auth/components/authSlice";
 import { useNavigate } from "react-router-dom";
+import { disconnectSocket } from "../../../socket/socketSlice";
 
 
 type Anchor = "top" | "left" | "bottom" | "right";
@@ -282,6 +283,7 @@ export const Header = () => {
                             className={classes.iconBase}
                             onClick={() => {
                                 dispatch(setToken(null));
+                                dispatch(disconnectSocket())
                                 navigate("/login");
                             }}
                         />

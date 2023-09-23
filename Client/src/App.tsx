@@ -2,43 +2,29 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { routes, store, useAppDispatch, useAppSelector } from "./core";
 import RequireAuth from "./core/RequireAuth";
-import React, { ReactNode, useEffect, useState } from "react";
+import  { useEffect } from "react";
 import { useAuthentication } from "./packages/feat-Auth/authUtils";
-import { ConnectSocket, disconnectSocket } from "./packages";
-
-interface RequireAuthProps {
-  children: ReactNode;
-}
+import { ConnectSocket } from "./packages";
 
 const SocketInit = (props: any) => {
+  console.log("SocketInit Rendering !!")
   const socket = useAppSelector((state) => state.socket);
   const isAuthenticated = useAuthentication();
   const dispatch = useAppDispatch();
-
-  // if (isAuthenticated && !socket.isConnected) {
-  //   console.log("connectSocket");
-  //   dispatch(ConnectSocket());
-  // }
+  
   useEffect(() => {
     if (isAuthenticated && !socket.isConnected) {
-      console.log("connectSocket");
       dispatch(ConnectSocket());
     }
-    return () => {
-      // Disconnect the socket when the component unmounts.
-      if (socket.isConnected) {
-        console.log("disconnectSocket");
-        dispatch(disconnectSocket());
-      }
-    };
-  }, [isAuthenticated, dispatch, socket]);
+  
+  }, [isAuthenticated]);
 
   return props.children;
 };
 
 
 function App() {
-  console.log("app Rendering");
+  console.log("App Rendering !!")
   return (
     <Provider store={store}>
       <SocketInit>

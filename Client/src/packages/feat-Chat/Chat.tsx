@@ -11,7 +11,7 @@ import { getMemberships } from "./components/rooms/chatThunk";
 import { getDirectConversations } from "./components/conversations/conversationThunk";
 import { ChatBox } from "./chatBox/ChatBox";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
-import { addMembership, setIsConversation } from "./components/rooms/chatSlice";
+import { setIsConversation } from "./components/rooms/chatSlice";
 
 export const Chat = () => {
     const dispatch = useAppDispatch();
@@ -38,27 +38,11 @@ export const Chat = () => {
         displayConversation,
     ]);
 
-    // useEffect(() => {
-    //   // Attach the 'roomCreated' event listener when the component mounts
-    //   if (socket) {
-    //     socket.on('roomCreated', (data) => {
-    //       // console.log("data in roomCreated", data);
-    //       // Handle the event data and update your component's state as needed
-    //       dispatch(addMembership(data));
-    //     });
-    //   }
-
-    //   // Clean up the event listener when the component unmounts
-    //   return () => {
-    //     if (socket) {
-    //       socket.off('roomCreated');
-    //     }
-    //   };
-    // }, [socket, dispatch])
-
     // Filter chat rooms based on the search query
     const filteredRooms = memberships.filter((item: any) =>
-        item.room.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+        item.room.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
     );
 
     // Filter conversations based on the search query
