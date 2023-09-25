@@ -7,55 +7,59 @@ import {
 import { useState, useEffect } from 'react'
 
 import {
+  PictureEdit,
   Title,
-  Cards,
+  SettingCards,
   CardAvatar,
   H5,
   Divider,
   ButtonAvatar,
   CardForm,
   ButtonForm,
-} from './styles'
+} from './styles' // ProfileSetting
+
+import style, {
+  Root,
+
+} from './styles' // general
+
 import { uinfo, UserInfo } from './API.d'
+import { useAppSelector } from '../../core'
 
 export const Settings = () => {
-  const [userData, setuserData] = useState<UserInfo|any>({});
-  const [twoFact, setTwoFact] = useState<boolean>(false);
-
-
-  let uname = 'mes-sadk'
-  let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjkwMzE3LCJlbWFpbCI6Im1lcy1zYWRrQHN0dWRlbnQuMTMzNy5tYSIsImlhdCI6MTY5NTQwMzc4MCwiZXhwIjoxNjk1NDkwMTgwfQ.6ZJ1OAg0hgD1Hyk7a-TF9PbZ1kdnQu4bu_OK9IoBR_A'
+  const [userData, setuserData] = useState<UserInfo|any>({})
+  const [twoFact, setTwoFact] = useState(false)
+  const [userInfo, setuserInfo] = useState(useAppSelector((state) => state.auth.user))
 
 
   useEffect (() => {
-    uinfo(uname, token)
-    .then (res => {
-      if (res?.status === 200)
-        setuserData(res.message)
-      else
-        throw 'Error'
-    }).catch(err => {
-      console.error('Error: ', err)
-    })
-  }, [])
+    setuserInfo( (prevInfo:any) => {
+      const updatedInfo = { ...prevInfo }
+      updatedInfo.avatar_url = null
+      return updatedInfo
+  })
+  }, [userInfo])
 
   return (
-    <>
-      <Title style={{ fontSize: "2rem" }}>Account Profile</Title>
-      <Cards>
+    <Root>
+      <Title>setting</Title>
+      <SettingCards>
         <CardAvatar>
           <Avatar
-            sx={{ width: "80px", height: "80px" }}
-            alt="Remy Sharp"
-            src="/static/images/avatar/1.jpg"
+            sx={style.avatar}
+            alt={''}
+            src={userInfo.avatar_url}
           />
-          <Title style={{ fontSize: "1rem" }}>{[userData?.lastName, ' ', userData?.firstName]}</Title>
-          <H5>{uname}</H5>
+          <h2 style={{ fontSize: "1rem" }}>{[userInfo.lastName, ' ', userInfo.firstName]}</h2>
+          <H5>{userInfo.userName}</H5>
           <Divider />
-          <ButtonAvatar>Upload Picture</ButtonAvatar>
+          <PictureEdit>
+            <ButtonAvatar onClick={()=> {}}>{ userInfo.avatar_url ? 'Change': 'upload' } Picture</ButtonAvatar>
+          </PictureEdit>
         </CardAvatar>
+      
         <CardForm>
-          <Title style={{ fontSize: "1rem" }}>Profile</Title>
+          <h3 >Profile</h3>
           <H5>The informations can be edited</H5>
           <TextField
             sx={{ margin: "10px 0px", width: "80%" }}
@@ -79,7 +83,7 @@ export const Settings = () => {
             id="username"
             label="Username"
             variant="outlined"
-            defaultValue={uname}
+            defaultValue={userInfo.userName}
           />
           <FormControlLabel
             control={
@@ -102,7 +106,7 @@ export const Settings = () => {
           <Divider />
           <ButtonForm>Save Details</ButtonForm>
         </CardForm>
-      </Cards>
-    </>
+      </SettingCards>
+    </Root>
   );
 }

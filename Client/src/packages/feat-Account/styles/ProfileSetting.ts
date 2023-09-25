@@ -93,8 +93,8 @@ const Divider = styled.hr`
   border-color: rgb(242, 244, 247);
 `
 const CardAvatar = styled.div`
-  width: 35%;
-  height: fit-content;
+  min-width: 85%;
+  /* height: fit-content; */
   margin: 5px;
   padding: 32px 24px 6px 32px;
   background-color: rgb(255, 255, 255);
@@ -109,30 +109,33 @@ const CardAvatar = styled.div`
     width: 75%;
   }
 `
-/** 
- *  \<Cards> div Selector
- * 
- *  Children:
- *    @see LeftCard
- *    @see RightCard
- * */ 
-const Cards = styled.div`
+/**
+ * `Setting Cards`
+ */
+const SettingCards = styled.div`
+  padding: 5px;
   display: flex;
   align-items: center;
-  flex-direction: row;
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
+  flex-direction: column;
 `
-const Title = styled.div`
+/**
+ * `PICTURE EDIT`
+ */
+const PictureEdit = styled.ul`
+`
+/**
+ * `Title` as title element
+ */
+const Title = styled.section`
+  padding: 20px 0 10px 0;
+  margin-bottom: 0px;
   text-align: center;
-  margin: 0;
   font-family: "Plus Jakarta Sans", sans-serif;
+  letter-spacing: 3px;
   font-weight: 700;
-  margin-top: 16px;
-  margin-bottom: 5px;
   line-height: 1.2;
-  font-size: "2rem";
+  font-size: 2rem;
+  border-top: 1px solid;
 `
 
 
@@ -141,11 +144,12 @@ const Title = styled.div`
  */
 export {
     Title,
-    Cards,
+    SettingCards,
     CardAvatar,
     H5,
     Divider,
     ButtonAvatar,
     CardForm,
     ButtonForm,
-}
+    PictureEdit
+} 

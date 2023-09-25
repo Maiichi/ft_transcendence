@@ -26,7 +26,9 @@ import {
 
 import Logo from "./../images_uploads/federation.png";
 import Pic from "./../images_uploads/Picture.png";
+import { useAppSelector } from '../../../core'
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 const LinearProgressWithLabel = (
   props: LinearProgressProps & { value: number }
@@ -44,7 +46,6 @@ const LinearProgressWithLabel = (
     </Box>
   );
 };
-
 const CircularProgressWithLabel = (
   props: CircularProgressProps & { value: number }
 ) => {
@@ -167,7 +168,7 @@ const TopPlayersArr = [
     wins: 50,
     loss: 10,
     achievement: Logo,
-    picture: Pic,
+    picture: 'Pic,'
   },
   {
     name: "mark",
@@ -175,7 +176,7 @@ const TopPlayersArr = [
     wins: 40,
     loss: 15,
     achievement: Logo,
-    picture: Pic,
+    picture: 'Pic,'
   },
   {
     name: "john",
@@ -183,21 +184,15 @@ const TopPlayersArr = [
     wins: 50,
     loss: 40,
     achievement: Logo,
-    picture: Pic,
+    picture: 'Pic,'
   },
 ];
 
 const GeustProfile = () => {
-  const [oo, setoo] = useState(false)
-  
+  const navigate = useNavigate()
+  let userInfo = useAppSelector((state) => state.auth.user)
+  userInfo.avatar_url = Pic
 
-  useEffect ( () => {
-    console.log("hi lool")
-  let ii = false
-  console.log(ii)
-  ii =! ii
-  console.log(ii)
-  }, [oo] )
 
   return (
     <Root>
@@ -207,19 +202,17 @@ const GeustProfile = () => {
             <div>
               <H5>The federation</H5>
               <img alt="logo" src={Logo} />
-              <H5>#155</H5>
-              <button onClick={() => {setoo(!oo)}}></button>
-              <h1>{oo}</h1>
+              <H5>#{'xxxx'/** rank */}</H5>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
               <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
                 <img
                   style={{ width: "80px", height: "80px" }}
                   alt="Remy Sharp"
-                  src={Pic}
+                  src={userInfo.avatar_url}
                 />
-                <Title style={{ fontSize: "1rem" }}>{'username'}</Title>
-                <CircularProgressWithLabel value={60} />
+                <Title style={{ fontSize: "1rem" }}>{userInfo.firstName.concat( ' ' + userInfo.lastName)}</Title>
+                <CircularProgressWithLabel value={66 % 101} />
               </div>
               <div style={{ display: "flex", gap: "20px" }}>
                 <div style={{}}>
@@ -284,13 +277,13 @@ const GeustProfile = () => {
               <Player>
                 <img
                   style={{ width: "30px", height: "45px", margin: "5px" }}
-                  alt="Remy Sharp"
+                  alt={'player: ' + index }
                   src={item.achievement}
                 />
                 <H5># {index + 1}</H5>
                 <img
                   style={{ width: "30px", height: "30px" }}
-                  alt="Remy Sharp"
+                  alt={'player: ' + (index + 1) }
                   src={item.picture}
                 />
                 <Title>{item.name}</Title>
@@ -312,8 +305,8 @@ const GeustProfile = () => {
               </Player>
             ))}
 
-            <Button onClick={() => console.log("Leaderboard")}>
-              See Full Leaderboard
+            <Button onClick={() => navigate('/Leaderboard')}>
+              See more {'...'}
             </Button>
           </TopPlayers>
           <MatchHistory>
@@ -334,7 +327,7 @@ const GeustProfile = () => {
                     alt="Remy Sharp"
                     src={Pic}
                   />
-                  <H5>{'username'}</H5>
+                  <H5>{userInfo.userName}</H5>
                 </div>
                 <div style={{ flexBasis: "20%" }}>
                   <Title style={{ margin: "0" }}>{item.score[0]} </Title>

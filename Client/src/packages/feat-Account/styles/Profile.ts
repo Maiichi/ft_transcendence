@@ -20,7 +20,7 @@ const RightCard = styled.div`
 `
 const Achievements = styled.div`
   margin-right: 5px;
-  background-color: rgb(255, 255, 255);
+  /* background-color: rgb(255, 255, 255); */
   color: rgb(17, 25, 39);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
   border-radius: 20px;
@@ -43,7 +43,7 @@ const Achievement = styled.div`
 `
 const TopPlayers = styled.div`
   margin-right: 5px;
-  background-color: rgb(255, 255, 255);
+  /* background-color: rgb(255, 255, 255); */
   color: rgb(17, 25, 39);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
   border-radius: 20px;
@@ -56,7 +56,7 @@ const TopPlayers = styled.div`
 `
 const MatchHistory = styled.div`
   margin-right: 5px;
-  background-color: rgb(255, 255, 255);
+  /* background-color: rgb(255, 255, 255); */
   color: rgb(17, 25, 39);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
   border-radius: 20px;
@@ -83,7 +83,7 @@ const Player = styled.div`
  */
 const CardAvatar2 = styled.div`
     margin-right: 5px;
-    background-color: rgb(255, 255, 255);
+    /* background-color: rgb(255, 255, 255); */
     color: rgb(17, 25, 39);
     box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
     border-radius: 20px;
@@ -113,21 +113,37 @@ const LeftCard = styled.div`
   }
 `
 /** 
+ *  \<Cards> div Selector
+ * 
+ *  Children:
+ *    @see LeftCard
+ *    @see RightCard
+ * */ 
+const Cards = styled.div`
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`
+/**
  *  `component Root` Profile
  * 
  *  Children:
  *   @see Cards
  */ 
 const Root = styled.div`
-  padding: 5px;
-  border-radius: 32px;
+  background-color: #f9f9f9;
+  padding: 0;
+  margin: 0;
 `
-
 
 /**
  * Style 
  */
-export const style = {
+const style = {
   Title: {
     fontSize: " 1rem"
   },
@@ -140,17 +156,14 @@ export const style = {
 }
 
 export default style
-
-export {
-  Root,
+export {Root, Cards,
   LeftCard,
-  CardAvatar2,
-  Player,
-  MatchHistory,
-  TopPlayers,
-  Achievement,
-  Achievements,
+    CardAvatar2,
+    Player,
+    MatchHistory,
+    TopPlayers,
+      Achievement,
+    Achievements,
   RightCard,
   Score,
-
 }
