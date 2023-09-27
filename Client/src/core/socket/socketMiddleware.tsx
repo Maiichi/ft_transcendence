@@ -12,7 +12,7 @@ import { initializeSocket } from "./socketManager";
 import {
     addMembership,
     createRoom,
-} from "../../packages/feat-Chat/components/rooms/chatSlice";
+} from "../../packages/feat-Chat/components/rooms/roomSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
     let socket: Socket;

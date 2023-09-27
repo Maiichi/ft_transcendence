@@ -5,7 +5,7 @@ import Switch from "@mui/material/Switch";
 import { styled } from "@mui/material/styles";
 import "./createChannelModal.css";
 import { useAppDispatch, useAppSelector } from "../../../core";
-import { createRoom } from "../components/rooms/chatSlice";
+import { createRoom } from "../components/rooms/roomSlice";
 
 export const CreateChannelModal = () => {
     const dispatch = useAppDispatch();

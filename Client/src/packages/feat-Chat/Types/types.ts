@@ -1,77 +1,59 @@
-export interface Membership {
-        id: number;
-        members: {
-          isAdmin: boolean;
-          isBanned: boolean;
-          isMute: boolean;
-          isOwner: boolean;
-          user: {
-            firstName: string;
-            lastName: string;
-            userName: string;
-            intraId: number;
-          };
-        }[];
-        conversation : {
-            id: number,
-            createdAt: string,
-            messages: {
-                sender: {},
-                content: string,
-                createdAt: string
-            }[],
-            participants:[],
-            type: string,
-            updatedAt: string
-        }
-        name: string;
-        createdAt: string;
-        updatedAt: string;
-        password: string;
-        type: string;
-}
-
-export interface Conversation {
-    id: number;
-    createdAt: string;
-    updatedAt: string;
-    type: string;
-    messages: { content: string; createdAt: string }[];
-    participants: {
-      userName: string;
+export interface I_Room {
+  id: number;
+  name: string;
+  password: string;
+  type: string;
+  members: {
+    isAdmin: boolean;
+    isBanned: boolean;
+    isMute: boolean;
+    isOwner: boolean;
+    user: {
       firstName: string;
       lastName: string;
-      status: string;
-    }[];
-  }
+      userName: string;
+      intraId: number;
+    };
+  }[];
+  conversation: {
+    id: number;
+    createdAt: string;
+    type: string;
+    updatedAt: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+export interface I_Discussion {
+  type: "direct" | "channel";
+  data: I_Room | I_DirectConversation;
+  messages: I_ConversationMessages;
+}
 
-  // interface Room {
-  //   id: number;
-  //   members: {
-  //     isAdmin: boolean;
-  //     isBanned: boolean;
-  //     isMute: boolean;
-  //     isOwner: boolean;
-  //     user: {
-  //       firstName: string;
-  //       lastName: string;
-  //       userName: string;
-  //     };
-  //   }[];
-  //   name: string;
-  //   createdAt: string;
-  //   updatedAt: string;
-  //   password: string;
-  //   type: string;
-  // }
-
-export interface messageData {
-    sender: {
-        intraId: number,
-        firstName: string,
-        lastName: string,
-        userName: string
-    },
-    content: string,
-    createdAt: string
+export interface I_DirectConversation {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  type: string;
+  lastMessage: string;
+  receiver: {
+    userName: string;
+    firstName: string;
+    lastName: string;
+    status: string;
+  };
+}
+export interface I_Message {
+  sender: {
+    intraId: number;
+    firstName: string;
+    lastName: string;
+    userName: string;
+  };
+  content: string;
+  createdAt: string;
+}
+export interface I_ConversationMessages {
+  conversationId: number;
+  messages: I_Message[];
 }

@@ -7,12 +7,12 @@ import {
 import { Box, Modal } from "@mui/material";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../../core"; // You might need to import other dependencies here
 import "./channelSettingModal.css";
-import { Conversation, Membership } from "../Types/types";
-import { leaveRoom } from "../components/rooms/chatThunk";
+import { I_DirectConversation, I_Room } from "../Types/types";
+import { leaveRoom } from "../components/rooms/roomThunk";
 
 interface Props {
-    directConversation: Conversation | null;
-    channelConversation: Membership | null;
+    directConversation: I_DirectConversation | null;
+    channelConversation: I_Room | null;
 }
 
 export const ChannelSettingModal: React.FC<Props> = ({
@@ -140,7 +140,7 @@ export const ChannelSettingModal: React.FC<Props> = ({
                     </div>
                 </>
             ) : (
-                <h4>{directConversation?.participants[0].userName}</h4>
+                <h4>{directConversation?.receiver.userName}</h4>
             )}
         </>
     );

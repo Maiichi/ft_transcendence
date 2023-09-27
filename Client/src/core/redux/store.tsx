@@ -7,24 +7,23 @@ import todosSlice from "../../packages/feat-Test/components/TodosSlice";
 import authSlice from "../../packages/feat-Auth/components/authSlice";
 import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
-import chatSlice from "../../packages/feat-Chat/components/rooms/chatSlice";
-import conversationSlice from "../../packages/feat-Chat/components/conversations/conversationSlice";
+import roomSlice from "../../packages/feat-Chat/components/rooms/roomSlice";
+import DirectMessageSlice from "../../packages/feat-Chat/components/directMessage/directMessageSlice";
 import FilterSlice from "../utils/components/Input/SearchSlice";
 import SocketMiddleware from "../socket/socketMiddleware";
 import socketSlice from "../socket/socketSlice";
 // ...
 
 const rootReducer = combineReducers({
-    counter: counterSlice,
-    todos: todosSlice,
-    auth: authSlice,
-    core: coreSlice,
-    chat: chatSlice,
-    conversation: conversationSlice,
-    filter: FilterSlice,
-    socket: socketSlice
-  },
-);
+  counter: counterSlice,
+  todos: todosSlice,
+  auth: authSlice,
+  core: coreSlice,
+  channels: roomSlice,
+  directMessage: DirectMessageSlice,
+  filter: FilterSlice,
+  socket: socketSlice,
+});
 
 const persistConfig = {
   key: "root", // Key to access your storage
