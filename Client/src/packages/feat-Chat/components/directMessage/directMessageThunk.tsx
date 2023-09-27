@@ -4,8 +4,9 @@ import { apiRequest } from "../../../../core/utils/apiRequest";
 
 export const getDirectConversations = createAsyncThunk(
   "conversation/direct",
-  async (token: string) => {
+  async (_, { getState }) => {
     try {
+      const token = (getState() as RootState).auth.token;
       const resp = await apiRequest(`/chat/conversations`, {
         method: "GET",
         headers: {

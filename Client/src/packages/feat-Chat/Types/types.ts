@@ -26,8 +26,8 @@ export interface I_Room {
 }
 export interface I_Discussion {
   type: "direct" | "channel";
-  data: I_Room | I_DirectConversation;
-  messages: I_ConversationMessages;
+  direct: I_DirectConversation | null;
+  room: I_Room | null;
 }
 
 export interface I_DirectConversation {

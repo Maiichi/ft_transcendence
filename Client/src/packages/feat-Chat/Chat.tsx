@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import styled from "styled-components";
 import Picture from "./Picture.png";
 import "./chat.css";
-import { ChatUsers } from "./chatUsers/ChatUsers";
+ 
 import { Badge } from "@mui/material";
 import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
 import { getMemberships } from "./components/rooms/roomThunk";
@@ -16,7 +16,6 @@ import { I_Discussion } from "./Types/types";
 
 export const Chat = () => {
   const dispatch = useAppDispatch();
-  const token = useAppSelector((state) => state.auth.token);
   const memberships = useAppSelector((state) => state.channels.memberships);
   const conversations: [] = useAppSelector(
     (state) => state.directMessage.conversations
@@ -25,23 +24,12 @@ export const Chat = () => {
     (state) => state.channels.isConversation
   );
   const searchQuery = useAppSelector((state) => state.filter.searchQuery);
-  const [directConversation, setDirectConversation] = useState(null);
-  const [channelConversation, setChannelConversation] = useState(null);
   const [conversation, setConversation] = useState<I_Discussion | null>(null);
 
-  useEffect(
-    () => {
-      dispatch(getMemberships(token));
-      dispatch(getDirectConversations(token));
-    },
-    [
-      // dispatch,
-      // token,
-      // directConversation,
-      // channelConversation,
-      // displayConversation,
-    ]
-  );
+  useEffect(() => {
+    dispatch(getMemberships());
+    dispatch(getDirectConversations());
+  }, []);
 
   // Filter chat rooms based on the search query
   const filteredRooms = memberships.filter((item: any) =>
@@ -55,8 +43,6 @@ export const Chat = () => {
       .includes(searchQuery.toLowerCase())
   );
 
-  // const isConnected = useAppSelector((state) => state.socket.isConnected);
-  // const message = useAppSelector((state) => state.socket.message);
   return (
     <Root>
       <div className="discussions">
@@ -80,15 +66,14 @@ export const Chat = () => {
             <h4
               key={item.room.id}
               className={`channel-name ${
-                channelConversation === item.id ? "selected" : ""
+                conversation?.room === item.id ? "selected" : ""
               }`}
               onClick={() => {
-                setChannelConversation(item.room);
-                // setConversation({
-                //   data: item.room,
-                //   type: "channel",
-                // });
-                setDirectConversation(null);
+                setConversation({
+                  direct: null,
+                  room: item.room,
+                  type: "channel",
+                });
                 dispatch(setIsConversation(true));
               }}
             >
@@ -116,17 +101,16 @@ export const Chat = () => {
             <div
               key={discussion.id}
               className={`discussion ${
-                directConversation === discussion.id ? "selected" : ""
+                conversation?.direct === discussion.id ? "selected" : ""
               }`}
               onClick={() => {
-                setDirectConversation(discussion);
-                // setConversation({
-                //   data: discussion,
-                //   type: "direct",
-                // });
-                setChannelConversation(null);
+                setConversation({
+                  room: null,
+                  direct: discussion,
+                  type: "direct",
+                });
                 dispatch(setIsConversation(true));
-              }} // Update the selected conversation on click
+              }}
             >
               <Badge
                 anchorOrigin={{
@@ -165,17 +149,7 @@ export const Chat = () => {
           <h1> Click on a conversation to start chatting. </h1>
         </div>
       ) : (
-        <>
-          <ChatBox
-            channelConversation={channelConversation}
-            conversation={conversation}
-            directConversation={directConversation}
-          />
-          <ChatUsers
-            channelConversation={channelConversation}
-            directConversation={directConversation}
-          />
-        </>
+        <ChatBox conversation={conversation} />
       )}
     </Root>
   );

@@ -5,8 +5,9 @@ import { RootState } from "../../../../core";
 
 export const getMemberships = createAsyncThunk(
   "chat/memberships",
-  async (token: string) => {
+  async (_, { getState }) => {
     try {
+      const token = (getState() as RootState).auth.token;
       const response = await apiRequest(`/chat/memberships`, {
         method: "GET",
         headers: {
