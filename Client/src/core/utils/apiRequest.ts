@@ -2,14 +2,15 @@ import axios, { AxiosRequestConfig } from "axios";
 
 // Define the base API URL
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5001/api";
+    process.env.REACT_APP_API_BASE_URL || "http://localhost:5001/api";
 
 // Define an interface for custom request options
 interface ApiRequestOptions extends AxiosRequestConfig {
-  headers: {
-    Authorization: string;
-  };
-  method: "GET" | "POST";
+    headers: {
+        Authorization: string;
+    };
+    method: "GET" | "POST" | "PATCH";
+    data?: any;
 }
 
 /**
@@ -21,16 +22,16 @@ interface ApiRequestOptions extends AxiosRequestConfig {
  * @throws {Error} - Throws an error if the request fails.
  */
 export const apiRequest = async (url: string, options?: ApiRequestOptions) => {
-  try {
-    // Perform the API request using Axios
-    const response = await axios(`${API_BASE_URL}${url}`, {
-      ...options,
-    });
+    try {
+        // Perform the API request using Axios
+        const response = await axios(`${API_BASE_URL}${url}`, {
+            ...options,
+        });
 
-    // Return the response data
-    return response.data;
-  } catch (error: any) {
-    // Propagate the error
-    throw error;
-  }
+        // Return the response data
+        return response.data;
+    } catch (error: any) {
+        // Propagate the error
+        throw error;
+    }
 };

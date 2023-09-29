@@ -79,7 +79,7 @@ export class UserService {
             if (!usernameExist)
             {
                 // perform the update
-                await this.prisma.user.update({
+                const user = await this.prisma.user.update({
                     where: {intraId: userId} ,
                     data : {
                         userName : dto.userName
@@ -89,7 +89,8 @@ export class UserService {
                 });
                 return  res.status(200).json({
                             status: 200,
-                            message : 'Username updated successfully'
+                            message : 'Username updated successfully',
+                            data: user
                         });
             }
             else
