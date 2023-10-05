@@ -1,9 +1,7 @@
-import style from '../styles/Profile'
-
 /**
  * styled Components exporting >/
 */
+export * from './global.style'
 export * from './Profile'
 export * from './ProfileSetting'
-
-export default style
+export * from './Leaderboard.style'

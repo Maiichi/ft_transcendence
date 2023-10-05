@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react'
 
 import {
   PictureEdit,
-  Title,
   SettingCards,
   CardAvatar,
   H5,
@@ -16,12 +15,11 @@ import {
   ButtonAvatar,
   CardForm,
   ButtonForm,
-} from './styles' // ProfileSetting
 
-import style, {
+  Title,
   Root,
+} from './styles'
 
-} from './styles' // general
 
 import { uinfo, UserInfo } from './API.d'
 import { useAppSelector } from '../../core'
@@ -40,6 +38,14 @@ export const Settings = () => {
   })
   }, [userInfo])
 
+const style = {
+  avatar: {
+    width: "80px",
+    height: "80px"
+  },
+
+
+}
   return (
     <Root>
       <Title>setting</Title>

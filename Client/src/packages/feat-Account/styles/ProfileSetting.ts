@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-
 const CardForm = styled.div`
   width: 65%;
   margin-left: 5px;
@@ -75,15 +74,7 @@ const ButtonForm = styled.button`
     box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 10px;
   }
 `
-const H5 = styled.h4`
-  margin: 0px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.57;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  color: rgb(108, 115, 127);
-`
+
 const Divider = styled.hr`
   margin-top: 15px;
   width: -webkit-fill-available;
@@ -126,27 +117,25 @@ const PictureEdit = styled.ul`
 /**
  * `Title` as title element
  */
-const Title = styled.section`
-  padding: 20px 0 10px 0;
-  margin-bottom: 0px;
-  text-align: center;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  letter-spacing: 3px;
-  font-weight: 700;
-  line-height: 1.2;
-  font-size: 2rem;
-  border-top: 1px solid;
-`
+// const Title = styled.section`
+//   padding: 20px 0 10px 0;
+//   margin-bottom: 0px;
+//   text-align: center;
+//   font-family: "Plus Jakarta Sans", sans-serif;
+//   letter-spacing: 3px;
+//   font-weight: 700;
+//   line-height: 1.2;
+//   font-size: 2rem;
+//   border-top: 1px solid;
+// `
 
 
 /**
  * styled Components exporting >/
  */
 export {
-    Title,
     SettingCards,
     CardAvatar,
-    H5,
     Divider,
     ButtonAvatar,
     CardForm,

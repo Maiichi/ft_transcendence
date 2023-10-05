@@ -1,6 +1,8 @@
-import styled from "styled-components";
+import styled from "styled-components"
+import { Players } from './Leaderboard.style'
 
-
+const TopPlayers = styled(Players)`
+`
 const Score = styled.div`
   display: flex;
   justify-content: space-around;
@@ -41,19 +43,6 @@ const Achievement = styled.div`
   justify-content: space-around;
   align-items: center;
 `
-const TopPlayers = styled.div`
-  margin-right: 5px;
-  /* background-color: rgb(255, 255, 255); */
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  -webkit-box-align: center;
-
-  text-align: center;
-  padding: 10px;
-  @media (max-width: 426px) {
-  }
-`
 const MatchHistory = styled.div`
   margin-right: 5px;
   /* background-color: rgb(255, 255, 255); */
@@ -65,18 +54,6 @@ const MatchHistory = styled.div`
   text-align: center;
   @media (max-width: 426px) {
   }
-`
-const Player = styled.div`
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  text-align: start;
-  border-radius: 8.295px;
-  gap: 20px;
-  margin: 10px;
-  justify-content: space-around;
-  background: rgba(156, 163, 175, 0.1);
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 2.07377px 4.14754px 0px;
 `
 /**
  *  `CardAvatar2`: div slector
@@ -128,42 +105,16 @@ const Cards = styled.div`
     flex-direction: column;
   }
 `
-/**
- *  `component Root` Profile
- * 
- *  Children:
- *   @see Cards
- */ 
-const Root = styled.div`
-  background-color: #f9f9f9;
-  padding: 0;
-  margin: 0;
-`
-
-/**
- * Style 
- */
-const style = {
-  Title: {
-    fontSize: " 1rem"
-  },
-  avatar: {
-    width: "80px",
-    height: "80px"
-  },
 
 
-}
-
-export default style
-export {Root, Cards,
+export {
+  Cards,
   LeftCard,
-    CardAvatar2,
-    Player,
-    MatchHistory,
-    TopPlayers,
-      Achievement,
-    Achievements,
+  CardAvatar2,
+  MatchHistory,
+  Achievement,
+  Achievements,
   RightCard,
+  TopPlayers,
   Score,
 }
