@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import AddIcon from "@mui/icons-material/Add";
 import styled from "styled-components";
-import Picture from "./Picture.png";
 import "./chat.css";
  
 import { Badge } from "@mui/material";
@@ -25,7 +24,6 @@ export const Chat = () => {
   );
   const searchQuery = useAppSelector((state) => state.filter.searchQuery);
   const [conversation, setConversation] = useState<I_Discussion | null>(null);
-
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getDirectConversations());
@@ -38,7 +36,7 @@ export const Chat = () => {
 
   // Filter conversations based on the search query
   const filteredConversations = conversations.filter((discussion: any) =>
-    discussion.participants[0].firstName
+    discussion.receiver.firstName
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
@@ -118,27 +116,26 @@ export const Chat = () => {
                   horizontal: "right",
                 }}
                 color={
-                  discussion.participants[0].status === "ONLINE"
+                  discussion.receiver.status === "ONLINE"
                     ? "success"
                     : "error"
                 }
                 overlap="circular"
                 variant="dot"
               >
-                <img className="photo" src={Picture} alt="" />
+                <img className="photo" src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)} alt="" />
               </Badge>
-
               <div className="desc-contact">
                 <p className="name">
-                  {discussion.participants[0].firstName}{" "}
-                  {discussion.participants[0].lastName}
+                  {discussion.receiver.firstName}{" "}
+                  {discussion.receiver.lastName}
                 </p>
                 <p className="message">
-                  {changeMessageLength(discussion.messages[0].content)}
+                  {changeMessageLength(discussion.lastMessage.content)}
                 </p>
               </div>
               <p style={{ fontSize: 13 }}>
-                {convertDateTime(discussion.messages[0].createdAt)}
+                {convertDateTime(discussion.lastMessage.createdAt)}
               </p>
             </div>
           ))}

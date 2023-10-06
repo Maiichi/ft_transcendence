@@ -35,12 +35,16 @@ export interface I_DirectConversation {
   createdAt: string;
   updatedAt: string;
   type: string;
-  lastMessage: string;
+  lastMessage: {
+    content: string;
+    createdAt: string
+  };
   receiver: {
     userName: string;
     firstName: string;
     lastName: string;
     status: string;
+    avatar_url: string;
   };
 }
 export interface I_Message {
@@ -49,7 +53,9 @@ export interface I_Message {
     firstName: string;
     lastName: string;
     userName: string;
+    avatar_url: string;
   };
+  id: number;
   content: string;
   createdAt: string;
 }

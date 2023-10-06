@@ -214,7 +214,7 @@ export class MessageService
             throw new NotFoundException("this room has no conversation yet");
         // getRoomParticipants
         const roomParticipants = await this.getRoomParticipants(room.id);
-        console.log("room participants == " + JSON.stringify(roomParticipants));
+        // console.log("room participants == " + JSON.stringify(roomParticipants));
         const userBlocked = await this.getBlackListByUserId(user.intraId);
         // console.log("userBlocked = " + JSON.stringify(userBlocked));
         // console.log("User authenticated = " + user.intraId);
@@ -358,7 +358,7 @@ export class MessageService
                 },
             },
         });
-        console.log("back: messages == ", JSON.stringify(messages));
+        // console.log("back: messages == ", JSON.stringify(messages));
         return messages;
     }
 
@@ -400,7 +400,7 @@ export class MessageService
 
     async getUserDirectConversations(userId: number, res: Response)
     {
-        const conversations = await this.prisma.user.findUnique({
+        const user = await this.prisma.user.findUnique({
             where : {
                 intraId: userId
             },
@@ -435,12 +435,45 @@ export class MessageService
                                 firstName: true,
                                 lastName: true,
                                 status: true,
+                                avatar_url: true,
                             }
                         }
                     }
                 }
             }
         });
-        res.send({data: conversations});
+
+        const conversationsData = [];
+        for (const conversation of user?.conversations || []) {
+            // const lastMessage = conversation.messages[0];
+            // console.log("lastMessage (back) ", lastMessage);
+    
+            const conversationData = {
+                id: conversation.id,
+                createdAt: conversation.createdAt,
+                updatedAt: conversation.updatedAt,
+                type: conversation.type,
+                lastMessage: {
+                    content: conversation.messages[0].content,
+                    createdAt: conversation.messages[0].createdAt,
+                },
+                receiver: {
+                    userName: conversation.participants[0].userName,
+                    firstName: conversation.participants[0].firstName,
+                    lastName: conversation.participants[0].lastName,
+                    status: conversation.participants[0].status,
+                    avatar_url: conversation.participants[0].avatar_url,
+                }
+            };
+    
+            conversationsData.push(conversationData);
+        }
+        // console.log("conv (back) ", JSON.stringify(conversationsData));
+        return res.json({
+            data: conversationsData
+        });
+        
+
+        // res.send({data: conversations});
     }
 }

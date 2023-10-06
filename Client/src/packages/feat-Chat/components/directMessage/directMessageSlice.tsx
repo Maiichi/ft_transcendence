@@ -44,8 +44,9 @@ export const DirectMessageSlice = createSlice({
         state.isLoad = true;
       })
       .addCase(getDirectConversationMessages.fulfilled, (state, action) => {
-        state.conversationsContent.push(action.payload);
+        // state.conversationsContent.push(action.payload);
         state.isLoad = false;
+        state.conversationsContent = action.payload;
       })
       .addCase(getDirectConversationMessages.rejected, (state) => {
         state.isLoad = false;
