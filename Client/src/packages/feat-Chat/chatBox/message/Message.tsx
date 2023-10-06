@@ -19,7 +19,12 @@ export const Message = ({own, data}: Props) => {
     return (
         <div className={messageClass} key={data.createdAt}>
             <div className="messageTop">
-                <img className='messageImg' src={require(`/app/images_uploads/${data.sender.avatar_url}`)} alt="" />
+                {data.sender.avatar_url !== null ? 
+                (<img className="messageImg" src={require(`/app/images_uploads/${data.sender.avatar_url}`)} alt="" />) 
+                :
+                (<img className="messageImg" src="" alt="" />)
+                }
+                {/* <img className='messageImg' src={require(`/app/images_uploads/${data.sender.avatar_url}`)} alt="" /> */}
                 <p className="messageText">
                     {data.content}
                 </p>  

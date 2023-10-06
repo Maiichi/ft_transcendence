@@ -123,7 +123,12 @@ export const Chat = () => {
                 overlap="circular"
                 variant="dot"
               >
-                <img className="photo" src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)} alt="" />
+                {discussion.receiver.avatar_url !== null ? 
+                (<img className="photo" src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)} alt="" />) 
+                :
+                (<img className="photo" src="" alt="" />)
+                }
+                
               </Badge>
               <div className="desc-contact">
                 <p className="name">
