@@ -1,5 +1,7 @@
 import styled, { keyframes } from 'styled-components'
-import { inherits } from 'util'
+import {
+  Typography as TypographyMui
+} from '@mui/material'
 
 const rotate = keyframes`
   from {
@@ -15,22 +17,16 @@ const Rotate = styled.div`
   padding: 2rem 1rem;
   font-size: 1.2rem;
 `
-const H5 = styled.h4`
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.57;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  color: rgb(108, 115, 127);
+const H5 = styled.h5`
 `
 /**
- * `Title` as title element
+ * `Title` as Typography Mui element // now as section
  */
 const Title = styled.section`
   padding: 30px 0 10px 0;
   text-align: center;
   font-family: "Plus Jakarta Sans", sans-serif;
-  letter-spacing: 3px;
+  letter-spacing: 10px;
   font-weight: 700;
   line-height: 1.2;
   font-size: 2rem;
@@ -38,7 +34,7 @@ const Title = styled.section`
 `
 /**
  *  `styled component Root`
- */ 
+ */
 const Root = styled.div<{ $primary?: boolean; }>`
   background-color: ${props => props.$primary? 'inherits' : '#f9f9f9' };
   padding: 0;

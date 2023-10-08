@@ -102,7 +102,7 @@ const CircularProgressWithLabel = (
 
 const GeustProfile = () => {
   const navigate = useNavigate()
-  let userInfo = useAppSelector((state) => state.auth.user)
+  let userInfo = useAppSelector((state) => state.auth?.user)
   userInfo.avatar_url = Pic
 
 

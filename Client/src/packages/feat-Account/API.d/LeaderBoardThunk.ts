@@ -47,7 +47,7 @@ const getLeaderboard = createAsyncThunk(
                 true
                 ? resolve(TopPlayersArr)
                 : reject( 'Failed to fetch leaderboard')
-            }, 5000)
+            }, 50)
         })
         return response
       } catch (error) {

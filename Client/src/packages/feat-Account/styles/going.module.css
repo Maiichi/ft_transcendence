@@ -1,24 +1,2 @@
 /** Leader Board unformal syles */
 
-img{
-    width: 30px;
-    height: 45px;
-    margin: 5px;
-}
-.avatar {
-    width: 60px; 
-    height: 60px;
-}
-.matches {
-    flex: 1 1;
-    display: flex;
-    gap: 20px;
-}
-.rank h5{
-        font-size: large;
-        background-color: brown;
-    }
-.rank p{
-        font-size:xx-small;
-        background-color: brown;
-    }
