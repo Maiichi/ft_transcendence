@@ -28,8 +28,34 @@ import { useAppSelector } from '../../../core'
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-import {AchievementsArr, Histories, TopPlayersArr, Logo, Pic} from '../data'
+import {AchievementsArr, Histories, Logo, Pic} from '../API.d/data'
 
+const TopPlayersArr = [
+  {
+      name: "Lionnel",
+      ladder: 100,
+      wins: 50,
+      loss: 10,
+      achievement: Logo,
+      picture: 'Pic,'
+  },
+  {
+      name: "mark",
+      ladder: 90,
+      wins: 40,
+      loss: 15,
+      achievement: Logo,
+      picture: 'Pic,'
+  },
+  {
+      name: "john",
+      ladder: 75,
+      wins: 50,
+      loss: 40,
+      achievement: Logo,
+      picture: 'Pic,'
+  },
+  ]
 const LinearProgressWithLabel = (
   props: LinearProgressProps & { value: number }
 ) => {

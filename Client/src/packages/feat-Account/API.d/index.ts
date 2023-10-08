@@ -1,2 +1,3 @@
-export * from './user_info'
+export * from './LeaderBoardSlice'
+export * from './LeaderBoardThunk'
 

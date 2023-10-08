@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components'
+import { inherits } from 'util'
 
 const rotate = keyframes`
   from {
@@ -9,7 +10,7 @@ const rotate = keyframes`
   }
 `
 const Rotate = styled.div`
-  /* display: inline-block; */
+  display: inline-block;
   animation: ${rotate} 3s linear infinite;
   padding: 2rem 1rem;
   font-size: 1.2rem;
@@ -38,12 +39,13 @@ const Title = styled.section`
 /**
  *  `styled component Root`
  */ 
-const Root = styled.div`
-  background-color: #f9f9f9;
+const Root = styled.div<{ $primary?: boolean; }>`
+  background-color: ${props => props.$primary? 'inherits' : '#f9f9f9' };
   padding: 0;
   margin: 0;
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 `
 
 export {

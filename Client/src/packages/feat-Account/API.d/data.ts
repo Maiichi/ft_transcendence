@@ -1,7 +1,5 @@
-
-import { Avatar } from "@mui/material";
-import Logo from "./images_uploads/federation.png";
-import Pic from './images_uploads/th-imoj.jpeg'
+import Logo from "../images_uploads/federation.png";
+import Pic from '../images_uploads/th-imoj.jpeg'
 
 const AchievementsArr = [
 {
@@ -91,32 +89,6 @@ const Histories = [
     score: [4, 4],
 },
 ]
-const TopPlayersArr = [
-{
-    name: "Lionnel",
-    ladder: 100,
-    wins: 50,
-    loss: 10,
-    achievement: Logo,
-    picture: 'Pic,'
-},
-{
-    name: "mark",
-    ladder: 90,
-    wins: 40,
-    loss: 15,
-    achievement: Logo,
-    picture: 'Pic,'
-},
-{
-    name: "john",
-    ladder: 75,
-    wins: 50,
-    loss: 40,
-    achievement: Logo,
-    picture: 'Pic,'
-},
-]
 
-const players = TopPlayersArr
-export { AchievementsArr, Histories, TopPlayersArr, players, Logo, Pic }
+
+export { AchievementsArr, Histories, Logo, Pic }

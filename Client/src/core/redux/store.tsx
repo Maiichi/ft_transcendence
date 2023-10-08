@@ -12,6 +12,8 @@ import conversationSlice from "../../packages/feat-Chat/components/conversations
 import FilterSlice from "../utils/components/Input/SearchSlice";
 import SocketMiddleware from "../socket/socketMiddleware";
 import socketSlice from "../socket/socketSlice";
+import LeaderBoardSlice from "../../packages/feat-Account/API.d/LeaderBoardSlice";
+
 // ...
 
 const rootReducer = combineReducers({
@@ -22,7 +24,8 @@ const rootReducer = combineReducers({
     chat: chatSlice,
     conversation: conversationSlice,
     filter: FilterSlice,
-    socket: socketSlice
+    socket: socketSlice,
+    LeaderBoard: LeaderBoardSlice
   },
 );
 
