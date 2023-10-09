@@ -1,3 +1,2 @@
-export * from './LeaderBoardSlice'
-export * from './LeaderBoardThunk'
-
+export * from "./ProfileThunk";
+export * from "./ProfileSlice";

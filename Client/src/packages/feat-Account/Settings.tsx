@@ -1,31 +1,13 @@
 import {
-  Avatar,
-  FormControlLabel,
-  Switch,
-  TextField 
-} from '@mui/material'
-import { useState, useEffect } from 'react'
-
-import {
-  PictureEdit,
-  SettingCards,
-  CardAvatar,
-  H5,
-  Divider,
-  ButtonAvatar,
-  CardForm,
-  ButtonForm,
-
+  /***global**/
   Title,
   Root,
-} from './styles'
-
+} from "./styles";
 
 export const Settings = () => {
-
   return (
     <Root>
       <Title>setting</Title>
     </Root>
   );
-}
+};

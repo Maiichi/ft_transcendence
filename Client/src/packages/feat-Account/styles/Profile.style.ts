@@ -1,28 +1,28 @@
-import styled from "styled-components"
-import { Players } from './Leaderboard.style'
+import styled from "styled-components";
+import { Players } from "./Leaderboard.style";
+import { Grid } from "@mui/material";
 
-const TopPlayers = styled(Players)`
-`
+const TopPlayers = styled(Players)``;
 const Score = styled.div`
-  display: flex;
+  /* display: flex;
   justify-content: space-around;
   align-items: center;
   box-shadow: ${(p) => p.color} 0px 0px 8px 0px;
   margin: 10px;
-  border-radius: 8px;
-`
+  border-radius: 8px; */
+`;
 const RightCard = styled.div`
-  display: flex;
+  /* display: flex;
   flex-direction: column;
   gap: 10px;
   flex: 100%;
   @media (max-width: 768px) {
     flex: 66%;
-  }
-`
+  } */
+`;
 const Achievements = styled.div`
-  margin-right: 5px;
-  /* background-color: rgb(255, 255, 255); */
+  /* margin-right: 5px;
+  background-color: rgb(255, 255, 255);
   color: rgb(17, 25, 39);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
   border-radius: 20px;
@@ -34,18 +34,18 @@ const Achievements = styled.div`
   gap: 40px;
   @media (max-width: 426px) {
 
-  }
-`
+  } */
+`;
 const Achievement = styled.div`
-  display: flex;
+  /* display: flex;
   background: ${(p) => p.color};
   margin: 10px;
   justify-content: space-around;
-  align-items: center;
-`
+  align-items: center; */
+`;
 const MatchHistory = styled.div`
-  margin-right: 5px;
-  /* background-color: rgb(255, 255, 255); */
+  /* margin-right: 5px;
+  background-color: rgb(255, 255, 255);
   color: rgb(17, 25, 39);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
   border-radius: 20px;
@@ -53,14 +53,14 @@ const MatchHistory = styled.div`
   padding: 10px;
   text-align: center;
   @media (max-width: 426px) {
-  }
-`
+  } */
+`;
 /**
  *  `CardAvatar2`: div slector
  */
 const CardAvatar2 = styled.div`
-    margin-right: 5px;
-    /* background-color: rgb(255, 255, 255); */
+  /* margin-right: 5px;
+    background-color: rgb(255, 255, 255);
     color: rgb(17, 25, 39);
     box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
     border-radius: 20px;
@@ -71,45 +71,44 @@ const CardAvatar2 = styled.div`
     padding: 0 10px;
     gap: 40px;
     @media (max-width: 426px) {
-    }
-`
+    } */
+`;
 /**
  * `Left Card`: div selector
- * 
+ *
  * Contains:
  *  - CardAvatar2
  *  - Achievements
  */
-const LeftCard = styled.div`
-  flex: 100%;
+const Port = styled.div`
+  /* flex: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
   @media (max-width: 768px) {
     flex: 30%;
-  }
-`
-/** 
+  } */
+`;
+/**
  *  \<Cards> div Selector
- * 
+ *
  *  Children:
  *    @see LeftCard
  *    @see RightCard
- * */ 
-const Cards = styled.div`
-  padding: 5px;
+ * */
+const Cards = styled(Grid)`
+  /* padding: 5px;
   display: flex;
   align-items: center;
   flex-direction: row;
   @media (max-width: 768px) {
     flex-direction: column;
-  }
-`
-
+  } */
+`;
 
 export {
   Cards,
-  LeftCard,
+  Port as LeftCard,
   CardAvatar2,
   MatchHistory,
   Achievement,
@@ -117,4 +116,4 @@ export {
   RightCard,
   TopPlayers,
   Score,
-}
+};

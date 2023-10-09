@@ -66,7 +66,7 @@ export const routes = [
     requireAuth: true,
   },
   {
-    path: "/Leaderboard",
+    path: "/leaderboard",
     element: (
       <Layout>
         <Leaderboard />

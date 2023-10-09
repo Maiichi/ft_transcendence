@@ -1,7 +1,5 @@
-import styled, { keyframes } from 'styled-components'
-import {
-  Typography as TypographyMui
-} from '@mui/material'
+import styled, { keyframes } from "styled-components";
+import { Typography as TypographyMui } from "@mui/material";
 
 const rotate = keyframes`
   from {
@@ -10,15 +8,14 @@ const rotate = keyframes`
   to {
     transform: rotate(180deg);
   }
-`
+`;
 const Rotate = styled.div`
   display: inline-block;
   animation: ${rotate} 3s linear infinite;
   padding: 2rem 1rem;
   font-size: 1.2rem;
-`
-const H5 = styled.h5`
-`
+`;
+const H5 = styled.h5``;
 /**
  * `Title` as Typography Mui element // now as section
  */
@@ -31,22 +28,17 @@ const Title = styled.section`
   line-height: 1.2;
   font-size: 2rem;
   border-top: 1px solid;
-`
+`;
 /**
  *  `styled component Root`
  */
-const Root = styled.div<{ $primary?: boolean; }>`
-  background-color: ${props => props.$primary? 'inherits' : '#f9f9f9' };
+const Root = styled.div<{ $primary?: boolean }>`
+  background-color: ${(props) => (props.$primary ? "inherits" : "#f9f9f9")};
   padding: 0;
   margin: 0;
   width: 100%;
   height: 100%;
   border-radius: 20px;
-`
+`;
 
-export {
-    Root,
-    Title,
-    H5,
-    Rotate,
-}
+export { Root, Title, H5, Rotate };
