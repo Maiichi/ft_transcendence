@@ -1,5 +1,5 @@
-import { I_DirectConversation } from "../../Types/types";
-import './boxHeader.css';
+
+import { I_DirectConversation } from '../../../Types/types';
 
 export const DirectBoxHeader = (props: { directConversation: I_DirectConversation }) => {
     const {directConversation} = props;

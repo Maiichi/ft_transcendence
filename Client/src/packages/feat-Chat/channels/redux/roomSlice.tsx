@@ -5,7 +5,6 @@ import { I_ConversationMessages, I_Room } from "../../Types/types";
 export interface roomState {
   memberships: I_Room[];
   messages: I_ConversationMessages[];
-  isConversation: boolean;
   isLoading: boolean;
 }
 type RoomPayload = {
@@ -18,7 +17,6 @@ type RoomPayload = {
 const initialState: roomState = {
   memberships: [],
   messages: [],
-  isConversation: false,
   isLoading: false,
 };
 
@@ -32,6 +30,9 @@ export const roomSlice = createSlice({
     createRoomSuccess: (state, action: PayloadAction<I_Room>) => {
       state.memberships.push(action.payload);
     },
+    leaveRoom: (state, action: PayloadAction<number>) => {
+      state.isLoading = true;
+    },
     setMemberships: (state, action: PayloadAction<roomState>) => {
       state.memberships = action.payload.memberships;
     },
@@ -42,17 +43,13 @@ export const roomSlice = createSlice({
       // Add the new membership to the existing memberships array
       state.memberships.push(action.payload);
     },
-    removeMembership: (state, action: PayloadAction<I_Room>) => {
+    removeMembership: (state, action: PayloadAction<number>) => {
       state.memberships.splice(
         state.memberships.findIndex(
-          (membership) => membership.id === action.payload.id
+          (membership) => membership.id === action.payload
         ),
-        1
       );
       console.log("(removeMembership) new state ==", state.memberships);
-    },
-    setIsConversation: (state, action: PayloadAction<boolean>) => {
-      state.isConversation = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -82,12 +79,12 @@ export const roomSlice = createSlice({
 });
 
 export const {
-  setIsConversation,
   setMemberships,
   setMessages,
   addMembership,
   removeMembership,
   createRoom,
+  leaveRoom,
   createRoomSuccess,
 } = roomSlice.actions;
 

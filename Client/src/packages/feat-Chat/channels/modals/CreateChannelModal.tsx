@@ -1,11 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { Add, Close, LockSharp, LockOpenSharp } from "@mui/icons-material";
 import { Box, Modal } from "@mui/material";
-import Switch from "@mui/material/Switch";
-import { styled } from "@mui/material/styles";
-import "./createChannelModal.css";
-import { useAppDispatch, useAppSelector } from "../../../core";
-import { createRoom } from "../components/rooms/roomSlice";
+import { useAppDispatch, useAppSelector } from "../../../../core";
+import { createRoom } from "../redux/roomSlice";
+import styled from "styled-components";
+import { AntSwitch } from "../../components/AntSwitch";
 
 export const CreateChannelModal = () => {
     const dispatch = useAppDispatch();
@@ -42,66 +41,11 @@ export const CreateChannelModal = () => {
         setOpen(false);
     };
 
-    // useEffect(() => {
-    //     if (socket) {
-    //         socket.on("roomCreationError", (data) => {
-    //             if (data && data.message) {
-    //                 setRoomCreationError(data.message);
-    //                 setOpen(true);
-    //             }
-    //         });
-    //     }
-    // }, [socket]);
 
-    const AntSwitch = styled(Switch)(({ theme }) => ({
-        width: 32,
-        height: 20,
-        padding: 0,
-        display: "flex",
-        "&:active": {
-            "& .MuiSwitch-thumb": {
-                width: 18,
-            },
-            "& .MuiSwitch-switchBase.Mui-checked": {
-                transform: "translateX(9px)",
-            },
-        },
-        "& .MuiSwitch-switchBase": {
-            padding: 2.5,
-            "&.Mui-checked": {
-                transform: "translateX(12px)",
-                color: "#fff",
-                "& + .MuiSwitch-track": {
-                    opacity: 1,
-                    backgroundColor:
-                        theme.palette.mode === "dark"
-                            ? "#177ddc"
-                            : "rgb(178, 163, 201)",
-                },
-            },
-        },
-        "& .MuiSwitch-thumb": {
-            boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
-            width: 15,
-            height: 15,
-            borderRadius: 6,
-            transition: theme.transitions.create(["width"], {
-                duration: 200,
-            }),
-        },
-        "& .MuiSwitch-track": {
-            borderRadius: 16 / 2,
-            opacity: 1,
-            backgroundColor:
-                theme.palette.mode === "dark"
-                    ? "rgba(255,255,255,.35)"
-                    : "rgba(0,0,0,.25)",
-            boxSizing: "border-box",
-        },
-    }));
+
     return (
         <div>
-            <Add className={"icon-add-channel"} onClick={() => setOpen(true)} />
+            <Add style={{}} onClick={() => setOpen(true)} />
             <Modal
                 open={open}
                 onClose={closeModal}
@@ -110,22 +54,21 @@ export const CreateChannelModal = () => {
             >
                 <Box sx={boxStyle}>
                     <div>
-                        <div className="modalHeader">
-                            <h2>Channel Settings</h2>
+                        <ModalHeader>
+                            <h2>Create new channel</h2>
                             <Close className={"close-button"} />
-                        </div>
-                        <div className="modalBody">
+                        </ModalHeader>
+                        <ModalBody>
                             {/* Display the error message here */}
                             {roomCreationError && (
-                                <div className="error-message">
+                                <ErrorMessage>
                                     {roomCreationError}
-                                </div>
+                                </ErrorMessage>
                             )}
 
-                            <div className="channelNameHolder">
-                                Channel name*
-                                <input
-                                    className="channel-name-input"
+                            <ChannelFieldHolder>
+                                Channel name
+                                <FieldInput
                                     type="text"
                                     placeholder="new-channel"
                                     value={roomName}
@@ -133,20 +76,19 @@ export const CreateChannelModal = () => {
                                         setRoomName(text.target.value)
                                     }
                                 />
-                            </div>
-                            <div className="channelDescriptionHolder">
+                            </ChannelFieldHolder>
+                            <ChannelFieldHolder>
                                 Channel Description (optional)
-                                <textarea
-                                    className="channel-desc-input"
+                                <FieldInput
                                     placeholder="channel description"
                                     value={roomDesc}
                                     onChange={(text) =>
                                         setRoomDesc(text.target.value)
                                     }
                                 />
-                            </div>
-                            <div className="channelPrivacyHolder">
-                                <div className="passwordHeaderHolder">
+                            </ChannelFieldHolder>
+                            <div>
+                                <PasswordHeaderHolder>
                                     {activate ? (
                                         <LockSharp />
                                     ) : (
@@ -156,12 +98,11 @@ export const CreateChannelModal = () => {
                                         checked={activate}
                                         onChange={toggleActivate}
                                     />
-                                </div>
+                                </PasswordHeaderHolder>
                                 {activate && (
-                                    <div className="passwordHolder">
+                                    <PasswordHolder>
                                         password
-                                        <input
-                                            className="channel-password-input"
+                                        <FieldInput
                                             type="password"
                                             placeholder=""
                                             value={roomPassword}
@@ -171,24 +112,22 @@ export const CreateChannelModal = () => {
                                                 )
                                             }
                                         />
-                                    </div>
+                                    </PasswordHolder>
                                 )}
                             </div>
-                        </div>
-                        <div className="modalFooter">
-                            <button
-                                className="button-cancel"
+                        </ModalBody>
+                        <ModalFooter>
+                            <CancelButton
                                 onClick={closeModal}
                             >
                                 Cancel
-                            </button>
-                            <button
-                                className="button-create"
+                            </CancelButton>
+                            <CreateButton
                                 onClick={() => handleCreateRoom()}
                             >
                                 Create
-                            </button>
-                        </div>
+                            </CreateButton>
+                        </ModalFooter>
                     </div>
                 </Box>
             </Modal>
@@ -208,3 +147,70 @@ const boxStyle = {
     p: 4,
     borderRadius: "20px",
 };
+
+// const iconAddChannel = {
+// };
+
+const ModalHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+`;
+
+const ModalBody = styled.div`
+
+`;
+
+const ErrorMessage = styled.div`
+    color: red;
+`;
+
+const ChannelFieldHolder = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+`;
+
+const FieldInput = styled.input`
+    height: 100%;
+    padding: 10px;
+    border : 1px solid #d5d0d0;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: #F9F9F9;
+`;
+
+const PasswordHolder = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const PasswordHeaderHolder = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin: 5px;
+    align-items: baseline;
+`;
+
+const ModalFooter = styled.div`
+    margin: 25px 0px 0px 0px;
+    display: flex;
+    justify-content: space-evenly;
+`;
+
+const CreateButton = styled.button`
+    height: 40px;
+    width: 100px;
+    border: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: rgb(178, 163, 201);
+`;
+
+const CancelButton = styled.button`
+    height: 40px;
+    width: 100px;
+    border: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+`;

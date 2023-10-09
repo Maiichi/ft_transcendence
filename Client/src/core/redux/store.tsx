@@ -7,11 +7,11 @@ import todosSlice from "../../packages/feat-Test/components/TodosSlice";
 import authSlice from "../../packages/feat-Auth/components/authSlice";
 import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
-import roomSlice from "../../packages/feat-Chat/components/rooms/roomSlice";
-import DirectMessageSlice from "../../packages/feat-Chat/components/directMessage/directMessageSlice";
 import FilterSlice from "../utils/components/Input/SearchSlice";
 import SocketMiddleware from "../socket/socketMiddleware";
 import socketSlice from "../socket/socketSlice";
+import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice"
+import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/directMessageSlice"
 // ...
 
 const rootReducer = combineReducers({

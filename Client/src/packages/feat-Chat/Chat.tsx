@@ -2,27 +2,22 @@ import { useEffect, useState } from "react";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import AddIcon from "@mui/icons-material/Add";
 import styled from "styled-components";
-import "./chat.css";
+// import "./chat.css";
  
 import { Badge } from "@mui/material";
-import { CreateChannelModal } from "./ChannelModal/CreateChannelModal";
-import { getMemberships } from "./components/rooms/roomThunk";
-import { getDirectConversations } from "./components/directMessage/directMessageThunk";
-import { ChatBox } from "./chatBox/ChatBox";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
-import { setIsConversation } from "./components/rooms/roomSlice";
-import { I_Discussion } from "./Types/types";
+import { I_DirectConversation, I_Discussion, I_Room } from "./Types/types";
+import { ChatBox } from "./ChatBox";
+import { CreateChannelModal } from "./channels/modals/CreateChannelModal";
+import { getMemberships } from "./channels/redux/roomThunk";
+import { getDirectConversations } from "./directMessages/redux/directMessageThunk";
+import { setIsConversation } from "../../core/CoreSlice";
+
 
 export const Chat = () => {
+  console.log('Chat Rendring !')
   const dispatch = useAppDispatch();
-  const memberships = useAppSelector((state) => state.channels.memberships);
-  const conversations: [] = useAppSelector(
-    (state) => state.directMessage.conversations
-  );
-  const displayConversation: boolean = useAppSelector(
-    (state) => state.channels.isConversation
-  );
-  const searchQuery = useAppSelector((state) => state.filter.searchQuery);
+  const { channels, directMessage, filter } = useAppSelector((state) => state);
   const [conversation, setConversation] = useState<I_Discussion | null>(null);
   useEffect(() => {
     dispatch(getMemberships());
@@ -30,22 +25,35 @@ export const Chat = () => {
   }, []);
 
   // Filter chat rooms based on the search query
-  const filteredRooms = memberships.filter((item: any) =>
-    item.room.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredRooms = channels.memberships.filter((item: any) =>
+    item.room.name.toLowerCase().includes(filter.searchQuery.toLowerCase())
+  );
+  // Filter conversations based on the search query
+  const filteredConversations = directMessage.conversations.filter(
+    (discussion: any) =>
+      discussion.receiver.firstName
+        .toLowerCase()
+        .includes(filter.searchQuery.toLowerCase())
   );
 
-  // Filter conversations based on the search query
-  const filteredConversations = conversations.filter((discussion: any) =>
-    discussion.receiver.firstName
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
-  );
+  const handleCLick = (
+    type: "direct" | "channel",
+    data: I_DirectConversation | I_Room
+  ) => {
+    setConversation({
+      room: type == "channel" ? (data as I_Room) : null,
+      direct: type == "direct" ? (data as I_DirectConversation) : null,
+      type: type,
+    });
+    dispatch(setIsConversation(true));
+  };
+
 
   return (
     <Root>
-      <div className="discussions">
-        <p className="messages-text">Discussions</p>
-        <SearchComponent onInputUpdate={searchQuery} />
+      <Discussions>
+        <TextMessage>Discussions</TextMessage>
+        <SearchComponent onInputUpdate={filter.searchQuery} />
         <div
           style={{
             display: "flex",
@@ -59,26 +67,19 @@ export const Chat = () => {
           <p>Channels</p>
           <CreateChannelModal />
         </div>
-        <div className="channelListHolder">
+        <ChannelListHolder>
           {filteredRooms.map((item: any) => (
-            <h4
+            <ChannelName
               key={item.room.id}
               className={`channel-name ${
                 conversation?.room === item.id ? "selected" : ""
               }`}
-              onClick={() => {
-                setConversation({
-                  direct: null,
-                  room: item.room,
-                  type: "channel",
-                });
-                dispatch(setIsConversation(true));
-              }}
+              onClick={() => handleCLick("channel", item.room)}
             >
               # {item.room.name}
-            </h4>
+            </ChannelName>
           ))}
-        </div>
+        </ChannelListHolder>
         <div
           style={{
             display: "flex",
@@ -94,21 +95,12 @@ export const Chat = () => {
             <AddIcon style={{ padding: "5px" }} />
           </div>
         </div>
-        <div className="DirectMessageListHolder">
+        <DirectMessageListHolder>
           {filteredConversations.map((discussion: any) => (
-            <div
+            <Discussion
               key={discussion.id}
-              className={`discussion ${
-                conversation?.direct === discussion.id ? "selected" : ""
-              }`}
-              onClick={() => {
-                setConversation({
-                  room: null,
-                  direct: discussion,
-                  type: "direct",
-                });
-                dispatch(setIsConversation(true));
-              }}
+              selected={conversation?.direct === discussion.id}
+              onClick={() => handleCLick("direct", discussion)}
             >
               <Badge
                 anchorOrigin={{
@@ -124,35 +116,29 @@ export const Chat = () => {
                 variant="dot"
               >
                 {discussion.receiver.avatar_url !== null ? 
-                (<img className="photo" src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)} alt="" />) 
+                (<AvatarImage src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)} alt="" />) 
                 :
-                (<img className="photo" src="" alt="" />)
+                (<AvatarImage src="" alt="" />)
                 }
                 
               </Badge>
-              <div className="desc-contact">
-                <p className="name">
+              <ContactDescription>
+                <DiscussionName>
                   {discussion.receiver.firstName}{" "}
                   {discussion.receiver.lastName}
-                </p>
-                <p className="message">
+                </DiscussionName>
+                <DiscussionMessage>
                   {changeMessageLength(discussion.lastMessage.content)}
-                </p>
-              </div>
+                </DiscussionMessage>
+              </ContactDescription>
               <p style={{ fontSize: 13 }}>
                 {convertDateTime(discussion.lastMessage.createdAt)}
               </p>
-            </div>
+            </Discussion>
           ))}
-        </div>
-      </div>
-      {displayConversation === false ? (
-        <div className="chatBoxNoConversation">
-          <h1> Click on a conversation to start chatting. </h1>
-        </div>
-      ) : (
+        </DirectMessageListHolder>
+      </Discussions>
         <ChatBox conversation={conversation} />
-      )}
     </Root>
   );
 };
@@ -170,6 +156,100 @@ const Root = styled.div`
 
 `;
 
+const Discussions = styled.div`
+overflow: hidden;
+/* display: inline-block; */
+padding: 5px;
+border-right:  1px solid #d7d7d7;
+`;
+
+const Discussion = styled.div<{selected?: boolean}>`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 10px 0px;
+  &:hover {
+    cursor: pointer;
+    background-color:  #f5f6f7;
+  }
+  ${(props) =>
+    props.selected &&
+    `
+    /* Add styles for the selected state */
+    background-color: #f5f6f7;
+  `}
+`;
+
+
+const TextMessage = styled.p`
+margin: 10px; /* Remove default margin for <p> tag */
+font-size: 40px;
+`;
+
+const ChannelListHolder = styled.div`
+padding: 0px 15px;
+overflow-y: scroll;
+max-height: 35%;
+`;
+
+const DirectMessageListHolder = styled.div`
+  overflow-y: scroll;
+  padding: "0px 15px";
+  max-height: 35%;
+`;
+
+const ChannelName = styled.h4`
+  margin: 0px 0px 10px 0px;
+  cursor: pointer;
+  &:hover{
+    background-color:  #f5f6f7;
+  }
+`;
+
+const AvatarImage = styled.img`
+  width: 45px;
+  height: 45px;
+`;
+
+const IsOnline = styled.div`
+  position: relative;
+  top: 30px;
+  left: 35px;
+  width: 13px;
+  height: 13px;
+  background-color: #8bc34a;
+  border-radius: 13px;
+  border: 3px solid #fafafa;
+`;
+
+const ContactDescription = styled.div`
+  max-width: 70%;
+`;
+
+const DiscussionName = styled.div`
+  margin: 0 0 0 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 11pt;
+  color: #515151;
+`;
+
+const DiscussionMessage = styled.div`
+  margin: 6px 0 0 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 9pt;
+  color: #515151;
+`;
+
+const Timer = styled.div`
+  margin-left: 25%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 11px;
+  padding: 3px 8px;
+  color: #bbb;
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 15px;
+`;
 // const boxStyle = {
 //   position: "absolute" as "absolute",
 //   top: "30%",
