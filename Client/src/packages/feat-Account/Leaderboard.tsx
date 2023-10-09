@@ -16,6 +16,8 @@ import {
 	Root,
 } from "./styles"
 import { Pic } from "./API.d/data"
+
+
 function sendGameRequist(userName:string) { }
 function sendFriendRequist(userName:string) { }
 

@@ -30,21 +30,24 @@ const Avatar = styled(AvatarMui)`
  * `Player` as  ListItem Mui element
  */
 const Player = styled(ListItemMui)`
-	border-radius: 8.295px;
-	margin: 12px;
-	margin-right: 50px;
 	box-shadow: rgba(0, 0, 0, 0.25) 0px 2.07377px 4.14754px 0px;
+	border-radius: 8.295px;
+	background-color: antiquewhite;
 `
 /**
  * `Players` as  List Mui element
  */
 const Players = styled(ListMui)`
-	padding: 10px 3% 15px 3%;
+	padding: 24px 12px !important;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 	margin: 0;
     /* -webkit-box-align: center; */
     @media (max-width: 426px) {
 	}
 `
+
 
 export {
 	Players,

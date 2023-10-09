@@ -2,7 +2,7 @@ import OwnerProfile  from './components/OwnerProfile'
 import GeustProfile from './components/GeustProfile'
 
 
-let isOwner = false
+let isOwner = true
 /**
  *  Profile Component
  *  
