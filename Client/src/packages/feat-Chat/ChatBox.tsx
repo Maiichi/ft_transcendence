@@ -12,12 +12,10 @@ interface ChatBoxProps {
 export const ChatBox: React.FC<ChatBoxProps> = ({ conversation }) => {
     console.log("ChatBox Rendring !");
     const state: CoreState = useAppSelector((state) => state.core);
-    useEffect(() => {
 
-    },[state.isConversation]);
-    if (conversation?.type === "direct" && conversation.direct) {
+    if (conversation?.type === "direct" && conversation.direct && state.isConversation) {
       return <DirectBox directConversation={conversation.direct} />;
-    } else if (conversation?.type === "channel" && conversation.room) {
+    } else if (conversation?.type === "channel" && conversation.room && state.isConversation) {
       return <ChannelBox channelConversation={conversation.room} />;
     } else
       return (
@@ -30,5 +28,5 @@ export const ChatBox: React.FC<ChatBoxProps> = ({ conversation }) => {
 const BoxNoConversation = styled.div`
   display: grid;
   place-content: center;
-
+  flex: 5;
 `;

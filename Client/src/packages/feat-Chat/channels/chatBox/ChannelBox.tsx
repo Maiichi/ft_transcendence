@@ -11,7 +11,8 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
   console.log("Channel Box rendring !");
   const { channelConversation } = props;
   const dispatch = useAppDispatch();
-  const {channels, auth} = useAppSelector((state) => state);
+  const auth = useAppSelector((state) => state.auth.user);
+  const channelMessages: [] = useAppSelector((state) => state.channels.messages);
 
   const isConnectedUser = (intraId: number) => {
     if (auth.user.intraId === intraId) return true;
@@ -30,13 +31,13 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
         </Header>
         <Wrapper>
           <ChatBoxTop>
-            {channels.messages.length === 0 ? (
+            {channelMessages.length === 0 ? (
                 <EmptyConversation>
                   <h2>it's always better to start a conversation &#128516;</h2>
                 </EmptyConversation>
               ) : (
                 <>
-                  {channels.messages.map((item: I_Message) => (
+                  {channelMessages.map((item: I_Message) => (
                     <>
                       <MessageBox
                         own={isConnectedUser(item.sender.intraId)}

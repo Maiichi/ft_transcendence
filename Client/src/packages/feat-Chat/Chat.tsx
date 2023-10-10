@@ -138,7 +138,7 @@ export const Chat = () => {
           ))}
         </DirectMessageListHolder>
       </Discussions>
-        <ChatBox conversation={conversation} />
+      <ChatBox conversation={conversation} />
     </Root>
   );
 };
@@ -151,7 +151,7 @@ const Root = styled.div`
   border-radius: 0.25rem;auto;
   // padding: 0;
   // margin: 5px;
-  height: 900px;
+  height: 800px;
   border-radius: 20px:
 
 `;

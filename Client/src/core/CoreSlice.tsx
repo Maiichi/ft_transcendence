@@ -23,7 +23,7 @@ export const coreSlice = createSlice({
       state.displayNavbar = !state.displayNavbar;
     },
     setIsConversation: (state, action: PayloadAction<boolean>) => {
-      state.isConversation = !state.displayNavbar;
+      state.isConversation = action.payload;
     },
   },
 });
