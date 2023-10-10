@@ -16,7 +16,6 @@ export class UserController
     constructor(private userService: UserService) {}
     // GET /api/users/:username
     @Get(':username')
-    @UseGuards(JwtGuard)
     @ApiOperation({ summary : 'Get user by username'})
     @ApiOkResponse({description : "get a user by username"})
     @ApiBadRequestResponse({description : 'User does not exist'})
@@ -32,7 +31,6 @@ export class UserController
  
     // GET /api/users/byid/:id
     @Get('byid/:id')
-    @UseGuards(JwtGuard)
     @ApiOperation({ summary : 'Get user by id'})
     @ApiOkResponse({description : "get a user by id"})
     @ApiBadRequestResponse({description : 'User does not exist'})
@@ -48,7 +46,6 @@ export class UserController
     
     // PATCH /api/users/:id/update
     @Patch(':id/update')
-    @UseGuards(JwtGuard)
     @ApiOperation({ summary : 'Update user by ID'})
     @ApiBody({
         schema: { properties: { userName: { type: 'string' } } },
@@ -69,7 +66,6 @@ export class UserController
 
     // PATCH /api/users/:username/upload-avatar
     @Patch(':id/upload-avatar')
-    @UseGuards(JwtGuard)
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -104,7 +100,6 @@ export class UserController
 
     // GET /api/users/:id/avatar
     @Get(':id/avatar/')
-    @UseGuards(JwtGuard)
     @ApiOperation({ summary: 'Get User Avatar' })
     @ApiParam({ name: 'id', description: 'User ID' })
     @ApiResponse({

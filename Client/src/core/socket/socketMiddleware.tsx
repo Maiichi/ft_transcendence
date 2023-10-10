@@ -9,10 +9,8 @@ import {
     SocketConnected,
 } from "./socketSlice";
 import { initializeSocket } from "./socketManager";
-import {
-    addMembership,
-    createRoom,
-} from "../../packages/feat-Chat/components/rooms/chatSlice";
+import { addMembership, createRoom, leaveRoom,  removeMembership } from "../../packages/feat-Chat/channels/redux/roomSlice";
+import { setIsConversation } from "../CoreSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
     let socket: Socket;
@@ -28,13 +26,20 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                 socket.on("roomCreated", (data) => {
                     dispatch(addMembership(data));
                 });
+                socket.on('roomLeaved', (data) => {
+                    console.log('data ==' , data);
+                    dispatch(removeMembership(data));
+                    dispatch(setIsConversation(false));
+                })
                 break;
             case disconnectSocket.type:
                 socket?.disconnect();
                 break;
             case createRoom.type:
                     socket.emit("createRoom", action.payload);
-                    
+                break;
+            case leaveRoom.type:
+                    socket.emit("leaveRoom", {roomId: action.payload});
                 break;
             default:
                 break;
