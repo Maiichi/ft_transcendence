@@ -4,6 +4,7 @@ import {
     enableTwoFactor,
     login,
     updateUserName,
+    uploadAvatar,
 } from "./authThunk";
 
 export type User = {
@@ -79,6 +80,15 @@ export const authSlice = createSlice({
                 state.loading = false;
             })
             .addCase(updateUserName.rejected, (state) => {
+                state.loading = false;
+            })
+            .addCase(uploadAvatar.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(uploadAvatar.fulfilled, (state, action) => {
+                if (state.user) state.user.avatar_url = action.payload.picture;
+            })
+            .addCase(uploadAvatar.rejected, (state) => {
                 state.loading = false;
             })
             .addCase(enableTwoFactor.pending, (state) => {

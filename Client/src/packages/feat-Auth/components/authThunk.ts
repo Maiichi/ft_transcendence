@@ -103,3 +103,28 @@ export const disableTwoFactor = createAsyncThunk(
         }
     }
 );
+
+export const uploadAvatar = createAsyncThunk(
+    "auth/uploadAvatar",
+    async (payload: { id: number; token: string; formData: FormData, picture: "" }) => {
+        try {
+            const resp = await apiRequest(
+                `/users/${payload.id}/upload-avatar`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${payload.token}`,
+                    },
+                    data: payload.formData,
+                }
+            );
+
+            payload.picture = resp.data.avatar_url
+
+            return payload;
+        } catch (error) {
+            console.error("Avatar update failed:", error);
+            throw error; // Propagate the error to be handled by .rejected case
+        }
+    }
+);

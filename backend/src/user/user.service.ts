@@ -116,7 +116,7 @@ export class UserService {
         // const usernameExist = await this.findUserByUsername(username);
         if (userExist)
         {
-            await this.prisma.user.update({
+            this.prisma.user.update({
                 where: {intraId: userId} ,
                 data : {
                     avatar_url : avatar.filename
@@ -125,7 +125,8 @@ export class UserService {
                 if (resp)
                     return res.status(200).json({
                         status: 200,
-                        message: 'Avatar updated successfully'
+                        message: 'Avatar updated successfully',
+                        data: resp
                     })
             })
         }
