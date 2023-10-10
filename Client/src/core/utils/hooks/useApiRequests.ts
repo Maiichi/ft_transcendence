@@ -20,7 +20,6 @@ const useApiRequest = () => {
 
   const apiRequest = async (url: string, options?: ApiRequestOptions) => {
     try {
-      console.log("TOKEN", token);
       setIsLoading(true);
       const response = await axios(`${API_BASE_URL}${url}`, {
         ...options,
