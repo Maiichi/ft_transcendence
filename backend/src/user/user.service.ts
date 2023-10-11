@@ -146,6 +146,7 @@ export class UserService {
         {
             const user = await this.getUser(userId);
             const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
+            console.log('filePath == ', filePath);
             res.sendFile(filePath);
         }
         else

@@ -1,45 +1,46 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../../core/utils/apiRequest";
 import { Socket } from "socket.io-client";
-
-
+import { RootState } from "../../../../core";
 
 export const getMemberships = createAsyncThunk(
-    "chat/memberships",
-    async (token: string) => {
-        try {
-            const response = await apiRequest(`/chat/memberships`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            //   console.log("getMemberships ==", response.data);
-            return response.data;
-        } catch (error) {
-            console.log("error in chatThunk", error);
-            throw error;
-        }
+  "chat/memberships",
+  async (_, { getState }) => {
+    try {
+      const token = (getState() as RootState).auth.token;
+      const response = await apiRequest(`/chat/memberships`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      //   console.log("getMemberships ==", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("error in chatThunk", error);
+      throw error;
     }
+  }
 );
 
 export const getChatRoomMessages = createAsyncThunk(
-    "chat/room/messages",
-    async ({ token, roomId }: { token: string; roomId: number }) => {
-        try {
-            const resp = await apiRequest(`/chat/room/${roomId}/conversation`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            // console.log("room Data thunk ", resp.data);
-            return resp.data.messages;
-        } catch (error) {
-            console.log("error in getChatRoomMessages", error);
-            throw error;
-        }
+  "chat/room/messages",
+  async (roomId: number, { getState }) => {
+    try {
+      const token = (getState() as RootState).auth.token;
+      const resp = await apiRequest(`/chat/room/${roomId}/conversation`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log("room Data thunk ", resp.data);
+      return resp.data.messages;
+    } catch (error) {
+      console.log("error in getChatRoomMessages", error);
+      throw error;
     }
+  }
 );
 
 // export const createRoom = createAsyncThunk(
@@ -54,7 +55,7 @@ export const getChatRoomMessages = createAsyncThunk(
 //                 password: room.password,
 //             };
 //             // Emit the createRoom event to the server
-            
+
 //         } catch (error) {
 //             // Handle error if needed
 //             console.log("error in createRoom Thunk ", error);
@@ -63,26 +64,26 @@ export const getChatRoomMessages = createAsyncThunk(
 //     }
 // );
 
-export const leaveRoom = createAsyncThunk(
-    "chat/room/leave",
-    async ({
-        socket,
-        roomId,
-    }: {
-        socket: Socket;
-        roomId: number | undefined;
-    }) => {
-        try {
-            socket.emit("leaveRoom", { roomId: roomId });
-            return {
-                roomId: roomId,
-            };
-        } catch (error) {
-            console.log("error in leave Room |", error);
-            throw error;
-        }
-    }
-);
+// export const leaveRoom = createAsyncThunk(
+//   "chat/room/leave",
+//   async ({
+//     socket,
+//     roomId,
+//   }: {
+//     socket: Socket;
+//     roomId: number | undefined;
+//   }) => {
+//     try {
+//       socket.emit("leaveRoom", { roomId: roomId });
+//       return {
+//         roomId: roomId,
+//       };
+//     } catch (error) {
+//       console.log("error in leave Room |", error);
+//       throw error;
+//     }
+//   }
+// );
 /***Second Parameter of the Async Function (_ and thunkAPI):
 
 In an async function defined for a thunk, there are typically two parameters:

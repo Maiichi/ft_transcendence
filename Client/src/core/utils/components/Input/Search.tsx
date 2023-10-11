@@ -40,7 +40,6 @@ export const SearchComponent = (props: Props) => {
   const { clear, setOpen , onInputUpdate} = props;
   const [searchValue, setSearchValue] = useState<string>('');
   const dispatch = useAppDispatch();
-  const searchQuery = useAppSelector((state) => state.filter.searchQuery);
   const classes = useStyles();
 
    useEffect(() => {
