@@ -10,17 +10,22 @@ import { UserService } from './user/user.service';
 import { multerConfig } from './user/multer/multer.config';
 import { ChatModule } from './chat/chat.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+
+
+
+      
+      isGlobal: true,
     }),
     MulterModule.register(multerConfig),
     AuthModule,
-    PrismaModule, UserModule, ChatModule
+    PrismaModule,
+    UserModule,
+    ChatModule,
   ],
   controllers: [UserController],
-  providers : [UserService]
+  providers: [UserService],
 })
 export class AppModule {}
