@@ -1,3 +1,4 @@
 # Ignore all .env files with various extensions
 
 node_modules
+.env

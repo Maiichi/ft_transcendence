@@ -1,1 +1,3 @@
-export * from "./utils";
+import Loading from "./Loading";
+
+export { Loading };
