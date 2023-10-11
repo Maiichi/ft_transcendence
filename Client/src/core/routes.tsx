@@ -33,7 +33,7 @@ export const routes = [
       </Layout>
     ),
     errorElement: <NotFoundError />,
-    requireAuth: true,
+    requireAuth: false,
   },
   {
     path: "/account/settings",
