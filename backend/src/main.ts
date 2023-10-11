@@ -5,7 +5,6 @@ import {
   DocumentBuilder,
   SwaggerModule,
 } from '@nestjs/swagger';
-import * as cors from 'cors';
 
 async function bootstrap() {
   const app = await NestFactory.create(
@@ -13,7 +12,7 @@ async function bootstrap() {
     { cors: true },
   );
   app.enableCors({
-    origin: 'http://localhost:3003', // Replace with your client's origin URL
+    origin: process.env.FRONTEND_URL, // Replace with your client's origin URL
     credentials: true,
   });
   // Enable CORS

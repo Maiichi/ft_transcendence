@@ -7,12 +7,14 @@
   "private": true,
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^8.2.1",
     "husky": "^7.0.4"
   },
   "scripts": {
-    "prepareStart": "yarn clean:full && bolt && yarn prepare && chmod ug+x .husky/*",
+    "prepareStart": "concurrently \"cd client && yarn install\" \"cd backend && yarn install\"",
+    "appstart": "concurrently \"docker-compose up postgres -d\" \"cd backend && yarn start:dev\" \"cd client && yarn start\"",
     "prepare": "husky install",
-    "clean:full": "rm -rf node_modules && rm -rf Client/node_modules && rm -rf backend/node_modules"
+    "clean:full": "rm -rf node_modules && rm -rf client/node_modules && rm -rf backend/node_modules"
   },
   "dependencies": {
     "@commitlint/cli": "^16.0.1",

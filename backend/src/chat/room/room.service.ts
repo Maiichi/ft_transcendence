@@ -7,7 +7,8 @@ import { UserService } from "src/user/user.service";
 import { ChatService } from "../chat.service";
 import { MuteMemberDto, KickMemberDto, LeaveRoomDto, JoinRoomDto, SetRoomAdminDto } from "./dto/membership.dto";
 import { CreateRoomDto, UpdateRoomDto } from "./dto/room.dto";
-
+import { User } from "@prisma/client";
+import { Response } from 'express';
 
 @Injectable()
 export class RoomService
@@ -56,6 +57,29 @@ export class RoomService
         }
     }
     
+    // get the rooms where the current user is member in
+    async getUserRooms(user: User, res: Response)
+    {
+        try {
+            const rooms = await this.prisma.user.findMany({
+                where : {
+                    intraId: user.intraId
+                },
+                select: {
+                    memberships : {
+                        where: {
+                            isBanned: false,
+                        },
+                        select : {
+                            room: true
+                        }
+                    },
+                }
+            })
+        } catch (error) {
+            
+        }
+    }
     // async getAllRoomsInfos()
     // {
     //     const rooms = await this.prisma.room.findMany({
@@ -132,8 +156,24 @@ export class RoomService
                 isAdmin: true,
             },
         });
-        console.log(`${user.userName} has created a ${newRoom.name} room`)
-        return newRoom;
+
+        // step 3 : create a new conversation entry
+        await this.prisma.conversation.create({
+            data : {
+                type: 'channel',
+                room : {
+                    connect : {
+                        id: newRoom.id,
+                    }
+                }
+            }
+        });
+
+        // retrive the room created 
+        const retrivedRoom = await this.chatService.getRoom(newRoom.id);
+        // console.log(`${user.userName} has created a ${newRoom.name} room`);
+        // console.log("retrived room =", JSON.stringify(retrivedRoom));
+        return retrivedRoom;
         // } catch (error) {
         //     console.log("error || " + error)
         // }
@@ -261,7 +301,7 @@ export class RoomService
     async leaveRoom(body: LeaveRoomDto, userId: number)
     {
         if (!body.roomId)
-            throw new WsException('room Id is reauired !')
+            throw new WsException('room Id is required !')
         const room = await this.getRoomById(body.roomId);
         const user = await this.userService.getUser(userId);
         if(!user)
@@ -512,5 +552,46 @@ export class RoomService
             }
         });
         return conversation;
+   }
+
+   async getUserMemeberships(user: User, res: Response)
+   {
+        const memberships = await this.prisma.membership.findMany({
+            where : {
+                userId : user.intraId,
+                isBanned: false,
+            },
+            select : {
+                room : {
+                    select : {
+                        id: true,
+                        conversation : true,
+                        members: {
+                            select: {
+                                isAdmin: true,
+                                isBanned: true,
+                                isMute: true,
+                                isOwner: true,
+                                user: {
+                                    select : {
+                                        firstName: true,
+                                        lastName: true,
+                                        userName: true,
+                                    }
+                                }
+                            }
+                        },
+                        name: true,
+                        createdAt: true,
+                        updatedAt: true,
+                        password: true,
+                        type: true,
+                    }
+                },
+            }
+        });
+        return res.send({
+            data: memberships
+        })
    }
 }

@@ -1,86 +1,30 @@
-import { Avatar, FormControlLabel, Switch, TextField } from "@mui/material";
-import { useState } from "react";
-import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import {
-  Title,
-  Cards,
-  CardAvatar,
-  H5,
-  Divider,
-  ButtonAvatar,
-  CardForm,
-  ButtonForm,
-} from "./components";
+  Button,
 
-export const Profile = () => {
-  const [twoFact, setTwoFact] = useState<boolean>(false);
+  /***global**/
+  Root,
+} from "./styles";
+
+const Profile = () => {
+  const navigate = useNavigate();
+
   return (
     <Root>
-      <Title style={{ fontSize: "2rem" }}>Account Profile</Title>
-      <Cards>
-        <CardAvatar>
-          <Avatar
-            sx={{ width: "80px", height: "80px" }}
-            alt="Remy Sharp"
-            src="/static/images/avatar/1.jpg"
-          />
-          <Title style={{ fontSize: "1rem" }}>Bouroummana Ismail</Title>
-          <H5>ibouroum</H5>
-          <Divider />
-          <ButtonAvatar>Upload Picture</ButtonAvatar>
-        </CardAvatar>
-        <CardForm>
-          <Title style={{ fontSize: "1rem" }}>Profile</Title>
-          <H5>The informations can be edited</H5>
-          <TextField
-            sx={{ margin: "10px 0px", width: "80%" }}
-            required
-            id="firstname"
-            label="Firstname"
-            variant="outlined"
-            defaultValue="Ismail"
-          />
-          <TextField
-            sx={{ margin: "10px 0px", width: "80%" }}
-            required
-            id="lastname"
-            label="Lastname"
-            variant="outlined"
-            defaultValue="Bouroummana"
-          />
-          <TextField
-            sx={{ margin: "10px 0px", width: "80%" }}
-            required
-            id="username"
-            label="Username"
-            variant="outlined"
-            defaultValue="ibouroum"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={twoFact}
-                onChange={() => setTwoFact(!twoFact)}
-                name="2FA"
-              />
-            }
-            label="Two Factor Authentication"
-          />
-          <TextField
-            sx={{ margin: "10px 0px", width: "80%" }}
-            required
-            id="outlined-basic"
-            label="Phone"
-            variant="outlined"
-            defaultValue="+212689912489"
-          />
-          <Divider />
-          <ButtonForm>Save Details</ButtonForm>
-        </CardForm>
-      </Cards>
+      <Button onClick={() => navigate("/Leaderboard")}>
+        See more {"...< >>Leaderboard >"}
+      </Button>
     </Root>
   );
 };
-const Root = styled.div`
-  padding: 10px;
-`;
+
+/**
+ *  Profile Component
+ *
+ * The Profile component is responsible for rendering and displaying user profile information.
+ * It typically receives user data as props and presents it in a structured format.
+ * This component can be used to show details such as the user's name, profile picture, bio,
+ * and other relevant information.
+ *
+ **/
+export { Profile };

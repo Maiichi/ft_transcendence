@@ -1,3 +1,2 @@
 export * from "./Chat";
-
-export * from "./message/Message"
+export * from "../../core/socket/socketSlice";
