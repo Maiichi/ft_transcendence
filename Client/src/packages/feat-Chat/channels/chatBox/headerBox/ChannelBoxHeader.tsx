@@ -1,30 +1,60 @@
 import { useState } from "react";
-import {
-  Person,
-  PersonAddAltRounded,
-} from "@mui/icons-material";
-import { Box, Modal } from "@mui/material";
+import { Person, PersonAddAltRounded } from "@mui/icons-material";
+import { Box, Modal, PopperPlacementType } from "@mui/material";
 import { I_Room } from "../../../Types/types";
 import styled from "styled-components";
 import { LeaveRoomModal } from "../../modals/leaveChannelModal";
-
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { PopperComponent } from "../../../../../core";
+const UpdateRoomForm = () => {
+  return <>UpdateRoomForm</>;
+};
 export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
   const { channelConversation } = props;
-  const [open, setOpen] = useState(false);
-
+  const [open, setOpen] = useState({
+    users: false,
+    updateRoom: false,
+  });
+  const [anchorEl, setAnchorEl] = useState<any | null>(null);
+  const [popperStyle, setPopperStyle] = useState<React.CSSProperties>();
+  const [placement, setPlacement] = useState<PopperPlacementType>();
+  const [ChildPopper, setChildPopper] = useState<JSX.Element>(
+    <UpdateRoomForm />
+  );
   const handleClose = () => {
-    setOpen(false);
+    setOpen({ ...open, users: false });
+  };
+  const handleUpdateRoom = (e: React.MouseEvent<any>) => {
+    console.log("hanlde");
+    setAnchorEl(e.currentTarget);
+    setOpen({ ...open, updateRoom: true });
   };
 
-  
   return (
     <>
-      <h4># {channelConversation.name} </h4>
+      <h4>
+        # {channelConversation.name}{" "}
+        <ArrowDropDownIcon onClick={(e) => handleUpdateRoom(e)} />
+      </h4>
+      <PopperComponent
+        paperStyle={{
+          backgroundColor: "rgb(255, 255, 255)",
+          color: "rgb(54, 65, 82)",
+          borderRadius: "10px",
+          overflow: "hidden",
+          border: "none rgba(144, 202, 249, 0.145)",
+        }}
+        popperStyle={popperStyle}
+        anchorEl={anchorEl}
+        open={open.updateRoom}
+        placement="bottom-start"
+        ChildComponent={ChildPopper}
+      />
       <IconHolder>
-        <ChannelMembers onClick={() => setOpen(true)}>
+        <ChannelMembers onClick={() => setOpen({ ...open, users: true })}>
           <Person /> {channelConversation.members.length}
           <Modal
-            open={open}
+            open={open.users}
             onClose={handleClose}
             aria-labelledby="modal-search-invite-users-to-room"
             aria-describedby="modal-description"
@@ -32,11 +62,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
             <Box sx={boxStyle}>
               <ModalHeader>
                 <h2>Users</h2>
-                <ButtonCloseModal
-                  onClick={handleClose}
-                >
-                  X
-                </ButtonCloseModal>
+                <ButtonCloseModal onClick={handleClose}>X</ButtonCloseModal>
                 {/* <Close className={"close-button"} style={{cursor: 'pointer'}} onClick={() => setOpen(false)} /> */}
               </ModalHeader>
               <div
@@ -47,7 +73,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
               >
                 <div className="modal-search">{/* <SearchComponent /> */}</div>
                 <ModalInviteUser
-                  // onClick={() => setOpenInviteModal(true)}
+                // onClick={() => setOpenInviteModal(true)}
                 >
                   <PersonAddAltRounded fontSize="large" />
                   <h4 style={{ marginLeft: "10px" }}>Invite user</h4>
@@ -64,12 +90,11 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
             </Box>
           </Modal>
         </ChannelMembers>
-        <LeaveRoomModal channelConversation={channelConversation}/>
+        <LeaveRoomModal channelConversation={channelConversation} />
       </IconHolder>
     </>
   );
 };
-
 
 const boxStyle = {
   position: "absolute" as "absolute",
@@ -115,7 +140,6 @@ const ButtonCloseModal = styled.button`
   width: 40px;
   border-radius: 10px;
   background-color: red;
-
 `;
 
 const ModalInviteUser = styled.div`
@@ -149,7 +173,7 @@ const ButtonLeave = styled.div`
   border-radius: 10px;
   cursor: pointer;
   background: red;
-  &:hover{
+  &:hover {
     background-color: rgb(244, 56, 56);
     color: #f1f1f1;
   }
@@ -165,7 +189,7 @@ const ButtonCancel = styled.div`
 `;
 
 const ModalFooter = styled.div`
-    margin: 25px 0px 0px 0px;
-    display: flex;
-    justify-content: space-evenly;
+  margin: 25px 0px 0px 0px;
+  display: flex;
+  justify-content: space-evenly;
 `;

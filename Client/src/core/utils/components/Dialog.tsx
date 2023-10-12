@@ -53,32 +53,6 @@ export const SimpleDialog = (props: SimpleDialogProps) => {
       onClose={handleClose}
       open={open}
       classes={{ container: classes.myButton, paper: classes.myButto }}
-    >
-      <DialogTitle>Set backup account</DialogTitle>
-      <List sx={{ pt: 0 }}>
-        {emails.map((email) => (
-          <ListItem disableGutters>
-            <ListItemButton onClick={() => handleListItemClick()} key={email}>
-              <ListItemAvatar>
-                <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
-                  <PersonIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={email} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-        <ListItem disableGutters>
-          <ListItemButton autoFocus onClick={() => handleListItemClick()}>
-            <ListItemAvatar>
-              <Avatar>
-                <AddIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="Add account" />
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </Dialog>
+    ></Dialog>
   );
 };
