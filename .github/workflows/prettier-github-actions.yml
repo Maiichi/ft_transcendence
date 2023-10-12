@@ -1,8 +1,9 @@
 name: Prettier
 
 on:
-  pull_request:
-    branches: [develop]
+  push:
+    branches: 
+      - '*'
 
 jobs:
   prettier:
