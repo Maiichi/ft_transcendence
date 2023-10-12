@@ -1,471 +1,226 @@
-import { Button, LinearProgress, LinearProgressProps } from "@mui/material";
-
+import {
+  Alert,
+  Avatar,
+  FormControlLabel,
+  FormHelperText,
+  Switch,
+  TextField,
+} from "@mui/material";
+import { useState } from "react";
 import styled from "styled-components";
-import CircularProgress, {
-  CircularProgressProps,
-} from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Box from "@mui/material/Box";
-import Logo from "./federation.png";
-import Logo1 from "./Logo2.png";
-import Logo2 from "./Logo1.png";
-import Logo3 from "./Logo4.png";
-import Picture from "./Picture.png";
-import Pic from "./Pic.png";
-import Women from "./Women.png";
-import VerifiedIcon from "@mui/icons-material/Verified";
-import PendingIcon from "@mui/icons-material/Pending";
+import {
+  Title,
+  Cards,
+  CardAvatar,
+  H5,
+  Divider,
+  ButtonAvatar,
+  CardForm,
+  ButtonForm,
+} from "./components";
+import TwoFactorSetup from "../feat-Auth/components/TwoFactorSetup";
+import { useAppDispatch, useAppSelector } from "../../core";
+import { styled as muiStyled } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { CheckCircle } from "@mui/icons-material";
+import { uploadAvatar } from "../feat-Auth/components/authThunk";
 
-const LinearProgressWithLabel = (
-  props: LinearProgressProps & { value: number }
-) => {
+const VisuallyHiddenInput = muiStyled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+
+export const AccountSettings = () => {
+  const auth = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [fileInfos, setFileInfos] = useState<File | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setImageError(null);
+      const fileInput = event.target;
+
+      if (fileInput && fileInput.files && fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+
+          if (file) {
+              // Read the selected image and set it in the state for preview
+              const reader = new FileReader();
+
+              reader.onload = (e) => {
+                  if (e.target && typeof e.target.result === "string") {
+                      if (file.size > MAX_IMAGE_SIZE) {
+                          setImageError(
+                              "Image size exceeds the allowed limit."
+                          );
+                          // Optionally, you can reset the input to clear the selected file
+                          event.target.value = "";
+                      } else {
+                          setFileInfos(file);
+                          setSelectedImage(e.target.result);
+                      }
+                  }
+              };
+
+              reader.onerror = (e) => {
+                  // Handle errors here
+                  setImageError("Error reading the file.");
+                  console.log("Error reading the file:", e?.target?.error);
+              };
+
+              reader.onabort = (e) => {
+                  // Handle aborts (e.g., if the user cancels the file input)
+                  setImageError("Error reading the file.");
+                  console.warn("File reading aborted:", e);
+              };
+
+              reader.readAsDataURL(file);
+          }
+      }
+  };
+
+  const handleUpload = () => {
+      if (selectedImage) {
+          const imageBlob = new Blob([selectedImage], {
+              type: fileInfos?.type,
+          });
+
+          // Create a form data object
+          const formData = new FormData();
+
+          // Append the image data to the form data
+          formData.append("file", imageBlob, fileInfos?.name);
+          dispatch(
+              uploadAvatar({
+                  id: auth.user.intraId,
+                  token: auth.token,
+                  formData: formData,
+                  picture: "",
+              })
+          ).then(() => {
+              setSelectedImage(null);
+          });
+      } else {
+          setImageError("Error uploading the file, please retry.");
+      }
+  };
+  console.log("im >", require(`/app/images_uploads/${auth.user.avatar_url}`))
   return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: "100%", mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value
-        )}%`}</Typography>
-      </Box>
-    </Box>
-  );
-};
-
-const CircularProgressWithLabel = (
-  props: CircularProgressProps & { value: number }
-) => {
-  return (
-    <Box sx={{ position: "relative", display: "inline-flex" }}>
-      <CircularProgress variant="determinate" {...props} />
-      <Box
-        sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          position: "absolute",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Typography
-          variant="caption"
-          component="div"
-          color="text.secondary"
-        >{`${Math.round(props.value)}%`}</Typography>
-      </Box>
-    </Box>
-  );
-};
-const AchievementsArr = [
-  {
-    name: "Hero",
-    Description: "Must play 10 games",
-    progress: 100,
-    isValid: true,
-    logo: Logo,
-  },
-  {
-    name: "Hero",
-    Description: "Must play 10 games",
-    progress: 100,
-    isValid: true,
-    logo: Logo,
-  },
-  {
-    name: "Hero",
-    Description: "Must play 10 games",
-    progress: 100,
-    isValid: true,
-    logo: Logo,
-  },
-  {
-    name: "Hero",
-    Description: "Must play 10 games",
-    progress: 100,
-    isValid: true,
-    logo: Logo,
-  },
-  {
-    name: "Athlete",
-    Description: "Must win 10 games",
-    progress: 100,
-    isValid: true,
-    logo: Logo1,
-  },
-  {
-    name: "Diamond",
-    Description: "Must win 100 games",
-    progress: 40,
-    isValid: false,
-    logo: Logo2,
-  },
-  {
-    name: "Bronze",
-    Description: "Must play 500 games",
-    progress: 10,
-    isValid: false,
-    logo: Logo3,
-  },
-];
-const Histories = [
-  {
-    user: {
-      name: "izajhk",
-      picture: Pic,
-    },
-    score: [13333333, 4],
-  },
-  {
-    user: {
-      name: "di",
-      picture: Pic,
-    },
-    score: [2, 4],
-  },
-  {
-    user: {
-      name: "johytuytuytuytutyutyn",
-      picture: Pic,
-    },
-    score: [6, 4],
-  },
-  {
-    user: {
-      name: "mbvfbfbark",
-      picture: Women,
-    },
-    score: [1, 2],
-  },
-  {
-    user: {
-      name: "sara",
-      picture: Women,
-    },
-    score: [4, 4],
-  },
-];
-const TopPlayersArr = [
-  {
-    name: "Lionnel",
-    ladder: 100,
-    wins: 50,
-    loss: 10,
-    achievement: Logo2,
-    picture: Women,
-  },
-  {
-    name: "mark",
-    ladder: 90,
-    wins: 40,
-    loss: 15,
-    achievement: Logo1,
-    picture: Picture,
-  },
-  {
-    name: "john",
-    ladder: 75,
-    wins: 50,
-    loss: 40,
-    achievement: Logo3,
-    picture: Pic,
-  },
-];
-export const Settings = () => {
-  return (
-    <Root>
-      <Cards>
-        <LeftCard>
-          <CardAvatar>
-            <div style={{}}>
-              <H5>The federation</H5>
-              <img alt="Remy Sharp" src={Logo} />
-              <H5>#155</H5>
-            </div>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "40px" }}
-            >
-              <div
-                style={{ display: "flex", gap: "20px", alignItems: "center" }}
-              >
-                <img
-                  style={{ width: "80px", height: "80px" }}
-                  alt="Remy Sharp"
-                  src={Picture}
-                />
-                <Title style={{ fontSize: "1rem" }}>Ibouroum</Title>
-                <CircularProgressWithLabel value={60} />
-              </div>
-              <div style={{ display: "flex", gap: "20px" }}>
-                <div style={{}}>
-                  <H5>Wins </H5>
-                  <Title>50 </Title>
-                </div>
-                <div style={{}}>
-                  <H5>Losses </H5>
-                  <Title>10 </Title>
-                </div>
-
-                <div style={{}}>
-                  <H5>Ladder level </H5>
-                  <Title>5 </Title>
-                </div>
-              </div>
-            </div>
-          </CardAvatar>
-          <Achievements>
-            <Title
-              style={{
-                position: "sticky",
-                top: 0,
-                zIndex: 1,
-                backgroundColor: "#f0f0f0",
-                padding: "10px",
-              }}
-            >
-              Achievements
-            </Title>
-
-            {AchievementsArr.map((item) => (
-              <Achievement
-                color={
-                  item.isValid == true ? "#f0fff0" : "rgba(156, 163, 175, 0.1)"
-                }
-              >
-                <img
-                  style={{ width: "35px", height: "55px" }}
-                  alt="Remy Sharp"
-                  src={item.logo}
-                />
-                <div style={{ textAlign: "start" }}>
-                  <Title>{item.name}</Title>
-                  <H5>{item.Description} </H5>
-                  <LinearProgressWithLabel value={item.progress} />
-                </div>
-                {item.isValid ? (
-                  <VerifiedIcon color="success" />
-                ) : (
-                  <PendingIcon color="disabled" />
-                )}
-              </Achievement>
-            ))}
-          </Achievements>
-        </LeftCard>
-        <RightCard>
-          <TopPlayers>
-            <Title>Top 5 Players</Title>
-
-            {TopPlayersArr.map((item, index) => (
-              <Player>
-                <img
-                  style={{ width: "30px", height: "45px", margin: "5px" }}
-                  alt="Remy Sharp"
-                  src={item.achievement}
-                />
-                <H5># {index + 1}</H5>
-                <img
-                  style={{ width: "30px", height: "30px" }}
-                  alt="Remy Sharp"
-                  src={item.picture}
-                />
-                <Title>{item.name}</Title>
-                <div style={{ display: "flex", gap: "20px" }}>
-                  <div style={{}}>
-                    <Title>{item.ladder} </Title>
-                    <H5>Ladder </H5>
-                  </div>
-                  <div style={{}}>
-                    <Title>{item.wins} </Title>
-                    <H5>Wins </H5>
-                  </div>
-                  <div style={{}}>
-                    <Title>{item.loss}</Title>
-                    <H5>Losses </H5>
-                  </div>
-                </div>
-                <MoreVertIcon />
-              </Player>
-            ))}
-
-            <Button onClick={() => console.log("Leaderboard")}>
-              See Full Leaderboard
-            </Button>
-          </TopPlayers>
-          <MatchHistory>
-            <Title>My Last 5 Matches </Title>
-            {Histories.map((item) => (
-              <Score
-                color={
-                  item.score[0] - item.score[1] == 0
-                    ? "rgb(65 128 220)"
-                    : item.score[0] - item.score[1] > 0
-                    ? "rgb(46 125 50)"
-                    : "rgb(231 16 16)"
-                }
-              >
-                <div style={{ flex: "1" }}>
-                  <img
-                    style={{ width: "30px", height: "45px", margin: "5px" }}
-                    alt="Remy Sharp"
-                    src={Picture}
+      <Root>
+          <Title style={{ fontSize: "2rem" }}>Account Profile</Title>
+          <Cards>
+              <CardAvatar>
+                  <Avatar
+                      sx={{ width: "80px", height: "80px" }}
+                      alt={auth.user.userName}
+                      src={
+                          selectedImage ||
+                          require(`/app/images_uploads/${auth.user.avatar_url}`) ||
+                          "/static/images/avatar/1.jpg"
+                      }
                   />
-                  <H5>ibouroum </H5>
-                </div>
-                <div style={{ flexBasis: "20%" }}>
-                  <Title style={{ margin: "0" }}>{item.score[0]} </Title>
-                  <H5 style={{ margin: "0" }}>VS</H5>
-                  <Title style={{ margin: "0" }}>{item.score[1]} </Title>
-                </div>
-                <div style={{ flex: "1" }}>
-                  <img
-                    style={{
-                      width: "30px",
-                      height: "45px",
-                      margin: "5px",
-                    }}
-                    alt="Remy Sharp"
-                    src={item.user.picture}
+                  <Title style={{ fontSize: "1rem" }}>
+                      {auth.user.userName}
+                  </Title>
+                  <Divider />
+                  {imageError && (
+                      <Alert
+                          severity="error"
+                          onClose={() => {
+                              setImageError(null);
+                          }}
+                      >
+                          {imageError}
+                      </Alert>
+                  )}
+                  {selectedImage ? (
+                      <Button
+                          color="success"
+                          component="label"
+                          variant="contained"
+                          startIcon={<CheckCircle />}
+                          onClick={handleUpload}
+                      >
+                          Confirm upload
+                      </Button>
+                  ) : (
+                      <Button
+                          component="label"
+                          variant="contained"
+                          startIcon={
+                              selectedImage ? (
+                                  <CheckCircle />
+                              ) : (
+                                  <CloudUploadIcon />
+                              )
+                          }
+                      >
+                          Upload picture
+                          <VisuallyHiddenInput
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageChange}
+                          />
+                      </Button>
+                  )}
+              </CardAvatar>
+              <CardForm>
+                  <Title style={{ fontSize: "1rem" }}>Profile</Title>
+                  <H5>The informations can be edited</H5>
+                  {/* <TextField
+          sx={{ margin: "10px 0px", width: "80%" }}
+          required
+          id="firstname"
+          label="Firstname"
+          variant="outlined"
+          defaultValue="Ismail"
+        />
+        <TextField
+          sx={{ margin: "10px 0px", width: "80%" }}
+          required
+          id="lastname"
+          label="Lastname"
+          variant="outlined"
+          defaultValue="Bouroummana"
+        /> */}
+                  <TextField
+                      sx={{ margin: "10px 0px", width: "80%" }}
+                      required
+                      id="username"
+                      label="Username"
+                      variant="outlined"
+                      defaultValue={auth.user.userName}
                   />
-                  <H5>{item.user.name}</H5>
-                </div>
-              </Score>
-            ))}
-          </MatchHistory>
-        </RightCard>
-      </Cards>
-    </Root>
+                  <TwoFactorSetup
+                      twoFactorActivate={auth.user.twoFactorActivate}
+                  />
+                  {/* <TextField
+          sx={{ margin: "10px 0px", width: "80%" }}
+          required
+          id="outlined-basic"
+          label="Phone"
+          variant="outlined"
+          defaultValue="+212689912489"
+        /> */}
+                  <Divider />
+                  <ButtonForm>Save Details</ButtonForm>
+              </CardForm>
+          </Cards>
+      </Root>
   );
 };
-const Score = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: ${(p) => p.color} 0px 0px 8px 0px;
-  margin: 10px;
-  border-radius: 8px;
-`;
 const Root = styled.div`
   padding: 10px;
-`;
-const Cards = styled.div`
-  display: flex;
-  @media (max-width: 426px) {
-    align-items: center;
-    flex-direction: column;
-  }
-`;
-const LeftCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  @media (max-width: 426px) {
-  }
-`;
-const RightCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  @media (max-width: 426px) {
-  }
-`;
-const CardAvatar = styled.div`
-  margin-right: 5px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  -webkit-box-align: center;
-  align-items: center;
-  text-align: center;
-  display: flex;
-  padding: 10px;
-  gap: 40px;
-  @media (max-width: 426px) {
-  }
-`;
-
-const Achievements = styled.div`
-  margin-right: 5px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  -webkit-box-align: center;
-  align-items: center;
-  text-align: center;
-  padding: 10px;
-  max-height: 500px;
-  overflow-y: scroll;
-  gap: 40px @media (max-width: 426px) {
-
-  }
-`;
-
-const Achievement = styled.div`
-  display: flex;
-  background: ${(p) => p.color};
-  margin: 10px;
-  justify-content: space-around;
-  align-items: center;
-`;
-
-const Title = styled.h4`
-  margin: 0px;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-weight: 700;
-  margin-top: 16px;
-  margin-bottom: 5px;
-  line-height: 1.2;
-  flex: 1 1 15%;
-`;
-
-const H5 = styled.h4`
-  margin: 0px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.57;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  color: rgb(108, 115, 127);
-`;
-const TopPlayers = styled.div`
-  margin-right: 5px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  -webkit-box-align: center;
-
-  text-align: center;
-  padding: 10px;
-  @media (max-width: 426px) {
-  }
-`;
-const MatchHistory = styled.div`
-  margin-right: 5px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  -webkit-box-align: center;
-  padding: 10px;
-  text-align: center;
-  @media (max-width: 426px) {
-  }
-`;
-const Player = styled.div`
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  text-align: start;
-  border-radius: 8.295px;
-  gap: 20px;
-  margin: 10px;
-  justify-content: space-around;
-  background: rgba(156, 163, 175, 0.1);
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 2.07377px 4.14754px 0px;
 `;
