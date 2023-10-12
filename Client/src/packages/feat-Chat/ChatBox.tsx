@@ -10,7 +10,8 @@ interface ChatBoxProps {
     conversation: I_Discussion | null;
   }
 export const ChatBox: React.FC<ChatBoxProps> = ({ conversation }) => {
-    console.log("ChatBox Rendring !");
+
+
     const state: CoreState = useAppSelector((state) => state.core);
 
     if (conversation?.type === "direct" && conversation.direct && state.isConversation) {

@@ -1,9 +1,6 @@
 name: Prettier
 
-on:
-  push:
-    branches: 
-      - '*'
+on: [push]
 
 jobs:
   prettier:
