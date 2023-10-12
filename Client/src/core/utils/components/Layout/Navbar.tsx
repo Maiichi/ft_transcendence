@@ -18,6 +18,11 @@ const Menu = [
     icon: SearchIcon,
   },
   {
+    redirect: "/search",
+    render: "Search",
+    icon: SearchIcon,
+  },
+  {
     redirect: "/game",
     render: "Game",
     icon: SportsEsportsIcon,
