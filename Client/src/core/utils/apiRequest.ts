@@ -1,14 +1,16 @@
 import axios, { AxiosRequestConfig } from "axios";
 
 // Define the base API URL
-const API_BASE_URL = "http://localhost:5001/api";
+const API_BASE_URL =
+    process.env.REACT_APP_API_BASE_URL || "http://localhost:5001/api";
 
 // Define an interface for custom request options
 interface ApiRequestOptions extends AxiosRequestConfig {
     headers: {
         Authorization: string;
     };
-    method: "GET" | "POST";
+    method: "GET" | "POST" | "PATCH";
+    data?: any;
 }
 
 /**

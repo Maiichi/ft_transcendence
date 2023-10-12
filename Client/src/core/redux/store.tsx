@@ -7,26 +7,39 @@ import todosSlice from "../../packages/feat-Test/components/TodosSlice";
 import authSlice from "../../packages/feat-Auth/components/authSlice";
 import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
+import FilterSlice from "../utils/components/Input/SearchSlice";
+import SocketMiddleware from "../socket/socketMiddleware";
+import socketSlice from "../socket/socketSlice";
+import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice";
+import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
+import leaderboardSlice from "../../packages/feat-Account/API.d/ProfileSlice";
 // ...
 
 const rootReducer = combineReducers({
-    counter: counterSlice,
-    todos: todosSlice,
-    auth: authSlice,
-    core: coreSlice,
+  counter: counterSlice,
+  todos: todosSlice,
+  auth: authSlice,
+  core: coreSlice,
+  channels: roomSlice,
+  directMessage: DirectMessageSlice,
+  filter: FilterSlice,
+  socket: socketSlice,
+  leaderboard: leaderboardSlice,
 });
 
 const persistConfig = {
-    key: "root", // Key to access your storage
-    storage,
-    whitelist: ["auth"],
-    transforms: [decryptionTransform], // Use the custom transform
+  key: "root", // Key to access your storage
+  storage,
+  whitelist: ["auth"],
+  transforms: [decryptionTransform], // Use the custom transform
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-    reducer: persistedReducer,
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat([SocketMiddleware]),
 });
 
 export const persistor = persistStore(store);

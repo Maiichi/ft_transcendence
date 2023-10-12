@@ -1,4 +1,4 @@
 export * from "./routes";
-export * from "./errors";
+export * from "./utils/components/errors";
 export * from "./redux";
 export * from "./utils"

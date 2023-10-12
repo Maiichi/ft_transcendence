@@ -9,9 +9,14 @@ interface RequireAuthProps {
 
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
     const isAuthenticated = useAuthentication();
+    // console.log(
+    //   "RequireAuth Rendering",
+    //   children.props.children.type.name,
+    //   isAuthenticated
+    // );
     const navigate = useNavigate();
-    const isFirstLogin = useAppSelector((state) => state.auth.firstLogin);
-
+    const authState = useAppSelector((state) => state.auth);
+    const isFirstLogin = authState.firstLogin;
     React.useEffect(() => {
         if (!isAuthenticated) {
             navigate("/login");
@@ -19,7 +24,10 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
         if (isFirstLogin) {
             navigate("/firstlogin");
         }
-    }, [navigate, isAuthenticated]);
+        if (authState.shouldVerifyTwoFactor) {
+            navigate("/verifyOtp");
+        }
+    }, [isAuthenticated]);
 
     // Render the wrapped content if authenticated
     return children;

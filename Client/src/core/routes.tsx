@@ -1,9 +1,9 @@
-import { Test, Home, Game, Settings, Profile } from "../packages";
+import { Test, Home, Game, AccountSettings, Profile, Chat, Leaderboard } from "../packages";
 import Login from "../packages/feat-Auth/Login";
 import FirstLogin from "../packages/feat-Auth/components/FirstLogin";
-
-import { NotFoundError } from "./errors";
+import VerifyOtp from "./VerifyOtp";
 import { Layout } from "./utils";
+import { NotFoundError } from "./utils/components/errors";
 
 export const routes = [
   {
@@ -34,13 +34,13 @@ export const routes = [
       </Layout>
     ),
     errorElement: <NotFoundError />,
-    requireAuth: true,
+    requireAuth: false,
   },
   {
     path: "/account/settings",
     element: (
       <Layout>
-        <Settings />
+        <AccountSettings />
       </Layout>
     ),
     errorElement: <NotFoundError />,
@@ -57,15 +57,35 @@ export const routes = [
     requireAuth: true,
   },
   {
+    path: "/chat",
+    element: (
+      <Layout>
+        <Chat />
+      </Layout>
+    ),
+    errorElement: <NotFoundError />,
+    requireAuth: true,
+  },
+  {
+    path: "/leaderboard",
+    element: (
+      <Layout>
+        <Leaderboard />
+      </Layout>
+    ), 
+    errorElement: <NotFoundError />,
+    requireAuth: true,
+  },
+  {
     path: "/firstlogin",
     element: <FirstLogin />,
     errorElement: <NotFoundError />,
     requireAuth: true,
-},
-{
+  },
+  {
     path: "/login",
     element: <Login />,
     errorElement: <NotFoundError />,
     requireAuth: false,
-},
+  },
 ];

@@ -25,6 +25,7 @@ import { setDisplayNavbar } from "../../../CoreSlice";
 import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
 import { setToken } from "../../../../packages/feat-Auth/components/authSlice";
 import { useNavigate } from "react-router-dom";
+import { disconnectSocket } from "../../../socket/socketSlice";
 
 
 type Anchor = "top" | "left" | "bottom" | "right";
@@ -195,7 +196,20 @@ export const Header = () => {
             ),
         },
     ];
-
+    // <SearchIcon
+            //   className={classes.iconBase}
+            //   style={{ marginLeft: "10px", marginRight: "auto" }}
+            //   onClick={popperClick(
+            //     "bottom",
+            //     <SearchComponent clear={true} setOpen={setOpen} />,
+            //     "search",
+            //     {
+            //       padding: "5px 10px",
+            //       marginTop: "-34px!important",
+            //       background: "#ffffff",
+            //       width: "100%",
+            //     }
+            //   )}
     return (
         <>
             {isMobile && (
@@ -228,7 +242,7 @@ export const Header = () => {
                             onClick={toggleDrawer("left", true)}
                         />
 
-                        <SearchIcon
+                        {/* <SearchIcon
                             className={classes.iconBase}
                             style={{ marginLeft: "10px", marginRight: "auto" }}
                             onClick={popperClick(
@@ -245,7 +259,7 @@ export const Header = () => {
                                     width: "-webkit-fill-available",
                                 }
                             )}
-                        />
+                        /> */}
                     </>
                 ) : (
                     <>
@@ -258,7 +272,7 @@ export const Header = () => {
                             />
                             <>LOGO</>
                         </Left>
-                        <SearchComponent />
+                        {/* <SearchComponent /> */}
                     </>
                 )}
                 <Right>
@@ -269,6 +283,7 @@ export const Header = () => {
                             className={classes.iconBase}
                             onClick={() => {
                                 dispatch(setToken(null));
+                                dispatch(disconnectSocket())
                                 navigate("/login");
                             }}
                         />

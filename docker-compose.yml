@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   postgres:
     image: postgres:13
@@ -19,7 +19,7 @@ services:
       context: ./backend
       target: development
     ports:
-      - "127.0.0.1:${BACKEND_PORT}:5001"
+      - "127.0.0.1:${BACKEND_PORT}:${BACKEND_PORT}"
       - "127.0.0.1:5555:5555" #for prisma Database Management
     depends_on:
       - postgres
@@ -35,7 +35,7 @@ services:
       context: ./Client
       target: development
     ports:
-      - "127.0.0.1:${FRONTEND_PORT}:3000"
+      - "127.0.0.1:${FRONTEND_PORT}:${FRONTEND_PORT}"
     depends_on:
       - backend
     networks:
@@ -45,9 +45,8 @@ services:
       - /app/node_modules
       - images_uploads:/app/images_uploads/ # shared volume for image uploads
 volumes:
-    db_data:
-    images_uploads:
-
+  db_data:
+  images_uploads:
 
 networks:
   NET1:

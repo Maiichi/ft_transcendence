@@ -79,7 +79,7 @@ export class UserService {
             if (!usernameExist)
             {
                 // perform the update
-                await this.prisma.user.update({
+                const user = await this.prisma.user.update({
                     where: {intraId: userId} ,
                     data : {
                         userName : dto.userName
@@ -89,7 +89,8 @@ export class UserService {
                 });
                 return  res.status(200).json({
                             status: 200,
-                            message : 'Username updated successfully'
+                            message : 'Username updated successfully',
+                            data: user
                         });
             }
             else
@@ -115,7 +116,7 @@ export class UserService {
         // const usernameExist = await this.findUserByUsername(username);
         if (userExist)
         {
-            await this.prisma.user.update({
+            this.prisma.user.update({
                 where: {intraId: userId} ,
                 data : {
                     avatar_url : avatar.filename
@@ -124,7 +125,8 @@ export class UserService {
                 if (resp)
                     return res.status(200).json({
                         status: 200,
-                        message: 'Avatar updated successfully'
+                        message: 'Avatar updated successfully',
+                        data: resp
                     })
             })
         }
@@ -146,6 +148,7 @@ export class UserService {
         {
             const user = await this.getUser(userId);
             const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
+            console.log('filePath == ', filePath);
             res.sendFile(filePath);
         }
         else
@@ -226,6 +229,24 @@ export class UserService {
             }
         })
         return user ? true : false;
+    }
+
+
+    /* update User Status */
+    async updateUserStatus(userId: number, status: string)
+    {
+        const user = await this.getUser(userId);
+        if (user)
+        {
+            await this.prisma.user.update({
+                where: {intraId : userId},
+                data : {
+                    status : status
+                }
+            });
+        }
+        else
+            throw new NotFoundException(`userId ${userId} not found`)
     }
 
 }
