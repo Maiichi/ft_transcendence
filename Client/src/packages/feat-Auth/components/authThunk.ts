@@ -106,7 +106,12 @@ export const disableTwoFactor = createAsyncThunk(
 
 export const uploadAvatar = createAsyncThunk(
     "auth/uploadAvatar",
-    async (payload: { id: number; token: string; formData: FormData, picture: "" }) => {
+    async (payload: {
+        id: number;
+        token: string;
+        formData: FormData;
+        picture: string;
+    }) => {
         try {
             const resp = await apiRequest(
                 `/users/${payload.id}/upload-avatar`,
@@ -119,9 +124,9 @@ export const uploadAvatar = createAsyncThunk(
                 }
             );
 
-            payload.picture = resp.data.avatar_url
+            payload.picture = resp.data.avatar_url;
 
-            return payload;
+            return payload.picture;
         } catch (error) {
             console.error("Avatar update failed:", error);
             throw error; // Propagate the error to be handled by .rejected case
