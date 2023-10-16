@@ -4,15 +4,13 @@ import { useAppDispatch, useAppSelector } from "../../../../core";
 import { createRoom } from "../redux/roomSlice";
 import styled from "styled-components";
 import { AntSwitch } from "../../components/AntSwitch";
+import { Field, Form } from "react-final-form";
 
 export const CreateChannelModal = (props: { handleClose: () => void }) => {
   const { handleClose } = props;
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.user);
-  const [activate, setActivate] = useState(false);
-  const [roomName, setRoomName] = useState("");
-  const [roomDesc, setRoomDesc] = useState("");
-  const [roomPassword, setRoomPassword] = useState("");
+  const [activate, setActivate] = useState(true);
   const [roomCreationError, setRoomCreationError] = useState(null);
   const toggleActivate = () => {
     setActivate(!activate);
@@ -23,21 +21,50 @@ export const CreateChannelModal = (props: { handleClose: () => void }) => {
     if (roomCreationError) setRoomCreationError(null);
   };
 
-  const handleCreateRoom = () => {
+  const handleCreateRoom = (values: any) => {
     const roomData = {
-      name: roomName,
+      name: values.name,
       ownerId: account.intraId,
-      description: roomDesc,
-      type: activate ? "private" : "public",
-      password: roomPassword,
+      description: values.description,
+      type: activate ? "public" : "private",
+      password: values.password,
     };
     dispatch(createRoom(roomData));
-    setRoomName("");
-    setRoomDesc("");
-    setRoomPassword("");
     handleClose();
   };
 
+  const validate = (value: any) => {
+    console.log("validate : ", value);
+    const errors = {};
+
+    return errors;
+  };
+  const fields = [
+    {
+      name: "name",
+      required: true,
+      hidden: false,
+      label: "Channel name",
+      type: "text",
+      holder: "new channel",
+    },
+    {
+      name: "description",
+      required: false,
+      hidden: false,
+      label: "Channel Description (optional)",
+      type: "text",
+      holder: "channel description",
+    },
+    {
+      name: "password",
+      required: false,
+      hidden: activate,
+      label: "Password",
+      type: "password",
+      holder: "password",
+    },
+  ];
   return (
     <div>
       <ModalHeader>
@@ -46,53 +73,59 @@ export const CreateChannelModal = (props: { handleClose: () => void }) => {
       </ModalHeader>
       <ModalBody>
         {/* Display the error message here */}
-        {roomCreationError && <ErrorMessage>{roomCreationError}</ErrorMessage>}
-
-        <ChannelFieldHolder>
-          Channel name
-          <FieldInput
-            type="text"
-            placeholder="new-channel"
-            value={roomName}
-            onChange={(text) => setRoomName(text.target.value)}
-          />
-        </ChannelFieldHolder>
-        <ChannelFieldHolder>
-          Channel Description (optional)
-          <FieldInput
-            placeholder="channel description"
-            value={roomDesc}
-            onChange={(text) => setRoomDesc(text.target.value)}
-          />
-        </ChannelFieldHolder>
-        <div>
-          <PasswordHeaderHolder>
-            {activate ? <LockSharp /> : <LockOpenSharp />}
-            <AntSwitch checked={activate} onChange={toggleActivate} />
-          </PasswordHeaderHolder>
-          {activate && (
-            <PasswordHolder>
-              password
-              <FieldInput
-                type="password"
-                placeholder=""
-                value={roomPassword}
-                onChange={(text) => setRoomPassword(text.target.value)}
-              />
-            </PasswordHolder>
+        {/* {roomCreationError && <ErrorMessage>{roomCreationError}</ErrorMessage>} */}
+        <Form
+          onSubmit={handleCreateRoom}
+          validate={validate}
+          render={({ handleSubmit, form }) => (
+            <form onSubmit={handleSubmit}>
+              <>
+                {fields.map((item, index) => (
+                  <>
+                    {item.hidden == false && (
+                      <Field key={index} name={item.name}>
+                        {({ input, meta }: any) => (
+                          <ChannelFieldHolder>
+                            {item.label}
+                            <FieldInput
+                              {...input}
+                              type={item.type}
+                              placeholder={item.holder}
+                              //value={roomName}
+                              // onChange={(text) => setRoomName(text.target.value)}
+                            />
+                            {meta.error && meta.touched && (
+                              <span>{meta.error}</span>
+                            )}
+                          </ChannelFieldHolder>
+                        )}
+                      </Field>
+                    )}
+                  </>
+                ))}
+                <PasswordHeaderHolder>
+                  {activate ? (
+                    <>
+                      <LockOpenSharp />
+                      Set Room password
+                    </>
+                  ) : (
+                    <LockSharp />
+                  )}
+                  <AntSwitch checked={!activate} onChange={toggleActivate} />
+                </PasswordHeaderHolder>
+              </>
+              <ModalFooter>
+                <CancelButton onClick={closeModal}>Cancel</CancelButton>
+                <CreateButton type="submit">Create</CreateButton>
+              </ModalFooter>
+            </form>
           )}
-        </div>
+        />
       </ModalBody>
-      <ModalFooter>
-        <CancelButton onClick={closeModal}>Cancel</CancelButton>
-        <CreateButton onClick={() => handleCreateRoom()}>Create</CreateButton>
-      </ModalFooter>
     </div>
   );
 };
-
-// const iconAddChannel = {
-// };
 
 const ModalHeader = styled.div`
   display: flex;
@@ -119,11 +152,6 @@ const FieldInput = styled.input`
   border-radius: 5px;
   margin-top: 10px;
   background-color: #f9f9f9;
-`;
-
-const PasswordHolder = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 const PasswordHeaderHolder = styled.div`
