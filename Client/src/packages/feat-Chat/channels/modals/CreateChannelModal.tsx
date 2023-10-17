@@ -32,18 +32,18 @@ export const CreateChannelModal = (props: { handleClose: () => void }) => {
     dispatch(createRoom(roomData));
     handleClose();
   };
-
-  const validate = (value: any) => {
-    console.log("validate : ", value);
-    const errors = {};
-
-    return errors;
-  };
-  const fields = [
+  interface Field {
+    name: string;
+    label: string;
+    type: string;
+    holder: string;
+    required: boolean;
+    hidden?: boolean;
+  }
+  const fields: Field[] = [
     {
       name: "name",
       required: true,
-      hidden: false,
       label: "Channel name",
       type: "text",
       holder: "new channel",
@@ -51,20 +51,28 @@ export const CreateChannelModal = (props: { handleClose: () => void }) => {
     {
       name: "description",
       required: false,
-      hidden: false,
       label: "Channel Description (optional)",
       type: "text",
       holder: "channel description",
     },
     {
       name: "password",
-      required: false,
+      required: !activate,
       hidden: activate,
       label: "Password",
       type: "password",
       holder: "password",
     },
   ];
+  const validate = (values: any) => {
+    const errors: any = {};
+    fields.forEach((field: Field) => {
+      if (!Object.keys(values).includes(field.name) && field.required)
+        errors[field.name] = "required";
+    });
+    return errors;
+  };
+
   return (
     <div>
       <ModalHeader>
@@ -72,33 +80,31 @@ export const CreateChannelModal = (props: { handleClose: () => void }) => {
         <Close className={"close-button"} onClick={handleClose} />
       </ModalHeader>
       <ModalBody>
-        {/* Display the error message here */}
-        {/* {roomCreationError && <ErrorMessage>{roomCreationError}</ErrorMessage>} */}
         <Form
           onSubmit={handleCreateRoom}
           validate={validate}
           render={({ handleSubmit, form }) => (
             <form onSubmit={handleSubmit}>
               <>
-                {fields.map((item, index) => (
+                {fields.map((item: Field, index: number) => (
                   <>
-                    {item.hidden == false && (
+                    {!item.hidden && (
                       <Field key={index} name={item.name}>
-                        {({ input, meta }: any) => (
-                          <ChannelFieldHolder>
-                            {item.label}
-                            <FieldInput
-                              {...input}
-                              type={item.type}
-                              placeholder={item.holder}
-                              //value={roomName}
-                              // onChange={(text) => setRoomName(text.target.value)}
-                            />
-                            {meta.error && meta.touched && (
-                              <span>{meta.error}</span>
-                            )}
-                          </ChannelFieldHolder>
-                        )}
+                        {({ input, meta }: any) => {
+                          return (
+                            <ChannelFieldHolder>
+                              {item.label}
+                              <FieldInput
+                                {...input}
+                                type={item.type}
+                                placeholder={item.holder}
+                              />
+                              {meta.error && meta.touched && (
+                                <ErrorMessage>{meta.error}</ErrorMessage>
+                              )}
+                            </ChannelFieldHolder>
+                          );
+                        }}
                       </Field>
                     )}
                   </>
