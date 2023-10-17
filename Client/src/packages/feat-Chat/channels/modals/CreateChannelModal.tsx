@@ -5,8 +5,12 @@ import { createRoom } from "../redux/roomSlice";
 import styled from "styled-components";
 import { AntSwitch } from "../../components/AntSwitch";
 import { Field, Form } from "react-final-form";
-
-export const CreateChannelModal = (props: { handleClose: () => void }) => {
+import { I_Room } from "../../Types/types";
+interface Props {
+  handleClose: () => void;
+  channelConversation?: I_Room;
+}
+export const CreateChannelModal = (props: Props) => {
   const { handleClose } = props;
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.user);
@@ -30,6 +34,7 @@ export const CreateChannelModal = (props: { handleClose: () => void }) => {
       password: values.password,
     };
     dispatch(createRoom(roomData));
+    // console.log(errors);
     handleClose();
   };
   interface Field {

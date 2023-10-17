@@ -1,11 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { getChatRoomMessages, getMemberships } from "./roomThunk";
 import { I_ConversationMessages, I_Room } from "../../Types/types";
-
 export interface roomState {
   memberships: I_Room[];
   messages: I_ConversationMessages[];
   isLoading: boolean;
+  errors: any;
 }
 type RoomPayload = {
   name: string;
@@ -18,6 +18,7 @@ const initialState: roomState = {
   memberships: [],
   messages: [],
   isLoading: false,
+  errors: null,
 };
 
 export const roomSlice = createSlice({
@@ -27,8 +28,12 @@ export const roomSlice = createSlice({
     createRoom: (state, action: PayloadAction<RoomPayload>) => {
       state.isLoading = true;
     },
-    createRoomSuccess: (state, action: PayloadAction<I_Room>) => {
-      state.memberships.push(action.payload);
+    // createRoomSuccess: (state, action: PayloadAction<I_Room>) => {
+    //   state.memberships.push(action.payload);
+    //   state.errors = null;
+    // },
+    createRoomError: (state, action: PayloadAction<string>) => {
+      state.errors = action.payload;
     },
     leaveRoom: (state, action: PayloadAction<number>) => {
       state.isLoading = true;
@@ -42,12 +47,13 @@ export const roomSlice = createSlice({
     addMembership: (state, action: PayloadAction<I_Room>) => {
       // Add the new membership to the existing memberships array
       state.memberships.push(action.payload);
+      state.errors = null;
     },
     removeMembership: (state, action: PayloadAction<number>) => {
       state.memberships.splice(
         state.memberships.findIndex(
           (membership) => membership.id === action.payload
-        ),
+        )
       );
       console.log("(removeMembership) new state ==", state.memberships);
     },
@@ -85,7 +91,8 @@ export const {
   removeMembership,
   createRoom,
   leaveRoom,
-  createRoomSuccess,
+
+  createRoomError,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

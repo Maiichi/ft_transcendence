@@ -8,7 +8,7 @@ import {
 import styled from "styled-components";
 // import "./chat.css";
 
-import { Badge } from "@mui/material";
+import { Alert, Badge, Snackbar } from "@mui/material";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
 import { I_DirectConversation, I_Discussion, I_Room } from "./Types/types";
 import { ChatBox } from "./ChatBox";
@@ -57,7 +57,16 @@ export const Chat = () => {
         .toLowerCase()
         .includes(filter.searchQuery.toLowerCase())
   );
+  // const handleCloseSnackbar = (
+  //   event?: React.SyntheticEvent | Event,
+  //   reason?: string
+  // ) => {
+  //   if (reason === "clickaway") {
+  //     return;
+  //   }
 
+  //   setOpen(false);
+  // };
   const handleCLick = (
     type: "direct" | "channel",
     data: I_DirectConversation | I_Room
@@ -69,9 +78,19 @@ export const Chat = () => {
     });
     dispatch(setIsConversation(true));
   };
+  const errors = useAppSelector((state) => state.channels.errors);
 
   return (
     <Root>
+      <Snackbar
+        open={errors ? true : false}
+        autoHideDuration={1000}
+        key={"top" + "center"}
+      >
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          {errors}
+        </Alert>
+      </Snackbar>
       <ModalComponent
         open={open}
         ChildComponent={ChildModal}

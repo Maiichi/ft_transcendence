@@ -6,6 +6,7 @@ import { LeaveRoomModal } from "../../modals/leaveChannelModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { ModalComponent } from "../../../../../core";
 import { UsersRoom } from "../../modals/UsersRoomModal";
+import { CreateChannelModal } from "../../modals/CreateChannelModal";
 const UpdateRoomForm = () => {
   return <h2>Update Room</h2>;
 };
@@ -42,7 +43,9 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
       <h4>
         # {channelConversation.name}{" "}
         <ArrowDropDownIcon
-          onClick={() => handleClickModal(<UpdateRoomForm />, "click")}
+          onClick={() =>
+            handleClickModal(<CreateChannelModal handleClose={handleClose} channelConversation={channelConversation}/>)
+          }
         />
       </h4>
       <IconHolder>
