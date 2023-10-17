@@ -52,8 +52,8 @@ export const roomSlice = createSlice({
     removeMembership: (state, action: PayloadAction<number>) => {
       state.memberships.splice(
         state.memberships.findIndex(
-          (membership) => membership.id === action.payload
-        )
+          (membership) => membership.id === action.payload,
+        ),
       );
       console.log("(removeMembership) new state ==", state.memberships);
     },

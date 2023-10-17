@@ -15,14 +15,14 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
 
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-    undefined
+    undefined,
   );
 
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
 
   const handleClickModal = (
     childModal: JSX.Element,
-    closeType?: "auto" | "click"
+    closeType?: "auto" | "click",
   ) => {
     setCloseType(closeType);
     setOpen(true);
@@ -44,7 +44,12 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
         # {channelConversation.name}{" "}
         <ArrowDropDownIcon
           onClick={() =>
-            handleClickModal(<CreateChannelModal handleClose={handleClose} channelConversation={channelConversation}/>)
+            handleClickModal(
+              <CreateChannelModal
+                handleClose={handleClose}
+                channelConversation={channelConversation}
+              />,
+            )
           }
         />
       </h4>
@@ -53,7 +58,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
           onClick={() =>
             handleClickModal(
               <UsersRoom channelConversation={channelConversation} />,
-              "click"
+              "click",
             )
           }
         >
@@ -65,7 +70,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
               <LeaveRoomModal
                 channelConversation={channelConversation}
                 handleClose={handleClose}
-              />
+              />,
             )
           }
           style={{ cursor: "pointer" }}

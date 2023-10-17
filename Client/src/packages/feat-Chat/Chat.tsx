@@ -22,14 +22,14 @@ import { NewDirectMessage } from "./channels/modals/CreateDirectMessageModal";
 export const Chat = () => {
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-    undefined
+    undefined,
   );
 
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
 
   const handleClickModal = (
     childModal: JSX.Element,
-    closeType?: "auto" | "click"
+    closeType?: "auto" | "click",
   ) => {
     setCloseType(closeType);
     setOpen(true);
@@ -48,14 +48,14 @@ export const Chat = () => {
 
   // Filter chat rooms based on the search query
   const filteredRooms = channels.memberships.filter((item: any) =>
-    item.room.name.toLowerCase().includes(filter.searchQuery.toLowerCase())
+    item.room.name.toLowerCase().includes(filter.searchQuery.toLowerCase()),
   );
   // Filter conversations based on the search query
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
       discussion.receiver.firstName
         .toLowerCase()
-        .includes(filter.searchQuery.toLowerCase())
+        .includes(filter.searchQuery.toLowerCase()),
   );
   // const handleCloseSnackbar = (
   //   event?: React.SyntheticEvent | Event,
@@ -69,7 +69,7 @@ export const Chat = () => {
   // };
   const handleCLick = (
     type: "direct" | "channel",
-    data: I_DirectConversation | I_Room
+    data: I_DirectConversation | I_Room,
   ) => {
     setConversation({
       room: type == "channel" ? (data as I_Room) : null,
@@ -129,7 +129,7 @@ export const Chat = () => {
             onClick={() =>
               handleClickModal(
                 <NewDirectMessage handleClose={handleClose} />,
-                "auto"
+                "auto",
               )
             }
           />
@@ -154,7 +154,9 @@ export const Chat = () => {
               >
                 {discussion.receiver.avatar_url !== null ? (
                   <AvatarImage
-                    src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)}
+                    src={require(
+                      `/app/images_uploads/${discussion.receiver.avatar_url}`,
+                    )}
                     alt=""
                   />
                 ) : (
