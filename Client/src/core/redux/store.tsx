@@ -13,6 +13,7 @@ import socketSlice from "../socket/socketSlice";
 import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice";
 import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
 import leaderboardSlice from "../../packages/feat-Account/API.d/ProfileSlice";
+import searchSlice from "../../packages/feat-Search/redux/searchSlice";
 // ...
 
 const rootReducer = combineReducers({
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   filter: FilterSlice,
   socket: socketSlice,
   leaderboard: leaderboardSlice,
+  search: searchSlice
 });
 
 const persistConfig = {

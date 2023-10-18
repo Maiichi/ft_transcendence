@@ -1,12 +1,63 @@
-import { TextField } from '@mui/material';
-import styled from 'styled-components';
+import {
+  Avatar,
+  AvatarGroup,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import styled from "styled-components";
+import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
+import { useEffect } from "react";
+import { getAllRooms } from "./redux/searchThunk";
+import { I_Room_Search } from "./types/types";
+import { joinRoom } from "./redux/searchSlice";
 
 export const Search = () => {
+  const dispatch = useAppDispatch();
+  const rooms: [] = useAppSelector((state) => state.search.rooms);
+  const filter = useAppSelector((state) => state.filter.searchQuery);
+  const user = useAppSelector((state) => state.auth.user);
+  useEffect(() => {
+    dispatch(getAllRooms());
+  }, []);
+
+  const handleJoinRoom = (rooms: I_Room_Search) => {
+    const roomInfo = {
+      id: rooms.id,
+      password: rooms.password,
+    };
+    dispatch(joinRoom(roomInfo));
+  };
+
+  // Filter chat rooms based on the search query
+  const filteredRooms: I_Room_Search[] = rooms.filter((item: any) =>
+    item.name.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  console.log("rooms ==", JSON.stringify(rooms));
+
+  // check if the user is a member or not to display the button based on the membership
+  const isUserInRoom = (roomS: I_Room_Search, userID: number) => {
+    for (const member of roomS.members) {
+      if (member.user.intraId === userID) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // console.log("rooms length==", rooms.length);
   return (
     <Root>
       <Holder>
         <SearchBar>
-          <TextField
+          <SearchComponent onInputUpdate={filter} />
+          {/* <TextField
             id="outlined-basic"
             label="Search"
             variant="outlined"
@@ -24,37 +75,98 @@ export const Search = () => {
                 color: 'red'
               }
             }}
-          />
+            // onChange={}
+          /> */}
         </SearchBar>
-        <Select name='Channels'>
+        <Select name="Channels">
           <option value="channels">channels</option>
           <option value="users">users</option>
         </Select>
       </Holder>
       <ListHolder>
-        <ChannelList>
-            Channel
-        </ChannelList>
+        {filteredRooms.length !== 0 ? (
+          filteredRooms.map((room: I_Room_Search) => (
+            <Channel key={room.id}>
+              <ButtonNameHolder>
+                <div
+                  style={
+                    {
+                      // display: 'flex',
+                      // flexDirection: 'column',
+                      // alignItem: 'center'
+                    }
+                  }
+                >
+                  <ChannelName>{room.name}</ChannelName>
+                  <ChannelType>{room.type}</ChannelType>
+                </div>
+                {isUserInRoom(room, user.intraId) ? (
+                  <Button
+                    variant="contained"
+                    style={{ backgroundColor: "#5e35b1d9" }}
+                  >
+                    ACCESS
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    style={{ backgroundColor: "#5e35b1d9" }}
+                    onClick={() => handleJoinRoom(room)}
+                  >
+                    JOIN
+                  </Button>
+                )}
+              </ButtonNameHolder>
+              <AvatarGroup max={4} style={{ justifyContent: "flex-end" }}>
+                {room.members.map((member: any) => (
+                  <Avatar
+                    key={member.user.avatar_url}
+                    alt="user"
+                    src={
+                      member.user.avatar_url
+                        ? require(`/app/images_uploads/${member.user.avatar_url}`)
+                        : ""
+                    }
+                  />
+                ))}
+              </AvatarGroup>
+            </Channel>
+          ))
+        ) : (
+          <div>No Room available</div>
+        )}
       </ListHolder>
     </Root>
-  )
-}
-
+  );
+};
 
 const Root = styled.div`
-  display: flex; 
+  display: flex;
   flex-direction: column;
-  width : 40%;
-  height: 100%;
+  // width : 32%;
   margin: auto;
-  background-color: green;
+  // border: 1px solid;
+  @media (max-width: 426px) {
+    margin: 0;
+    width: 100%;
+  }
+  overflow: hidden;
+  height: 800px;
+  @media (max-height: 700px) {
+    height: 560px;
+  }
 `;
 
 const Holder = styled.div`
   display: flex;
+  width: 40%;
+  margin: auto;
   gap: 0.5em;
   align-items: center;
   justify-content: center;
+  @media (max-width: 426px) {
+    flex-direction: column;
+  }
 `;
 
 const SearchBar = styled.div`
@@ -67,99 +179,64 @@ const SearchBar = styled.div`
 
 const Select = styled.select`
   width: 20%;
-  height: 80%;
+  height: 60%;
   border-radius: 5px;
 `;
 
 const ListHolder = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  // flex-direction: column;
   margin-top: 10px;
-  gap: 0.5rem; 
-  justify-content: center; 
-  align-items: center; 
-  width: 100%; 
-
+  gap: 0.5rem;
+  height: 80%;
+  align-content: baseline;
+  align-items: center;
+  grid-template-columns: repeat(auto-fit, 300px);
+  justify-content: center;
+  gap: 20px 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 90%;
 `;
 
 const UserList = styled.div``;
 
-const ChannelList = styled.div``;
+const Channel = styled.div`
+  display: flex;
+  width: 90%;
+  padding: 0px 5px 5px 5px;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-radius: 0.375rem;
+  border-width: 2px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  max-width: 500px;
+  border: 0.5px solid #8e00a1;
+`;
 
-// import { TextField } from '@mui/material';
-// import styled from 'styled-components'
+const ChannelName = styled.p`
+  justify-items: center;
+`;
 
-// export const Search = () => {
-//   return (
-//     <Root>
-//       <Holder>
-//         <SearchBar>
-//           <TextField 
-//             id="outlined-basic" 
-//             label="Search" 
-//             variant="outlined" 
-//             style={{borderColor: 'grey'}}
-//           />
-//         </SearchBar>
-//         <Select name='Channels'>
-//           <option value="channels">channels</option>
-//           <option value="users">users</option>
-//         </Select>
-//       </Holder>
-//       <ListHolder>
-//         <ChannelList>
-//             Channel
-//         </ChannelList>
-//       </ListHolder>
-//     </Root>
-//   )
-// }
+const ButtonNameHolder = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  @media (max-width: 426px) {
+    flex-direction: column;
+    align-items: inherit;
+  }
+`;
 
+const ChannelMembersNumber = styled.div``;
 
-// const Root = styled.div`
-//   display: flex; 
-//   flex-direction: column;
-//   width : 50%;
-//   height: 100%;
-//   margin: auto;
-//   background-color: green;
-// `;
+const ChannelMembers = styled.div``;
 
-// const Holder = styled.div`
-//   display: flex;
-//   gap: 0.5em;
-//   align-items: center;
-//   justify-content: center;
-// `;
+const JoinButton = styled.button`
+  height: 30px;
+  width: 60px;
+  border-radius: 5px;
+`;
 
-// const SearchBar = styled.div`
-// background-color: grey;
-//   width: 80%;
-//   height: 40px;
-//   padding: 10px;
-//   border-radius: 5px;
-//   position: relative; 
-// width: 100%; 
-// `;
-
-// const Select = styled.select`
-//   width: 20%;
-//   height: 80%;
-//   border-radius: 5px;
-// `;
-
-// const ListHolder = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   margin-top: 10px;
-//   gap: 0.5rem; 
-//   justify-content: center; 
-//   align-items: center; 
-//   width: 100%; 
-
-// `;
-
-// const UserList = styled.div``;
-
-// const ChannelList = styled.div``;
-
+const ChannelType = styled.div``;

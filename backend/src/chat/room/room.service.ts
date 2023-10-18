@@ -22,7 +22,24 @@ export class RoomService
     async getRoomById(roomId: number)
     {
         const room = await this.prisma.room.findUnique({
-            where: {id : roomId}
+            where: {id : roomId},
+            select: {
+                id: true,
+                name: true,
+                password: true,
+                type: true,
+                members: {
+                    select: {
+                        user: {
+                            select: {
+                                avatar_url: true,
+                            }
+                        }
+                    }
+                },
+                createdAt: true,
+                updatedAt: true,
+            }
         });
         if (!room)
             throw new WsException(`roomId ${roomId} does not exist`);
@@ -43,9 +60,28 @@ export class RoomService
    async getAllRooms()
     {
         try {
-            const rooms = await this.prisma.room.findMany();
+            const rooms = await this.prisma.room.findMany({
+                where : {
+                    type: {not: 'secret'}
+                },
+                include : {
+                    members: {
+                        select : {
+                            user  : {
+                                select : {
+                                    avatar_url: true,
+                                    intraId: true,
+                                }
+                            }
+                        }
+                    },
+                },
+                orderBy: {
+                    createdAt:  'desc'
+                }
+            });
             if (!rooms.length)
-            return 'no rooms exists';
+                return 'no rooms exists';
             return rooms;
         } catch (error) {
             const response = {
@@ -79,6 +115,44 @@ export class RoomService
         } catch (error) {
             
         }
+    }
+
+    async getRoomUsers(roomId: number)
+    {
+        const roomUsers = await this.prisma.room.findMany({
+            where: {
+                id: roomId
+            },
+            select: {
+                members: {
+                    where: {
+                        isBanned: false
+                    },
+                    select: {
+                        user: {
+                            select: {
+                                intraId: true,
+                                userName: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        if (roomUsers.length == 0)
+            return [];
+
+         // Extract the desired data structure using map
+        const transformedUsers = roomUsers[0].members.map(member => ({
+            intraId: member.user.intraId,
+            userName: member.user.userName
+        }));
+
+
+
+        return transformedUsers;
+        // return roomUsers;
+
     }
     // async getAllRoomsInfos()
     // {
@@ -251,7 +325,7 @@ export class RoomService
             if (!isMatch)
                 throw new WsException(`Passwords don't matchs`);
         }
-        const newMembership = await this.prisma.membership.create({
+        await this.prisma.membership.create({
             data : {
                 room: {
                     connect: {
@@ -266,13 +340,11 @@ export class RoomService
                 isOwner: false,
                 isAdmin: false,
                 isBanned: false,
-                isMute: false,
-            }
+                isMute: false,  
+            },
         })
+        // console.log("new mem == ", JSON.stringify(newMembership));
         const getConversationByRoomId = await this.getConversationByRoomId(room.id);
-        console.log("conversation == " + JSON.stringify(getConversationByRoomId));
-        console.log("conversationId == " + JSON.stringify(getConversationByRoomId.id));
-        console.log("userID == " + userId);
         await this.prisma.conversation.update({
             where : {
                 id: getConversationByRoomId.id
@@ -285,9 +357,42 @@ export class RoomService
                 }
             }
         })
+        // console.log('memeb ==', JSON.stringify(newMembership));
+        const joinedRoom = await this.prisma.room.findUnique({
+            where: {
+                id: room.id,
+            },
+            select: {
+                id: true,
+                name: true,
+                type: true,
+                password: true,
+                members: {  
+                    select: {
+                        user: {
+                            select: {
+                                avatar_url: true,
+                            }
+                        }
+                    }
+                },
+                createdAt: true,
+                updatedAt: true,
+            }
+        })
+        // retrive the room created 
+        const retrivedRoom = await this.chatService.getRoom(room.id);
         // console.log("join room service");
+        // console.log('JoinedRoom (back)', JSON.stringify(joinedRoom));
+        // console.log('aji lhna',
+        //     {dataMembership: retrivedRoom,
+        //     dataRoom: joinedRoom}
+        // )
         console.log(`${userId} has joined the room ${room.name}`)
-        return newMembership;
+        return {
+            dataMembership: retrivedRoom,
+            dataRoom: joinedRoom
+        };
     }
 
     /*

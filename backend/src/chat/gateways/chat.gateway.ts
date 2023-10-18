@@ -135,9 +135,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             this.userSockets.get(user.intraId).push(client.id);
             this.userService.updateUserStatus(user.intraId, 'ONLINE');
             this.server.emit('userConnected', { userId: client.id });
-            console.log(user.userName + ' is Connected ' + client.id);
             // this.printClients();
-            // this.printClientSockets();
+            console.log(user.userName + ' is Connected ' + client.id);
+            this.printClients();
+            this.printClientSockets();
         } catch (error) {
             client.disconnect();
             console.log("Client disconnected due to invalid authorization");
@@ -210,10 +211,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             // this.printClientSockets();
             const currentUser = this.findUserByClientSocketId(client.id);
             const roomData = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
-            const userSockets: string[] = this.userSockets.get(currentUser.intraId);
+            // const userSockets: string[] = this.userSockets.get(currentUser.intraId);
             // console.log("userSockerts ===", userSockets);
             // console.log("userSockerts length===", userSockets.length);
-            userSockets.forEach((value) =>{
+            // this.userSockets.forEach((key, value) => {
+
+            // })
+            this.userSockets.forEach((value) =>{
                 // console.log("value (socketId) = " + value);
                 this.server.to(value).emit('roomCreated', roomData);
             })
@@ -231,7 +235,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             // get current User 
             const currentUser = this.findUserByClientSocketId(client.id);
             const roomUpdated = await this.roomService.updateRoomById(body, currentUser.intraId);
-            this.server.emit('roomUpdated', roomUpdated);
+            const userSockets: string[] = this.userSockets.get(currentUser.intraId);
+            userSockets.forEach((value) =>{
+                this.server.to(value).emit('roomUpdated', roomUpdated);
+            })
             console.log("room updated successfully");
         } catch (error) {
             // if (error instanceof NotFoundException)
@@ -246,8 +253,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
-            await this.roomService.joinRoom(body, currentUser.intraId);
-            this.server.emit('joinRoom');
+            const joinedRoom = await this.roomService.joinRoom(body, currentUser.intraId);
+            const roomUsers = await this.roomService.getRoomUsers(joinedRoom.dataRoom.id);
+            console.log("roomUsers ==", JSON.stringify(roomUsers));
+             // Retrieve the user IDs of users in the room
+            const usersInRoom = roomUsers.map(user => user.intraId);
+
+            // Iterate through the user IDs and emit the event to their associated sockets
+            usersInRoom.forEach(userId => {
+                const userSockets = this.userSockets.get(userId);
+                if (userSockets) {
+                    userSockets.forEach(socketId => {
+                        this.server.to(socketId).emit('roomJoined', joinedRoom);
+                    });
+                }
+            });
+            // const userSockets: string[] = this.userSockets.get(currentUser.intraId);
+            // // console.log('joinedRoom (back) ==', JSON.stringify(joinedRoom));
+            // userSockets.forEach((value) =>{
+            //     this.server.to(value).emit('roomJoined', joinedRoom);
+            // })
         } catch (error) {
             console.log(error.message)
         }
