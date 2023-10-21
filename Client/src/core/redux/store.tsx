@@ -20,7 +20,7 @@ const rootReducer = combineReducers({
   directMessage: DirectMessageSlice,
   socket: socketSlice,
   leaderboard: leaderboardSlice,
-  search: searchSlice
+  search: searchSlice,
 });
 
 const persistConfig = {

@@ -1,4 +1,4 @@
-import React , { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   },
 });
 export const SearchComponent = (props: Props) => {
-  const { clear, setOpen , onInputUpdate} = props;
+  const { clear, setOpen, onInputUpdate } = props;
   const classes = useStyles();
 
   return (

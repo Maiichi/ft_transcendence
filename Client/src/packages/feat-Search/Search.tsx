@@ -27,8 +27,8 @@ export const Search = () => {
   const user = useAppSelector((state) => state.auth.user);
 
   const handleClickSearch = (str: string) => {
-    setSearchQuery(str)
-  }
+    setSearchQuery(str);
+  };
 
   useEffect(() => {
     dispatch(getMemberships());
@@ -45,7 +45,7 @@ export const Search = () => {
 
   // Filter chat rooms based on the search query
   const filteredRooms: I_Room_Search[] = rooms.filter((item: any) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const ButtonRoom = ({
@@ -71,7 +71,7 @@ export const Search = () => {
       </Button>
     );
   };
-  
+
   console.log("rooms ==", JSON.stringify(filteredRooms));
 
   // check if the user is a member or not to display the button based on the membership
@@ -137,7 +137,9 @@ export const Search = () => {
                     alt="user"
                     src={
                       member.user.avatar_url
-                        ? require(`/app/images_uploads/${member.user.avatar_url}`)
+                        ? require(
+                            `/app/images_uploads/${member.user.avatar_url}`,
+                          )
                         : ""
                     }
                   />

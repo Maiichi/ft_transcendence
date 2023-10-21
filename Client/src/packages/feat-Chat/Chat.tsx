@@ -83,8 +83,8 @@ export const Chat = () => {
   const errors = useAppSelector((state) => state.channels.errors);
 
   const handleClickSearch = (str: string) => {
-    setSearchQuery(str)
-  }
+    setSearchQuery(str);
+  };
 
   return (
     <Root>
