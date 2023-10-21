@@ -12,17 +12,24 @@ import {
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAllRooms } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
 import { joinRoom } from "./redux/searchSlice";
 import { getMemberships } from "../feat-Chat/channels/redux/roomThunk";
+import { useNavigate } from "react-router-dom";
 
 export const Search = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const rooms: [] = useAppSelector((state) => state.search.rooms);
-  const filter = useAppSelector((state) => state.filter.searchQuery);
   const user = useAppSelector((state) => state.auth.user);
+
+  const handleClickSearch = (str: string) => {
+    setSearchQuery(str);
+  };
+
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getAllRooms());
@@ -38,19 +45,38 @@ export const Search = () => {
 
   // Filter chat rooms based on the search query
   const filteredRooms: I_Room_Search[] = rooms.filter((item: any) =>
-    item.name.toLowerCase().includes(filter.toLowerCase())
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const ButtonRoom = ({
+    room,
+    userId,
+  }: {
+    room: I_Room_Search;
+    userId: number;
+  }) => {
+    var title = isUserInRoom(room, userId) ? "ACCESS" : "JOIN";
+
+    const handleCLick = () => {
+      if (isUserInRoom(room, userId)) navigate("/chat");
+      else handleJoinRoom(room);
+    };
+    return (
+      <Button
+        variant="contained"
+        style={{ backgroundColor: "#5e35b1d9" }}
+        onClick={handleCLick}
+      >
+        {title}
+      </Button>
+    );
+  };
 
   console.log("rooms ==", JSON.stringify(filteredRooms));
 
   // check if the user is a member or not to display the button based on the membership
   const isUserInRoom = (roomS: I_Room_Search, userID: number) => {
-    for (const member of roomS.members) {
-      if (member.user.intraId === userID) {
-        return true;
-      }
-    }
-    return false;
+    return roomS.members.find((item) => item.user.intraId == userID);
   };
 
   // console.log("rooms length==", rooms.length);
@@ -58,7 +84,7 @@ export const Search = () => {
     <Root>
       <Holder>
         <SearchBar>
-          <SearchComponent onInputUpdate={filter} />
+          <SearchComponent onInputUpdate={handleClickSearch} />
           {/* <TextField
             id="outlined-basic"
             label="Search"
@@ -102,22 +128,7 @@ export const Search = () => {
                   <ChannelName>{room.name}</ChannelName>
                   <ChannelType>{room.type}</ChannelType>
                 </div>
-                {isUserInRoom(room, user.intraId) ? (
-                  <Button
-                    variant="contained"
-                    style={{ backgroundColor: "#5e35b1d9" }}
-                  >
-                    ACCESS
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    style={{ backgroundColor: "#5e35b1d9" }}
-                    onClick={() => handleJoinRoom(room)}
-                  >
-                    JOIN
-                  </Button>
-                )}
+                <ButtonRoom room={room} userId={user.intraId} />
               </ButtonNameHolder>
               <AvatarGroup max={4} style={{ justifyContent: "flex-end" }}>
                 {room.members.map((member: any) => (
@@ -126,7 +137,9 @@ export const Search = () => {
                     alt="user"
                     src={
                       member.user.avatar_url
-                        ? require(`/app/images_uploads/${member.user.avatar_url}`)
+                        ? require(
+                            `/app/images_uploads/${member.user.avatar_url}`,
+                          )
                         : ""
                     }
                   />

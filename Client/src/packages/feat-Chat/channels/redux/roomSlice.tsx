@@ -126,7 +126,6 @@ export const {
   addMemberToRoom,
   createRoom,
   leaveRoom,
-  createRoomSuccess,
   removeMemberFromRoom,
 
   createRoomError,
