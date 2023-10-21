@@ -12,6 +12,7 @@ import {
   createRoom,
   leaveRoom,
   removeMemberFromRoom,
+  createRoomError,
   removeMembership,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import { setIsConversation } from "../CoreSlice";
@@ -35,28 +36,32 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         socket.on("roomCreated", (data) => {
           dispatch(addMembership(data));
         });
-        socket.on('newRoom', (data) => {
+        socket.on("newRoom", (data) => {
           dispatch(addRoom(data));
         });
+        socket.on("roomCreationError", (data) => {
+          dispatch(createRoomError(data.message));
+        });
+
         socket.on("roomLeaved", (data) => {
           dispatch(removeMembership(data));
           dispatch(setIsConversation(false));
         });
         socket.on("userLeftRoom", (data) => {
-          console.log('data (userLeftRoom)===', data)
+          console.log("data (userLeftRoom)===", data);
           dispatch(removeMemberFromRoom(data));
         });
-        socket.on("roomHasBeenLeft", (data) =>{
+        socket.on("roomHasBeenLeft", (data) => {
           dispatch(setRoomLeaved(data));
         });
         socket.on("roomJoined", (data) => {
           console.log("data ins roomJOined ==", data);
           dispatch(addMembership(data));
         });
-        socket.on('userJoinRoom', (data) => {
+        socket.on("userJoinRoom", (data) => {
           dispatch(addMemberToRoom(data));
-        })
-        socket.on('newRoomJoined', (data) => {
+        });
+        socket.on("newRoomJoined", (data) => {
           dispatch(setRoomJoined(data));
         });
         break;
