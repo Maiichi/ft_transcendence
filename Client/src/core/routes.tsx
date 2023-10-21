@@ -1,12 +1,4 @@
-import {
-  Test,
-  Home,
-  Game,
-  Settings,
-  Profile,
-  Chat,
-  Leaderboard,
-} from "../packages";
+import { Test, Home, Game, Settings, Profile, Chat, Leaderboard } from "../packages";
 import Login from "../packages/feat-Auth/Login";
 import FirstLogin from "../packages/feat-Auth/components/FirstLogin";
 import { Layout } from "./utils";
@@ -79,7 +71,7 @@ export const routes = [
       <Layout>
         <Leaderboard />
       </Layout>
-    ),
+    ), 
     errorElement: <NotFoundError />,
     requireAuth: true,
   },

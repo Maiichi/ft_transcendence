@@ -1,6 +1,11 @@
 import styled, { keyframes } from "styled-components";
-import { Typography as TypographyMui } from "@mui/material";
+import { Typography } from "@mui/material";
 
+/**
+ * `as Typography from mui`
+ */
+const Text = styled(Typography)<{}>`
+`
 const rotate = keyframes`
   from {
     transform: rotate(0deg);
@@ -41,4 +46,4 @@ const Root = styled.div<{ $primary?: boolean }>`
   border-radius: 20px;
 `;
 
-export { Root, Title, H5, Rotate };
+export { Root, Title, H5, Rotate, Text };

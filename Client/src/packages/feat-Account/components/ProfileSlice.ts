@@ -1,7 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getLeaderboard } from "./ProfileThunk";
 import Module from "module";
+import { useAppSelector } from "../../../core";
+import { federation } from "../images_uploads";
 
+type gamerType = {
+  user: any
+  coalition: {
+    name: string | null
+    logo: Module | undefined
+  },
+  rank: number
+}
 type leaderboardType = {
   name: string;
   ladder: number;
@@ -12,54 +22,81 @@ type leaderboardType = {
 };
 type AchievementType = {
   name: string;
-  logo: Module;
+  logo: Module
 };
 type MatchHistoryType = {
-  name: string;
-};
+  name:string
+}
 
-export type { leaderboardType, AchievementType, MatchHistoryType };
+export type { gamerType, leaderboardType, AchievementType, MatchHistoryType }
 
 export interface ProfileState {
+  gamer: {
+    on: gamerType
+    isLoading: boolean
+  }
   lead: {
     leaderboard: leaderboardType[] | unknown;
     isLoading: boolean;
-  };
+  },
   achiv: {
-    achievement: AchievementType[] | null;
+    achievement: AchievementType[] | null
     isLoading: boolean;
-  };
+  }
   matchs: {
-    MatchHistory: MatchHistoryType[] | null;
+    MatchHistory: MatchHistoryType[] | null
     isLoading: boolean;
-  };
+  }
 }
 
 const initialState: ProfileState = {
+  gamer: {
+    on: {
+      user: null ,
+      coalition: {
+        name: null,
+        logo: undefined
+      },
+      rank: 0
+    },
+    isLoading: false
+  },
   lead: {
     leaderboard: null,
-    isLoading: false,
+    isLoading: false
   },
   achiv: {
     achievement: null,
-    isLoading: false,
+    isLoading: false
   },
   matchs: {
     MatchHistory: null,
-    isLoading: false,
+    isLoading: false
   },
 };
 
-const leaderboardSlice = createSlice({
+export const ops:gamerType = {
+    user: null,
+    coalition: {
+      name: 'The Order',
+      logo: federation
+    },
+    rank: 32
+  }
+const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    getMatchsHistory(state: ProfileState) {
-      state.achiv = initialState.achiv;
+    getuserasgamer(state:ProfileState, action) {
+      state.gamer.on.user = action.payload
+      state.gamer.on = ops
     },
-    getAchievements(state) {
-      state.matchs = initialState.matchs;
+    getMatchsHistory(state:ProfileState){
+      state.achiv = initialState.achiv
     },
+    getAchievements(state){
+      state.matchs = initialState.matchs
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -77,6 +114,6 @@ const leaderboardSlice = createSlice({
 });
 
 // export type { leaderboardType, leaderboardState };
-export const { getMatchsHistory, getAchievements } = leaderboardSlice.actions;
+export const { getuserasgamer, getMatchsHistory, getAchievements } = profileSlice.actions;
 /** in rootReducer = combineReducers as LeaderBoard */
-export default leaderboardSlice.reducer;
+export default profileSlice.reducer;

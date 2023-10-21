@@ -39,7 +39,7 @@ const Leaderboard = () => {
         <Loading />
       ) : state.leaderboard ? (
         <Players>
-          {state.leaderboard.map((player: leaderboardType, index: number) => (
+          {state.leaderboard.map((player:leaderboardType, index: number) => (
             <Player>
               <ListItemAvatar>
                 <Avatar src={Pic}>{index + 1}</Avatar>

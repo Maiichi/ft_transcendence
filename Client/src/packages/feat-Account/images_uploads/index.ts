@@ -1,2 +1,4 @@
-import Logo from "./federation.png";
 import Picture from "./Picture.png";
+import federation from './federation.png'
+
+export { Picture, federation}

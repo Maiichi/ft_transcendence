@@ -3,7 +3,7 @@ import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import AddIcon from "@mui/icons-material/Add";
 import styled from "styled-components";
 // import "./chat.css";
-
+ 
 import { Badge } from "@mui/material";
 import { convertDateTime, changeMessageLength } from "./Utils/utils";
 import { I_DirectConversation, I_Discussion, I_Room } from "./Types/types";
@@ -13,8 +13,9 @@ import { getMemberships } from "./channels/redux/roomThunk";
 import { getDirectConversations } from "./directMessages/redux/directMessageThunk";
 import { setIsConversation } from "../../core/CoreSlice";
 
+
 export const Chat = () => {
-  console.log("Chat Rendring !");
+  console.log('Chat Rendring !')
   const dispatch = useAppDispatch();
   const { channels, directMessage, filter } = useAppSelector((state) => state);
   const [conversation, setConversation] = useState<I_Discussion | null>(null);
@@ -25,19 +26,19 @@ export const Chat = () => {
 
   // Filter chat rooms based on the search query
   const filteredRooms = channels.memberships.filter((item: any) =>
-    item.room.name.toLowerCase().includes(filter.searchQuery.toLowerCase()),
+    item.room.name.toLowerCase().includes(filter.searchQuery.toLowerCase())
   );
   // Filter conversations based on the search query
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
       discussion.receiver.firstName
         .toLowerCase()
-        .includes(filter.searchQuery.toLowerCase()),
+        .includes(filter.searchQuery.toLowerCase())
   );
 
   const handleCLick = (
     type: "direct" | "channel",
-    data: I_DirectConversation | I_Room,
+    data: I_DirectConversation | I_Room
   ) => {
     setConversation({
       room: type == "channel" ? (data as I_Room) : null,
@@ -46,6 +47,7 @@ export const Chat = () => {
     });
     dispatch(setIsConversation(true));
   };
+
 
   return (
     <Root>
@@ -106,25 +108,24 @@ export const Chat = () => {
                   horizontal: "right",
                 }}
                 color={
-                  discussion.receiver.status === "ONLINE" ? "success" : "error"
+                  discussion.receiver.status === "ONLINE"
+                    ? "success"
+                    : "error"
                 }
                 overlap="circular"
                 variant="dot"
               >
-                {discussion.receiver.avatar_url !== null ? (
-                  <AvatarImage
-                    src={require(
-                      `/app/images_uploads/${discussion.receiver.avatar_url}`,
-                    )}
-                    alt=""
-                  />
-                ) : (
-                  <AvatarImage src="" alt="" />
-                )}
+                {discussion.receiver.avatar_url !== null ? 
+                (<AvatarImage src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)} alt="" />) 
+                :
+                (<AvatarImage src="" alt="" />)
+                }
+                
               </Badge>
               <ContactDescription>
                 <DiscussionName>
-                  {discussion.receiver.firstName} {discussion.receiver.lastName}
+                  {discussion.receiver.firstName}{" "}
+                  {discussion.receiver.lastName}
                 </DiscussionName>
                 <DiscussionMessage>
                   {changeMessageLength(discussion.lastMessage.content)}
@@ -156,20 +157,20 @@ const Root = styled.div`
 `;
 
 const Discussions = styled.div`
-  overflow: hidden;
-  /* display: inline-block; */
-  padding: 5px;
-  border-right: 1px solid #d7d7d7;
+overflow: hidden;
+/* display: inline-block; */
+padding: 5px;
+border-right:  1px solid #d7d7d7;
 `;
 
-const Discussion = styled.div<{ selected?: boolean }>`
+const Discussion = styled.div<{selected?: boolean}>`
   display: flex;
   align-items: center;
   justify-content: space-around;
   margin: 10px 0px;
   &:hover {
     cursor: pointer;
-    background-color: #f5f6f7;
+    background-color:  #f5f6f7;
   }
   ${(props) =>
     props.selected &&
@@ -179,15 +180,16 @@ const Discussion = styled.div<{ selected?: boolean }>`
   `}
 `;
 
+
 const TextMessage = styled.p`
-  margin: 10px; /* Remove default margin for <p> tag */
-  font-size: 40px;
+margin: 10px; /* Remove default margin for <p> tag */
+font-size: 40px;
 `;
 
 const ChannelListHolder = styled.div`
-  padding: 0px 15px;
-  overflow-y: scroll;
-  max-height: 35%;
+padding: 0px 15px;
+overflow-y: scroll;
+max-height: 35%;
 `;
 
 const DirectMessageListHolder = styled.div`
@@ -199,8 +201,8 @@ const DirectMessageListHolder = styled.div`
 const ChannelName = styled.h4`
   margin: 0px 0px 10px 0px;
   cursor: pointer;
-  &:hover {
-    background-color: #f5f6f7;
+  &:hover{
+    background-color:  #f5f6f7;
   }
 `;
 

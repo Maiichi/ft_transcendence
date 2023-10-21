@@ -31,6 +31,7 @@ const TopPlayersArr: leaderboardType[] = [
   },
 ];
 
+
 const getLeaderboard = createAsyncThunk(
   "profile/leaderboard",
   async (_, { getState }): Promise<leaderboardType[] | undefined> => {
@@ -54,7 +55,7 @@ const getLeaderboard = createAsyncThunk(
     } catch (error) {
       console.log("error leaderboard fetching", error);
     }
-  },
+  }
 );
 
 export { getLeaderboard };

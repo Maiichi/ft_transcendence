@@ -20,7 +20,7 @@ export const getMemberships = createAsyncThunk(
       console.log("error in chatThunk", error);
       throw error;
     }
-  },
+  }
 );
 
 export const getChatRoomMessages = createAsyncThunk(
@@ -40,7 +40,7 @@ export const getChatRoomMessages = createAsyncThunk(
       console.log("error in getChatRoomMessages", error);
       throw error;
     }
-  },
+  }
 );
 
 // export const createRoom = createAsyncThunk(
