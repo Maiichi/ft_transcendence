@@ -17,7 +17,7 @@ import {
   Title,
   Root,
 } from "./styles";
-import { Pic } from "./static-data";
+import { Pic } from "./images_uploads";
 import { Loading } from "./components";
 
 function sendGameRequist(userName: string) {}

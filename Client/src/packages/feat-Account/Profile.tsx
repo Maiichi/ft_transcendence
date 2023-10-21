@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { flexbox } from '@mui/system';
+import hh from './images_uploads/federation.png'
 
 import style, {
   ProfileCards,
@@ -9,20 +10,20 @@ import style, {
   User,
 
   Text
-} from "./styles";
+} from "./styles"
 import { useAppDispatch, useAppSelector } from "../../core";
-import { getuserasgamer, gamerType, getAchievements, getMatchsHistory, ops } from "./components";
-import { Box, Button } from "@mui/material";
+import { getuserasgamer, gamerType, getAchievements, getMatchsHistory } from "./components";
+import { Avatar, Box, Button } from "@mui/material";
 import {PersonAddAlt, Message} from '@mui/icons-material';
-import { Pic } from "./static-data";
-import CircularProgressBar from "./components/utils/CircularProgressBar";
+import { Pic } from "./images_uploads"
 
+import CircularProgressBar from "./components/utils/CircularProgressBar";
 
 const Profile = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const  user = useAppSelector(state => state.auth.user)
-  const gamer:gamerType = ops
+  const gamer:gamerType = require('./static-data/gamer.json')
   const Loading = useState([
   ])
   useEffect(() => {
@@ -35,22 +36,23 @@ const Profile = () => {
         <Usercard>
           <Coalition>
             <Text variant="subtitle2" sx={{mb: '5px'}}> {gamer.coalition.name} </Text>
-            <img alt={'Coalition'} src={`${gamer.coalition.logo}`} />
-            <h5 > #{gamer.rank}</h5>
+            <img alt={'Coalition'} src={require(`${gamer.coalition.logo}`)} />
+            <h5 style={{margin: '7px'}}> #{gamer.rank}</h5>
           </Coalition>
           <div style={style.div1}>
             <div style={style.div2}>
               <div style={style.div3}>
-                <img style={style.userAvatar} alt='UserImg' src={/*gamer.user?.avatar_url*/ Pic}/>
+                <Avatar style={style.userAvatar} alt='UserImg' src={/*gamer.user?.avatar_url*/ Pic}/>
                 <div style={style.div4}>
                   <Text variant="h5" style={style.userName} > {`${user.firstName} ${user.lastName}`} </Text>
                   <Button
+                    sx={style.button1}
                     size="small"
                     startIcon={<PersonAddAlt fontSize="small"/>}  
                     onClick={() => navigate('/account/profile') } > friend requist
                   </Button>
                   <Button
-                    variant='outlined'
+                   sx={style.button1}
                     size="small"
                     startIcon={<Message fontSize="small"/>}
                     onClick={() => navigate('/account/profile')} > message

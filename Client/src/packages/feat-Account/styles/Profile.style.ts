@@ -26,6 +26,11 @@ const Usercard = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  max-width: 50%;
+  @media (max-width: 940px) {
+    max-width: none;
+  }
+  margin: 2%;
 `
 const Coalition = styled.div`
   display: inline-flex;
@@ -35,6 +40,9 @@ const Coalition = styled.div`
   padding: 5px;
   margin: 5px ;
   min-width: 20%;
+  @media (max-width: 540px) {
+    display: none;
+  };
 `
 const User = styled.div`
   display: flex;
@@ -63,6 +71,10 @@ const style: Record<string, React.CSSProperties> = {
   div5: {
     fontSize: '12px',
   },
+  button1: {
+    padding: '0',
+    textTransform: 'lowercase'
+  },
   box1: {
     display: 'flex',
     flexDirection: 'row',
@@ -78,10 +90,8 @@ const style: Record<string, React.CSSProperties> = {
     padding: '0 2% 0 10%',
   },
   userAvatar: {
-    borderRadius: '40px',
     width: '80px',
     height: '80px',
-    marginTop: '10px',
     marginRight: '10px',
   },
   userName: {

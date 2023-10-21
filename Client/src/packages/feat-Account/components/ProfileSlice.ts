@@ -2,13 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getLeaderboard } from "./ProfileThunk";
 import Module from "module";
 import { useAppSelector } from "../../../core";
-import { federation } from "../images_uploads";
 
 type gamerType = {
   user: any
   coalition: {
     name: string | null
-    logo: Module | undefined
+    logo: Module | string 
   },
   rank: number
 }
@@ -55,7 +54,7 @@ const initialState: ProfileState = {
       user: null ,
       coalition: {
         name: null,
-        logo: undefined
+        logo: ''
       },
       rank: 0
     },
@@ -75,27 +74,19 @@ const initialState: ProfileState = {
   },
 };
 
-export const ops:gamerType = {
-    user: null,
-    coalition: {
-      name: 'The Order',
-      logo: federation
-    },
-    rank: 32
-  }
 const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
     getuserasgamer(state:ProfileState, action) {
       state.gamer.on.user = action.payload
-      state.gamer.on = ops
+      state.gamer.on = require('../static-data/gamer.json')
     },
     getMatchsHistory(state:ProfileState){
-      state.achiv = initialState.achiv
+      state.achiv = require('../static-data/Achievements.json')
     },
     getAchievements(state){
-      state.matchs = initialState.matchs
+      state.matchs = require('../static-data/MatchesHistory.json')
     }
   },
   extraReducers: (builder) => {

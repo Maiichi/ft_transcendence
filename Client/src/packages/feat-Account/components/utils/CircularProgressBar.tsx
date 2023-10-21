@@ -7,23 +7,21 @@ const style: Record<string, CSSProperties> = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    margin: '0 2% 0 1%'
+    margin: '0 2% 0 1%',
+    paddingBottom: '16px',
   },
   svg: {
     transform: "rotate(-90deg)",
   },
-  circleBackground: {
-    strokeWidth: "5",
-  },
   circle: {
-    fill: "#abb0bbfa",
-    stroke: "#007acc",
-    strokeWidth: "5",
+    fill: "rgba(215, 227, 239, 0.804)",
+    stroke: "#dde7f2",
+    strokeWidth: "6",
     strokeLinecap: "round",
     transition: "stroke-dashoffset 0.3s",
   },
   percentage: {
-    fontSize: "24px",
+      fontSize: "29px",
   },
 };
 
@@ -31,7 +29,7 @@ interface CircularProgressBarProps {
   progress: number;
 }
 
-const CircularProgressBar: FC<CircularProgressBarProps> = ({ progress }) => {
+const  CircularProgressBar: React.FC<CircularProgressBarProps> = ({ progress }) => {
   const circumference = 2 * Math.PI * 40;
   const offset = circumference - (progress / 100) * circumference;
 
@@ -39,8 +37,7 @@ const CircularProgressBar: FC<CircularProgressBarProps> = ({ progress }) => {
     <div style={style.circularprogressbar}>
       <svg style={style.svg} width="120" height="120">
         <circle
-          style={style.circlebackground}
-          r="40"
+          r="50"
           cx="60"
           cy="60"
         />
@@ -51,7 +48,7 @@ const CircularProgressBar: FC<CircularProgressBarProps> = ({ progress }) => {
             },
             style.circle
           )}
-          r="38"
+          r="47.2"
           cx="60"
           cy="60"
         />
