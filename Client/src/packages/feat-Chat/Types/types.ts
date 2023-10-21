@@ -13,7 +13,6 @@ export interface I_Room {
       lastName: string;
       userName: string;
       intraId: number;
-      avatar_url: string;
     };
   }[];
   conversation: {

@@ -12,8 +12,7 @@ import SocketMiddleware from "../socket/socketMiddleware";
 import socketSlice from "../socket/socketSlice";
 import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice";
 import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
-import leaderboardSlice from "../../packages/feat-Account/API.d/ProfileSlice";
-import searchSlice from "../../packages/feat-Search/redux/searchSlice";
+import ProfileSlice from "../../packages/feat-Account/components/ProfileSlice";
 // ...
 
 const rootReducer = combineReducers({
@@ -25,8 +24,7 @@ const rootReducer = combineReducers({
   directMessage: DirectMessageSlice,
   filter: FilterSlice,
   socket: socketSlice,
-  leaderboard: leaderboardSlice,
-  search: searchSlice
+  profile: ProfileSlice,
 });
 
 const persistConfig = {

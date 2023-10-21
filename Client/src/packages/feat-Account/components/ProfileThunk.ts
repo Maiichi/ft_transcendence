@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../core/utils/apiRequest";
 import { RootState } from "../../../core";
-import { Logo } from "./data";
+import { Logo } from "../static-data";
 import { leaderboardType } from "./ProfileSlice";
 
 const TopPlayersArr: leaderboardType[] = [

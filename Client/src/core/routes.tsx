@@ -1,21 +1,10 @@
 import { Test, Home, Game, Settings, Profile, Chat, Leaderboard } from "../packages";
 import Login from "../packages/feat-Auth/Login";
 import FirstLogin from "../packages/feat-Auth/components/FirstLogin";
-import { Search } from "../packages/feat-Search";
 import { Layout } from "./utils";
 import { NotFoundError } from "./utils/components/errors";
 
 export const routes = [
-  {
-    path: "/search",
-    element: (
-      <Layout>
-        <Search />
-      </Layout>
-    ),
-    errorElement: <NotFoundError />,
-    requireAuth: true,
-  },
   {
     path: "/test",
     element: (

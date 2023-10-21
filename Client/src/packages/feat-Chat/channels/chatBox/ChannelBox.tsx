@@ -11,12 +11,11 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
   console.log("Channel Box rendring !");
   const { channelConversation } = props;
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
+  const auth = useAppSelector((state) => state.auth.user);
   const channelMessages: [] = useAppSelector((state) => state.channels.messages);
 
   const isConnectedUser = (intraId: number) => {
-    console.log('intraId ==', intraId);
-    if (user.intraId === intraId) return true;
+    if (auth.user.intraId === intraId) return true;
     return false;
   };
   useEffect(() => {

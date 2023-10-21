@@ -1,20 +1,29 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Button,
+  ProfileCards,
 
   /***global**/
   Root,
 } from "./styles";
+import { useAppDispatch, useAppSelector } from "../../core";
+import { getAchievements, getMatchsHistory } from "./components";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const [state, _] = useState(useAppSelector(state => state.profile))
+  const dispatch = useAppDispatch()
 
+  useEffect(() => {
+
+  }, [])
+
+  dispatch(getAchievements())
+  dispatch(getMatchsHistory())
   return (
-    <Root>
-      <Button onClick={() => navigate("/Leaderboard")}>
-        See more {"...< >>Leaderboard >"}
-      </Button>
-    </Root>
+      <ProfileCards>
+
+      </ProfileCards>
   );
 };
 

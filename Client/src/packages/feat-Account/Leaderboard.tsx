@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Chat, PersonAdd, SportsCricket } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../core";
-import { getLeaderboard, leaderboardState, leaderboardType } from "./API.d";
+import { getLeaderboard, leaderboardType } from "./components";
 import {
   Players,
   Player,
@@ -17,7 +17,7 @@ import {
   Title,
   Root,
 } from "./styles";
-import { Pic } from "./API.d/data";
+import { Pic } from "./static-data";
 import { Loading } from "./components";
 
 function sendGameRequist(userName: string) {}
@@ -25,7 +25,7 @@ function sendFriendRequist(userName: string) {}
 
 const Leaderboard = () => {
   const navigate = useNavigate();
-  const state = useAppSelector((state) => state.leaderboard);
+  const state = useAppSelector((state) => state.profile.lead);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
