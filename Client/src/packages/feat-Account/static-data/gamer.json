@@ -1,8 +1,9 @@
 {
-    "user": null,
-    "coalition": {
-        "name": "The Order",
-        "logo": "./images_uploads/federation.png"
-    },
-    "rank": 73
+  "user": null,
+  "coalition": {
+    "name": "The Order",
+    "logo": "./images_uploads/federation.png"
+  },
+  "rank": 73
 }
+

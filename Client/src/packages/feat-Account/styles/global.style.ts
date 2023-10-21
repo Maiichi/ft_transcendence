@@ -4,8 +4,7 @@ import { Typography } from "@mui/material";
 /**
  * `as Typography from mui`
  */
-const Text = styled(Typography)<{}>`
-`
+const Text = styled(Typography)<{}>``;
 const rotate = keyframes`
   from {
     transform: rotate(0deg);

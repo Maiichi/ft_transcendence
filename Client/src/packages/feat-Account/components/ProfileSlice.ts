@@ -2,15 +2,16 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getLeaderboard } from "./ProfileThunk";
 import Module from "module";
 import { useAppSelector } from "../../../core";
+import { TimeLike } from "fs";
 
 type gamerType = {
-  user: any
+  user: any;
   coalition: {
-    name: string | null
-    logo: Module | string 
-  },
-  rank: number
-}
+    name: string | null;
+    logo: Module | string;
+  };
+  rank: number;
+};
 type leaderboardType = {
   name: string;
   ladder: number;
@@ -21,56 +22,60 @@ type leaderboardType = {
 };
 type AchievementType = {
   name: string;
-  logo: Module
+  logo: Module;
 };
 type MatchHistoryType = {
-  name:string
-}
+  name: string;
+  pic: Module;
+  time: string;
+  gain: number;
+  nogain: number;
+};
 
-export type { gamerType, leaderboardType, AchievementType, MatchHistoryType }
+export type { gamerType, leaderboardType, AchievementType, MatchHistoryType };
 
 export interface ProfileState {
   gamer: {
-    on: gamerType
-    isLoading: boolean
-  }
+    on: gamerType;
+    isLoading: boolean;
+  };
   lead: {
     leaderboard: leaderboardType[] | unknown;
     isLoading: boolean;
-  },
+  };
   achiv: {
-    achievement: AchievementType[] | null
+    achievement: AchievementType[] | null;
     isLoading: boolean;
-  }
+  };
   matchs: {
-    MatchHistory: MatchHistoryType[] | null
+    MatchHistory: MatchHistoryType[] | null;
     isLoading: boolean;
-  }
+  };
 }
 
 const initialState: ProfileState = {
   gamer: {
     on: {
-      user: null ,
+      user: null,
       coalition: {
         name: null,
-        logo: ''
+        logo: "",
       },
-      rank: 0
+      rank: 0,
     },
-    isLoading: false
+    isLoading: false,
   },
   lead: {
     leaderboard: null,
-    isLoading: false
+    isLoading: true,
   },
   achiv: {
     achievement: null,
-    isLoading: false
+    isLoading: false,
   },
   matchs: {
     MatchHistory: null,
-    isLoading: false
+    isLoading: false,
   },
 };
 
@@ -78,16 +83,16 @@ const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    getuserasgamer(state:ProfileState, action) {
-      state.gamer.on.user = action.payload
-      state.gamer.on = require('../static-data/gamer.json')
+    getuserasgamer(state: ProfileState, action) {
+      state.gamer.on.user = action.payload;
+      state.gamer.on = require("../static-data/gamer.json");
     },
-    getMatchsHistory(state:ProfileState){
-      state.achiv = require('../static-data/Achievements.json')
+    getMatchsHistory(state: ProfileState) {
+      state.achiv = require("../static-data/Achievements.json");
     },
-    getAchievements(state){
-      state.matchs = require('../static-data/MatchesHistory.json')
-    }
+    getAchievements(state) {
+      state.matchs = require("../static-data/MatchesHistory.json").matchs;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -105,6 +110,7 @@ const profileSlice = createSlice({
 });
 
 // export type { leaderboardType, leaderboardState };
-export const { getuserasgamer, getMatchsHistory, getAchievements } = profileSlice.actions;
+export const { getuserasgamer, getMatchsHistory, getAchievements } =
+  profileSlice.actions;
 /** in rootReducer = combineReducers as LeaderBoard */
 export default profileSlice.reducer;
