@@ -4,14 +4,13 @@ import { RootState } from "../../../core";
 import { Logo } from "../images_uploads";
 import { leaderboardType } from "./ProfileSlice";
 
-
 const getLeaderboard = createAsyncThunk(
   "profile/leaderboard",
   async (_, { getState }): Promise<leaderboardType[] | undefined> => {
     try {
       // const token = (getState() as RootState).auth.token;
-      const Players = require('../static-data/Players.json').Players
-      const TopPlayersArr:leaderboardType[]  = []
+      const Players = require("../static-data/Players.json").Players;
+      const TopPlayersArr: leaderboardType[] = [];
       for (let i = 1; i < 5; i++) {
         if (!Players[i]) break;
         TopPlayersArr.push(Players[i]);
@@ -34,7 +33,7 @@ const getLeaderboard = createAsyncThunk(
     } catch (error) {
       console.log("error leaderboard fetching", error);
     }
-  }
+  },
 );
 
 export { getLeaderboard };
