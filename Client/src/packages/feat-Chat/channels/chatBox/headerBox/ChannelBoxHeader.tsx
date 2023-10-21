@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+
+import { Box, Modal } from "@mui/material";
 import { LogoutRounded, Person } from "@mui/icons-material";
 import { I_Room } from "../../../Types/types";
 import styled from "styled-components";

@@ -13,13 +13,13 @@ export const getMemberships = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      //   console.log("getMemberships ==", response.data);
+      console.log("getMemberships ==", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       console.log("error in chatThunk", error);
       throw error;
     }
-  }
+  },
 );
 
 export const getChatRoomMessages = createAsyncThunk(
@@ -39,5 +39,5 @@ export const getChatRoomMessages = createAsyncThunk(
       console.log("error in getChatRoomMessages", error);
       throw error;
     }
-  }
+  },
 );

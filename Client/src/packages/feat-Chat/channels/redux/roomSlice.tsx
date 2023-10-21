@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import { getChatRoomMessages, getMemberships } from "./roomThunk";
 import { I_ConversationMessages, I_Room } from "../../Types/types";
 export interface roomState {
@@ -44,18 +44,52 @@ export const roomSlice = createSlice({
     setMessages: (state, action: PayloadAction<roomState>) => {
       state.messages = action.payload.messages;
     },
+    removeMemberFromRoom: (state, action: PayloadAction<any>) => {
+      const { userId, roomId } = action.payload;
+      const isMembershipFound: I_Room | undefined = state.memberships.find(
+        (membership: I_Room) => membership.id === roomId,
+      );
+      console.log("newState (isMem) ===", JSON.stringify(isMembershipFound));
+      if (isMembershipFound) {
+        console.log("here");
+        const memberIndex = isMembershipFound.members.findIndex(
+          (member) => member.user.intraId == userId,
+        );
+        console.log("memberINdex ==", memberIndex);
+        if (memberIndex !== -1) {
+          console.log("here 2");
+          isMembershipFound.members.splice(memberIndex, 1);
+        }
+      }
+      console.log("newState (before)===", current(state.memberships));
+      state.memberships.map((membership: any) => {
+        console.log("memId ==", membership.id);
+        console.log("memId (II) ==", membership.id);
+        if (membership.id == roomId) {
+          membership = isMembershipFound;
+        }
+      });
+      console.log("newState ===", current(state.memberships));
+    },
+    addMemberToRoom: (state, action: PayloadAction<any>) => {
+      console.log("addMemberToRoom (payload) ==", action.payload);
+      state.memberships.map((membership) => {
+        if (membership.id == action.payload.roomId)
+          membership.members.unshift(action.payload.user);
+      });
+    },
     addMembership: (state, action: PayloadAction<I_Room>) => {
       // Add the new membership to the existing memberships array
-      state.memberships.push(action.payload);
+      state.memberships.unshift(action.payload);
       state.errors = null;
     },
     removeMembership: (state, action: PayloadAction<number>) => {
       state.memberships.splice(
         state.memberships.findIndex(
-          (membership) => membership.id === action.payload,
+          (membership: I_Room) => membership.id === action.payload,
         ),
+        1,
       );
-      console.log("(removeMembership) new state ==", state.memberships);
     },
   },
   extraReducers: (builder) => {
@@ -89,8 +123,11 @@ export const {
   setMessages,
   addMembership,
   removeMembership,
+  addMemberToRoom,
   createRoom,
   leaveRoom,
+  createRoomSuccess,
+  removeMemberFromRoom,
 
   createRoomError,
 } = roomSlice.actions;

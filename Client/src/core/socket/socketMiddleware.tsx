@@ -8,12 +8,20 @@ import {
 import { initializeSocket } from "./socketManager";
 import {
   addMembership,
+  addMemberToRoom,
   createRoom,
-  createRoomError,
   leaveRoom,
+  removeMemberFromRoom,
+  createRoomError,
   removeMembership,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import { setIsConversation } from "../CoreSlice";
+import {
+  addRoom,
+  joinRoom,
+  setRoomJoined,
+  setRoomLeaved,
+} from "../../packages/feat-Search/redux/searchSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -28,6 +36,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         socket.on("roomCreated", (data) => {
           dispatch(addMembership(data));
         });
+        socket.on("newRoom", (data) => {
+          dispatch(addRoom(data));
+        });
         socket.on("roomCreationError", (data) => {
           dispatch(createRoomError(data.message));
         });
@@ -35,6 +46,23 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         socket.on("roomLeaved", (data) => {
           dispatch(removeMembership(data));
           dispatch(setIsConversation(false));
+        });
+        socket.on("userLeftRoom", (data) => {
+          console.log("data (userLeftRoom)===", data);
+          dispatch(removeMemberFromRoom(data));
+        });
+        socket.on("roomHasBeenLeft", (data) => {
+          dispatch(setRoomLeaved(data));
+        });
+        socket.on("roomJoined", (data) => {
+          console.log("data ins roomJOined ==", data);
+          dispatch(addMembership(data));
+        });
+        socket.on("userJoinRoom", (data) => {
+          dispatch(addMemberToRoom(data));
+        });
+        socket.on("newRoomJoined", (data) => {
+          dispatch(setRoomJoined(data));
         });
         break;
       case disconnectSocket.type:
@@ -45,6 +73,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case leaveRoom.type:
         socket.emit("leaveRoom", { roomId: action.payload });
+        break;
+      case joinRoom.type:
+        socket.emit("joinRoom", action.payload);
         break;
       default:
         break;
