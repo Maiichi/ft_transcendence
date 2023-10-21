@@ -2,12 +2,9 @@ import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Choose the storage solution you want to use
 import { combineReducers } from "redux";
-import counterSlice from "../../packages/feat-Test/components/CounterSlice";
-import todosSlice from "../../packages/feat-Test/components/TodosSlice";
 import authSlice from "../../packages/feat-Auth/components/authSlice";
 import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
-import FilterSlice from "../utils/components/Input/SearchSlice";
 import SocketMiddleware from "../socket/socketMiddleware";
 import socketSlice from "../socket/socketSlice";
 import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice";
@@ -17,13 +14,10 @@ import searchSlice from "../../packages/feat-Search/redux/searchSlice";
 // ...
 
 const rootReducer = combineReducers({
-  counter: counterSlice,
-  todos: todosSlice,
   auth: authSlice,
   core: coreSlice,
   channels: roomSlice,
   directMessage: DirectMessageSlice,
-  filter: FilterSlice,
   socket: socketSlice,
   leaderboard: leaderboardSlice,
   search: searchSlice

@@ -41,6 +41,8 @@ export const Chat = () => {
   const dispatch = useAppDispatch();
   const { channels, directMessage, filter } = useAppSelector((state) => state);
   const [conversation, setConversation] = useState<I_Discussion | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getDirectConversations());
@@ -48,14 +50,14 @@ export const Chat = () => {
 
   // Filter chat rooms based on the search query
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
-    item.name.toLowerCase().includes(filter.searchQuery.toLowerCase()),
+    item.name.toLowerCase().startsWith(searchQuery.toLowerCase()),
   );
   // Filter conversations based on the search query
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
       discussion.receiver.firstName
         .toLowerCase()
-        .includes(filter.searchQuery.toLowerCase()),
+        .startsWith(searchQuery.toLowerCase()),
   );
   // const handleCloseSnackbar = (
   //   event?: React.SyntheticEvent | Event,
@@ -80,6 +82,10 @@ export const Chat = () => {
   };
   const errors = useAppSelector((state) => state.channels.errors);
 
+  const handleClickSearch = (str: string) => {
+    setSearchQuery(str)
+  }
+
   return (
     <Root>
       <Snackbar
@@ -99,11 +105,10 @@ export const Chat = () => {
       />
       <Discussions>
         <TextMessage>Discussions</TextMessage>
-        <SearchComponent onInputUpdate={filter.searchQuery} />
+        <SearchComponent onInputUpdate={handleClickSearch} />
         <Tab>
           <p>Channels</p>
           <Add
-            style={{}}
             onClick={() =>
               handleClickModal(<CreateChannelModal handleClose={handleClose} />)
             }
@@ -125,7 +130,6 @@ export const Chat = () => {
         <Tab>
           <p>Direct Messages</p>
           <Add
-            style={{ padding: "5px" }}
             onClick={() =>
               handleClickModal(
                 <NewDirectMessage handleClose={handleClose} />,
@@ -196,12 +200,12 @@ const Root = styled.div`
 
 `;
 const Tab = styled.div`
-  display: "flex";
-  alignitems: "center";
-  justifycontent: "space-between";
-  color: "rgb(94; 53; 177)";
-  margin: "0px 10px 0px 10px";
-  fontweight: "900";
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgb(94, 53, 177);
+  margin: 0px 10px 0px 10px;
+  font-weight: 900;
 `;
 
 const Discussions = styled.div`

@@ -22,7 +22,7 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
   useEffect(() => {
     if (channelConversation !== null)
       dispatch(getChatRoomMessages(channelConversation.id));
-  }, [channelConversation]);
+  }, []);
 
   return (
     <>
