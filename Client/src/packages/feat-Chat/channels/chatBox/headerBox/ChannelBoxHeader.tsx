@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-  Person,
-  PersonAddAltRounded,
-} from "@mui/icons-material";
+import { Person, PersonAddAltRounded } from "@mui/icons-material";
 import { Box, Modal } from "@mui/material";
 import { I_Room } from "../../../Types/types";
 import styled from "styled-components";
@@ -16,7 +13,6 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
     setOpen(false);
   };
 
-  
   return (
     <>
       <h4># {channelConversation.name} </h4>
@@ -32,11 +28,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
             <Box sx={boxStyle}>
               <ModalHeader>
                 <h2>Users</h2>
-                <ButtonCloseModal
-                  onClick={handleClose}
-                >
-                  X
-                </ButtonCloseModal>
+                <ButtonCloseModal onClick={handleClose}>X</ButtonCloseModal>
                 {/* <Close className={"close-button"} style={{cursor: 'pointer'}} onClick={() => setOpen(false)} /> */}
               </ModalHeader>
               <div
@@ -47,7 +39,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
               >
                 <div className="modal-search">{/* <SearchComponent /> */}</div>
                 <ModalInviteUser
-                  // onClick={() => setOpenInviteModal(true)}
+                // onClick={() => setOpenInviteModal(true)}
                 >
                   <PersonAddAltRounded fontSize="large" />
                   <h4 style={{ marginLeft: "10px" }}>Invite user</h4>
@@ -64,12 +56,11 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
             </Box>
           </Modal>
         </ChannelMembers>
-        <LeaveRoomModal channelConversation={channelConversation}/>
+        <LeaveRoomModal channelConversation={channelConversation} />
       </IconHolder>
     </>
   );
 };
-
 
 const boxStyle = {
   position: "absolute" as "absolute",
@@ -115,7 +106,6 @@ const ButtonCloseModal = styled.button`
   width: 40px;
   border-radius: 10px;
   background-color: red;
-
 `;
 
 const ModalInviteUser = styled.div`
@@ -149,7 +139,7 @@ const ButtonLeave = styled.div`
   border-radius: 10px;
   cursor: pointer;
   background: red;
-  &:hover{
+  &:hover {
     background-color: rgb(244, 56, 56);
     color: #f1f1f1;
   }
@@ -165,7 +155,7 @@ const ButtonCancel = styled.div`
 `;
 
 const ModalFooter = styled.div`
-    margin: 25px 0px 0px 0px;
-    display: flex;
-    justify-content: space-evenly;
+  margin: 25px 0px 0px 0px;
+  display: flex;
+  justify-content: space-evenly;
 `;

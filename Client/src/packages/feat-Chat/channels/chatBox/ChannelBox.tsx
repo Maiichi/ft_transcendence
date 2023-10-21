@@ -12,7 +12,9 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
   const { channelConversation } = props;
   const dispatch = useAppDispatch();
   const auth = useAppSelector((state) => state.auth.user);
-  const channelMessages: [] = useAppSelector((state) => state.channels.messages);
+  const channelMessages: [] = useAppSelector(
+    (state) => state.channels.messages,
+  );
 
   const isConnectedUser = (intraId: number) => {
     if (auth.user.intraId === intraId) return true;
@@ -32,22 +34,22 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
         <Wrapper>
           <ChatBoxTop>
             {channelMessages.length === 0 ? (
-                <EmptyConversation>
-                  <h2>it's always better to start a conversation &#128516;</h2>
-                </EmptyConversation>
-              ) : (
-                <>
-                  {channelMessages.map((item: I_Message) => (
-                    <>
-                      <MessageBox
-                        own={isConnectedUser(item.sender.intraId)}
-                        data={item}
-                        key={item.id}
-                      />
-                    </>
-                  ))}
-                </>
-              )}
+              <EmptyConversation>
+                <h2>it's always better to start a conversation &#128516;</h2>
+              </EmptyConversation>
+            ) : (
+              <>
+                {channelMessages.map((item: I_Message) => (
+                  <>
+                    <MessageBox
+                      own={isConnectedUser(item.sender.intraId)}
+                      data={item}
+                      key={item.id}
+                    />
+                  </>
+                ))}
+              </>
+            )}
           </ChatBoxTop>
         </Wrapper>
         <ChatBoxBottom>
@@ -60,7 +62,6 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
     </>
   );
 };
-
 
 const ChatBox = styled.div`
   flex: 5.5;
@@ -81,7 +82,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   height: 80%;
   padding: 0px 10px 0px 0px;
-`; 
+`;
 
 const ChatBoxTop = styled.div`
   height: 100%;
@@ -129,7 +130,7 @@ const EmptyConversation = styled.div`
 `;
 
 const RightSide = styled.div`
-  flex : 2;
+  flex: 2;
   height: 100%;
   /* border-radius: 20px; */
   border-left: 1px solid #d7d7d7;

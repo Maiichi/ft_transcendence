@@ -11,20 +11,14 @@ import { getAchievements, getMatchsHistory } from "./components";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const [state, _] = useState(useAppSelector(state => state.profile))
-  const dispatch = useAppDispatch()
+  const [state, _] = useState(useAppSelector((state) => state.profile));
+  const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  useEffect(() => {}, []);
 
-  }, [])
-
-  dispatch(getAchievements())
-  dispatch(getMatchsHistory())
-  return (
-      <ProfileCards>
-
-      </ProfileCards>
-  );
+  dispatch(getAchievements());
+  dispatch(getMatchsHistory());
+  return <ProfileCards></ProfileCards>;
 };
 
 /**

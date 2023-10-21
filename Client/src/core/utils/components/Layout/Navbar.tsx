@@ -31,7 +31,7 @@ const Menu = [
 interface ListNavProps {
   toggleDrawer?: (
     anchor: Anchor,
-    open: boolean
+    open: boolean,
   ) => (event: React.KeyboardEvent | React.MouseEvent) => void;
 }
 export const ListNav = ({ toggleDrawer }: ListNavProps) => {

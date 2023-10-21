@@ -12,55 +12,54 @@ type leaderboardType = {
 };
 type AchievementType = {
   name: string;
-  logo: Module
+  logo: Module;
 };
 type MatchHistoryType = {
-  name:string
-}
+  name: string;
+};
 
-export type {leaderboardType, AchievementType, MatchHistoryType}
+export type { leaderboardType, AchievementType, MatchHistoryType };
 
 export interface ProfileState {
   lead: {
     leaderboard: leaderboardType[] | unknown;
     isLoading: boolean;
-  },
+  };
   achiv: {
-    achievement: AchievementType[] | null
+    achievement: AchievementType[] | null;
     isLoading: boolean;
-  }
+  };
   matchs: {
-    MatchHistory: MatchHistoryType[] | null
+    MatchHistory: MatchHistoryType[] | null;
     isLoading: boolean;
-  }
+  };
 }
 
 const initialState: ProfileState = {
   lead: {
     leaderboard: null,
-    isLoading: false
+    isLoading: false,
   },
   achiv: {
     achievement: null,
-    isLoading: false
+    isLoading: false,
   },
   matchs: {
     MatchHistory: null,
-    isLoading: false
+    isLoading: false,
   },
-
 };
 
 const leaderboardSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    getMatchsHistory(state:ProfileState){
-      state.achiv = initialState.achiv
+    getMatchsHistory(state: ProfileState) {
+      state.achiv = initialState.achiv;
     },
-    getAchievements(state){
-      state.matchs = initialState.matchs
-    }
+    getAchievements(state) {
+      state.matchs = initialState.matchs;
+    },
   },
   extraReducers: (builder) => {
     builder
