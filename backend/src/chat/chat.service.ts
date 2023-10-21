@@ -42,7 +42,8 @@ export class ChatService
                                 firstName: true,
                                 lastName: true,
                                 userName: true,
-                                intraId: true
+                                intraId: true,
+                                avatar_url: true,
                             }
                         }
                     },
@@ -64,7 +65,7 @@ export class ChatService
                 type: true
             }
         });
-        return {room: room};
+        return room;
     }
     // async getSingleMembership(userId: number, roomId: number)
     // {

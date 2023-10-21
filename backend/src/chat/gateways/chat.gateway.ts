@@ -205,22 +205,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     @SubscribeMessage('createRoom')
     async createRoom(client: Socket, createRoomDto: CreateRoomDto) {
-        try {
-            // Get the current user
-            // console.log("room data ===", createRoomDto); 
-            // this.printClientSockets();
+        try { 
             const currentUser = this.findUserByClientSocketId(client.id);
             const roomData = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
-            // const userSockets: string[] = this.userSockets.get(currentUser.intraId);
-            // console.log("userSockerts ===", userSockets);
-            // console.log("userSockerts length===", userSockets.length);
-            // this.userSockets.forEach((key, value) => {
-
-            // })
-            this.userSockets.forEach((value) =>{
-                // console.log("value (socketId) = " + value);
-                this.server.to(value).emit('roomCreated', roomData);
+            const socketsOfUser: string[] = this.userSockets.get(currentUser.intraId);
+            console.log('roomData ==', JSON.stringify(roomData));
+            socketsOfUser.forEach((value) =>{
+                this.server.to(value).emit('roomCreated', roomData.dataMembership);
             })
+            this.userSockets.forEach((socketId) => {
+                this.server.to(socketId).emit('newRoom', roomData.dataRoom)
+            })
+
         } catch (error) {
             console.log(error.message);
             client.emit('roomCreationError', { message: error.message });
@@ -253,26 +249,40 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
     {
         try {
             const currentUser = this.findUserByClientSocketId(client.id);
+            const member = await this.roomService.getMember(currentUser.intraId);
             const joinedRoom = await this.roomService.joinRoom(body, currentUser.intraId);
-            const roomUsers = await this.roomService.getRoomUsers(joinedRoom.dataRoom.id);
-            console.log("roomUsers ==", JSON.stringify(roomUsers));
-             // Retrieve the user IDs of users in the room
+            const roomUsers = await this.roomService.getRoomUsersExcludingSender(joinedRoom.dataRoom.id, currentUser.intraId);
+            const socketsOfUser: string[] = this.userSockets.get(currentUser.intraId);
             const usersInRoom = roomUsers.map(user => user.intraId);
 
-            // Iterate through the user IDs and emit the event to their associated sockets
+            // this event for the users in the room
             usersInRoom.forEach(userId => {
                 const userSockets = this.userSockets.get(userId);
                 if (userSockets) {
                     userSockets.forEach(socketId => {
-                        this.server.to(socketId).emit('roomJoined', joinedRoom);
+                        this.server.to(socketId).emit('userJoinRoom', {
+                            roomId: body.id,
+                            user : {
+                                idAdmin: "false",
+                                isBanned: "false",
+                                isOwner: "false",
+                                isMute: "false",
+                                user: member
+                            }
+                        });
                     });
                 }
             });
-            // const userSockets: string[] = this.userSockets.get(currentUser.intraId);
-            // // console.log('joinedRoom (back) ==', JSON.stringify(joinedRoom));
-            // userSockets.forEach((value) =>{
-            //     this.server.to(value).emit('roomJoined', joinedRoom);
-            // })
+
+            // this event for the user who joins a room 
+            socketsOfUser.forEach((socketId) => {
+                this.server.to(socketId).emit('roomJoined', joinedRoom.dataMembership);
+            })
+
+            // this event is for all user who are connected
+            this.userSockets.forEach((value) =>{
+                this.server.to(value).emit('newRoomJoined', joinedRoom.dataRoom);
+            })
         } catch (error) {
             console.log(error.message)
         }
@@ -286,12 +296,36 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             // console.log("(back) body == ", body);
             const currentUser = this.findUserByClientSocketId(client.id);
             await this.roomService.leaveRoom(body, currentUser.intraId);
-            const userSockets: string[] = this.userSockets.get(currentUser.intraId);
-            userSockets.forEach((value) =>{
-                console.log("value (socketId) = " + value);
+            const currentUserSockets: string[] = this.userSockets.get(currentUser.intraId);
+            const roomUsers = await this.roomService.getRoomUsersExcludingSender(body.roomId, currentUser.intraId);
+            console.log("roomUsers ==", JSON.stringify(roomUsers));
+             // Retrieve the user IDs of users in the room
+            const usersInRoom = roomUsers.map(user => user.intraId);
+
+            // this event is for the user how perform the action
+            currentUserSockets.forEach((value) =>{
                 this.server.to(value).emit('roomLeaved', body.roomId);
             })
-            // this.server.to(client.id).emit('leaveRoom');
+            // Ihis event is for the userInRoom exculding the performer
+            usersInRoom.forEach(userId => {
+                const socketsUser = this.userSockets.get(userId);
+                if (socketsUser) {
+                    socketsUser.forEach(socketId => {
+                        this.server.to(socketId).emit('userLeftRoom',
+                            {
+                                roomId: body.roomId, 
+                                userId: currentUser.intraId
+                            });
+                    });
+                }
+            });
+
+            this.userSockets.forEach((socketId) => {
+                this.server.to(socketId).emit('roomHasBeenLeft', {
+                    roomId: body.roomId,
+                    userId: currentUser.intraId
+                })
+            })
         } catch (error) {
             console.log("leaveRoom error =" + error.message)
         }

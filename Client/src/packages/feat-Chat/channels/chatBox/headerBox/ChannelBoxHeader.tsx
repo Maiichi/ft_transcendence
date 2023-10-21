@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Person,
   PersonAddAltRounded,
@@ -15,7 +15,6 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
   const handleClose = () => {
     setOpen(false);
   };
-
   
   return (
     <>

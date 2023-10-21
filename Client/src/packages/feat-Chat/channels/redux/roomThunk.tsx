@@ -14,7 +14,7 @@ export const getMemberships = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      //   console.log("getMemberships ==", response.data);
+        console.log("getMemberships ==", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       console.log("error in chatThunk", error);

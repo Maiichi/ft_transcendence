@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { getAllRooms } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
 import { joinRoom } from "./redux/searchSlice";
+import { getMemberships } from "../feat-Chat/channels/redux/roomThunk";
 
 export const Search = () => {
   const dispatch = useAppDispatch();
@@ -23,6 +24,7 @@ export const Search = () => {
   const filter = useAppSelector((state) => state.filter.searchQuery);
   const user = useAppSelector((state) => state.auth.user);
   useEffect(() => {
+    dispatch(getMemberships());
     dispatch(getAllRooms());
   }, []);
 
@@ -39,7 +41,7 @@ export const Search = () => {
     item.name.toLowerCase().includes(filter.toLowerCase())
   );
 
-  console.log("rooms ==", JSON.stringify(rooms));
+  console.log("rooms ==", JSON.stringify(filteredRooms));
 
   // check if the user is a member or not to display the button based on the membership
   const isUserInRoom = (roomS: I_Room_Search, userID: number) => {

@@ -25,8 +25,8 @@ export const Chat = () => {
   }, []);
 
   // Filter chat rooms based on the search query
-  const filteredRooms = channels.memberships.filter((item: any) =>
-    item.room.name.toLowerCase().includes(filter.searchQuery.toLowerCase())
+  const filteredRooms = channels.memberships.filter((item: I_Room) =>
+    item.name.toLowerCase().includes(filter.searchQuery.toLowerCase())
   );
   // Filter conversations based on the search query
   const filteredConversations = directMessage.conversations.filter(
@@ -68,15 +68,15 @@ export const Chat = () => {
           <CreateChannelModal />
         </div>
         <ChannelListHolder>
-          {filteredRooms.map((item: any) => (
+          {filteredRooms.map((item: I_Room) => (
             <ChannelName
-              key={item.room.id}
+              key={item.id}
               className={`channel-name ${
-                conversation?.room === item.id ? "selected" : ""
+                conversation?.room === item ? "selected" : ""
               }`}
-              onClick={() => handleCLick("channel", item.room)}
+              onClick={() => handleCLick("channel", item)}
             >
-              # {item.room.name}
+              # {item.name}
             </ChannelName>
           ))}
         </ChannelListHolder>

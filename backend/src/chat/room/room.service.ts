@@ -81,7 +81,7 @@ export class RoomService
                 }
             });
             if (!rooms.length)
-                return 'no rooms exists';
+                return [];
             return rooms;
         } catch (error) {
             const response = {
@@ -117,11 +117,20 @@ export class RoomService
         }
     }
 
-    async getRoomUsers(roomId: number)
+    async getRoomUsersExcludingSender(roomId: number, userIdExcluded: number)
     {
         const roomUsers = await this.prisma.room.findMany({
             where: {
-                id: roomId
+                id: roomId,
+                members: {
+                    some: {
+                        user: {
+                            NOT: {
+                                intraId: userIdExcluded
+                            }
+                        }
+                    }
+                }
             },
             select: {
                 members: {
@@ -147,9 +156,42 @@ export class RoomService
             intraId: member.user.intraId,
             userName: member.user.userName
         }));
+        
+        return transformedUsers;
+        // return roomUsers;
 
+    }
+    async getRoomUsers(roomId: number)
+    {
+        const roomUsers = await this.prisma.room.findMany({
+            where: {
+                id: roomId,
+            },
+            select: {
+                members: {
+                    where: {
+                        isBanned: false
+                    },
+                    select: {
+                        user: {
+                            select: {
+                                intraId: true,
+                                userName: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        if (roomUsers.length == 0)
+            return [];
 
-
+         // Extract the desired data structure using map
+        const transformedUsers = roomUsers[0].members.map(member => ({
+            intraId: member.user.intraId,
+            userName: member.user.userName
+        }));
+        
         return transformedUsers;
         // return roomUsers;
 
@@ -242,12 +284,38 @@ export class RoomService
                 }
             }
         });
-
+        const roomCreated = await this.prisma.room.findUnique({
+            where: {
+                id: newRoom.id,
+            },
+            select: {
+                id: true,
+                name: true,
+                type: true,
+                password: true,
+                members: {  
+                    select: {
+                        user: {
+                            select: {
+                                avatar_url: true,
+                                intraId: true,
+                            }
+                        }
+                    }
+                },
+                createdAt: true,
+                updatedAt: true,
+            }
+        })
         // retrive the room created 
         const retrivedRoom = await this.chatService.getRoom(newRoom.id);
         // console.log(`${user.userName} has created a ${newRoom.name} room`);
         // console.log("retrived room =", JSON.stringify(retrivedRoom));
-        return retrivedRoom;
+        return {
+            dataMembership: retrivedRoom,
+            dataRoom: roomCreated
+        };
+        // return retrivedRoom;
         // } catch (error) {
         //     console.log("error || " + error)
         // }
@@ -342,22 +410,20 @@ export class RoomService
                 isBanned: false,
                 isMute: false,  
             },
-        })
-        // console.log("new mem == ", JSON.stringify(newMembership));
-        const getConversationByRoomId = await this.getConversationByRoomId(room.id);
-        await this.prisma.conversation.update({
-            where : {
-                id: getConversationByRoomId.id
-            },
-            data : {
-                participants : {
-                    connect : {
-                        intraId : userId
-                    }
-                }
-            }
-        })
-        // console.log('memeb ==', JSON.stringify(newMembership));
+        });
+
+        // console.log('newMembership ==', JSON.stringify(membership));
+        // await this.prisma.room.update({
+        //     where: {
+        //         id: room.id
+        //     },
+        //     data: {
+        //         members: {
+                    
+        //         }
+        //     }
+        // })
+        // TODO : need to check
         const joinedRoom = await this.prisma.room.findUnique({
             where: {
                 id: room.id,
@@ -369,9 +435,19 @@ export class RoomService
                 password: true,
                 members: {  
                     select: {
+                        id: true,
+                        isAdmin: true,
+                        isBanned: true,
+                        isMute: true,
+                        isOwner: true,
+                        timeMute:true,
                         user: {
                             select: {
                                 avatar_url: true,
+                                firstName: true,
+                                lastName: true,
+                                userName: true,
+                                intraId: true,
                             }
                         }
                     }
@@ -380,10 +456,11 @@ export class RoomService
                 updatedAt: true,
             }
         })
+        // console.log('joinedRoom Members ==', JSON.stringify(joinedRoom));
         // retrive the room created 
         const retrivedRoom = await this.chatService.getRoom(room.id);
         // console.log("join room service");
-        // console.log('JoinedRoom (back)', JSON.stringify(joinedRoom));
+        // console.log('retrivedRoom (back)', JSON.stringify(retrivedRoom));
         // console.log('aji lhna',
         //     {dataMembership: retrivedRoom,
         //     dataRoom: joinedRoom}
@@ -391,7 +468,7 @@ export class RoomService
         console.log(`${userId} has joined the room ${room.name}`)
         return {
             dataMembership: retrivedRoom,
-            dataRoom: joinedRoom
+            dataRoom: joinedRoom,
         };
     }
 
@@ -659,12 +736,17 @@ export class RoomService
         return conversation;
    }
 
-   async getUserMemeberships(user: User, res: Response)
+    async getUserMemeberships(user: User, res: Response)
    {
         const memberships = await this.prisma.membership.findMany({
             where : {
                 userId : user.intraId,
                 isBanned: false,
+            },
+            orderBy: {
+                room: {
+                    createdAt: 'desc'
+                }
             },
             select : {
                 room : {
@@ -682,6 +764,7 @@ export class RoomService
                                         firstName: true,
                                         lastName: true,
                                         userName: true,
+                                        intraId: true,
                                     }
                                 }
                             }
@@ -695,8 +778,37 @@ export class RoomService
                 },
             }
         });
-        return res.send({
-            data: memberships
-        })
-   }
+          // Transform the data to match the desired format
+        const transformedData = memberships.map(membership => ({
+            id: membership.room.id,
+            conversation: membership.room.conversation,
+            members: membership.room.members,
+            name: membership.room.name,
+            createdAt: membership.room.createdAt,
+            updatedAt: membership.room.updatedAt,
+            password: membership.room.password,
+            type: membership.room.type,
+        }));
+        return res.send({data : transformedData});
+    }
+
+    /* currently this function is used to get 
+        a specific data of the user in order 
+        to add him to the room members when he joins. */
+    async getMember(userId: number)
+    {
+        const member = await this.prisma.user.findUnique({
+            where : {
+                intraId: userId
+            },
+            select: {
+                userName: true,
+                lastName: true,
+                firstName: true,
+                intraId: true,
+                avatar_url: true,
+            }
+        });
+        return member;
+    }
 }

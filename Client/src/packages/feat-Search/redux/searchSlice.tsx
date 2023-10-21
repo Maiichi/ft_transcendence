@@ -29,10 +29,22 @@ export const searchSlice = createSlice({
     setRoomJoined: (state, action) => {
       // console.log('action payload ===', action.payload)
       state.rooms.map((item: I_Room_Search) => {
-        // console.log('item id ==', item.id);
         if (item.id == action.payload.id) item.members = action.payload.members;
       });
     },
+    setRoomLeaved: (state, action) => {
+      state.rooms.map((room: I_Room_Search) => {
+        if (room.id == action.payload.roomId)
+        {
+          const memberIndex = room.members.findIndex((member) => member.user.intraId == action.payload.userId)
+          if (memberIndex !== -1)
+            room.members.splice(memberIndex);
+        }
+      })
+    },
+    addRoom :(state, action: PayloadAction<I_Room_Search>) => {
+      state.rooms.unshift(action.payload);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -49,6 +61,6 @@ export const searchSlice = createSlice({
   },
 });
 
-export const { joinRoom, setRoomJoined } = searchSlice.actions;
+export const { joinRoom, setRoomJoined, setRoomLeaved,  addRoom } = searchSlice.actions;
 
 export default searchSlice.reducer;
