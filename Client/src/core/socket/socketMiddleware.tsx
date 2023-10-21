@@ -1,52 +1,57 @@
-
-import {
-    Middleware,
-} from "@reduxjs/toolkit";
+import { Middleware } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
 import {
-    ConnectSocket,
-    disconnectSocket,
-    SocketConnected,
+  ConnectSocket,
+  disconnectSocket,
+  SocketConnected,
 } from "./socketSlice";
 import { initializeSocket } from "./socketManager";
-import { addMembership, createRoom, leaveRoom,  removeMembership } from "../../packages/feat-Chat/channels/redux/roomSlice";
+import {
+  addMembership,
+  createRoom,
+  createRoomError,
+  leaveRoom,
+  removeMembership,
+} from "../../packages/feat-Chat/channels/redux/roomSlice";
 import { setIsConversation } from "../CoreSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
-    let socket: Socket;
-    return (next) => (action) => {
-        switch (action.type) {
-            case ConnectSocket.type:
-                console.log("Connect Socket Middleware");
-                let serverUrl =
-                    process.env.REACT_APP_BACKEND_URL ||
-                    "http://localhost:5001";
-                socket = initializeSocket(serverUrl, getState().auth.token);
-                dispatch(SocketConnected());
-                socket.on("roomCreated", (data) => {
-                    dispatch(addMembership(data));
-                });
-                socket.on('roomLeaved', (data) => {
-                    console.log('data ==' , data);
-                    dispatch(removeMembership(data));
-                    dispatch(setIsConversation(false));
-                })
-                break;
-            case disconnectSocket.type:
-                socket?.disconnect();
-                break;
-            case createRoom.type:
-                    socket.emit("createRoom", action.payload);
-                break;
-            case leaveRoom.type:
-                    socket.emit("leaveRoom", {roomId: action.payload});
-                break;
-            default:
-                break;
-        }
-       
-        next(action);
-    };
+  let socket: Socket;
+  return (next) => (action) => {
+    switch (action.type) {
+      case ConnectSocket.type:
+        console.log("Connect Socket Middleware");
+        let serverUrl =
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
+        socket = initializeSocket(serverUrl, getState().auth.token);
+        dispatch(SocketConnected());
+        socket.on("roomCreated", (data) => {
+          dispatch(addMembership(data));
+        });
+        socket.on("roomCreationError", (data) => {
+          dispatch(createRoomError(data.message));
+        });
+
+        socket.on("roomLeaved", (data) => {
+          dispatch(removeMembership(data));
+          dispatch(setIsConversation(false));
+        });
+        break;
+      case disconnectSocket.type:
+        socket?.disconnect();
+        break;
+      case createRoom.type:
+        socket.emit("createRoom", action.payload);
+        break;
+      case leaveRoom.type:
+        socket.emit("leaveRoom", { roomId: action.payload });
+        break;
+      default:
+        break;
+    }
+
+    next(action);
+  };
 };
 
 export default SocketMiddleware;
