@@ -33,7 +33,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  
+
   return (
     <>
       <ModalComponent

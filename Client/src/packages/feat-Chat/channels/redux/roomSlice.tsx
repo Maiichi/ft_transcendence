@@ -47,13 +47,13 @@ export const roomSlice = createSlice({
     removeMemberFromRoom: (state, action: PayloadAction<any>) => {
       const { userId, roomId } = action.payload;
       const isMembershipFound: I_Room | undefined = state.memberships.find(
-        (membership: I_Room) => membership.id === roomId
+        (membership: I_Room) => membership.id === roomId,
       );
       console.log("newState (isMem) ===", JSON.stringify(isMembershipFound));
       if (isMembershipFound) {
         console.log("here");
         const memberIndex = isMembershipFound.members.findIndex(
-          (member) => member.user.intraId == userId
+          (member) => member.user.intraId == userId,
         );
         console.log("memberINdex ==", memberIndex);
         if (memberIndex !== -1) {
@@ -86,9 +86,9 @@ export const roomSlice = createSlice({
     removeMembership: (state, action: PayloadAction<number>) => {
       state.memberships.splice(
         state.memberships.findIndex(
-          (membership: I_Room) => membership.id === action.payload
+          (membership: I_Room) => membership.id === action.payload,
         ),
-        1
+        1,
       );
     },
   },
