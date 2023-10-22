@@ -26,7 +26,7 @@ const Usercard = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  max-width: 50%;
+  max-width: 47%;
   @media (max-width: 940px) {
     max-width: none;
   }
@@ -50,7 +50,9 @@ const Matchshistory = styled.div`
   gap: 45px 15px;
   margin: 3px 7px;
   justify-content: center;
-  max-width: 50%;
+  max-width: 47%;
+  margin: 2%;
+  padding-bottom: 7px;
   @media (max-width: 940px) {
     max-width: none;
   }
