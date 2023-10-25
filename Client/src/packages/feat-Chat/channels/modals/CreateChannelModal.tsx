@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Close, LockSharp, LockOpenSharp } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../../../core";
-import { createRoom } from "../redux/roomSlice";
+import { createRoom, updateRoom } from "../redux/roomSlice";
 import styled from "styled-components";
 import { AntSwitch } from "../../components/AntSwitch";
 import { Field, Form } from "react-final-form";
@@ -11,10 +11,16 @@ interface Props {
   channelConversation?: I_Room;
 }
 export const CreateChannelModal = (props: Props) => {
-  const { handleClose } = props;
+  const { channelConversation, handleClose } = props;
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.user);
-  const [activate, setActivate] = useState(true);
+  const [activate, setActivate] = useState(
+    channelConversation
+      ? channelConversation?.type == "public"
+        ? true
+        : false
+      : true
+  );
   const [roomCreationError, setRoomCreationError] = useState(null);
   const toggleActivate = () => {
     setActivate(!activate);
@@ -27,18 +33,21 @@ export const CreateChannelModal = (props: Props) => {
 
   const handleCreateRoom = (values: any) => {
     const roomData = {
+      id: channelConversation?.id,
       name: values.name,
       ownerId: account.intraId,
       description: values.description,
       type: activate ? "public" : "private",
       password: values.password,
     };
-    dispatch(createRoom(roomData));
-    // console.log(errors);
+    if (channelConversation) {
+      dispatch(updateRoom(roomData));
+    } else dispatch(createRoom(roomData));
     handleClose();
   };
   interface Field {
     name: string;
+    value?: string;
     label: string;
     type: string;
     holder: string;
@@ -48,6 +57,7 @@ export const CreateChannelModal = (props: Props) => {
   const fields: Field[] = [
     {
       name: "name",
+      value: channelConversation?.name,
       required: true,
       label: "Channel name",
       type: "text",
@@ -55,6 +65,7 @@ export const CreateChannelModal = (props: Props) => {
     },
     {
       name: "description",
+      value: channelConversation?.name,
       required: false,
       label: "Channel Description (optional)",
       type: "text",
@@ -77,11 +88,11 @@ export const CreateChannelModal = (props: Props) => {
     });
     return errors;
   };
-
+  const title = channelConversation ? "Update Channel" : "Create new channel";
   return (
     <div>
       <ModalHeader>
-        <h2>Create new channel</h2>
+        <h2>{title}</h2>
         <Close className={"close-button"} onClick={handleClose} />
       </ModalHeader>
       <ModalBody>
@@ -94,7 +105,11 @@ export const CreateChannelModal = (props: Props) => {
                 {fields.map((item: Field, index: number) => (
                   <>
                     {!item.hidden && (
-                      <Field key={index} name={item.name}>
+                      <Field
+                        key={index}
+                        name={item.name}
+                        defaultValue={item.value}
+                      >
                         {({ input, meta }: any) => {
                           return (
                             <ChannelFieldHolder>

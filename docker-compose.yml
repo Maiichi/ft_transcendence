@@ -32,7 +32,7 @@ services:
   client:
     container_name: client
     build:
-      context: ./Client
+      context: ./client
       target: development
     ports:
       - "127.0.0.1:${FRONTEND_PORT}:${FRONTEND_PORT}"

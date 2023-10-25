@@ -21,15 +21,14 @@ import { NewDirectMessage } from "./channels/modals/CreateDirectMessageModal";
 
 export const Chat = () => {
   const [open, setOpen] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-    undefined,
+    undefined
   );
-
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
-
   const handleClickModal = (
     childModal: JSX.Element,
-    closeType?: "auto" | "click",
+    closeType?: "auto" | "click"
   ) => {
     setCloseType(closeType);
     setOpen(true);
@@ -47,31 +46,20 @@ export const Chat = () => {
     dispatch(getMemberships());
     dispatch(getDirectConversations());
   }, []);
-
   // Filter chat rooms based on the search query
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
-    item.name.toLowerCase().startsWith(searchQuery.toLowerCase()),
+    item.name.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
   // Filter conversations based on the search query
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
       discussion.receiver.firstName
         .toLowerCase()
-        .startsWith(searchQuery.toLowerCase()),
+        .startsWith(searchQuery.toLowerCase())
   );
-  // const handleCloseSnackbar = (
-  //   event?: React.SyntheticEvent | Event,
-  //   reason?: string
-  // ) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-
-  //   setOpen(false);
-  // };
   const handleCLick = (
     type: "direct" | "channel",
-    data: I_DirectConversation | I_Room,
+    data: I_DirectConversation | I_Room
   ) => {
     setConversation({
       room: type == "channel" ? (data as I_Room) : null,
@@ -79,8 +67,8 @@ export const Chat = () => {
       type: type,
     });
     dispatch(setIsConversation(true));
+    setOpenSnackbar(true);
   };
-  const errors = useAppSelector((state) => state.channels.errors);
 
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
@@ -88,15 +76,6 @@ export const Chat = () => {
 
   return (
     <Root>
-      <Snackbar
-        open={errors ? true : false}
-        autoHideDuration={1000}
-        key={"top" + "center"}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-          {errors}
-        </Alert>
-      </Snackbar>
       <ModalComponent
         open={open}
         ChildComponent={ChildModal}
@@ -133,7 +112,7 @@ export const Chat = () => {
             onClick={() =>
               handleClickModal(
                 <NewDirectMessage handleClose={handleClose} />,
-                "auto",
+                "auto"
               )
             }
           />
@@ -158,9 +137,7 @@ export const Chat = () => {
               >
                 {discussion.receiver.avatar_url !== null ? (
                   <AvatarImage
-                    src={require(
-                      `/app/images_uploads/${discussion.receiver.avatar_url}`,
-                    )}
+                    src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)}
                     alt=""
                   />
                 ) : (

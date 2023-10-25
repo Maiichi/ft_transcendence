@@ -1,8 +1,8 @@
 export interface I_Room {
   id: number;
   name: string;
-  password: string;
-  type: string;
+  password: string; // must check
+  type: "public" | "private";
   members: {
     isAdmin: boolean;
     isBanned: boolean;
@@ -38,7 +38,7 @@ export interface I_DirectConversation {
   type: string;
   lastMessage: {
     content: string;
-    createdAt: string
+    createdAt: string;
   };
   receiver: {
     userName: string;

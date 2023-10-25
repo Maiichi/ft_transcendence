@@ -6,7 +6,7 @@ import { IsNumber, IsOptional, IsString } from "class-validator"
         name: string;
 
         @IsString()
-        type: string;
+        type: 'public' | 'private';
 
         @IsString()
         @IsOptional()
@@ -23,7 +23,7 @@ import { IsNumber, IsOptional, IsString } from "class-validator"
         name: string;
 
         @IsString()
-        type: string;
+        type: 'public' | 'private';
 
         @IsString()
         @IsOptional()
