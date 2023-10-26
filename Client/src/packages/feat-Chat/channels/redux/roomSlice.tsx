@@ -65,11 +65,10 @@ export const roomSlice = createSlice({
       console.log("newState ===", current(state.memberships));
     },
     addMemberToRoom: (state, action: PayloadAction<any>) => {
-
       // console.log("addMemberToRoom (payload) ==", action.payload);
       const { roomId, user } = action.payload;
       state.isLoading = true;
-      const membership = state.memberships.find(m => m.id === roomId);
+      const membership = state.memberships.find((m) => m.id === roomId);
       if (membership) {
         membership.members.push(user);
       }
