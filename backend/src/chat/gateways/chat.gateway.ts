@@ -255,6 +255,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             const socketsOfUser: string[] = this.userSockets.get(currentUser.intraId);
             const usersInRoom = roomUsers.map(user => user.intraId);
 
+            // this event for the user who joins a room 
+            socketsOfUser.forEach((socketId) => {
+                this.server.to(socketId).emit('roomJoined', joinedRoom.dataMembership);
+            });
+
+            // this event is for all user who are connected
+            this.userSockets.forEach((value) =>{
+                this.server.to(value).emit('newRoomJoined', joinedRoom.dataRoom);
+            });
+
             // this event for the users in the room
             usersInRoom.forEach(userId => {
                 const userSockets = this.userSockets.get(userId);
@@ -263,10 +273,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
                         this.server.to(socketId).emit('userJoinRoom', {
                             roomId: body.id,
                             user : {
-                                idAdmin: "false",
-                                isBanned: "false",
-                                isOwner: "false",
-                                isMute: "false",
+                                idAdmin: false,
+                                isBanned: false,
+                                isOwner: false,
+                                isMute: false,
                                 user: member
                             }
                         });
@@ -274,15 +284,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
                 }
             });
 
-            // this event for the user who joins a room 
-            socketsOfUser.forEach((socketId) => {
-                this.server.to(socketId).emit('roomJoined', joinedRoom.dataMembership);
-            })
-
-            // this event is for all user who are connected
-            this.userSockets.forEach((value) =>{
-                this.server.to(value).emit('newRoomJoined', joinedRoom.dataRoom);
-            })
         } catch (error) {
             console.log(error.message)
         }
@@ -305,8 +306,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             // this event is for the user how perform the action
             currentUserSockets.forEach((value) =>{
                 this.server.to(value).emit('roomLeaved', body.roomId);
-            })
-            // Ihis event is for the userInRoom exculding the performer
+            });
+
+            this.userSockets.forEach((socketId) => {
+                this.server.to(socketId).emit('roomHasBeenLeft', {
+                    roomId: body.roomId,
+                    userId: currentUser.intraId
+                })
+            });
+
+            // This event is for the userInRoom exculding the sender
             usersInRoom.forEach(userId => {
                 const socketsUser = this.userSockets.get(userId);
                 if (socketsUser) {
@@ -319,13 +328,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
                     });
                 }
             });
-
-            this.userSockets.forEach((socketId) => {
-                this.server.to(socketId).emit('roomHasBeenLeft', {
-                    roomId: body.roomId,
-                    userId: currentUser.intraId
-                })
-            })
         } catch (error) {
             console.log("leaveRoom error =" + error.message)
         }

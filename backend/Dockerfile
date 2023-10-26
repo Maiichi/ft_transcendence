@@ -10,9 +10,9 @@ COPY .env ./.env
 
 COPY [ "package.json","yarn.lock*" , "./" ]
 
-RUN apk add xdg-utils
+# RUN apk add xdg-utils
 
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 COPY ./prisma ./prisma
 

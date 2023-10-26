@@ -802,11 +802,10 @@ export class RoomService
                 intraId: userId
             },
             select: {
-                userName: true,
-                lastName: true,
                 firstName: true,
+                lastName: true,
+                userName: true,
                 intraId: true,
-                avatar_url: true,
             }
         });
         return member;
