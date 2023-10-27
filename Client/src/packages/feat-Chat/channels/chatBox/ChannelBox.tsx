@@ -5,32 +5,26 @@ import { getChatRoomMessages } from "../redux/roomThunk";
 import { ChannelBoxHeader } from "./headerBox/ChannelBoxHeader";
 import { MessageBox } from "../../components/MessageBox";
 import styled from "styled-components";
+import { isConnectedUser } from "../../../../core/utils/helperFunctions";
 
-export const ChannelBox = (props: { channelConversation: I_Room }) => {
-  // console.log(props.channelConversation.id);
-  console.log("Channel Box rendring !");
-  const { channelConversation } = props;
+export const ChannelBox = () => {
+  const { room } = useAppSelector((state) => state.chat.currentConversation);
+
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const channelMessages: [] = useAppSelector(
-    (state) => state.channels.messages,
+    (state) => state.channels.messages
   );
 
-  const isConnectedUser = (intraId: number) => {
-    console.log("intraId ==", intraId);
-    if (user.intraId === intraId) return true;
-    return false;
-  };
   useEffect(() => {
-    if (channelConversation !== null)
-      dispatch(getChatRoomMessages(channelConversation.id));
+    if (room) dispatch(getChatRoomMessages(room.id));
   }, []);
 
   return (
     <>
       <ChatBox>
         <Header>
-          <ChannelBoxHeader channelConversation={channelConversation} />
+          <ChannelBoxHeader />
         </Header>
         <Wrapper>
           <ChatBoxTop>
@@ -43,7 +37,7 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
                 {channelMessages.map((item: I_Message) => (
                   <>
                     <MessageBox
-                      own={isConnectedUser(item.sender.intraId)}
+                      own={isConnectedUser(item.sender.intraId, user.intraId)}
                       data={item}
                       key={item.id}
                     />

@@ -3,6 +3,7 @@ export interface I_Room {
   name: string;
   password: string; // must check
   type: "public" | "private";
+  description: string;
   members: {
     isAdmin: boolean;
     isBanned: boolean;

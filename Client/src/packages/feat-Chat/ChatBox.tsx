@@ -6,24 +6,20 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../core";
 import { CoreState } from "../../core/CoreSlice";
 
-interface ChatBoxProps {
-  conversation: I_Discussion | null;
-}
-export const ChatBox: React.FC<ChatBoxProps> = ({ conversation }) => {
-  const state: CoreState = useAppSelector((state) => state.core);
-
+export const ChatBox = () => {
+  const { core, chat } = useAppSelector((state) => state);
   if (
-    conversation?.type === "direct" &&
-    conversation.direct &&
-    state.isConversation
+    chat.currentConversation?.type === "direct" &&
+    chat.currentConversation.direct &&
+    core.isConversation
   ) {
-    return <DirectBox directConversation={conversation.direct} />;
+    return <DirectBox directConversation={chat.currentConversation.direct} />;
   } else if (
-    conversation?.type === "channel" &&
-    conversation.room &&
-    state.isConversation
+    chat.currentConversation?.type === "channel" &&
+    chat.currentConversation.room &&
+    core.isConversation
   ) {
-    return <ChannelBox channelConversation={conversation.room} />;
+    return <ChannelBox />;
   } else
     return (
       <BoxNoConversation>

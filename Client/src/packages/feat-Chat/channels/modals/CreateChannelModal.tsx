@@ -65,7 +65,7 @@ export const CreateChannelModal = (props: Props) => {
     },
     {
       name: "description",
-      value: channelConversation?.name,
+      value: channelConversation?.description,
       required: false,
       label: "Channel Description (optional)",
       type: "text",
@@ -143,7 +143,9 @@ export const CreateChannelModal = (props: Props) => {
               </>
               <ModalFooter>
                 <CancelButton onClick={closeModal}>Cancel</CancelButton>
-                <CreateButton type="submit">Create</CreateButton>
+                <CreateButton type="submit">
+                  {channelConversation ? "update" : "Create"}
+                </CreateButton>
               </ModalFooter>
             </form>
           )}

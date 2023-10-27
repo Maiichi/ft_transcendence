@@ -11,6 +11,7 @@ import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice";
 import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
 import leaderboardSlice from "../../packages/feat-Account/API.d/ProfileSlice";
 import searchSlice from "../../packages/feat-Search/redux/searchSlice";
+import chatSlice from "../../packages/feat-Chat/chatSlice";
 // ...
 
 const rootReducer = combineReducers({
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   socket: socketSlice,
   leaderboard: leaderboardSlice,
   search: searchSlice,
+  chat: chatSlice,
 });
 
 const persistConfig = {

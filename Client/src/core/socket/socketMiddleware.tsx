@@ -15,6 +15,7 @@ import {
   createRoomError,
   removeMembership,
   updateRoom,
+  updateRoomSucess,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import {
   setIsConversation,
@@ -49,7 +50,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(addMembership(data));
           });
           socket.on("roomUpdated", (data) => {
-            console.log(data);
+            dispatch(updateRoomSucess(data));
           });
           socket.on("newRoom", (data) => {
             dispatch(addRoom(data));
@@ -86,7 +87,6 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         socket.emit("createRoom", action.payload);
         break;
       case updateRoom.type:
-        console.log(action.payload);
         socket.emit("updateRoom", action.payload);
         break;
       case leaveRoom.type:

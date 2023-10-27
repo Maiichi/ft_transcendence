@@ -18,10 +18,11 @@ import { getDirectConversations } from "./directMessages/redux/directMessageThun
 import { setIsConversation } from "../../core/CoreSlice";
 import { Add } from "@mui/icons-material";
 import { NewDirectMessage } from "./channels/modals/CreateDirectMessageModal";
+import { setCurrentConversation } from "./chatSlice";
 
 export const Chat = () => {
   const [open, setOpen] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
   );
@@ -38,8 +39,11 @@ export const Chat = () => {
     setOpen(false);
   };
   const dispatch = useAppDispatch();
-  const { channels, directMessage, filter } = useAppSelector((state) => state);
-  const [conversation, setConversation] = useState<I_Discussion | null>(null);
+  const { channels, directMessage, filter, chat } = useAppSelector(
+    (state) => state
+  );
+  // const [conversation, setConversation] = useState<I_Discussion | null>(null);
+
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
@@ -61,13 +65,19 @@ export const Chat = () => {
     type: "direct" | "channel",
     data: I_DirectConversation | I_Room
   ) => {
-    setConversation({
-      room: type == "channel" ? (data as I_Room) : null,
-      direct: type == "direct" ? (data as I_DirectConversation) : null,
-      type: type,
-    });
+    dispatch(
+      setCurrentConversation({
+        room: type == "channel" ? (data as I_Room) : null,
+        direct: type == "direct" ? (data as I_DirectConversation) : null,
+        type: type,
+      })
+    );
+    // setConversation({
+    //   room: type == "channel" ? (data as I_Room) : null,
+    //   direct: type == "direct" ? (data as I_DirectConversation) : null,
+    //   type: type,
+    // });
     dispatch(setIsConversation(true));
-    setOpenSnackbar(true);
   };
 
   const handleClickSearch = (str: string) => {
@@ -98,7 +108,7 @@ export const Chat = () => {
             <ChannelName
               key={item.id}
               className={`channel-name ${
-                conversation?.room === item ? "selected" : ""
+                chat.currentConversation?.room === item ? "selected" : ""
               }`}
               onClick={() => handleCLick("channel", item)}
             >
@@ -121,7 +131,7 @@ export const Chat = () => {
           {filteredConversations.map((discussion: any) => (
             <Discussion
               key={discussion.id}
-              selected={conversation?.direct === discussion.id}
+              selected={chat.currentConversation?.direct === discussion.id}
               onClick={() => handleCLick("direct", discussion)}
             >
               <Badge
@@ -159,7 +169,7 @@ export const Chat = () => {
           ))}
         </DirectMessageListHolder>
       </Discussions>
-      <ChatBox conversation={conversation} />
+      <ChatBox />
     </Root>
   );
 };
