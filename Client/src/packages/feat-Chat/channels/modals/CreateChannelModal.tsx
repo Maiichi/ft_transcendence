@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Close, LockSharp, LockOpenSharp } from "@mui/icons-material";
+import {
+  Close,
+  LockSharp,
+  LockOpenSharp,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../../../core";
 import { createRoom, updateRoom } from "../redux/roomSlice";
 import styled from "styled-components";
@@ -10,6 +16,7 @@ interface Props {
   handleClose: () => void;
   channelConversation?: I_Room;
 }
+
 export const CreateChannelModal = (props: Props) => {
   const { channelConversation, handleClose } = props;
   const dispatch = useAppDispatch();
@@ -21,14 +28,18 @@ export const CreateChannelModal = (props: Props) => {
         : false
       : true
   );
+  const [roomType, setRoomType] = useState<string>("public");
   const [roomCreationError, setRoomCreationError] = useState(null);
-  const toggleActivate = () => {
-    setActivate(!activate);
-  };
-
   const closeModal = () => {
     handleClose();
     if (roomCreationError) setRoomCreationError(null);
+  };
+
+  const handleRoomTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setRoomType((prevRoomType) =>
+      prevRoomType === newValue ? "public" : newValue
+    );
   };
 
   const handleCreateRoom = (values: any) => {
@@ -37,7 +48,7 @@ export const CreateChannelModal = (props: Props) => {
       name: values.name,
       ownerId: account.intraId,
       description: values.description,
-      type: activate ? "public" : "private",
+      type: roomType,
       password: values.password,
     };
     if (channelConversation) {
@@ -73,8 +84,8 @@ export const CreateChannelModal = (props: Props) => {
     },
     {
       name: "password",
-      required: !activate,
-      hidden: activate,
+      required: roomType === "protected",
+      hidden: roomType !== "protected",
       label: "Password",
       type: "password",
       holder: "password",
@@ -89,11 +100,63 @@ export const CreateChannelModal = (props: Props) => {
     return errors;
   };
   const title = channelConversation ? "Update Channel" : "Create new channel";
+  const PrivacyHolder = ({
+    roomType,
+    handleRoomTypeChange,
+  }: {
+    roomType: string;
+    handleRoomTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  }) => {
+    return (
+      <>
+        <PrivacyDivHolder>
+          {roomType !== "private" ? (
+            <>
+              {" "}
+              <Visibility /> Set channel Private{" "}
+            </>
+          ) : (
+            <>
+              {" "}
+              <VisibilityOff /> Private Channel{" "}
+            </>
+          )}
+          <AntSwitch
+            value="private"
+            checked={roomType === "private"}
+            onChange={handleRoomTypeChange}
+          />
+        </PrivacyDivHolder>
+        <PrivacyDivHolder>
+          {roomType !== "protected" ? (
+            <>
+              {" "}
+              <LockOpenSharp /> Set channel password{" "}
+            </>
+          ) : (
+            <>
+              {" "}
+              <LockSharp /> Protected channel{" "}
+            </>
+          )}
+          <AntSwitch
+            value="protected"
+            checked={roomType === "protected"}
+            onChange={handleRoomTypeChange}
+          />
+        </PrivacyDivHolder>
+      </>
+    );
+  };
   return (
     <div>
       <ModalHeader>
         <h2>{title}</h2>
-        <Close className={"close-button"} onClick={handleClose} />
+        <Close
+          sx={{ "&:hover": { color: "red" } }}
+          style={{ cursor: "pointer" }}
+          onClick={handleClose}
+        />
       </ModalHeader>
       <ModalBody>
         <Form
@@ -129,17 +192,10 @@ export const CreateChannelModal = (props: Props) => {
                     )}
                   </>
                 ))}
-                <PasswordHeaderHolder>
-                  {activate ? (
-                    <>
-                      <LockOpenSharp />
-                      Set Room password
-                    </>
-                  ) : (
-                    <LockSharp />
-                  )}
-                  <AntSwitch checked={!activate} onChange={toggleActivate} />
-                </PasswordHeaderHolder>
+                <PrivacyHolder
+                  roomType={roomType}
+                  handleRoomTypeChange={handleRoomTypeChange}
+                />
               </>
               <ModalFooter>
                 <CancelButton onClick={closeModal}>Cancel</CancelButton>
@@ -182,11 +238,11 @@ const FieldInput = styled.input`
   background-color: #f9f9f9;
 `;
 
-const PasswordHeaderHolder = styled.div`
+const PrivacyDivHolder = styled.div`
   display: flex;
   justify-content: space-between;
-  margin: 5px;
-  align-items: baseline;
+  margin: 10px 5px 10px 5px;
+  align-items: center;
 `;
 
 const ModalFooter = styled.div`

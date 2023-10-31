@@ -6,7 +6,13 @@ import { ChannelBoxHeader } from "./headerBox/ChannelBoxHeader";
 import { MessageBox } from "../../components/MessageBox";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../../core/utils/helperFunctions";
-
+import {
+  MoreHoriz,
+  MoreHorizOutlined,
+  PersonAddAltRounded,
+  Settings,
+} from "@mui/icons-material";
+import { Avatar } from "@mui/material";
 export const ChannelBox = () => {
   const { room } = useAppSelector((state) => state.chat.currentConversation);
 
@@ -20,6 +26,35 @@ export const ChannelBox = () => {
     if (room) dispatch(getChatRoomMessages(room.id));
   }, []);
 
+  const ChannelUsers = () => {
+    return (
+      <RightSide>
+        <ChannelNameHolder>
+          <ChannelName>{room.name}</ChannelName>
+          {room.description}
+          <ChannelSettingIcons>
+            <Settings />
+            <PersonAddAltRounded />
+            <Settings />
+          </ChannelSettingIcons>
+        </ChannelNameHolder>
+        <div>
+          Owner:
+          {[1, 2, 3, 4].map((item) => (
+            <OwnerDiv>
+              <Owner>
+                <Avatar></Avatar>
+                Name
+              </Owner>
+              <MoreHorizOutlined></MoreHorizOutlined>
+            </OwnerDiv>
+          ))}
+          <Admins>admin</Admins>
+          <Members>member</Members>
+        </div>
+      </RightSide>
+    );
+  };
   return (
     <>
       <ChatBox>
@@ -53,7 +88,7 @@ export const ChannelBox = () => {
         </ChatBoxBottom>
       </ChatBox>
       {/* need an improvement */}
-      <RightSide> USERS </RightSide>
+      <ChannelUsers />
     </>
   );
 };
@@ -129,4 +164,46 @@ const RightSide = styled.div`
   height: 100%;
   /* border-radius: 20px; */
   border-left: 1px solid #d7d7d7;
+`;
+
+/** CHANNEL USERS **/
+
+const ChannelNameHolder = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-bottom: 0.5px solid #d7d7d7;
+`;
+
+const ChannelName = styled.h2`
+  text-align: center;
+`;
+
+const ChannelSettingIcons = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 10px;
+`;
+
+const Owner = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const Admins = styled.div`
+  background-color: blue;
+`;
+
+const Members = styled.div`
+  background-color: grey;
+`;
+
+const OwnerDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  &:hover {
+    background-color: rgb(245, 246, 247);
+  }
+  padding: 5px;
 `;

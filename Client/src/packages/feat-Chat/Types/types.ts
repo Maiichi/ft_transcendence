@@ -2,7 +2,7 @@ export interface I_Room {
   id: number;
   name: string;
   password: string; // must check
-  type: "public" | "private";
+  type: "public" | "private" | "protected";
   description: string;
   members: {
     isAdmin: boolean;

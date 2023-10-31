@@ -41,7 +41,7 @@ services:
     networks:
       - NET1
     volumes:
-      - ./client:/app
+      - ./Client:/app
       - /app/node_modules
       - images_uploads:/app/images_uploads/ # shared volume for image uploads
 volumes:
