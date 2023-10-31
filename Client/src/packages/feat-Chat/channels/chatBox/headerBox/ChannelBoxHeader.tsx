@@ -6,15 +6,15 @@ import { I_Room } from "../../../Types/types";
 import styled from "styled-components";
 import { LeaveRoomModal } from "../../modals/leaveChannelModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { ModalComponent } from "../../../../../core";
+import { ModalComponent, useAppSelector } from "../../../../../core";
 import { UsersRoom } from "../../modals/UsersRoomModal";
 import { CreateChannelModal } from "../../modals/CreateChannelModal";
-const UpdateRoomForm = () => {
-  return <h2>Update Room</h2>;
-};
-export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
-  const { channelConversation } = props;
 
+export const ChannelBoxHeader = () => {
+  const { roomId } = useAppSelector((state) => state.chat.currentConversation);
+  const { memberships } = useAppSelector((state) => state.channels);
+
+  const index = memberships.findIndex((item: any) => item.id == roomId);
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined,
@@ -35,7 +35,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
   };
 
   return (
-    <>
+    <Header>
       <ModalComponent
         open={open}
         ChildComponent={ChildModal}
@@ -43,13 +43,13 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
         closeType={closeType}
       />
       <h4>
-        # {channelConversation.name}{" "}
+        # {memberships[index].name}{" "}
         <ArrowDropDownIcon
           onClick={() =>
             handleClickModal(
               <CreateChannelModal
                 handleClose={handleClose}
-                channelConversation={channelConversation}
+                channelConversation={memberships[index]}
               />,
             )
           }
@@ -59,18 +59,18 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
         <ChannelMembers
           onClick={() =>
             handleClickModal(
-              <UsersRoom channelConversation={channelConversation} />,
+              <UsersRoom channelConversation={memberships[index]} />,
               "click",
             )
           }
         >
-          <Person /> {channelConversation.members.length}
+          <Person /> {memberships[index].members.length}
         </ChannelMembers>
         <LogoutRounded
           onClick={() =>
             handleClickModal(
               <LeaveRoomModal
-                channelConversation={channelConversation}
+                channelConversation={memberships[index]}
                 handleClose={handleClose}
               />,
             )
@@ -78,7 +78,7 @@ export const ChannelBoxHeader = (props: { channelConversation: I_Room }) => {
           style={{ cursor: "pointer" }}
         />
       </IconHolder>
-    </>
+    </Header>
   );
 };
 
@@ -98,4 +98,11 @@ const ChannelMembers = styled.div`
   &:hover {
     background-color: #f1f1f1;
   }
+`;
+const Header = styled.div`
+  border-bottom: 1px solid #d7d7d7;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px 0px 10px;
+  align-items: center;
 `;

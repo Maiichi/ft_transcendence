@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import { getChatRoomMessages, getMemberships } from "./roomThunk";
 import { I_ConversationMessages, I_Room } from "../../Types/types";
+
 export interface roomState {
   memberships: I_Room[];
   messages: I_ConversationMessages[];
@@ -28,10 +29,20 @@ export const roomSlice = createSlice({
     createRoom: (state, action: PayloadAction<RoomPayload>) => {
       state.isLoading = true;
     },
-    // createRoomSuccess: (state, action: PayloadAction<I_Room>) => {
-    //   state.memberships.push(action.payload);
-    //   state.errors = null;
-    // },
+    updateRoom: (state, action: PayloadAction<RoomPayload>) => {
+      state.isLoading = true;
+    },
+    updateRoomSucess: (state, action: PayloadAction<I_Room>) => {
+      const index = state.memberships.findIndex(
+        (item) => (item.id = action.payload.id)
+      );
+      console.log(action.payload);
+      state.memberships[index].name = action.payload.name;
+      state.memberships[index].type = action.payload.type;
+      state.memberships[index].password = action.payload.password;
+      state.memberships[index].description = action.payload.description;
+    },
+
     createRoomError: (state, action: PayloadAction<string>) => {
       state.errors = action.payload;
     },
@@ -47,13 +58,13 @@ export const roomSlice = createSlice({
     removeMemberFromRoom: (state, action: PayloadAction<any>) => {
       const { userId, roomId } = action.payload;
       const isMembershipFound: I_Room | undefined = state.memberships.find(
-        (membership: I_Room) => membership.id === roomId,
+        (membership: I_Room) => membership.id === roomId
       );
       console.log("newState (isMem) ===", JSON.stringify(isMembershipFound));
       if (isMembershipFound) {
         console.log("here");
         const memberIndex = isMembershipFound.members.findIndex(
-          (member) => member.user.intraId == userId,
+          (member) => member.user.intraId == userId
         );
         console.log("memberINdex ==", memberIndex);
         if (memberIndex !== -1) {
@@ -86,9 +97,9 @@ export const roomSlice = createSlice({
     removeMembership: (state, action: PayloadAction<number>) => {
       state.memberships.splice(
         state.memberships.findIndex(
-          (membership: I_Room) => membership.id === action.payload,
+          (membership: I_Room) => membership.id === action.payload
         ),
-        1,
+        1
       );
     },
   },
@@ -127,8 +138,9 @@ export const {
   createRoom,
   leaveRoom,
   removeMemberFromRoom,
-
+  updateRoom,
   createRoomError,
+  updateRoomSucess,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

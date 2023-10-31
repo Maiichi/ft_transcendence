@@ -18,15 +18,18 @@ import { getDirectConversations } from "./directMessages/redux/directMessageThun
 import { setIsConversation } from "../../core/CoreSlice";
 import { Add } from "@mui/icons-material";
 import { NewDirectMessage } from "./channels/modals/CreateDirectMessageModal";
-
-export const Chat = () => {
+import { setCurrentConversation } from "./chatSlice";
+const ChatDiscussion = () => {
+  const dispatch = useAppDispatch();
+  const { channels, directMessage, filter, chat } = useAppSelector(
+    (state) => state,
+  );
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined,
   );
-
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
-
   const handleClickModal = (
     childModal: JSX.Element,
     closeType?: "auto" | "click",
@@ -38,65 +41,40 @@ export const Chat = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const dispatch = useAppDispatch();
-  const { channels, directMessage, filter } = useAppSelector((state) => state);
-  const [conversation, setConversation] = useState<I_Discussion | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getDirectConversations());
   }, []);
-
-  // Filter chat rooms based on the search query
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
     item.name.toLowerCase().startsWith(searchQuery.toLowerCase()),
   );
-  // Filter conversations based on the search query
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
       discussion.receiver.firstName
         .toLowerCase()
         .startsWith(searchQuery.toLowerCase()),
   );
-  // const handleCloseSnackbar = (
-  //   event?: React.SyntheticEvent | Event,
-  //   reason?: string
-  // ) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-
-  //   setOpen(false);
-  // };
   const handleCLick = (
     type: "direct" | "channel",
     data: I_DirectConversation | I_Room,
   ) => {
-    setConversation({
-      room: type == "channel" ? (data as I_Room) : null,
-      direct: type == "direct" ? (data as I_DirectConversation) : null,
-      type: type,
-    });
+    dispatch(
+      setCurrentConversation({
+        roomId: type == "channel" ? data.id : null,
+        directConversationId: type == "direct" ? data.id : null,
+        type: type,
+      }),
+    );
+
     dispatch(setIsConversation(true));
   };
-  const errors = useAppSelector((state) => state.channels.errors);
 
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
   };
 
   return (
-    <Root>
-      <Snackbar
-        open={errors ? true : false}
-        autoHideDuration={1000}
-        key={"top" + "center"}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-          {errors}
-        </Alert>
-      </Snackbar>
+    <>
       <ModalComponent
         open={open}
         ChildComponent={ChildModal}
@@ -109,6 +87,10 @@ export const Chat = () => {
         <Tab>
           <p>Channels</p>
           <Add
+            sx={{
+              cursor: "pointer",
+              "&:hover": { backgroundColor: "rgb(245, 246, 247)" },
+            }}
             onClick={() =>
               handleClickModal(<CreateChannelModal handleClose={handleClose} />)
             }
@@ -119,7 +101,7 @@ export const Chat = () => {
             <ChannelName
               key={item.id}
               className={`channel-name ${
-                conversation?.room === item ? "selected" : ""
+                chat.currentConversation?.roomId === item.id ? "selected" : ""
               }`}
               onClick={() => handleCLick("channel", item)}
             >
@@ -130,6 +112,10 @@ export const Chat = () => {
         <Tab>
           <p>Direct Messages</p>
           <Add
+            sx={{
+              cursor: "pointer",
+              "&:hover": { backgroundColor: "rgb(245, 246, 247)" },
+            }}
             onClick={() =>
               handleClickModal(
                 <NewDirectMessage handleClose={handleClose} />,
@@ -142,7 +128,9 @@ export const Chat = () => {
           {filteredConversations.map((discussion: any) => (
             <Discussion
               key={discussion.id}
-              selected={conversation?.direct === discussion.id}
+              selected={
+                chat.currentConversation?.directConversationId === discussion.id
+              }
               onClick={() => handleCLick("direct", discussion)}
             >
               <Badge
@@ -182,7 +170,14 @@ export const Chat = () => {
           ))}
         </DirectMessageListHolder>
       </Discussions>
-      <ChatBox conversation={conversation} />
+    </>
+  );
+};
+export const Chat = () => {
+  return (
+    <Root>
+      <ChatDiscussion />
+      <ChatBox />
     </Root>
   );
 };
@@ -262,17 +257,6 @@ const AvatarImage = styled.img`
   height: 45px;
 `;
 
-const IsOnline = styled.div`
-  position: relative;
-  top: 30px;
-  left: 35px;
-  width: 13px;
-  height: 13px;
-  background-color: #8bc34a;
-  border-radius: 13px;
-  border: 3px solid #fafafa;
-`;
-
 const ContactDescription = styled.div`
   max-width: 70%;
 `;
@@ -290,27 +274,3 @@ const DiscussionMessage = styled.div`
   font-size: 9pt;
   color: #515151;
 `;
-
-const Timer = styled.div`
-  margin-left: 25%;
-  font-family: "Open Sans", sans-serif;
-  font-size: 11px;
-  padding: 3px 8px;
-  color: #bbb;
-  background-color: #fff;
-  border: 1px solid #e5e5e5;
-  border-radius: 15px;
-`;
-// const boxStyle = {
-//   position: "absolute" as "absolute",
-//   top: "30%",
-//   left: "50%",
-//   transform: "translate(-50%, -50%)",
-//   width: 400,
-//   bgcolor: "background.paper",
-//   border: "1px solid #000",
-//   boxShadow: 24,
-//   p: 4,
-//   borderRadius: "20px",
-//   height: "400px",
-// };
