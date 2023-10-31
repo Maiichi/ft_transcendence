@@ -19,10 +19,13 @@ import { setIsConversation } from "../../core/CoreSlice";
 import { Add } from "@mui/icons-material";
 import { NewDirectMessage } from "./channels/modals/CreateDirectMessageModal";
 import { setCurrentConversation } from "./chatSlice";
-
-export const Chat = () => {
+const ChatDiscussion = () => {
+  const dispatch = useAppDispatch();
+  const { channels, directMessage, filter, chat } = useAppSelector(
+    (state) => state
+  );
   const [open, setOpen] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
   );
@@ -38,23 +41,13 @@ export const Chat = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const dispatch = useAppDispatch();
-  const { channels, directMessage, filter, chat } = useAppSelector(
-    (state) => state
-  );
-  // const [conversation, setConversation] = useState<I_Discussion | null>(null);
-
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getDirectConversations());
   }, []);
-  // Filter chat rooms based on the search query
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
     item.name.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
-  // Filter conversations based on the search query
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
       discussion.receiver.firstName
@@ -72,11 +65,7 @@ export const Chat = () => {
         type: type,
       })
     );
-    // setConversation({
-    //   room: type == "channel" ? (data as I_Room) : null,
-    //   direct: type == "direct" ? (data as I_DirectConversation) : null,
-    //   type: type,
-    // });
+
     dispatch(setIsConversation(true));
   };
 
@@ -85,7 +74,7 @@ export const Chat = () => {
   };
 
   return (
-    <Root>
+    <>
       <ModalComponent
         open={open}
         ChildComponent={ChildModal}
@@ -177,6 +166,13 @@ export const Chat = () => {
           ))}
         </DirectMessageListHolder>
       </Discussions>
+    </>
+  );
+};
+export const Chat = () => {
+  return (
+    <Root>
+      <ChatDiscussion />
       <ChatBox />
     </Root>
   );
@@ -257,17 +253,6 @@ const AvatarImage = styled.img`
   height: 45px;
 `;
 
-const IsOnline = styled.div`
-  position: relative;
-  top: 30px;
-  left: 35px;
-  width: 13px;
-  height: 13px;
-  background-color: #8bc34a;
-  border-radius: 13px;
-  border: 3px solid #fafafa;
-`;
-
 const ContactDescription = styled.div`
   max-width: 70%;
 `;
@@ -285,27 +270,3 @@ const DiscussionMessage = styled.div`
   font-size: 9pt;
   color: #515151;
 `;
-
-const Timer = styled.div`
-  margin-left: 25%;
-  font-family: "Open Sans", sans-serif;
-  font-size: 11px;
-  padding: 3px 8px;
-  color: #bbb;
-  background-color: #fff;
-  border: 1px solid #e5e5e5;
-  border-radius: 15px;
-`;
-// const boxStyle = {
-//   position: "absolute" as "absolute",
-//   top: "30%",
-//   left: "50%",
-//   transform: "translate(-50%, -50%)",
-//   width: 400,
-//   bgcolor: "background.paper",
-//   border: "1px solid #000",
-//   boxShadow: 24,
-//   p: 4,
-//   borderRadius: "20px",
-//   height: "400px",
-// };

@@ -13,7 +13,40 @@ import {
   Settings,
 } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
-export const ChannelBox = () => {
+
+const ChannelUsers = () => {
+  const { room } = useAppSelector((state) => state.chat.currentConversation);
+
+  return (
+    <RightSide>
+      <ChannelNameHolder>
+        <ChannelName>{room.name}</ChannelName>
+        {room.description}
+        <ChannelSettingIcons>
+          <Settings />
+          <PersonAddAltRounded />
+          <Settings />
+        </ChannelSettingIcons>
+      </ChannelNameHolder>
+      <div>
+        Owner:
+        {[1, 2, 3, 4].map((item) => (
+          <OwnerDiv>
+            <Owner>
+              <Avatar></Avatar>
+              Name
+            </Owner>
+            <MoreHorizOutlined></MoreHorizOutlined>
+          </OwnerDiv>
+        ))}
+        <Admins>admin</Admins>
+        <Members>member</Members>
+      </div>
+    </RightSide>
+  );
+};
+
+const ChannelBoxContent = () => {
   const { room } = useAppSelector((state) => state.chat.currentConversation);
 
   const dispatch = useAppDispatch();
@@ -26,68 +59,41 @@ export const ChannelBox = () => {
     if (room) dispatch(getChatRoomMessages(room.id));
   }, []);
 
-  const ChannelUsers = () => {
-    return (
-      <RightSide>
-        <ChannelNameHolder>
-          <ChannelName>{room.name}</ChannelName>
-          {room.description}
-          <ChannelSettingIcons>
-            <Settings />
-            <PersonAddAltRounded />
-            <Settings />
-          </ChannelSettingIcons>
-        </ChannelNameHolder>
-        <div>
-          Owner:
-          {[1, 2, 3, 4].map((item) => (
-            <OwnerDiv>
-              <Owner>
-                <Avatar></Avatar>
-                Name
-              </Owner>
-              <MoreHorizOutlined></MoreHorizOutlined>
-            </OwnerDiv>
-          ))}
-          <Admins>admin</Admins>
-          <Members>member</Members>
-        </div>
-      </RightSide>
-    );
-  };
+  return (
+    <>
+      <Wrapper>
+        <ChatBoxTop>
+          {channelMessages.length === 0 ? (
+            <EmptyConversation>
+              <h2>it's always better to start a conversation &#128516;</h2>
+            </EmptyConversation>
+          ) : (
+            <>
+              {channelMessages.map((item: I_Message) => (
+                <MessageBox
+                  own={isConnectedUser(item.sender.intraId, user.intraId)}
+                  data={item}
+                  key={item.id}
+                />
+              ))}
+            </>
+          )}
+        </ChatBoxTop>
+      </Wrapper>
+      <ChatBoxBottom>
+        <ChatMessageInput placeholder="Write your message ..." />
+        <ChatSubmitButtom>Send</ChatSubmitButtom>
+      </ChatBoxBottom>
+    </>
+  );
+};
+export const ChannelBox = () => {
   return (
     <>
       <ChatBox>
-        <Header>
-          <ChannelBoxHeader />
-        </Header>
-        <Wrapper>
-          <ChatBoxTop>
-            {channelMessages.length === 0 ? (
-              <EmptyConversation>
-                <h2>it's always better to start a conversation &#128516;</h2>
-              </EmptyConversation>
-            ) : (
-              <>
-                {channelMessages.map((item: I_Message) => (
-                  <>
-                    <MessageBox
-                      own={isConnectedUser(item.sender.intraId, user.intraId)}
-                      data={item}
-                      key={item.id}
-                    />
-                  </>
-                ))}
-              </>
-            )}
-          </ChatBoxTop>
-        </Wrapper>
-        <ChatBoxBottom>
-          <ChatMessageInput placeholder="Write your message ..." />
-          <ChatSubmitButtom>Send</ChatSubmitButtom>
-        </ChatBoxBottom>
+        <ChannelBoxHeader />
+        <ChannelBoxContent />
       </ChatBox>
-      {/* need an improvement */}
       <ChannelUsers />
     </>
   );
@@ -96,14 +102,6 @@ export const ChannelBox = () => {
 const ChatBox = styled.div`
   flex: 5.5;
   height: 100%;
-`;
-
-const Header = styled.div`
-  border-bottom: 1px solid #d7d7d7;
-  display: flex;
-  justify-content: space-between;
-  padding: 0px 10px 0px 10px;
-  align-items: center;
 `;
 
 const Wrapper = styled.div`

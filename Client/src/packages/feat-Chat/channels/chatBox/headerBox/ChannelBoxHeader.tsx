@@ -35,7 +35,7 @@ export const ChannelBoxHeader = () => {
   };
 
   return (
-    <>
+    <Header>
       <ModalComponent
         open={open}
         ChildComponent={ChildModal}
@@ -58,7 +58,10 @@ export const ChannelBoxHeader = () => {
       <IconHolder>
         <ChannelMembers
           onClick={() =>
-            handleClickModal(<UsersRoom channelConversation={memberships[index]} />, "click")
+            handleClickModal(
+              <UsersRoom channelConversation={memberships[index]} />,
+              "click"
+            )
           }
         >
           <Person /> {memberships[index].members.length}
@@ -75,7 +78,7 @@ export const ChannelBoxHeader = () => {
           style={{ cursor: "pointer" }}
         />
       </IconHolder>
-    </>
+    </Header>
   );
 };
 
@@ -95,4 +98,11 @@ const ChannelMembers = styled.div`
   &:hover {
     background-color: #f1f1f1;
   }
+`;
+const Header = styled.div`
+  border-bottom: 1px solid #d7d7d7;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px 0px 10px;
+  align-items: center;
 `;

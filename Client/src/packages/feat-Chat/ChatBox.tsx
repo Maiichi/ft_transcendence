@@ -7,17 +7,15 @@ import { useAppDispatch, useAppSelector } from "../../core";
 import { CoreState } from "../../core/CoreSlice";
 
 export const ChatBox = () => {
-  const { core, chat } = useAppSelector((state) => state);
+  const { chat } = useAppSelector((state) => state);
   if (
     chat.currentConversation?.type === "direct" &&
-    chat.currentConversation.direct &&
-    core.isConversation
+    chat.currentConversation.direct
   ) {
     return <DirectBox directConversation={chat.currentConversation.direct} />;
   } else if (
     chat.currentConversation?.type === "channel" &&
-    chat.currentConversation.room &&
-    core.isConversation
+    chat.currentConversation.room
   ) {
     return <ChannelBox />;
   } else

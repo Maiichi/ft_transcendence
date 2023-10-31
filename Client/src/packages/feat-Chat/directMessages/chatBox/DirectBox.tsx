@@ -10,21 +10,23 @@ import { isConnectedUser } from "../../../../core/utils/helperFunctions";
 export const DirectBox = (props: {
   directConversation: I_DirectConversation;
 }) => {
-  const { directConversation } = props;
+  // const { directConversation } = props;
+  const { direct } = useAppSelector((state) => state.chat.currentConversation);
+  const { conversations } = useAppSelector((state) => state.directMessage);
 
+  const index = conversations.findIndex((item: any) => item.id == direct.id);
   const dispatch = useAppDispatch();
   const { directMessage, auth } = useAppSelector((state) => state);
 
   useEffect(() => {
     // check if directConversation.id is not exist in the state
-    if (directConversation)
-      dispatch(getDirectConversationMessages(directConversation.id));
+    if (direct) dispatch(getDirectConversationMessages(direct.id));
   }, []);
   return (
     <>
       <ChatBox>
         <Header>
-          <DirectBoxHeader directConversation={directConversation} />
+          <DirectBoxHeader directConversation={direct} />
         </Header>
         <Wrapper>
           <ChatBoxTop>
