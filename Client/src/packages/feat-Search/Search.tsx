@@ -11,15 +11,19 @@ import {
 } from "@mui/material";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
-import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
+import { ModalComponent, SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import { useEffect, useState } from "react";
 import { getAllRooms } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
 import { joinRoom } from "./redux/searchSlice";
 import { getMemberships } from "../feat-Chat/channels/redux/roomThunk";
 import { useNavigate } from "react-router-dom";
+import { JoinChannelModal } from "./modal/joinChannelModal";
 
 export const Search = () => {
+
+  
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -55,20 +59,48 @@ export const Search = () => {
     room: I_Room_Search;
     userId: number;
   }) => {
+    const [open, setOpen] = useState(false);
+    const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
+      undefined,
+    );
+
+    const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+
+    const handleClickModal = (
+      childModal: JSX.Element,
+      closeType?: "auto" | "click",
+    ) => {
+      setCloseType(closeType);
+      setOpen(true);
+      setChildModal(childModal);
+    };
+    const handleClose = () => {
+      setOpen(false);
+    };
     var title = isUserInRoom(room, userId) ? "ACCESS" : "JOIN";
 
     const handleCLick = () => {
       if (isUserInRoom(room, userId)) navigate("/chat");
+      if (room.type === 'protected')
+        handleClickModal(<JoinChannelModal roomId={room.id} handleClose={handleClose} />)
       else handleJoinRoom(room);
     };
     return (
-      <Button
-        variant="contained"
-        style={{ backgroundColor: "#5e35b1d9" }}
-        onClick={handleCLick}
-      >
-        {title}
-      </Button>
+      <>
+        <ModalComponent
+          open={open}
+          ChildComponent={ChildModal}
+          handleClose={handleClose}
+          closeType={closeType}
+        />
+        <Button
+          variant="contained"
+          style={{ backgroundColor: "#5e35b1d9" }}
+          onClick={handleCLick}
+        >
+          {title}
+        </Button>
+      </>
     );
   };
 
@@ -133,7 +165,7 @@ export const Search = () => {
               <AvatarGroup max={4} style={{ justifyContent: "flex-end" }}>
                 {room.members.map((member: any) => (
                   <Avatar
-                    key={member.user.avatar_url}
+                    key={member.user.intraId}
                     alt="user"
                     src={
                       member.user.avatar_url

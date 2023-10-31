@@ -62,7 +62,7 @@ export class RoomService
         try {
             const rooms = await this.prisma.room.findMany({
                 where : {
-                    type: {not: 'secret'}
+                    type: {not: 'private'}
                 },
                 include : {
                     members: {
@@ -289,6 +289,7 @@ export class RoomService
         const roomCreated = await this.prisma.room.findUnique({
             where: {
                 id: newRoom.id,
+                type: {not: 'private'}
             },
             select: {
                 id: true,
@@ -310,6 +311,7 @@ export class RoomService
                 updatedAt: true,
             }
         })
+
         // retrive the room created 
         const retrivedRoom = await this.chatService.getRoom(newRoom.id);
         // console.log(`${user.userName} has created a ${newRoom.name} room`);
@@ -386,9 +388,9 @@ export class RoomService
         // console.log("isMem in join === " + isMember)
         if (isMember)
             throw new WsException(`user is already member on the room`);
-        if (room.type === 'private' && !body.password)
+        if (room.type === 'protected' && !body.password)
             throw new WsException(`password is required for this room !`);
-        if (room.type == 'private' && body.password)
+        if (room.type == 'protected' && body.password)
         {
             const isMatch = await verify(room.password, body.password);
             if (!isMatch)
@@ -428,11 +430,13 @@ export class RoomService
         const joinedRoom = await this.prisma.room.findUnique({
             where: {
                 id: room.id,
+                type: {not : 'private'}
             },
             select: {
                 id: true,
                 name: true,
                 type: true,
+                description: true,
                 password: true,
                 members: {  
                     select: {
@@ -457,7 +461,6 @@ export class RoomService
                 updatedAt: true,
             }
         })
-        // console.log('joinedRoom Members ==', JSON.stringify(joinedRoom));
         // retrive the room created 
         const retrivedRoom = await this.chatService.getRoom(room.id);
         // console.log("join room service");

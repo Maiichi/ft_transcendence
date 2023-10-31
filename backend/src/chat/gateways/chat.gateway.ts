@@ -209,13 +209,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             const currentUser = this.findUserByClientSocketId(client.id);
             const roomData = await this.roomService.createRoom(createRoomDto, currentUser.intraId);
             const socketsOfUser: string[] = this.userSockets.get(currentUser.intraId);
-            console.log('roomData ==', JSON.stringify(roomData));
             socketsOfUser.forEach((value) =>{
                 this.server.to(value).emit('roomCreated', roomData.dataMembership);
             })
-            this.userSockets.forEach((socketId) => {
-                this.server.to(socketId).emit('newRoom', roomData.dataRoom)
-            })
+            if (roomData.dataRoom)
+                this.userSockets.forEach((socketId) => {
+                    this.server.to(socketId).emit('newRoom', roomData.dataRoom)
+                })
 
         } catch (error) {
             console.log(error.message);
@@ -263,10 +263,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
                         this.server.to(socketId).emit('userJoinRoom', {
                             roomId: body.id,
                             user : {
-                                idAdmin: "false",
-                                isBanned: "false",
-                                isOwner: "false",
-                                isMute: "false",
+                                idAdmin: false,
+                                isBanned: false,
+                                isOwner: false,
+                                isMute: false,
                                 user: member
                             }
                         });
@@ -284,6 +284,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
                 this.server.to(value).emit('newRoomJoined', joinedRoom.dataRoom);
             })
         } catch (error) {
+            client.emit('roomJoinError', { message: error.message });
             console.log(error.message)
         }
     }
