@@ -39,7 +39,7 @@ export interface I_DirectConversation {
   type: string;
   lastMessage: {
     content: string;
-    createdAt: string
+    createdAt: string;
   };
   receiver: {
     userName: string;

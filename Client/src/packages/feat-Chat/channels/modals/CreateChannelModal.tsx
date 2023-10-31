@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Close, LockSharp, LockOpenSharp, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Close,
+  LockSharp,
+  LockOpenSharp,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../../../core";
 import { createRoom } from "../redux/roomSlice";
 import styled from "styled-components";
@@ -15,7 +21,7 @@ export const CreateChannelModal = (props: Props) => {
   const { handleClose } = props;
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.user);
-  const [roomType, setRoomType] = useState<string>('public');
+  const [roomType, setRoomType] = useState<string>("public");
   const [roomCreationError, setRoomCreationError] = useState(null);
   const closeModal = () => {
     handleClose();
@@ -24,7 +30,9 @@ export const CreateChannelModal = (props: Props) => {
 
   const handleRoomTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    setRoomType((prevRoomType) => (prevRoomType === newValue ? 'public' : newValue));
+    setRoomType((prevRoomType) =>
+      prevRoomType === newValue ? "public" : newValue,
+    );
   };
 
   const handleCreateRoom = (values: any) => {
@@ -80,34 +88,50 @@ export const CreateChannelModal = (props: Props) => {
     return errors;
   };
 
-  const PrivacyHolder = (
-    {roomType, handleRoomTypeChange}:
-    {roomType: string, handleRoomTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void}
-    ) => {
+  const PrivacyHolder = ({
+    roomType,
+    handleRoomTypeChange,
+  }: {
+    roomType: string;
+    handleRoomTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  }) => {
     return (
       <>
         <PrivacyDivHolder>
-          {
-            roomType !== 'private' ? 
-            ( <> <Visibility/> Set channel Private </> ) 
-            : 
-            ( <> <VisibilityOff/> Private Channel </> )
-          }
-          <AntSwitch 
-            value='private'
-            checked={roomType === 'private'} 
-            onChange={handleRoomTypeChange}/>
+          {roomType !== "private" ? (
+            <>
+              {" "}
+              <Visibility /> Set channel Private{" "}
+            </>
+          ) : (
+            <>
+              {" "}
+              <VisibilityOff /> Private Channel{" "}
+            </>
+          )}
+          <AntSwitch
+            value="private"
+            checked={roomType === "private"}
+            onChange={handleRoomTypeChange}
+          />
         </PrivacyDivHolder>
         <PrivacyDivHolder>
-          {roomType !== 'protected' ? (
-            <> <LockOpenSharp /> Set channel password </>
+          {roomType !== "protected" ? (
+            <>
+              {" "}
+              <LockOpenSharp /> Set channel password{" "}
+            </>
           ) : (
-            <> <LockSharp /> Protected channel </>
+            <>
+              {" "}
+              <LockSharp /> Protected channel{" "}
+            </>
           )}
-          <AntSwitch  
-            value='protected'
-            checked={roomType === 'protected'} 
-            onChange={handleRoomTypeChange} />
+          <AntSwitch
+            value="protected"
+            checked={roomType === "protected"}
+            onChange={handleRoomTypeChange}
+          />
         </PrivacyDivHolder>
       </>
     );
@@ -117,10 +141,11 @@ export const CreateChannelModal = (props: Props) => {
     <div>
       <ModalHeader>
         <h2>Create new channel</h2>
-        <Close  
-          sx={{"&:hover" : {color: 'red'}}} 
-          style ={{ cursor: 'pointer' }} 
-          onClick={handleClose} />
+        <Close
+          sx={{ "&:hover": { color: "red" } }}
+          style={{ cursor: "pointer" }}
+          onClick={handleClose}
+        />
       </ModalHeader>
       <ModalBody>
         <Form
@@ -152,7 +177,10 @@ export const CreateChannelModal = (props: Props) => {
                     )}
                   </>
                 ))}
-                <PrivacyHolder roomType ={roomType} handleRoomTypeChange={handleRoomTypeChange} />
+                <PrivacyHolder
+                  roomType={roomType}
+                  handleRoomTypeChange={handleRoomTypeChange}
+                />
               </>
               <ModalFooter>
                 <CancelButton onClick={closeModal}>Cancel</CancelButton>

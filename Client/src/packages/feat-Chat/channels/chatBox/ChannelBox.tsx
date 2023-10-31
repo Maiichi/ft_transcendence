@@ -5,7 +5,12 @@ import { getChatRoomMessages } from "../redux/roomThunk";
 import { ChannelBoxHeader } from "./headerBox/ChannelBoxHeader";
 import { MessageBox } from "../../components/MessageBox";
 import styled from "styled-components";
-import { MoreHoriz, MoreHorizOutlined, PersonAddAltRounded, Settings } from "@mui/icons-material";
+import {
+  MoreHoriz,
+  MoreHorizOutlined,
+  PersonAddAltRounded,
+  Settings,
+} from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 
 export const ChannelBox = (props: { channelConversation: I_Room }) => {
@@ -31,32 +36,29 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
   const ChannelUsers = () => {
     return (
       <RightSide>
-          <ChannelNameHolder>
-            <ChannelName>{channelConversation.name}</ChannelName>
-            {channelConversation.description}
-            <ChannelSettingIcons>
-              <Settings />
-              <PersonAddAltRounded />
-              <Settings />
-            </ChannelSettingIcons>
-          </ChannelNameHolder>
-          <div>
-              Owner: 
-              {
-                [1, 2, 3, 4].map((item) => (
-                  <OwnerDiv>
-                    <Owner>
-                      <Avatar>
-                      </Avatar>
-                      Name
-                    </Owner>
-                    <MoreHorizOutlined></MoreHorizOutlined>
-                  </OwnerDiv>
-                ))
-              }
-            <Admins>admin</Admins>
-            <Members>member</Members>
-          </div>
+        <ChannelNameHolder>
+          <ChannelName>{channelConversation.name}</ChannelName>
+          {channelConversation.description}
+          <ChannelSettingIcons>
+            <Settings />
+            <PersonAddAltRounded />
+            <Settings />
+          </ChannelSettingIcons>
+        </ChannelNameHolder>
+        <div>
+          Owner:
+          {[1, 2, 3, 4].map((item) => (
+            <OwnerDiv>
+              <Owner>
+                <Avatar></Avatar>
+                Name
+              </Owner>
+              <MoreHorizOutlined></MoreHorizOutlined>
+            </OwnerDiv>
+          ))}
+          <Admins>admin</Admins>
+          <Members>member</Members>
+        </div>
       </RightSide>
     );
   };
@@ -171,7 +173,6 @@ const RightSide = styled.div`
   border-left: 1px solid #d7d7d7;
 `;
 
-
 /** CHANNEL USERS **/
 
 const ChannelNameHolder = styled.div`
@@ -196,12 +197,12 @@ const Owner = styled.div`
   gap: 10px;
 `;
 
-const Admins= styled.div`
-background-color: blue;
+const Admins = styled.div`
+  background-color: blue;
 `;
 
 const Members = styled.div`
-background-color: grey;
+  background-color: grey;
 `;
 
 const OwnerDiv = styled.div`
