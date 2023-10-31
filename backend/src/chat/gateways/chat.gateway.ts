@@ -240,6 +240,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
             // if (error instanceof NotFoundException)
             //     console.log("Room not found:", error.message);
             // else
+                client.emit('updateRoomError',{ message: error.message });
                 console.log(error.message)
         }
     }
@@ -284,6 +285,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect
                 this.server.to(value).emit('newRoomJoined', joinedRoom.dataRoom);
             })
         } catch (error) {
+            client.emit('joinRoomError',{ message: error.message });
             console.log(error.message)
         }
     }

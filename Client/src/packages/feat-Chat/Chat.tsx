@@ -60,8 +60,8 @@ const ChatDiscussion = () => {
   ) => {
     dispatch(
       setCurrentConversation({
-        room: type == "channel" ? (data as I_Room) : null,
-        direct: type == "direct" ? (data as I_DirectConversation) : null,
+        roomId: type == "channel" ? (data.id) : null,
+        directConversationId: type == "direct" ? (data.id) : null,
         type: type,
       }),
     );
@@ -101,7 +101,7 @@ const ChatDiscussion = () => {
             <ChannelName
               key={item.id}
               className={`channel-name ${
-                chat.currentConversation?.room === item ? "selected" : ""
+                chat.currentConversation?.roomId === item.id ? "selected" : ""
               }`}
               onClick={() => handleCLick("channel", item)}
             >
@@ -128,7 +128,7 @@ const ChatDiscussion = () => {
           {filteredConversations.map((discussion: any) => (
             <Discussion
               key={discussion.id}
-              selected={chat.currentConversation?.direct === discussion.id}
+              selected={chat.currentConversation?.directConversationId === discussion.id}
               onClick={() => handleCLick("direct", discussion)}
             >
               <Badge

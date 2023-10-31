@@ -28,8 +28,8 @@ export interface I_Room {
 }
 export interface I_Discussion {
   type: "direct" | "channel";
-  direct: I_DirectConversation | null;
-  room: I_Room | null;
+  directConversationId: number | null;
+  roomId: number | null;
 }
 
 export interface I_DirectConversation {

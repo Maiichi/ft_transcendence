@@ -9,13 +9,11 @@ import { CoreState } from "../../core/CoreSlice";
 export const ChatBox = () => {
   const { chat } = useAppSelector((state) => state);
   if (
-    chat.currentConversation?.type === "direct" &&
-    chat.currentConversation.direct
+    chat.currentConversation?.type === "direct"
   ) {
     return <DirectBox directConversation={chat.currentConversation.direct} />;
   } else if (
-    chat.currentConversation?.type === "channel" &&
-    chat.currentConversation.room
+    chat.currentConversation?.type === "channel"
   ) {
     return <ChannelBox />;
   } else

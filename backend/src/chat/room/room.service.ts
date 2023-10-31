@@ -392,6 +392,7 @@ export class RoomService {
       'isAdmin ==' + JSON.stringify(isAdmin),
     );
     if (!isAdmin.isAdmin) {
+    
       throw new WsException(
         `User with intraId ${userId} is not an admin in the room`,
       );

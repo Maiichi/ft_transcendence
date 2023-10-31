@@ -11,10 +11,10 @@ import { UsersRoom } from "../../modals/UsersRoomModal";
 import { CreateChannelModal } from "../../modals/CreateChannelModal";
 
 export const ChannelBoxHeader = () => {
-  const { room } = useAppSelector((state) => state.chat.currentConversation);
+  const { roomId } = useAppSelector((state) => state.chat.currentConversation);
   const { memberships } = useAppSelector((state) => state.channels);
 
-  const index = memberships.findIndex((item: any) => item.id == room.id);
+  const index = memberships.findIndex((item: any) => item.id == roomId);
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined,

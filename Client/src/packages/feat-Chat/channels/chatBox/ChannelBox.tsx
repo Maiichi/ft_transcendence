@@ -15,13 +15,15 @@ import {
 import { Avatar } from "@mui/material";
 
 const ChannelUsers = () => {
-  const { room } = useAppSelector((state) => state.chat.currentConversation);
+  const { roomId } = useAppSelector((state) => state.chat.currentConversation);
+  const { memberships } = useAppSelector((state) => state.channels);
 
+  const index = memberships.findIndex((item: any) => item.id == roomId);
   return (
     <RightSide>
       <ChannelNameHolder>
-        <ChannelName>{room.name}</ChannelName>
-        {room.description}
+        <ChannelName>{memberships[index].name}</ChannelName>
+        {memberships[index].description}
         <ChannelSettingIcons>
           <Settings />
           <PersonAddAltRounded />
@@ -47,7 +49,7 @@ const ChannelUsers = () => {
 };
 
 const ChannelBoxContent = () => {
-  const { room } = useAppSelector((state) => state.chat.currentConversation);
+  const { roomId } = useAppSelector((state) => state.chat.currentConversation);
 
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
@@ -56,7 +58,7 @@ const ChannelBoxContent = () => {
   );
 
   useEffect(() => {
-    if (room) dispatch(getChatRoomMessages(room.id));
+    if (roomId) dispatch(getChatRoomMessages(roomId));
   }, []);
 
   return (
