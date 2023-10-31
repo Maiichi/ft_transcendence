@@ -11,7 +11,12 @@ import {
 } from "@mui/material";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
-import { ModalComponent, SearchComponent, useAppDispatch, useAppSelector } from "../../core";
+import {
+  ModalComponent,
+  SearchComponent,
+  useAppDispatch,
+  useAppSelector,
+} from "../../core";
 import { useEffect, useState } from "react";
 import { getAllRooms } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
@@ -21,9 +26,6 @@ import { useNavigate } from "react-router-dom";
 import { JoinChannelModal } from "./modal/joinChannelModal";
 
 export const Search = () => {
-
-  
-
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -81,8 +83,10 @@ export const Search = () => {
 
     const handleCLick = () => {
       if (isUserInRoom(room, userId)) navigate("/chat");
-      if (room.type === 'protected')
-        handleClickModal(<JoinChannelModal roomId={room.id} handleClose={handleClose} />)
+      if (room.type === "protected")
+        handleClickModal(
+          <JoinChannelModal roomId={room.id} handleClose={handleClose} />,
+        );
       else handleJoinRoom(room);
     };
     return (
