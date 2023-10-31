@@ -52,7 +52,7 @@ const ChannelBoxContent = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const channelMessages: [] = useAppSelector(
-    (state) => state.channels.messages
+    (state) => state.channels.messages,
   );
 
   useEffect(() => {

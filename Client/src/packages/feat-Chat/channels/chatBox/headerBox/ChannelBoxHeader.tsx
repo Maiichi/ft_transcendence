@@ -17,14 +17,14 @@ export const ChannelBoxHeader = () => {
   const index = memberships.findIndex((item: any) => item.id == room.id);
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-    undefined
+    undefined,
   );
 
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
 
   const handleClickModal = (
     childModal: JSX.Element,
-    closeType?: "auto" | "click"
+    closeType?: "auto" | "click",
   ) => {
     setCloseType(closeType);
     setOpen(true);
@@ -50,7 +50,7 @@ export const ChannelBoxHeader = () => {
               <CreateChannelModal
                 handleClose={handleClose}
                 channelConversation={memberships[index]}
-              />
+              />,
             )
           }
         />
@@ -60,7 +60,7 @@ export const ChannelBoxHeader = () => {
           onClick={() =>
             handleClickModal(
               <UsersRoom channelConversation={memberships[index]} />,
-              "click"
+              "click",
             )
           }
         >
@@ -72,7 +72,7 @@ export const ChannelBoxHeader = () => {
               <LeaveRoomModal
                 channelConversation={memberships[index]}
                 handleClose={handleClose}
-              />
+              />,
             )
           }
           style={{ cursor: "pointer" }}

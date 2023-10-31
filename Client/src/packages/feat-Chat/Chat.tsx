@@ -22,17 +22,17 @@ import { setCurrentConversation } from "./chatSlice";
 const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
   const { channels, directMessage, filter, chat } = useAppSelector(
-    (state) => state
+    (state) => state,
   );
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-    undefined
+    undefined,
   );
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
   const handleClickModal = (
     childModal: JSX.Element,
-    closeType?: "auto" | "click"
+    closeType?: "auto" | "click",
   ) => {
     setCloseType(closeType);
     setOpen(true);
@@ -46,24 +46,24 @@ const ChatDiscussion = () => {
     dispatch(getDirectConversations());
   }, []);
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
-    item.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+    item.name.toLowerCase().startsWith(searchQuery.toLowerCase()),
   );
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
       discussion.receiver.firstName
         .toLowerCase()
-        .startsWith(searchQuery.toLowerCase())
+        .startsWith(searchQuery.toLowerCase()),
   );
   const handleCLick = (
     type: "direct" | "channel",
-    data: I_DirectConversation | I_Room
+    data: I_DirectConversation | I_Room,
   ) => {
     dispatch(
       setCurrentConversation({
         room: type == "channel" ? (data as I_Room) : null,
         direct: type == "direct" ? (data as I_DirectConversation) : null,
         type: type,
-      })
+      }),
     );
 
     dispatch(setIsConversation(true));
@@ -119,7 +119,7 @@ const ChatDiscussion = () => {
             onClick={() =>
               handleClickModal(
                 <NewDirectMessage handleClose={handleClose} />,
-                "auto"
+                "auto",
               )
             }
           />
@@ -144,7 +144,9 @@ const ChatDiscussion = () => {
               >
                 {discussion.receiver.avatar_url !== null ? (
                   <AvatarImage
-                    src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)}
+                    src={require(
+                      `/app/images_uploads/${discussion.receiver.avatar_url}`,
+                    )}
                     alt=""
                   />
                 ) : (
