@@ -1,6 +1,7 @@
 export interface I_Room {
   id: number;
   name: string;
+  description: string;
   password: string;
   type: string;
   members: {

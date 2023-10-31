@@ -27,7 +27,11 @@ export class AuthController
     @Get("callback")
     async login42Redirect(@Req() req: Request, @Res() res:Response)
     {
-        return await this.authService.authenticate(req, res);
+        try {
+            return await this.authService.authenticate(req, res);
+        } catch (error) {
+            res.send({error: error})
+        }
     }
     
     /********************** Two Factor Authentication Endpoints **********************/

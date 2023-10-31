@@ -231,7 +231,7 @@ export class RoomService
     async createRoom(createRoomDto: CreateRoomDto, userId: number)
     {
         // try {
-        const {name, type, password} = createRoomDto;
+        const {name, type, password, description} = createRoomDto;
         if (!createRoomDto.name || !createRoomDto.type)
             throw new WsException(`name and type are required !`);
         const user = await this.userService.getUser(userId);
@@ -240,18 +240,20 @@ export class RoomService
         // console.log("user ==" + JSON.stringify(user));
         const roomExist = await this.getRoomByName(name);
         if (roomExist)
-            throw new WsException(`room name ${name} already exist !`);
-        if (type !== "public" && (!password?.length || password.length < 4))
-                throw new WsException(`password must have at least 4 characters!`);
-        if (type === "public" && password)
-            throw new WsException(`public rooms should not have a password !`);
+            throw new WsException(`Room name ${name} already exist !`);
+        if (type === "protected" && (!password?.length || password.length < 4))
+                throw new WsException(`Password must have at least 4 characters!`);
+        if ((type === "public" || type == "private") && password)
+            throw new WsException(`Only protected rooms, that should have a password !`);
         // const hashedPass: string | undefined = type === "private" && password ? await hash(password) : undefined;
-        if (type == "private" && password)
+        if (type == "protected" && password)
             var hashedPass: string = await hash(password);
+
         const newRoom = await this.prisma.room.create({
             data : {
                 name : name,
-                password : hashedPass || "",
+                description: description,
+                password : hashedPass,
                 type : type,
             }
         });
@@ -291,6 +293,7 @@ export class RoomService
             select: {
                 id: true,
                 name: true,
+                description: true,
                 type: true,
                 password: true,
                 members: {  
@@ -315,10 +318,6 @@ export class RoomService
             dataMembership: retrivedRoom,
             dataRoom: roomCreated
         };
-        // return retrivedRoom;
-        // } catch (error) {
-        //     console.log("error || " + error)
-        // }
     }
 
     /* DTO update
@@ -329,6 +328,7 @@ export class RoomService
         }
     */
     // update Room
+        // TODO: need to be checked concerning the optional fields ( password and description)
     async updateRoomById(body: UpdateRoomDto, userId: number)
     {
         const room = await this.getRoomById(body.id);
@@ -359,6 +359,7 @@ export class RoomService
             data : {
                 name: body.name,
                 type: body.type,
+                description: body.description,
                 password: hashedPass
             }
         });

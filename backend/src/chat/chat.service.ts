@@ -59,6 +59,7 @@ export class ChatService
                 },
                 id: true,
                 name: true,
+                description: true,
                 createdAt: true,
                 updatedAt: true, 
                 password: true,

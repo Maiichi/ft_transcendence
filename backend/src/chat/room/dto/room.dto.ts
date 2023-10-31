@@ -12,6 +12,10 @@ import { IsNumber, IsOptional, IsString } from "class-validator"
         @IsOptional()
         password: string;
 
+        @IsString()
+        @IsOptional()
+        description: string;
+
     }
 
     export class UpdateRoomDto
@@ -28,5 +32,9 @@ import { IsNumber, IsOptional, IsString } from "class-validator"
         @IsString()
         @IsOptional()
         password: string;
+
+        @IsString()
+        @IsOptional()
+        description: string;
 
     }

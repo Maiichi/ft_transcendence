@@ -5,6 +5,8 @@ import { getChatRoomMessages } from "../redux/roomThunk";
 import { ChannelBoxHeader } from "./headerBox/ChannelBoxHeader";
 import { MessageBox } from "../../components/MessageBox";
 import styled from "styled-components";
+import { MoreHoriz, MoreHorizOutlined, PersonAddAltRounded, Settings } from "@mui/icons-material";
+import { Avatar } from "@mui/material";
 
 export const ChannelBox = (props: { channelConversation: I_Room }) => {
   // console.log(props.channelConversation.id);
@@ -26,6 +28,38 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
       dispatch(getChatRoomMessages(channelConversation.id));
   }, []);
 
+  const ChannelUsers = () => {
+    return (
+      <RightSide>
+          <ChannelNameHolder>
+            <ChannelName>{channelConversation.name}</ChannelName>
+            {channelConversation.description}
+            <ChannelSettingIcons>
+              <Settings />
+              <PersonAddAltRounded />
+              <Settings />
+            </ChannelSettingIcons>
+          </ChannelNameHolder>
+          <div>
+              Owner: 
+              {
+                [1, 2, 3, 4].map((item) => (
+                  <OwnerDiv>
+                    <Owner>
+                      <Avatar>
+                      </Avatar>
+                      Name
+                    </Owner>
+                    <MoreHorizOutlined></MoreHorizOutlined>
+                  </OwnerDiv>
+                ))
+              }
+            <Admins>admin</Admins>
+            <Members>member</Members>
+          </div>
+      </RightSide>
+    );
+  };
   return (
     <>
       <ChatBox>
@@ -59,7 +93,7 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
         </ChatBoxBottom>
       </ChatBox>
       {/* need an improvement */}
-      <RightSide> USERS </RightSide>
+      <ChannelUsers />
     </>
   );
 };
@@ -135,4 +169,47 @@ const RightSide = styled.div`
   height: 100%;
   /* border-radius: 20px; */
   border-left: 1px solid #d7d7d7;
+`;
+
+
+/** CHANNEL USERS **/
+
+const ChannelNameHolder = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-bottom: 0.5px solid #d7d7d7;
+`;
+
+const ChannelName = styled.h2`
+  text-align: center;
+`;
+
+const ChannelSettingIcons = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 10px;
+`;
+
+const Owner = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const Admins= styled.div`
+background-color: blue;
+`;
+
+const Members = styled.div`
+background-color: grey;
+`;
+
+const OwnerDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  &:hover {
+    background-color: rgb(245, 246, 247);
+  }
+  padding: 5px;
 `;

@@ -109,6 +109,9 @@ export const Chat = () => {
         <Tab>
           <p>Channels</p>
           <Add
+            sx={{
+              cursor: 'pointer',
+              "&:hover" : {backgroundColor: "rgb(245, 246, 247)" }}}
             onClick={() =>
               handleClickModal(<CreateChannelModal handleClose={handleClose} />)
             }
@@ -130,6 +133,9 @@ export const Chat = () => {
         <Tab>
           <p>Direct Messages</p>
           <Add
+            sx={{
+              cursor: 'pointer',
+              "&:hover" : {backgroundColor: "rgb(245, 246, 247)" }}}
             onClick={() =>
               handleClickModal(
                 <NewDirectMessage handleClose={handleClose} />,
