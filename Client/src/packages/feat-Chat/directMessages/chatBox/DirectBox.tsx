@@ -5,55 +5,51 @@ import { getDirectConversationMessages } from "../redux/directMessageThunk";
 import { MessageBox } from "../../components/MessageBox";
 import { DirectBoxHeader } from "./headerBox/DirectBoxHeader";
 import styled from "styled-components";
+import { isConnectedUser } from "../../../../core/utils/helperFunctions";
 
+export const DirectBox = (props: {
+  directConversation: I_DirectConversation;
+}) => {
+  // const { directConversation } = props;
+  const { direct } = useAppSelector((state) => state.chat.currentConversation);
+  const { conversations } = useAppSelector((state) => state.directMessage);
 
-export const DirectBox = (props: { directConversation: I_DirectConversation }) => {
-    const { directConversation } = props;
-  
-    const dispatch = useAppDispatch();
-    const {directMessage, auth} = useAppSelector((state) => state);
+  const index = conversations.findIndex((item: any) => item.id == direct.id);
+  const dispatch = useAppDispatch();
+  const { directMessage, auth } = useAppSelector((state) => state);
 
-    const isConnectedUser = (intraId: number) => {
-      if (auth.user.intraId === intraId) return true;
-      return false;
-    };
-  
-    useEffect(() => {
-      // check if directConversation.id is not exist in the state
-      if (directConversation)
-        dispatch(getDirectConversationMessages(directConversation.id));
-    }, [directConversation.id]);
-    return (
-      <>
-        <ChatBox>
-          <Header>
-            <DirectBoxHeader directConversation={directConversation} />
-          </Header>
-          <Wrapper>
-            <ChatBoxTop>
-              {directMessage.conversationsContent.map((item: I_Message) => (
-                <MessageBox 
-                  own={isConnectedUser(item.sender.intraId)} 
-                  data={item} 
-                  key={item.id}  
-                />
-              ))}
-            </ChatBoxTop>
-          </Wrapper>
-          <ChatBoxBottom>
-            <ChatMessageInput
-              placeholder="Write your message ..."
-            ></ChatMessageInput>
-            <ChatSubmitButtom>Send</ChatSubmitButtom>
-          </ChatBoxBottom>
-        </ChatBox>
-        <RightSide>onlineUsers</RightSide>
-      </>
-    );
-  };
+  useEffect(() => {
+    // check if directConversation.id is not exist in the state
+    if (direct) dispatch(getDirectConversationMessages(direct.id));
+  }, []);
+  return (
+    <>
+      <ChatBox>
+        <Header>
+          <DirectBoxHeader directConversation={direct} />
+        </Header>
+        <Wrapper>
+          <ChatBoxTop>
+            {directMessage.conversationsContent.map((item: I_Message) => (
+              <MessageBox
+                own={isConnectedUser(item.sender.intraId, auth.user.intraId)}
+                data={item}
+                key={item.id}
+              />
+            ))}
+          </ChatBoxTop>
+        </Wrapper>
+        <ChatBoxBottom>
+          <ChatMessageInput placeholder="Write your message ..."></ChatMessageInput>
+          <ChatSubmitButtom>Send</ChatSubmitButtom>
+        </ChatBoxBottom>
+      </ChatBox>
+      <RightSide>onlineUsers</RightSide>
+    </>
+  );
+};
 
-
-  const ChatBox = styled.div`
+const ChatBox = styled.div`
   flex: 5.5;
   height: 100%;
 `;
@@ -72,7 +68,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   height: 80%;
   padding: 0px 10px 0px 0px;
-`; 
+`;
 
 const ChatBoxTop = styled.div`
   height: 100%;
@@ -111,7 +107,7 @@ const ChatSubmitButtom = styled.button`
 `;
 
 const RightSide = styled.div`
-  flex : 2;
+  flex: 2;
   height: 100%;
   /* border-radius: 20px; */
   border-left: 1px solid #d7d7d7;

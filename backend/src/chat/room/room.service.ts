@@ -347,7 +347,6 @@ export class RoomService {
           updatedAt: true,
         },
       });
-
     // retrive the room created
     const retrivedRoom =
       await this.chatService.getRoom(newRoom.id);

@@ -5,94 +5,98 @@ import { getChatRoomMessages } from "../redux/roomThunk";
 import { ChannelBoxHeader } from "./headerBox/ChannelBoxHeader";
 import { MessageBox } from "../../components/MessageBox";
 import styled from "styled-components";
-import { MoreHoriz, MoreHorizOutlined, PersonAddAltRounded, Settings } from "@mui/icons-material";
+import { isConnectedUser } from "../../../../core/utils/helperFunctions";
+import {
+  MoreHoriz,
+  MoreHorizOutlined,
+  PersonAddAltRounded,
+  Settings,
+} from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 
-export const ChannelBox = (props: { channelConversation: I_Room }) => {
-  // console.log(props.channelConversation.id);
-  console.log("Channel Box rendring !");
-  const { channelConversation } = props;
+const ChannelUsers = () => {
+  const { roomId } = useAppSelector((state) => state.chat.currentConversation);
+  const { memberships } = useAppSelector((state) => state.channels);
+
+  const index = memberships.findIndex((item: any) => item.id == roomId);
+  return (
+    <RightSide>
+      <ChannelNameHolder>
+        <ChannelName>{memberships[index].name}</ChannelName>
+        {memberships[index].description}
+        <ChannelSettingIcons>
+          <Settings />
+          <PersonAddAltRounded />
+          <Settings />
+        </ChannelSettingIcons>
+      </ChannelNameHolder>
+      <div>
+        Owner:
+        {[1, 2, 3, 4].map((item) => (
+          <OwnerDiv>
+            <Owner>
+              <Avatar></Avatar>
+              Name
+            </Owner>
+            <MoreHorizOutlined></MoreHorizOutlined>
+          </OwnerDiv>
+        ))}
+        <Admins>admin</Admins>
+        <Members>member</Members>
+      </div>
+    </RightSide>
+  );
+};
+
+const ChannelBoxContent = () => {
+  const { roomId } = useAppSelector((state) => state.chat.currentConversation);
+
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const channelMessages: [] = useAppSelector(
     (state) => state.channels.messages,
   );
 
-  const isConnectedUser = (intraId: number) => {
-    console.log("intraId ==", intraId);
-    if (user.intraId === intraId) return true;
-    return false;
-  };
   useEffect(() => {
-    if (channelConversation !== null)
-      dispatch(getChatRoomMessages(channelConversation.id));
+    if (roomId) dispatch(getChatRoomMessages(roomId));
   }, []);
 
-  const ChannelUsers = () => {
-    return (
-      <RightSide>
-          <ChannelNameHolder>
-            <ChannelName>{channelConversation.name}</ChannelName>
-            {channelConversation.description}
-            <ChannelSettingIcons>
-              <Settings />
-              <PersonAddAltRounded />
-              <Settings />
-            </ChannelSettingIcons>
-          </ChannelNameHolder>
-          <div>
-              Owner: 
-              {
-                [1, 2, 3, 4].map((item) => (
-                  <OwnerDiv>
-                    <Owner>
-                      <Avatar>
-                      </Avatar>
-                      Name
-                    </Owner>
-                    <MoreHorizOutlined></MoreHorizOutlined>
-                  </OwnerDiv>
-                ))
-              }
-            <Admins>admin</Admins>
-            <Members>member</Members>
-          </div>
-      </RightSide>
-    );
-  };
+  
+  return (
+    <>
+      <Wrapper>
+        <ChatBoxTop>
+          {channelMessages.length === 0 ? (
+            <EmptyConversation>
+              <h2>it's always better to start a conversation &#128516;</h2>
+            </EmptyConversation>
+          ) : (
+            <>
+              {channelMessages.map((item: I_Message) => (
+                <MessageBox
+                  own={isConnectedUser(item.sender.intraId, user.intraId)}
+                  data={item}
+                  key={item.id}
+                />
+              ))}
+            </>
+          )}
+        </ChatBoxTop>
+      </Wrapper>
+      <ChatBoxBottom>
+        <ChatMessageInput placeholder="Write your message ..." />
+        <ChatSubmitButtom>Send</ChatSubmitButtom>
+      </ChatBoxBottom>
+    </>
+  );
+};
+export const ChannelBox = () => {
   return (
     <>
       <ChatBox>
-        <Header>
-          <ChannelBoxHeader channelConversation={channelConversation} />
-        </Header>
-        <Wrapper>
-          <ChatBoxTop>
-            {channelMessages.length === 0 ? (
-              <EmptyConversation>
-                <h2>it's always better to start a conversation &#128516;</h2>
-              </EmptyConversation>
-            ) : (
-              <>
-                {channelMessages.map((item: I_Message) => (
-                  <>
-                    <MessageBox
-                      own={isConnectedUser(item.sender.intraId)}
-                      data={item}
-                      key={item.id}
-                    />
-                  </>
-                ))}
-              </>
-            )}
-          </ChatBoxTop>
-        </Wrapper>
-        <ChatBoxBottom>
-          <ChatMessageInput placeholder="Write your message ..." />
-          <ChatSubmitButtom>Send</ChatSubmitButtom>
-        </ChatBoxBottom>
+        <ChannelBoxHeader />
+        <ChannelBoxContent />
       </ChatBox>
-      {/* need an improvement */}
       <ChannelUsers />
     </>
   );
@@ -101,14 +105,6 @@ export const ChannelBox = (props: { channelConversation: I_Room }) => {
 const ChatBox = styled.div`
   flex: 5.5;
   height: 100%;
-`;
-
-const Header = styled.div`
-  border-bottom: 1px solid #d7d7d7;
-  display: flex;
-  justify-content: space-between;
-  padding: 0px 10px 0px 10px;
-  align-items: center;
 `;
 
 const Wrapper = styled.div`
@@ -171,7 +167,6 @@ const RightSide = styled.div`
   border-left: 1px solid #d7d7d7;
 `;
 
-
 /** CHANNEL USERS **/
 
 const ChannelNameHolder = styled.div`
@@ -196,12 +191,12 @@ const Owner = styled.div`
   gap: 10px;
 `;
 
-const Admins= styled.div`
-background-color: blue;
+const Admins = styled.div`
+  background-color: blue;
 `;
 
 const Members = styled.div`
-background-color: grey;
+  background-color: grey;
 `;
 
 const OwnerDiv = styled.div`

@@ -14,8 +14,14 @@ import {
   removeMemberFromRoom,
   createRoomError,
   removeMembership,
+  updateRoom,
+  updateRoomSucess,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
-import { setIsConversation } from "../CoreSlice";
+import {
+  setIsConversation,
+  setOpenErrorSnackbar,
+  setServerError,
+} from "../CoreSlice";
 import {
   addRoom,
   joinRoom,
@@ -25,51 +31,63 @@ import {
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
+
   return (next) => (action) => {
     switch (action.type) {
       case ConnectSocket.type:
-        console.log("Connect Socket Middleware");
-        let serverUrl =
-          process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
-        socket = initializeSocket(serverUrl, getState().auth.token);
-        dispatch(SocketConnected());
-        socket.on("roomCreated", (data) => {
-          dispatch(addMembership(data));
-        });
-        socket.on("newRoom", (data) => {
-          dispatch(addRoom(data));
-        });
-        socket.on("roomCreationError", (data) => {
-          dispatch(createRoomError(data.message));
-        });
-
-        socket.on("roomLeaved", (data) => {
-          dispatch(removeMembership(data));
-          dispatch(setIsConversation(false));
-        });
-        socket.on("userLeftRoom", (data) => {
-          console.log("data (userLeftRoom)===", data);
-          dispatch(removeMemberFromRoom(data));
-        });
-        socket.on("roomHasBeenLeft", (data) => {
-          dispatch(setRoomLeaved(data));
-        });
-        socket.on("roomJoined", (data) => {
-          console.log("data ins roomJOined ==", data);
-          dispatch(addMembership(data));
-        });
-        socket.on("userJoinRoom", (data) => {
-          dispatch(addMemberToRoom(data));
-        });
-        socket.on("newRoomJoined", (data) => {
-          dispatch(setRoomJoined(data));
-        });
+        try {
+          let serverUrl =
+            process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
+          socket = initializeSocket(serverUrl, getState().auth.token);
+          dispatch(SocketConnected());
+          socket.onAny((eventName, data) => {
+            if (eventName.toLowerCase().includes("error")) {
+              dispatch(setServerError(data.message));
+              dispatch(setOpenErrorSnackbar(true));
+            }
+          });
+          socket.on("roomCreated", (data) => {
+            dispatch(addMembership(data));
+          });
+          socket.on("roomUpdated", (data) => {
+            dispatch(updateRoomSucess(data));
+          });
+          socket.on("newRoom", (data) => {
+            dispatch(addRoom(data));
+          });
+          socket.on("roomLeaved", (data) => {
+            dispatch(removeMembership(data));
+            dispatch(setIsConversation(false));
+          });
+          socket.on("userLeftRoom", (data) => {
+            console.log("data (userLeftRoom)===", data);
+            dispatch(removeMemberFromRoom(data));
+          });
+          socket.on("roomHasBeenLeft", (data) => {
+            dispatch(setRoomLeaved(data));
+          });
+          socket.on("roomJoined", (data) => {
+            console.log("data ins roomJOined ==", data);
+            dispatch(addMembership(data));
+          });
+          socket.on("userJoinRoom", (data) => {
+            dispatch(addMemberToRoom(data));
+          });
+          socket.on("newRoomJoined", (data) => {
+            dispatch(setRoomJoined(data));
+          });
+        } catch (error) {
+          console.log(error);
+        }
         break;
       case disconnectSocket.type:
         socket?.disconnect();
         break;
       case createRoom.type:
         socket.emit("createRoom", action.payload);
+        break;
+      case updateRoom.type:
+        socket.emit("updateRoom", action.payload);
         break;
       case leaveRoom.type:
         socket.emit("leaveRoom", { roomId: action.payload });

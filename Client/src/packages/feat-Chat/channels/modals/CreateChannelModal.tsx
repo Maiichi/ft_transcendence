@@ -1,7 +1,13 @@
 import { useState } from "react";
-import { Close, LockSharp, LockOpenSharp, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Close,
+  LockSharp,
+  LockOpenSharp,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../../../core";
-import { createRoom } from "../redux/roomSlice";
+import { createRoom, updateRoom } from "../redux/roomSlice";
 import styled from "styled-components";
 import { AntSwitch } from "../../components/AntSwitch";
 import { Field, Form } from "react-final-form";
@@ -12,10 +18,17 @@ interface Props {
 }
 
 export const CreateChannelModal = (props: Props) => {
-  const { handleClose } = props;
+  const { channelConversation, handleClose } = props;
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.user);
-  const [roomType, setRoomType] = useState<string>('public');
+  const [activate, setActivate] = useState(
+    channelConversation
+      ? channelConversation?.type == "public"
+        ? true
+        : false
+      : true
+  );
+  const [roomType, setRoomType] = useState<string>("public");
   const [roomCreationError, setRoomCreationError] = useState(null);
   const closeModal = () => {
     handleClose();
@@ -24,23 +37,28 @@ export const CreateChannelModal = (props: Props) => {
 
   const handleRoomTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    setRoomType((prevRoomType) => (prevRoomType === newValue ? 'public' : newValue));
+    setRoomType((prevRoomType) =>
+      prevRoomType === newValue ? "public" : newValue
+    );
   };
 
   const handleCreateRoom = (values: any) => {
     const roomData = {
+      id: channelConversation?.id,
       name: values.name,
       ownerId: account.intraId,
       description: values.description,
       type: roomType,
       password: values.password,
     };
-    dispatch(createRoom(roomData));
-    // console.log(errors);
+    if (channelConversation) {
+      dispatch(updateRoom(roomData));
+    } else dispatch(createRoom(roomData));
     handleClose();
   };
   interface Field {
     name: string;
+    value?: string;
     label: string;
     type: string;
     holder: string;
@@ -50,6 +68,7 @@ export const CreateChannelModal = (props: Props) => {
   const fields: Field[] = [
     {
       name: "name",
+      value: channelConversation?.name,
       required: true,
       label: "Channel name",
       type: "text",
@@ -57,6 +76,7 @@ export const CreateChannelModal = (props: Props) => {
     },
     {
       name: "description",
+      value: channelConversation?.description,
       required: false,
       label: "Channel Description (optional)",
       type: "text",
@@ -79,48 +99,62 @@ export const CreateChannelModal = (props: Props) => {
     });
     return errors;
   };
-
-  const PrivacyHolder = (
-    {roomType, handleRoomTypeChange}:
-    {roomType: string, handleRoomTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void}
-    ) => {
+  const title = channelConversation   ? "Update Channel" : "Create new channel";
+  const PrivacyHolder = ({
+    roomType,
+    handleRoomTypeChange,
+  }: {
+    roomType: string;
+    handleRoomTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  }) => {
     return (
       <>
         <PrivacyDivHolder>
-          {
-            roomType !== 'private' ? 
-            ( <> <Visibility/> Set channel Private </> ) 
-            : 
-            ( <> <VisibilityOff/> Private Channel </> )
-          }
-          <AntSwitch 
-            value='private'
-            checked={roomType === 'private'} 
-            onChange={handleRoomTypeChange}/>
+          {roomType !== "private" ? (
+            <>
+              <Visibility /> Set channel Private
+            </>
+          ) : (
+            <>
+              <VisibilityOff /> Private Channel
+            </>
+          )}
+          <AntSwitch
+            value="private"
+            checked={roomType === "private"}
+            onChange={handleRoomTypeChange}
+          />
         </PrivacyDivHolder>
         <PrivacyDivHolder>
-          {roomType !== 'protected' ? (
-            <> <LockOpenSharp /> Set channel password </>
+          {roomType !== "protected" ? (
+            <>
+              {" "}
+              <LockOpenSharp /> Set channel password{" "}
+            </>
           ) : (
-            <> <LockSharp /> Protected channel </>
+            <>
+              {" "}
+              <LockSharp /> Protected channel{" "}
+            </>
           )}
-          <AntSwitch  
-            value='protected'
-            checked={roomType === 'protected'} 
-            onChange={handleRoomTypeChange} />
+          <AntSwitch
+            value="protected"
+            checked={roomType === "protected"}
+            onChange={handleRoomTypeChange}
+          />
         </PrivacyDivHolder>
       </>
     );
   };
-
   return (
     <div>
       <ModalHeader>
-        <h2>Create new channel</h2>
-        <Close  
-          sx={{"&:hover" : {color: 'red'}}} 
-          style ={{ cursor: 'pointer' }} 
-          onClick={handleClose} />
+        <h2>{title}</h2>
+        <Close
+          sx={{ "&:hover": { color: "red" } }}
+          style={{ cursor: "pointer" }}
+          onClick={handleClose}
+        />
       </ModalHeader>
       <ModalBody>
         <Form
@@ -132,7 +166,11 @@ export const CreateChannelModal = (props: Props) => {
                 {fields.map((item: Field, index: number) => (
                   <>
                     {!item.hidden && (
-                      <Field key={index} name={item.name}>
+                      <Field
+                        key={index}
+                        name={item.name}
+                        defaultValue={item.value}
+                      >
                         {({ input, meta }: any) => {
                           return (
                             <ChannelFieldHolder>
@@ -152,11 +190,16 @@ export const CreateChannelModal = (props: Props) => {
                     )}
                   </>
                 ))}
-                <PrivacyHolder roomType ={roomType} handleRoomTypeChange={handleRoomTypeChange} />
+                <PrivacyHolder
+                  roomType={roomType}
+                  handleRoomTypeChange={handleRoomTypeChange}
+                />
               </>
               <ModalFooter>
                 <CancelButton onClick={closeModal}>Cancel</CancelButton>
-                <CreateButton type="submit">Create</CreateButton>
+                <CreateButton type="submit">
+                  {channelConversation ? "update" : "Create"}
+                </CreateButton>
               </ModalFooter>
             </form>
           )}

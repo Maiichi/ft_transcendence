@@ -1,9 +1,9 @@
 export interface I_Room {
   id: number;
   name: string;
+  password: string; // must check
+  type: "public" | "private" | "protected";
   description: string;
-  password: string;
-  type: string;
   members: {
     isAdmin: boolean;
     isBanned: boolean;
@@ -27,9 +27,9 @@ export interface I_Room {
   updatedAt: string;
 }
 export interface I_Discussion {
-  type: "direct" | "channel";
-  direct: I_DirectConversation | null;
-  room: I_Room | null;
+  type: "direct" | "channel" | null;
+  directConversationId: number | null;
+  roomId: number | null;
 }
 
 export interface I_DirectConversation {
@@ -39,7 +39,7 @@ export interface I_DirectConversation {
   type: string;
   lastMessage: {
     content: string;
-    createdAt: string
+    createdAt: string;
   };
   receiver: {
     userName: string;

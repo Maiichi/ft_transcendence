@@ -24,6 +24,7 @@ import { joinRoom } from "./redux/searchSlice";
 import { getMemberships } from "../feat-Chat/channels/redux/roomThunk";
 import { useNavigate } from "react-router-dom";
 import { JoinChannelModal } from "./modal/joinChannelModal";
+import { setCurrentConversation } from "../feat-Chat/chatSlice";
 
 export const Search = () => {
   const dispatch = useAppDispatch();
@@ -82,8 +83,9 @@ export const Search = () => {
     var title = isUserInRoom(room, userId) ? "ACCESS" : "JOIN";
 
     const handleCLick = () => {
-      if (isUserInRoom(room, userId)) navigate("/chat");
-      if (room.type === "protected")
+      if (title == 'ACCESS') 
+        navigate("/chat");
+      else if (room.type === "protected")
         handleClickModal(
           <JoinChannelModal roomId={room.id} handleClose={handleClose} />,
         );
@@ -108,7 +110,6 @@ export const Search = () => {
     );
   };
 
-  console.log("rooms ==", JSON.stringify(filteredRooms));
 
   // check if the user is a member or not to display the button based on the membership
   const isUserInRoom = (roomS: I_Room_Search, userID: number) => {
