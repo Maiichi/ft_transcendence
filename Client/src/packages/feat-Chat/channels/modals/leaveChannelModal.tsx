@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { leaveRoom } from "../redux/roomSlice";
 import { useAppDispatch } from "../../../../core";
 import { I_Room } from "../../Types/types";
+import { setCurrentConversation } from "../../chatSlice";
 
 export const LeaveRoomModal = (props: {
   channelConversation: I_Room;
@@ -13,6 +14,13 @@ export const LeaveRoomModal = (props: {
   const handleLeaveRoom = () => {
     console.log("channelId || ", channelConversation.id);
     dispatch(leaveRoom(channelConversation.id));
+    dispatch(
+      setCurrentConversation({
+        roomId: null,
+        directConversationId: null,
+        type: null,
+      }),
+    );
     handleClose();
   };
 

@@ -27,7 +27,7 @@ export interface I_Room {
   updatedAt: string;
 }
 export interface I_Discussion {
-  type: "direct" | "channel";
+  type: "direct" | "channel" | null;
   directConversationId: number | null;
   roomId: number | null;
 }

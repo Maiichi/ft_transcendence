@@ -72,7 +72,7 @@ export class RoomService {
       const rooms =
         await this.prisma.room.findMany({
           where: {
-            type: { not: 'secret' },
+            type: { not: 'private' },
           },
           include: {
             members: {
@@ -325,6 +325,7 @@ export class RoomService {
       await this.prisma.room.findUnique({
         where: {
           id: newRoom.id,
+          type: { not: 'private' },
         },
         select: {
           id: true,
@@ -457,11 +458,17 @@ export class RoomService {
       throw new WsException(
         `user is already member on the room`,
       );
-    if (room.type === 'private' && !body.password)
+    if (
+      room.type === 'protected' &&
+      !body.password
+    )
       throw new WsException(
         `password is required for this room !`,
       );
-    if (room.type == 'private' && body.password) {
+    if (
+      room.type == 'protected' &&
+      body.password
+    ) {
       const isMatch = await verify(
         room.password,
         body.password,
@@ -506,11 +513,13 @@ export class RoomService {
       await this.prisma.room.findUnique({
         where: {
           id: room.id,
+          type: { not: 'private' },
         },
         select: {
           id: true,
           name: true,
           type: true,
+          description: true,
           password: true,
           members: {
             select: {
@@ -535,7 +544,6 @@ export class RoomService {
           updatedAt: true,
         },
       });
-    // console.log('joinedRoom Members ==', JSON.stringify(joinedRoom));
     // retrive the room created
     const retrivedRoom =
       await this.chatService.getRoom(room.id);

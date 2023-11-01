@@ -302,10 +302,6 @@ export class ChatGateway
         );
       const socketsOfUser: string[] =
         this.userSockets.get(currentUser.intraId);
-      console.log(
-        'roomData ==',
-        JSON.stringify(roomData),
-      );
       socketsOfUser.forEach((value) => {
         this.server
           .to(value)
@@ -314,11 +310,12 @@ export class ChatGateway
             roomData.dataMembership,
           );
       });
-      this.userSockets.forEach((socketId) => {
-        this.server
-          .to(socketId)
-          .emit('newRoom', roomData.dataRoom);
-      });
+      if (roomData.dataRoom)
+        this.userSockets.forEach((socketId) => {
+          this.server
+            .to(socketId)
+            .emit('newRoom', roomData.dataRoom);
+        });
     } catch (error) {
       console.log(error.message);
       client.emit('roomCreationError', {
@@ -354,9 +351,6 @@ export class ChatGateway
       // if (error instanceof NotFoundException)
       //     console.log("Room not found:", error.message);
       // else
-      client.emit('updateRoomError', {
-        message: error.message,
-      });
       console.log(error.message);
     }
   }
@@ -400,10 +394,10 @@ export class ChatGateway
               .emit('userJoinRoom', {
                 roomId: body.id,
                 user: {
-                  idAdmin: 'false',
-                  isBanned: 'false',
-                  isOwner: 'false',
-                  isMute: 'false',
+                  idAdmin: false,
+                  isBanned: false,
+                  isOwner: false,
+                  isMute: false,
                   user: member,
                 },
               });
@@ -431,7 +425,7 @@ export class ChatGateway
           );
       });
     } catch (error) {
-      client.emit('joinRoomError', {
+      client.emit('roomJoinError', {
         message: error.message,
       });
       console.log(error.message);

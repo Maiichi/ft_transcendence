@@ -99,7 +99,7 @@ export const CreateChannelModal = (props: Props) => {
     });
     return errors;
   };
-  const title = channelConversation ? "Update Channel" : "Create new channel";
+  const title = channelConversation   ? "Update Channel" : "Create new channel";
   const PrivacyHolder = ({
     roomType,
     handleRoomTypeChange,
@@ -112,13 +112,11 @@ export const CreateChannelModal = (props: Props) => {
         <PrivacyDivHolder>
           {roomType !== "private" ? (
             <>
-              {" "}
-              <Visibility /> Set channel Private{" "}
+              <Visibility /> Set channel Private
             </>
           ) : (
             <>
-              {" "}
-              <VisibilityOff /> Private Channel{" "}
+              <VisibilityOff /> Private Channel
             </>
           )}
           <AntSwitch

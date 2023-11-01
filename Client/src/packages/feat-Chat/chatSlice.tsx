@@ -15,6 +15,7 @@ export const chatSlice = createSlice({
     setCurrentConversation: (state, action: PayloadAction<I_Discussion>) => {
       state.currentConversation = action.payload;
     },
+    
   },
 });
 
