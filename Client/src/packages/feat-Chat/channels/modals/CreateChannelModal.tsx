@@ -100,8 +100,13 @@ export const CreateChannelModal = (props: Props) => {
   const validate = (values: any) => {
     const errors: any = {};
     fields.forEach((field: Field) => {
-      if (!Object.keys(values).includes(field.name) && field.required)
-        errors[field.name] = "required";
+      if (
+        !Object.keys(values).includes(field.name) &&
+        (field.required ||
+          (field.dependencies &&
+            checkRequiredDependencies(values, field.dependencies)))
+      )
+        errors[field.name] = `${field.label} must be required`;
     });
     return errors;
   };
@@ -119,6 +124,21 @@ export const CreateChannelModal = (props: Props) => {
       }
     });
     return shouldHide;
+  };
+  const checkRequiredDependencies = (
+    values: any,
+    dependencies?: Array<Dependencie>
+  ) => {
+    let shouldRequired = false;
+    dependencies?.forEach((dependencie) => {
+      if (
+        dependencie.action == "required" &&
+        dependencie.value.includes(values[dependencie.field])
+      ) {
+        shouldRequired = true;
+      }
+    });
+    return shouldRequired;
   };
   const title = channelConversation ? "Update Channel" : "Create new channel";
 
@@ -145,7 +165,6 @@ export const CreateChannelModal = (props: Props) => {
                       key={index}
                       name={item.name}
                       defaultValue={item.value}
-                      subscription={{ value: true }}
                     >
                       {({ input, meta }: any) => (
                         <>
