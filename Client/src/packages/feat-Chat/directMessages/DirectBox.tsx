@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../core";
-import { I_DirectConversation, I_Message } from "../../Types/types";
-import { getDirectConversationMessages } from "../redux/directMessageThunk";
-import { MessageBox } from "../../components/MessageBox";
-import { DirectBoxHeader } from "./headerBox/DirectBoxHeader";
+import { useAppDispatch, useAppSelector } from "../../../core";
+import { I_DirectConversation, I_Message } from "../components/types";
+import { getDirectConversationMessages } from "./redux/directMessageThunk";
+import { MessageBox } from "../components/MessageBox";
+import { DirectBoxHeader } from "./DirectBoxHeader";
 import styled from "styled-components";
-import { isConnectedUser } from "../../../../core/utils/helperFunctions";
+import { isConnectedUser } from "../../../core/utils/helperFunctions";
 
 export const DirectBox = (props: {
   directConversation: I_DirectConversation;

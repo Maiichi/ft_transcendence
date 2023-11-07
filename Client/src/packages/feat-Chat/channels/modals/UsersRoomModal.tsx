@@ -1,6 +1,6 @@
 import { PersonAddAltRounded } from "@mui/icons-material";
 import styled from "styled-components";
-import { I_Room } from "../../Types/types";
+import { I_Room } from "../../components/types";
 
 export const UsersRoom = ({
   channelConversation,

@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
-import { I_Discussion } from "./Types/types";
+import { I_Discussion } from "./types";
 
 export interface roomState {
   currentConversation: I_Discussion | null;
@@ -15,7 +15,6 @@ export const chatSlice = createSlice({
     setCurrentConversation: (state, action: PayloadAction<I_Discussion>) => {
       state.currentConversation = action.payload;
     },
-    
   },
 });
 
