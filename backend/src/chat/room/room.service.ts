@@ -11,6 +11,7 @@ import {
   LeaveRoomDto,
   JoinRoomDto,
   SetRoomAdminDto,
+  AddUserToRoomDto,
 } from './dto/membership.dto';
 import {
   CreateRoomDto,
@@ -49,6 +50,7 @@ export class RoomService {
           updatedAt: true,
         },
       });
+    // console.log('room == ', JSON.stringify(room));
     if (!room)
       throw new WsException(
         `roomId ${roomId} does not exist`,
@@ -72,7 +74,7 @@ export class RoomService {
       const rooms =
         await this.prisma.room.findMany({
           where: {
-            type: { not: 'private' },
+            type: { not: 'secret' },
           },
           include: {
             members: {
@@ -152,6 +154,7 @@ export class RoomService {
                 select: {
                   intraId: true,
                   userName: true,
+                  avatar_url: true,
                 },
               },
             },
@@ -186,6 +189,7 @@ export class RoomService {
                 select: {
                   intraId: true,
                   userName: true,
+                  avatar_url: true,
                 },
               },
             },
@@ -325,7 +329,6 @@ export class RoomService {
       await this.prisma.room.findUnique({
         where: {
           id: newRoom.id,
-          type: { not: 'private' },
         },
         select: {
           id: true,
@@ -458,17 +461,11 @@ export class RoomService {
       throw new WsException(
         `user is already member on the room`,
       );
-    if (
-      room.type === 'protected' &&
-      !body.password
-    )
+    if (room.type === 'protected' && !body.password)
       throw new WsException(
         `password is required for this room !`,
       );
-    if (
-      room.type == 'protected' &&
-      body.password
-    ) {
+    if (room.type == 'protected' && body.password) {
       const isMatch = await verify(
         room.password,
         body.password,
@@ -497,29 +494,17 @@ export class RoomService {
       },
     });
 
-    // console.log('newMembership ==', JSON.stringify(membership));
-    // await this.prisma.room.update({
-    //     where: {
-    //         id: room.id
-    //     },
-    //     data: {
-    //         members: {
-
-    //         }
-    //     }
-    // })
+    
     // TODO : need to check
     const joinedRoom =
       await this.prisma.room.findUnique({
         where: {
           id: room.id,
-          type: { not: 'private' },
         },
         select: {
           id: true,
           name: true,
           type: true,
-          description: true,
           password: true,
           members: {
             select: {
@@ -544,6 +529,7 @@ export class RoomService {
           updatedAt: true,
         },
       });
+    // console.log('joinedRoom Members ==', JSON.stringify(joinedRoom));
     // retrive the room created
     const retrivedRoom =
       await this.chatService.getRoom(room.id);
@@ -637,7 +623,7 @@ export class RoomService {
         `userId = ${body.userId} does not exist !`,
       );
     // check if the user is who wants to set an admin is also an admin
-    const isAdmin = await this.isAdmin(
+    const isAdmin = await this.isOwner(
       userId,
       room.id,
     );
@@ -833,6 +819,79 @@ export class RoomService {
     return updateMembership;
   }
 
+    async addUserToRoom(adminId: number, body: AddUserToRoomDto)
+    {
+      const {roomId, userId} = body;
+      if (!body) throw new WsException('roomId & addedUserId field are required !');
+      const room = await this.getRoomById(roomId);
+      
+      const user = await this.userService.getUser(userId);
+      if (!user) throw new WsException(`userId = ${userId} does not exist !`);
+      const isAdmin = await this.isAdmin(adminId, room.id);
+      if (!isAdmin) throw new WsException('only admins who can add users to rooms');
+      const isMember = await this.isMember(userId, room.id);
+      if (isMember) throw new WsException(`user is already member in #${room.name} room`);
+      
+      await this.prisma.membership.create({
+          data: {
+              room: {
+                  connect: {
+                      id: room.id,
+                  },
+              },
+              user: {
+                  connect: {
+                      intraId: userId,
+                  },
+              },
+              isOwner: false,
+              isAdmin: false,
+              isBanned: false,
+              isMute: false,
+          },
+      });
+      const joinedRoom = await this.prisma.room.findUnique({
+          where: {
+              id: room.id,
+          },
+          select: {
+          id: true,
+          description: true,
+          name: true,
+          type: true,
+          password: true,
+          members: {
+              select: {
+                  id: true,
+                  isAdmin: true,
+                  isBanned: true,
+                  isMute: true,
+                  isOwner: true,
+                  timeMute: true,
+              user: {
+                  select: {
+                  avatar_url: true,
+                  firstName: true,
+                  lastName: true,
+                  userName: true,
+                  intraId: true,
+                  },
+              },
+              },
+          },
+          createdAt: true,
+          updatedAt: true,
+          },
+      });
+      const retrivedRoom = await this.chatService.getRoom(room.id);
+      console.log(`${userId} has been added the room ${room.name}`);
+      return {
+          dataMembership: retrivedRoom,
+          dataRoom: joinedRoom,
+      };
+
+    }
+
   // async unSetAdminOfRoom(body: SetRoomAdmin, userId: number)
   // {
   //     const room = await this.getRoomById(body.roomId);
@@ -857,7 +916,7 @@ export class RoomService {
   /********************************************************************************************************* */
   // isOwner
   async isOwner(userId: number, roomId: number) {
-    const isOwner =
+    const result =
       await this.prisma.membership.findFirst({
         where: {
           userId: userId,
@@ -867,7 +926,7 @@ export class RoomService {
           isOwner: true,
         },
       });
-    return isOwner.isOwner;
+    return result.isOwner;
   }
 
   // isAdmin
@@ -981,6 +1040,7 @@ export class RoomService {
               updatedAt: true,
               password: true,
               type: true,
+              description: true,
             },
           },
         },
@@ -989,14 +1049,15 @@ export class RoomService {
     const transformedData = memberships.map(
       (membership) => ({
         id: membership.room.id,
+        name: membership.room.name,
+        description: membership.room.description,
+        type: membership.room.type,
+        password: membership.room.password,
+        members: membership.room.members,
         conversation:
           membership.room.conversation,
-        members: membership.room.members,
-        name: membership.room.name,
         createdAt: membership.room.createdAt,
         updatedAt: membership.room.updatedAt,
-        password: membership.room.password,
-        type: membership.room.type,
       }),
     );
     return res.send({ data: transformedData });

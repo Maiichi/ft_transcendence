@@ -34,6 +34,7 @@ import {
   MuteMemberDto,
   JoinRoomDto,
   SetRoomAdminDto,
+  AddUserToRoomDto,
 } from '../room/dto/membership.dto';
 import {
   AcceptFriendRequestDto,
@@ -498,6 +499,59 @@ export class ChatGateway
       );
     }
   }
+
+    @SubscribeMessage('addUserToRoom')
+    async addUserToRoom(@ConnectedSocket() client: Socket, @MessageBody() body: AddUserToRoomDto)
+    {
+        try {
+            const {roomId, userId} = body;
+            console.log('body ==', body);
+
+            const currentUser = this.findUserByClientSocketId(client.id);
+            const joinedRoom = await this.roomService.addUserToRoom(currentUser.intraId, body);
+            const addedUserSockets: string[] = this.userSockets.get(userId);
+            const member = await this.roomService.getMember(userId);
+            
+            const roomUsers = await this.roomService.getRoomUsersExcludingSender(roomId, userId);
+
+            const usersInRoom = roomUsers.map((user) => user.intraId);
+            // this event for the users in the room
+            usersInRoom.forEach((userId) => {
+                const userSockets = this.userSockets.get(userId);
+                if (userSockets) {
+                userSockets.forEach((socketId) => {
+                    this.server.to(socketId).emit('userJoinRoom', {
+                        roomId: roomId,
+                        user: {
+                            idAdmin: false,
+                            isBanned: false,
+                            isOwner: false,
+                            isMute: false,
+                            user: member,
+                        },
+                    });
+                });
+                }
+            });
+
+            // this event is for the user how's been added to the room
+            if (addedUserSockets)
+            {
+              addedUserSockets.forEach((value) => {
+                this.server.to(value).emit('roomJoined', joinedRoom.dataMembership);
+              });
+            }
+
+            // this event is for all user who are connected
+            this.userSockets.forEach((value) => {
+                this.server.to(value).emit('newRoomJoined', joinedRoom.dataRoom);
+            });
+            
+        } catch (error) {
+            client.emit('addUserToRoomError',{ message: error.message });
+            console.log('addUserToRoomError ==', error.message)
+        }
+    }
 
   // set room Admins
   @SubscribeMessage('setRoomAdmin')

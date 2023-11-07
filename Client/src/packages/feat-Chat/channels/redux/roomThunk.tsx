@@ -13,7 +13,7 @@ export const getMemberships = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-
+      console.log('memo =======', (response.data))
       return response.data;
     } catch (error) {
       console.log("error in chatThunk", error);
