@@ -4,6 +4,7 @@ import {
   Button as ButtonMui,
   ListItem as ListItemMui,
   List as ListMui,
+  ListItemIcon as ListItemIconMui,
 } from "@mui/material";
 
 /**
@@ -32,6 +33,12 @@ const Player = styled(ListItemMui)`
   border-radius: 8.295px;
   background-color: antiquewhite;
 `;
+const ListItemIcon = styled(ListItemIconMui)`
+  overflow-y: scroll 3px;
+  /* max-width: 25%; */
+  @media (max-width: 426px) {
+  }
+`;
 /**
  * `Players` as  List Mui element
  */
@@ -46,11 +53,6 @@ const Players = styled(ListMui)`
   }
 `;
 
-export { Players, Player, NoPlayer, Avatar, Button };
+export { Players, Player, NoPlayer, Avatar, Button, ListItemIcon };
 
-export {
-  ListItemIcon,
-  ListItemText,
-  ListItemAvatar,
-  Typography,
-} from "@mui/material";
+export { ListItemText, ListItemAvatar, Typography } from "@mui/material";

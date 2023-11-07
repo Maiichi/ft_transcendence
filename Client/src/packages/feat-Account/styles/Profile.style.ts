@@ -3,36 +3,33 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 /**
- * `global css usage for the Conatiners`
- */
-const conatainer = css``;
-/**
- * `global css usage for the Items`
- */
-const item = css``;
-/**
  * 1-main component to the User Profile
  */
 const ProfileCards = styled.main`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  /**  */
+  & datalist, data, div    {
+    border: 1px solid black;
+  }
 `;
 /**
- * ``
+ * `Usercard` global information of the user as <data />
  */
-const Usercard = styled.div`
+const Usercard = styled.data`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   max-width: 47%;
+  margin: 2%;
+  padding-right: 30px;
   @media (max-width: 940px) {
     max-width: none;
   }
-  margin: 2%;
 `;
-const Coalition = styled.div`
+const Coalition = styled.data`
   display: inline-flex;
   flex-direction: column;
   justify-content: center;
@@ -44,20 +41,19 @@ const Coalition = styled.div`
     display: none;
   }
 `;
-const Matchshistory = styled.div`
+const Matchshistory = styled.datalist`
   display: flex;
   flex-wrap: wrap;
   gap: 45px 15px;
-  margin: 3px 7px;
   justify-content: center;
   max-width: 47%;
   margin: 2%;
-  padding-bottom: 7px;
+  padding-bottom: 32px;
   @media (max-width: 940px) {
     max-width: none;
   }
 `;
-const Match = styled.div<{ win: any }>`
+const Match = styled.data<{ win: any }>`
   display: flex;
   justify-content: start;
   align-items: center;
@@ -71,6 +67,11 @@ const Match = styled.div<{ win: any }>`
   padding-top: 5px;
   border-radius: 10px;
 `;
+const Achievemets = styled.datalist`
+  
+`;
+const Achiv = styled.data`
+`
 const style: Record<string, React.CSSProperties> = {
   div1: {
     display: "flex",
@@ -129,4 +130,4 @@ const style: Record<string, React.CSSProperties> = {
 };
 
 export { style };
-export { ProfileCards, Usercard, Coalition, Matchshistory, Match };
+export { ProfileCards, Usercard, Coalition, Matchshistory, Match, Achievemets, Achiv };

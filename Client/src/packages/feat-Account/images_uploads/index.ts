@@ -1,6 +1,14 @@
-import Picture from "./Picture.png";
-import federation from './federation.png'
-import Pic from "./th-imoj.jpeg";
-import Logo from './Logo1.png'
+const images: {
+  Picture: string;
+  federation: string;
+  Pic: string;
+  Logo: string;
+} = {
+  Picture: require("./Picture.png"),
+  federation: require("./federation.png"),
+  Pic: require("./th-imoj.jpeg"),
+  Logo: require("./Logo1.png"),
+};
 
-export { Logo, Picture, federation, Pic}
+export const { Logo, Picture, federation, Pic } = images;
+export default images;

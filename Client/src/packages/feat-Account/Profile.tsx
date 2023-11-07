@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import images from './images_uploads'
 import style, {
   ProfileCards,
   Usercard,
@@ -8,6 +8,8 @@ import style, {
   Matchshistory,
   Match,
   Text,
+  Achievemets,
+  Achiv,
 } from "./styles";
 import { useAppDispatch, useAppSelector } from "../../core";
 import {
@@ -16,8 +18,9 @@ import {
   getAchievements,
   getMatchsHistory,
   MatchHistoryType,
+  ProfileState,
 } from "./components";
-import { Avatar, Box, Button, Icon } from "@mui/material";
+import { Avatar, Button } from "@mui/material";
 import {
   PersonAddAlt,
   Message,
@@ -25,26 +28,22 @@ import {
   Dangerous,
   DoNotDisturbOn,
 } from "@mui/icons-material";
-import { Pic } from "./images_uploads";
 
 import CircularProgressBar from "./components/utils/CircularProgressBar";
+import { Leaderboard } from "./Leaderboard";
 
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
-  const gamer: gamerType = require("./static-data/gamer.json");
-  const matchs = require("./static-data/MatchesHistory.json").matchs;
-  const match: MatchHistoryType[] = [];
-  for (let i = 1; ; i++) {
-    if (!matchs[i]) break;
-    match.push(matchs[i]);
-  }
+  const profileStates: ProfileState = useAppSelector((state) => state.profile);
+  const gamer = profileStates.gamer.on
+  const matchs = profileStates.matchs.MatchHistory;
 
-  const Loading = useState([]);
   useEffect(() => {
     if (user) dispatch(getuserasgamer(user));
-  }, [Loading, user]);
+    dispatch(getMatchsHistory())
+  }, [user]);
 
   function getresult(one: number, two: number, results: Array<any>) {
     return one > two ? results[0] : one < two ? results[1] : results[2];
@@ -54,10 +53,9 @@ const Profile = () => {
       <Usercard>
         <Coalition>
           <Text variant="subtitle2" sx={{ mb: "5px" }}>
-            {" "}
-            {gamer.coalition.name}{" "}
+            {gamer.coalition.name}
           </Text>
-          <img alt={"Coalition"} src={require(`${gamer.coalition.logo}`)} />
+          <img alt={"Coalition"} src={/* gamer.coalition.logo */ images.federation} />
           <h5 style={{ margin: "7px" }}> #{gamer.rank}</h5>
         </Coalition>
         <div style={style.div1}>
@@ -66,12 +64,11 @@ const Profile = () => {
               <Avatar
                 style={style.userAvatar}
                 alt="UserImg"
-                src={/*gamer.user?.avatar_url*/ Pic}
+                src={/*gamer.user?.avatar_url*/ images.Pic}
               />
               <div style={style.div4}>
                 <Text variant="h5" style={style.userName}>
-                  {" "}
-                  {`${user.firstName} ${user.lastName}`}{" "}
+                  {`${user.firstName} ${user.lastName}`}
                 </Text>
                 <Button
                   sx={style.button1}
@@ -79,7 +76,6 @@ const Profile = () => {
                   startIcon={<PersonAddAlt fontSize="small" />}
                   onClick={() => navigate("/account/profile")}
                 >
-                  {" "}
                   friend requist
                 </Button>
                 <Button
@@ -88,7 +84,6 @@ const Profile = () => {
                   startIcon={<Message fontSize="small" />}
                   onClick={() => navigate("/account/profile")}
                 >
-                  {" "}
                   message
                 </Button>
               </div>
@@ -97,27 +92,25 @@ const Profile = () => {
           </div>
           <div style={style.box2}>
             <Text variant="body1">
-              {" "}
               {"Total matches"} <br /> <span> {23} </span>
             </Text>
             <Text variant="body1">
-              {" "}
               {"Wins"} <br /> <span> {20} </span>
             </Text>
             <Text variant="body1">
-              {" "}
               {"Achievements"} <br /> <span> {13} </span>
             </Text>
           </div>
         </div>
       </Usercard>
-      <div style={{ minWidth: "40%" }}></div>
+      <div style={{ minWidth: "45%" }}>
+        <Leaderboard primary={false} />
+      </div>
       <Matchshistory>
         <Text variant="h5" sx={style.cardName}>
-          {" "}
           {`${gamer?.user?.lastName}'s Last Matches`}
         </Text>
-        {match.map((item: MatchHistoryType, index: number) => (
+        {matchs?.map((item: MatchHistoryType, index: number) => (
           <Match
             win={getresult(item.gain, item.nogain, [
               "#2fa025b8",
@@ -136,7 +129,11 @@ const Profile = () => {
           </Match>
         ))}
       </Matchshistory>
-      <div style={{ minWidth: "40%" }}></div>
+      <Achievemets>
+        <Text variant="h5" sx={style.cardName}>
+          {`${gamer?.user?.lastName}'s Achievements`}
+        </Text>
+      </Achievemets>
     </ProfileCards>
   );
 };

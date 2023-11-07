@@ -23,6 +23,14 @@
       "loss": "40",
       "achievement": "Logo",
       "picture": "Pic"
+    },
+    "4": {
+      "name": "john",
+      "ladder": "75",
+      "wins": "50",
+      "loss": "40",
+      "achievement": "Logo",
+      "picture": "Pic"
     }
   }
 }

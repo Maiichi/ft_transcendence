@@ -37,7 +37,7 @@ const Title = styled.section`
  *  `styled component Root`
  */
 const Root = styled.div<{ $primary?: boolean }>`
-  background-color: ${(props) => (props.$primary ? "inherits" : "#f9f9f9")};
+  background-color: "inherits";
   padding: 0;
   margin: 0;
   width: 100%;

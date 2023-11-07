@@ -8,7 +8,7 @@ type gamerType = {
   user: any;
   coalition: {
     name: string | null;
-    logo: Module | string;
+    logo: string;
   };
   rank: number;
 };
@@ -22,7 +22,9 @@ type leaderboardType = {
 };
 type AchievementType = {
   name: string;
+  score: number;
   logo: Module;
+  discription: string;
 };
 type MatchHistoryType = {
   name: string;
@@ -45,53 +47,36 @@ export interface ProfileState {
   };
   achiv: {
     achievement: AchievementType[] | null;
-    isLoading: boolean;
+    loaded: boolean;
   };
   matchs: {
     MatchHistory: MatchHistoryType[] | null;
-    isLoading: boolean;
+    loaded: boolean;
   };
 }
 
-const initialState: ProfileState = {
-  gamer: {
-    on: {
-      user: null,
-      coalition: {
-        name: null,
-        logo: "",
-      },
-      rank: 0,
-    },
-    isLoading: false,
-  },
-  lead: {
-    leaderboard: null,
-    isLoading: true,
-  },
-  achiv: {
-    achievement: null,
-    isLoading: false,
-  },
-  matchs: {
-    MatchHistory: null,
-    isLoading: false,
-  },
-};
+const initialState: ProfileState =
+  require("../static-data/initialStates.json").profile;
 
 const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
     getuserasgamer(state: ProfileState, action) {
-      state.gamer.on.user = action.payload;
       state.gamer.on = require("../static-data/gamer.json");
+      state.gamer.on.user = action.payload;
     },
     getMatchsHistory(state: ProfileState) {
-      state.achiv = require("../static-data/Achievements.json");
+      state.matchs.MatchHistory = Object.values(
+        require("../static-data/MatchesHistory.json").matchs
+      );
+      state.matchs.loaded = true;
     },
     getAchievements(state) {
-      state.matchs = require("../static-data/MatchesHistory.json").matchs;
+      state.achiv.achievement = Object.values(
+        require("../static-data/Achievements.json")
+      );
+      state.achiv.loaded = true;
     },
   },
   extraReducers: (builder) => {
