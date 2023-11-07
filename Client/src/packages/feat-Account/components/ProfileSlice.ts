@@ -23,7 +23,7 @@ type leaderboardType = {
 type AchievementType = {
   name: string;
   score: number;
-  logo: Module;
+  logo: string;
   discription: string;
 };
 type MatchHistoryType = {

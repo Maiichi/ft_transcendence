@@ -17,7 +17,7 @@ import {
   Title,
   Root,
 } from "./styles";
-import { Pic } from "./images_uploads";
+import images, { Pic } from "./images_uploads";
 import { Loading } from "./components";
 
 function sendGameRequist(userName: string) {}
@@ -26,9 +26,9 @@ function sendFriendRequist(userName: string) {}
 const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const navigate = useNavigate();
   const state = useAppSelector((state) => state.profile.lead);
+  const leaderboard: leaderboardType[] = state.leaderboard
   const dispatch = useAppDispatch();
 
-  if (primary) console.log("true");
   useEffect(() => {
     dispatch(getLeaderboard());
   }, []);
@@ -38,14 +38,14 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
       {primary && <Title> Leaderboard </Title>}
       {state.isLoading ? (
         <Loading />
-      ) : state.leaderboard ? (
+      ) : leaderboard ? (
         <Players>
-          {state.leaderboard.map(
-            (player: leaderboardType, index: number) =>
+          {leaderboard.map(
+            (player, index) =>
               (!primary && index >= 3) || (
                 <Player>
                   <ListItemAvatar>
-                    <Avatar src={Pic}>{index + 1}</Avatar>
+                    <Avatar src={images[player.picture]}>{index + 1}</Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={player.name}

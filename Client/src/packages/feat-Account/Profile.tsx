@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import images from './images_uploads'
+import { useAppDispatch, useAppSelector } from "../../core";
+import images from "./images_uploads";
 import style, {
   ProfileCards,
   Usercard,
@@ -10,15 +11,13 @@ import style, {
   Text,
   Achievemets,
   Achiv,
+  Board,
 } from "./styles";
-import { useAppDispatch, useAppSelector } from "../../core";
 import {
-  getuserasgamer,
-  gamerType,
-  getAchievements,
-  getMatchsHistory,
-  MatchHistoryType,
   ProfileState,
+  getuserasgamer,
+  getMatchsHistory,
+  getAchievements,
 } from "./components";
 import { Avatar, Button } from "@mui/material";
 import {
@@ -35,19 +34,24 @@ import { Leaderboard } from "./Leaderboard";
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   const user = useAppSelector((state) => state.auth.user);
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
-  const gamer = profileStates.gamer.on
+
+  const gamer = profileStates.gamer.on;
   const matchs = profileStates.matchs.MatchHistory;
+  const achivs = profileStates.achiv.achievement;
 
   useEffect(() => {
-    if (user) dispatch(getuserasgamer(user));
-    dispatch(getMatchsHistory())
+    user && dispatch(getuserasgamer(user));
+    profileStates.matchs.loaded || dispatch(getMatchsHistory());
+    profileStates.achiv.loaded || dispatch(getAchievements());
   }, [user]);
 
   function getresult(one: number, two: number, results: Array<any>) {
     return one > two ? results[0] : one < two ? results[1] : results[2];
   }
+
   return (
     <ProfileCards>
       <Usercard>
@@ -55,7 +59,10 @@ const Profile = () => {
           <Text variant="subtitle2" sx={{ mb: "5px" }}>
             {gamer.coalition.name}
           </Text>
-          <img alt={"Coalition"} src={/* gamer.coalition.logo */ images.federation} />
+          <img
+            alt={"Coalition"}
+            src={images[gamer.coalition.logo]}
+          />
           <h5 style={{ margin: "7px" }}> #{gamer.rank}</h5>
         </Coalition>
         <div style={style.div1}>
@@ -103,14 +110,16 @@ const Profile = () => {
           </div>
         </div>
       </Usercard>
-      <div style={{ minWidth: "45%" }}>
+
+      <Board>
         <Leaderboard primary={false} />
-      </div>
+      </Board>
+
       <Matchshistory>
         <Text variant="h5" sx={style.cardName}>
           {`${gamer?.user?.lastName}'s Last Matches`}
         </Text>
-        {matchs?.map((item: MatchHistoryType, index: number) => (
+        {matchs?.map((item, index: number) => (
           <Match
             win={getresult(item.gain, item.nogain, [
               "#2fa025b8",
@@ -129,10 +138,17 @@ const Profile = () => {
           </Match>
         ))}
       </Matchshistory>
+
       <Achievemets>
         <Text variant="h5" sx={style.cardName}>
           {`${gamer?.user?.lastName}'s Achievements`}
         </Text>
+        {achivs?.map((achiv, index) => (
+          <Achiv>
+            <img style={style.achivlogo} alt="logoAchiv" src={images[achiv.logo]} />
+            <p> { achiv.name }</p>
+          </Achiv>
+        ))}
       </Achievemets>
     </ProfileCards>
   );

@@ -1,7 +1,22 @@
-import { Card } from "@mui/material";
-import React from "react";
 import styled, { css } from "styled-components";
 
+const cardstyle = css`
+  max-width: 47%;
+  @media (max-width: 940px) {
+    max-width: none;
+  }
+`;
+const smallCard = styled.data`
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  height: 150px;
+  min-width: 100px;
+  max-width: 150px;
+  max-height: 110px;
+  padding-top: 5px;
+`;
 /**
  * 1-main component to the User Profile
  */
@@ -10,7 +25,9 @@ const ProfileCards = styled.main`
   flex-wrap: wrap;
   gap: 20px;
   /**  */
-  & datalist, data, div    {
+  & datalist,
+  data,
+  div {
     border: 1px solid black;
   }
 `;
@@ -22,11 +39,10 @@ const Usercard = styled.data`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  max-width: 47%;
   margin: 2%;
   padding-right: 30px;
+  ${cardstyle}
   @media (max-width: 940px) {
-    max-width: none;
   }
 `;
 const Coalition = styled.data`
@@ -41,37 +57,33 @@ const Coalition = styled.data`
     display: none;
   }
 `;
+const Board = styled.datalist`
+  display: inline;
+  min-width: 45%;
+  ${cardstyle}
+`;
 const Matchshistory = styled.datalist`
   display: flex;
   flex-wrap: wrap;
   gap: 45px 15px;
   justify-content: center;
-  max-width: 47%;
   margin: 2%;
   padding-bottom: 32px;
-  @media (max-width: 940px) {
-    max-width: none;
-  }
+  ${cardstyle}
 `;
-const Match = styled.data<{ win: any }>`
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  flex-direction: column;
+const Match = styled(smallCard)<{ win: any }>`
   box-shadow: 2px 1px 4px 2px ${(props) => props.win};
-  /* flex: 1 1/2 1; */
-  height: 150px;
-  min-width: 100px;
-  max-width: 150px;
-  max-height: 110px;
-  padding-top: 5px;
   border-radius: 10px;
 `;
 const Achievemets = styled.datalist`
-  
+  display: flex;
+  flex-wrap: wrap;
+  gap: 45px 15px;
+  ${cardstyle}
+  @media (max-width: 940px) {
+  }
 `;
-const Achiv = styled.data`
-`
+const Achiv = styled(smallCard)``;
 const style: Record<string, React.CSSProperties> = {
   div1: {
     display: "flex",
@@ -117,6 +129,10 @@ const style: Record<string, React.CSSProperties> = {
     height: "80px",
     marginRight: "10px",
   },
+  achivlogo: {
+    width: '40px',
+    height: '40px'
+  },
   userName: {},
   cardName: {
     width: "90%",
@@ -130,4 +146,13 @@ const style: Record<string, React.CSSProperties> = {
 };
 
 export { style };
-export { ProfileCards, Usercard, Coalition, Matchshistory, Match, Achievemets, Achiv };
+export {
+  Board,
+  ProfileCards,
+  Usercard,
+  Coalition,
+  Matchshistory,
+  Match,
+  Achievemets,
+  Achiv,
+};

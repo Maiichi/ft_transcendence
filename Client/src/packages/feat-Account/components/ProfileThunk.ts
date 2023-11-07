@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../core/utils/apiRequest";
 import { RootState } from "../../../core";
-import { Logo } from "../images_uploads";
 import { leaderboardType } from "./ProfileSlice";
 
 const getLeaderboard = createAsyncThunk(
