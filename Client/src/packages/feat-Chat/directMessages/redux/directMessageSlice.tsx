@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
   I_DirectConversation,
   I_ConversationMessages,
-} from "../../Types/types";
+} from "../../components/types";
 import {
   getDirectConversationMessages,
   getDirectConversations,

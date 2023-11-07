@@ -1,40 +1,41 @@
-import { convertDateTime } from "../Utils/utils";
+import { convertDateTime } from "./utils";
 import styled from "styled-components";
 
 interface Props {
-    own: boolean,
-    data: {
-        sender: {
-            intraId: number,
-            firstName: string,
-            lastName: string,
-            userName: string,
-            avatar_url: string,
-        },
-        content: string,
-        createdAt: string
-    }
+  own: boolean;
+  data: {
+    sender: {
+      intraId: number;
+      firstName: string;
+      lastName: string;
+      userName: string;
+      avatar_url: string;
+    };
+    content: string;
+    createdAt: string;
+  };
 }
 
-
 export const MessageBox = ({ own, data }: Props) => {
-    const Message = own ? MessageBoxOwn : MessageBoxWrapper;
-  
-    return (
-      <Message key={data.createdAt}>
-        <MessageTop>
-          {data.sender.avatar_url !== null ? (
-            
-            <MessageImg src={require(`/app/images_uploads/${data.sender.avatar_url}`)} alt="" />
-          ) : (
-            <MessageImg src="" alt="" />
-          )}
-          <MessageText>{data.content}</MessageText>
-        </MessageTop>
-        <MessageBottom>{convertDateTime(data.createdAt)}</MessageBottom>
-      </Message>
-    );
-  };
+  const Message = own ? MessageBoxOwn : MessageBoxWrapper;
+
+  return (
+    <Message key={data.createdAt}>
+      <MessageTop>
+        {data.sender.avatar_url !== null ? (
+          <MessageImg
+            src={require(`/app/images_uploads/${data.sender.avatar_url}`)}
+            alt=""
+          />
+        ) : (
+          <MessageImg src="" alt="" />
+        )}
+        <MessageText>{data.content}</MessageText>
+      </MessageTop>
+      <MessageBottom>{convertDateTime(data.createdAt)}</MessageBottom>
+    </Message>
+  );
+};
 
 const MessageBoxWrapper = styled.div`
   display: flex;

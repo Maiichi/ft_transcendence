@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../../../core";
 import { createRoom, updateRoom } from "../redux/roomSlice";
 import styled from "styled-components";
 import { Field, Form } from "react-final-form";
-import { I_Room } from "../../Types/types";
+import { I_Room } from "../../components/types";
 import { FormControl, MenuItem, Select } from "@mui/material";
 interface Props {
   handleClose: () => void;

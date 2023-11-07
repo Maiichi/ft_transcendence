@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { LogoutRounded, Person } from "@mui/icons-material";
-import { I_Room } from "../../../Types/types";
+import { I_Room } from "../components/types";
 import styled from "styled-components";
-import { LeaveRoomModal } from "../../modals/leaveChannelModal";
+import { LeaveRoomModal } from "./modals/leaveChannelModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { ModalComponent, useAppSelector } from "../../../../../core";
-import { UsersRoom } from "../../modals/UsersRoomModal";
-import { CreateChannelModal } from "../../modals/CreateChannelModal";
+import { ModalComponent, useAppSelector } from "../../../core";
+import { UsersRoom } from "./modals/UsersRoomModal";
+import { CreateChannelModal } from "./modals/CreateChannelModal";
 
 export const ChannelBoxHeader = () => {
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
@@ -15,14 +15,14 @@ export const ChannelBoxHeader = () => {
   const index = memberships.findIndex((item: any) => item.id == roomId);
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-    undefined,
+    undefined
   );
 
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
 
   const handleClickModal = (
     childModal: JSX.Element,
-    closeType?: "auto" | "click",
+    closeType?: "auto" | "click"
   ) => {
     setCloseType(closeType);
     setOpen(true);
@@ -48,7 +48,7 @@ export const ChannelBoxHeader = () => {
               <CreateChannelModal
                 handleClose={handleClose}
                 channelConversation={memberships[index]}
-              />,
+              />
             )
           }
         />
@@ -58,7 +58,7 @@ export const ChannelBoxHeader = () => {
           onClick={() =>
             handleClickModal(
               <UsersRoom channelConversation={memberships[index]} />,
-              "click",
+              "click"
             )
           }
         >
@@ -70,7 +70,7 @@ export const ChannelBoxHeader = () => {
               <LeaveRoomModal
                 channelConversation={memberships[index]}
                 handleClose={handleClose}
-              />,
+              />
             )
           }
           style={{ cursor: "pointer" }}

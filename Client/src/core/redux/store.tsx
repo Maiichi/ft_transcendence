@@ -11,8 +11,8 @@ import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice";
 import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
 import leaderboardSlice from "../../packages/feat-Account/API.d/ProfileSlice";
 import searchSlice from "../../packages/feat-Search/redux/searchSlice";
-import chatSlice from "../../packages/feat-Chat/chatSlice";
-import friendSlice from "../../packages/feat-Chat/friendSlice";
+import chatSlice from "../../packages/feat-Chat/components/chatSlice";
+import friendSlice from "../../packages/feat-Chat/channels/redux/friendSlice";
 // ...
 
 const rootReducer = combineReducers({

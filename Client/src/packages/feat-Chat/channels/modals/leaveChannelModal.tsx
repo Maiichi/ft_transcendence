@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { leaveRoom } from "../redux/roomSlice";
 import { useAppDispatch } from "../../../../core";
-import { I_Room } from "../../Types/types";
-import { setCurrentConversation } from "../../chatSlice";
+import { I_Room } from "../../components/types";
+import { setCurrentConversation } from "../../components/chatSlice";
 
 export const LeaveRoomModal = (props: {
   channelConversation: I_Room;
@@ -19,7 +19,7 @@ export const LeaveRoomModal = (props: {
         roomId: null,
         directConversationId: null,
         type: null,
-      }),
+      })
     );
     handleClose();
   };

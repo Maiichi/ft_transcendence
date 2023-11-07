@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import { getChatRoomMessages, getMemberships } from "./roomThunk";
-import { I_ConversationMessages, I_Room } from "../../Types/types";
+import { I_ConversationMessages, I_Room } from "../../components/types";
 
 export interface roomState {
   memberships: I_Room[];

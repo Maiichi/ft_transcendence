@@ -1,8 +1,4 @@
-import {
-  Avatar,
-  AvatarGroup,
-  Button,
-} from "@mui/material";
+import { Avatar, AvatarGroup, Button } from "@mui/material";
 import styled from "styled-components";
 import {
   ModalComponent,
@@ -17,10 +13,7 @@ import { joinRoom } from "./redux/searchSlice";
 import { getMemberships } from "../feat-Chat/channels/redux/roomThunk";
 import { useNavigate } from "react-router-dom";
 import { JoinChannelModal } from "./modal/joinChannelModal";
-import { setCurrentConversation } from "../feat-Chat/chatSlice";
-
-
-
+import { setCurrentConversation } from "../feat-Chat/components/chatSlice";
 
 export const Search = () => {
   const dispatch = useAppDispatch();
@@ -48,7 +41,7 @@ export const Search = () => {
 
   // Filter chat rooms based on the search query
   const filteredRooms: I_Room_Search[] = rooms.filter((item: any) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const ButtonRoom = ({
@@ -60,14 +53,14 @@ export const Search = () => {
   }) => {
     const [open, setOpen] = useState(false);
     const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-      undefined,
+      undefined
     );
-  
+
     const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
-  
+
     const handleClickModal = (
       childModal: JSX.Element,
-      closeType?: "auto" | "click",
+      closeType?: "auto" | "click"
     ) => {
       setCloseType(closeType);
       setOpen(true);
@@ -77,13 +70,12 @@ export const Search = () => {
       setOpen(false);
     };
     var title = isUserInRoom(room, userId) ? "ACCESS" : "JOIN";
-  
+
     const handleCLick = () => {
-      if (title == 'ACCESS') 
-        navigate("/chat");
+      if (title == "ACCESS") navigate("/chat");
       else if (room.type === "protected")
         handleClickModal(
-          <JoinChannelModal roomId={room.id} handleClose={handleClose} />,
+          <JoinChannelModal roomId={room.id} handleClose={handleClose} />
         );
       else handleJoinRoom(room);
     };
@@ -105,7 +97,6 @@ export const Search = () => {
       </>
     );
   };
-
 
   // check if the user is a member or not to display the button based on the membership
   const isUserInRoom = (roomS: I_Room_Search, userID: number) => {
@@ -170,9 +161,7 @@ export const Search = () => {
                     alt="user"
                     src={
                       member.user.avatar_url
-                        ? require(
-                            `/app/images_uploads/${member.user.avatar_url}`,
-                          )
+                        ? require(`/app/images_uploads/${member.user.avatar_url}`)
                         : ""
                     }
                   />

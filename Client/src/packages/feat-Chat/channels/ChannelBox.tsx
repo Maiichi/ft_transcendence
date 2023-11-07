@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { ModalComponent, useAppDispatch, useAppSelector } from "../../../../core";
-import { I_Message, I_Room } from "../../Types/types";
-import { getChatRoomMessages } from "../redux/roomThunk";
-import { ChannelBoxHeader } from "./headerBox/ChannelBoxHeader";
-import { MessageBox } from "../../components/MessageBox";
+import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
+import { I_Message, I_Room } from "../components/types";
+import { getChatRoomMessages } from "./redux/roomThunk";
+import { ChannelBoxHeader } from "./ChannelBoxHeader";
+import { MessageBox } from "../components/MessageBox";
 import styled from "styled-components";
-import { isConnectedUser } from "../../../../core/utils/helperFunctions";
+import { isConnectedUser } from "../../../core/utils/helperFunctions";
 import {
   LogoutRounded,
   MoreHorizOutlined,
@@ -13,7 +13,7 @@ import {
   Settings,
 } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
-import { AddUserToRoomModal } from "../modals/AddUserToRoomModal";
+import { AddUserToRoomModal } from "./modals/AddUserToRoomModal";
 
 const ChannelUsers = () => {
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
@@ -21,63 +21,62 @@ const ChannelUsers = () => {
   const index = memberships.findIndex((item: any) => item.id == roomId);
 
   const [open, setOpen] = useState(false);
-    const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-      undefined,
-    );  
+  const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
+    undefined
+  );
 
-  
-    const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
-  
-    const handleClickModal = (
-      childModal: JSX.Element,
-      closeType?: "auto" | "click",
-    ) => {
-      setCloseType(closeType);
-      setOpen(true);
-      setChildModal(childModal);
-    };
-    const handleClose = () => {
-      setOpen(false); 
-    };
+  const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
 
-    const ChannelSettings = ({membership} : {membership : I_Room}) => {
-      const isChannelOwner: boolean = 
-        membership.members.find((member) => member.isOwner === true) ? true : false;
-      let settingsComponent;
-      if (isChannelOwner)
-      {
-        settingsComponent =  
-                  <> 
-                    <Settings />
-                    <PersonAddAltRounded 
-                      sx={{
-                        cursor: 'pointer',
-                        "&:hover" : {backgroundColor: "rgb(245, 246, 247)" }}}
-                      onClick = {() => {
-                        handleClickModal(<AddUserToRoomModal handleClose={handleClose} />)
-                      }}
-                    />
-                    <LogoutRounded /> 
-                  </>
-      }
-      else
-        settingsComponent = <LogoutRounded /> ;
-        
-      return (
+  const handleClickModal = (
+    childModal: JSX.Element,
+    closeType?: "auto" | "click"
+  ) => {
+    setCloseType(closeType);
+    setOpen(true);
+    setChildModal(childModal);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const ChannelSettings = ({ membership }: { membership: I_Room }) => {
+    const isChannelOwner: boolean = membership.members.find(
+      (member) => member.isOwner === true
+    )
+      ? true
+      : false;
+    let settingsComponent;
+    if (isChannelOwner) {
+      settingsComponent = (
         <>
-          {settingsComponent}
+          <Settings />
+          <PersonAddAltRounded
+            sx={{
+              cursor: "pointer",
+              "&:hover": { backgroundColor: "rgb(245, 246, 247)" },
+            }}
+            onClick={() => {
+              handleClickModal(
+                <AddUserToRoomModal handleClose={handleClose} />
+              );
+            }}
+          />
+          <LogoutRounded />
         </>
       );
-    }
+    } else settingsComponent = <LogoutRounded />;
+
+    return <>{settingsComponent}</>;
+  };
 
   return (
     <>
       <ModalComponent
-          open={open}
-          ChildComponent={ChildModal}
-          handleClose={handleClose}
-          closeType={closeType}
-        />
+        open={open}
+        ChildComponent={ChildModal}
+        handleClose={handleClose}
+        closeType={closeType}
+      />
       <RightSide>
         <ChannelNameHolder>
           <ChannelName>{memberships[index].name}</ChannelName>
@@ -110,14 +109,13 @@ const ChannelBoxContent = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const channelMessages: [] = useAppSelector(
-    (state) => state.channels.messages,
+    (state) => state.channels.messages
   );
 
   useEffect(() => {
     if (roomId) dispatch(getChatRoomMessages(roomId));
   }, []);
 
-  
   return (
     <>
       <Wrapper>
