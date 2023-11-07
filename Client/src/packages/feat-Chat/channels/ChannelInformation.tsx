@@ -11,11 +11,12 @@ import {
 import { Avatar } from "@mui/material";
 import { AddUserToRoomModal } from "./modals/AddUserToRoomModal";
 import styled from "styled-components";
+
 export const ChannelInformation = () => {
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
   const { memberships } = useAppSelector((state) => state.channels);
   const index = memberships.findIndex((item: any) => item.id == roomId);
-
+  const user = useAppSelector((state) => state.auth.user);
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
@@ -36,11 +37,14 @@ export const ChannelInformation = () => {
   };
 
   const ChannelSettings = ({ membership }: { membership: I_Room }) => {
-    const isChannelOwner: boolean = membership.members.find(
-      (member) => member.isOwner === true
-    )
-      ? true
-      : false;
+    
+    const isOwner = (membership: I_Room, userId: number) => {
+      const member = membership.members.find((member) => member.user.intraId === userId);
+      return member?.isAdmin ? true : false;
+    }
+      
+      const isChannelOwner: boolean = isOwner(membership, user.intraId);
+
     let settingsComponent;
     if (isChannelOwner) {
       settingsComponent = (

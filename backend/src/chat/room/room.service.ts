@@ -74,7 +74,7 @@ export class RoomService {
       const rooms =
         await this.prisma.room.findMany({
           where: {
-            type: { not: 'secret' },
+            type: { not: 'private' },
           },
           include: {
             members: {
@@ -374,49 +374,46 @@ export class RoomService {
     body: UpdateRoomDto,
     userId: number,
   ) {
+    if (!body.name)
+      throw new WsException(`name field is required !`);
+
     const room = await this.getRoomById(body.id);
-    console.log(
-      'room Id ==' + JSON.stringify(room),
-    );
     if (!room)
-      throw new WsException(
-        `room Id ${body.id} does not exist`,
-      );
+      throw new WsException(`room Id ${body.id} does not exist`);
 
     // Check if the user is an admin in the room
-    const isAdmin =
-      await this.prisma.membership.findFirst({
-        where: {
-          roomId: room.id,
-          userId: userId,
-        },
-        select: { isAdmin: true },
-      });
+    const isAdmin = await this.isAdmin(userId,room.id);
     console.log(
       'isAdmin ==' + JSON.stringify(isAdmin),
     );
-    if (!isAdmin.isAdmin) {
+    if (!isAdmin) {
       throw new WsException(
         `User with intraId ${userId} is not an admin in the room`,
       );
     }
+    const roomExist =
+      await this.getRoomByName(body.name);
+    if (roomExist && room.name != body.name)
+      throw new WsException(
+        `Room name ${body.name} already exist !`,
+      );
     // check body data before persistence
     if (
-      body.type !== 'public' &&
+      body.type === 'protected' &&
       (!body.password?.length ||
         body.password.length < 4)
     )
       throw new WsException(
         `password must have at least 4 characters!`,
       );
-    if (body.type === 'public' && body.password)
+    if (body.type !== 'protected' && body.password)
       throw new WsException(
-        `public rooms shouldnt have a password !`,
+        `only the protected rooms that should have a password !`,
       );
     const hashedPass: string | undefined =
-      body.type === 'private' && body.password
+      body.type === 'protected' && body.password
         ? await hash(body.password)
-        : '';
+        : null;
     const roomUpdate =
       await this.prisma.room.update({
         where: { id: room.id },
@@ -623,7 +620,7 @@ export class RoomService {
         `userId = ${body.userId} does not exist !`,
       );
     // check if the user is who wants to set an admin is also an admin
-    const isAdmin = await this.isOwner(
+    const isAdmin = await this.isAdmin(
       userId,
       room.id,
     );

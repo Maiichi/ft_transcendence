@@ -311,7 +311,7 @@ export class ChatGateway
             roomData.dataMembership,
           );
       });
-      if (roomData.dataRoom)
+      if (roomData.dataRoom.type !== 'private')
         this.userSockets.forEach((socketId) => {
           this.server
             .to(socketId)
@@ -418,6 +418,7 @@ export class ChatGateway
             joinedRoom.dataMembership,
           );
       });
+      
 
       // this event is for all user who are connected
       this.userSockets.forEach((value) => {
@@ -428,6 +429,7 @@ export class ChatGateway
             joinedRoom.dataRoom,
           );
       });
+      
     } catch (error) {
       client.emit('roomJoinError', {
         message: error.message,
