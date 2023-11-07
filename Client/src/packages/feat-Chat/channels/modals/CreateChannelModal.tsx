@@ -1,45 +1,40 @@
 import { useState } from "react";
-import {
-  Close,
-  LockSharp,
-  LockOpenSharp,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../../../core";
 import { createRoom, updateRoom } from "../redux/roomSlice";
 import styled from "styled-components";
-import { AntSwitch } from "../../components/AntSwitch";
 import { Field, Form } from "react-final-form";
 import { I_Room } from "../../Types/types";
+import { FormControl, MenuItem, Select } from "@mui/material";
 interface Props {
   handleClose: () => void;
   channelConversation?: I_Room;
+}
+interface Field {
+  name: string;
+  value?: string;
+  label: string;
+  type: string;
+  options?: Array<string>;
+  holder: string;
+  required?: boolean;
+  hidden?: boolean;
+  dependencies?: Array<Dependencie>;
+}
+interface Dependencie {
+  field: string;
+  value: Array<string>;
+  action: string;
 }
 
 export const CreateChannelModal = (props: Props) => {
   const { channelConversation, handleClose } = props;
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.user);
-  const [activate, setActivate] = useState(
-    channelConversation
-      ? channelConversation?.type == "public"
-        ? true
-        : false
-      : true
-  );
-  const [roomType, setRoomType] = useState<string>("public");
   const [roomCreationError, setRoomCreationError] = useState(null);
   const closeModal = () => {
     handleClose();
     if (roomCreationError) setRoomCreationError(null);
-  };
-
-  const handleRoomTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value;
-    setRoomType((prevRoomType) =>
-      prevRoomType === newValue ? "public" : newValue
-    );
   };
 
   const handleCreateRoom = (values: any) => {
@@ -48,7 +43,7 @@ export const CreateChannelModal = (props: Props) => {
       name: values.name,
       ownerId: account.intraId,
       description: values.description,
-      type: roomType,
+      type: values.type,
       password: values.password,
     };
     if (channelConversation) {
@@ -56,15 +51,7 @@ export const CreateChannelModal = (props: Props) => {
     } else dispatch(createRoom(roomData));
     handleClose();
   };
-  interface Field {
-    name: string;
-    value?: string;
-    label: string;
-    type: string;
-    holder: string;
-    required: boolean;
-    hidden?: boolean;
-  }
+
   const fields: Field[] = [
     {
       name: "name",
@@ -83,9 +70,28 @@ export const CreateChannelModal = (props: Props) => {
       holder: "channel description",
     },
     {
+      name: "type",
+      value: channelConversation?.type || "public",
+      required: true,
+      label: "Channel Type",
+      type: "select",
+      options: ["public", "protected", "private"],
+      holder: "Channel Type",
+    },
+    {
       name: "password",
-      required: roomType === "protected",
-      hidden: roomType !== "protected",
+      dependencies: [
+        {
+          field: "type",
+          value: ["protected"],
+          action: "required",
+        },
+        {
+          field: "type",
+          value: ["public", "private"],
+          action: "hidden",
+        },
+      ],
       label: "Password",
       type: "password",
       holder: "password",
@@ -94,58 +100,48 @@ export const CreateChannelModal = (props: Props) => {
   const validate = (values: any) => {
     const errors: any = {};
     fields.forEach((field: Field) => {
-      if (!Object.keys(values).includes(field.name) && field.required)
-        errors[field.name] = "required";
+      if (
+        !Object.keys(values).includes(field.name) &&
+        (field.required ||
+          (field.dependencies &&
+            checkRequiredDependencies(values, field.dependencies)))
+      )
+        errors[field.name] = `${field.label} must be required`;
     });
     return errors;
   };
-  const title = channelConversation   ? "Update Channel" : "Create new channel";
-  const PrivacyHolder = ({
-    roomType,
-    handleRoomTypeChange,
-  }: {
-    roomType: string;
-    handleRoomTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  }) => {
-    return (
-      <>
-        <PrivacyDivHolder>
-          {roomType !== "private" ? (
-            <>
-              <Visibility /> Set channel Private
-            </>
-          ) : (
-            <>
-              <VisibilityOff /> Private Channel
-            </>
-          )}
-          <AntSwitch
-            value="private"
-            checked={roomType === "private"}
-            onChange={handleRoomTypeChange}
-          />
-        </PrivacyDivHolder>
-        <PrivacyDivHolder>
-          {roomType !== "protected" ? (
-            <>
-              {" "}
-              <LockOpenSharp /> Set channel password{" "}
-            </>
-          ) : (
-            <>
-              {" "}
-              <LockSharp /> Protected channel{" "}
-            </>
-          )}
-          <AntSwitch
-            value="protected"
-            checked={roomType === "protected"}
-            onChange={handleRoomTypeChange}
-          />
-        </PrivacyDivHolder>
-      </>
-    );
+  const checkHiddenDependencies = (
+    values: any,
+    dependencies?: Array<Dependencie>
+  ) => {
+    let shouldHide = true;
+    dependencies?.forEach((dependencie) => {
+      if (
+        dependencie.action == "hidden" &&
+        dependencie.value.includes(values[dependencie.field])
+      ) {
+        shouldHide = false;
+      }
+    });
+    return shouldHide;
   };
+  const checkRequiredDependencies = (
+    values: any,
+    dependencies?: Array<Dependencie>
+  ) => {
+    let shouldRequired = false;
+    dependencies?.forEach((dependencie) => {
+      if (
+        dependencie.action == "required" &&
+        dependencie.value.includes(values[dependencie.field])
+      ) {
+        shouldRequired = true;
+      }
+    });
+    return shouldRequired;
+  };
+  const title = channelConversation ? "Update Channel" : "Create new channel";
+
   return (
     <div>
       <ModalHeader>
@@ -160,40 +156,60 @@ export const CreateChannelModal = (props: Props) => {
         <Form
           onSubmit={handleCreateRoom}
           validate={validate}
-          render={({ handleSubmit, form }) => (
+          render={({ handleSubmit, values }) => (
             <form onSubmit={handleSubmit}>
               <>
                 {fields.map((item: Field, index: number) => (
                   <>
-                    {!item.hidden && (
-                      <Field
-                        key={index}
-                        name={item.name}
-                        defaultValue={item.value}
-                      >
-                        {({ input, meta }: any) => {
-                          return (
-                            <ChannelFieldHolder>
-                              {item.label}
-                              <FieldInput
-                                {...input}
-                                type={item.type}
-                                placeholder={item.holder}
-                              />
+                    <Field
+                      key={index}
+                      name={item.name}
+                      defaultValue={item.value}
+                    >
+                      {({ input, meta }: any) => (
+                        <>
+                          {checkHiddenDependencies(
+                            values,
+                            item.dependencies
+                          ) && (
+                            <>
+                              <ChannelFieldHolder>
+                                {item.label}
+                                {item.type == "select" && item.options ? (
+                                  <FormControl fullWidth>
+                                    <Select
+                                      sx={{
+                                        height: "40px !important",
+                                        marginTop: "5px",
+                                      }}
+                                      {...input}
+                                      placeholder={item.holder}
+                                    >
+                                      {item.options?.map((option) => (
+                                        <MenuItem value={option}>
+                                          {option}
+                                        </MenuItem>
+                                      ))}
+                                    </Select>
+                                  </FormControl>
+                                ) : (
+                                  <FieldInput
+                                    {...input}
+                                    type={item.type}
+                                    placeholder={item.holder}
+                                  />
+                                )}
+                              </ChannelFieldHolder>
                               {meta.error && meta.touched && (
                                 <ErrorMessage>{meta.error}</ErrorMessage>
                               )}
-                            </ChannelFieldHolder>
-                          );
-                        }}
-                      </Field>
-                    )}
+                            </>
+                          )}
+                        </>
+                      )}
+                    </Field>
                   </>
                 ))}
-                <PrivacyHolder
-                  roomType={roomType}
-                  handleRoomTypeChange={handleRoomTypeChange}
-                />
               </>
               <ModalFooter>
                 <CancelButton onClick={closeModal}>Cancel</CancelButton>
@@ -234,13 +250,6 @@ const FieldInput = styled.input`
   border-radius: 5px;
   margin-top: 10px;
   background-color: #f9f9f9;
-`;
-
-const PrivacyDivHolder = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 10px 5px 10px 5px;
-  align-items: center;
 `;
 
 const ModalFooter = styled.div`

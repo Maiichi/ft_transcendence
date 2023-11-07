@@ -348,6 +348,9 @@ export class ChatGateway
       });
       console.log('room updated successfully');
     } catch (error) {
+      client.emit('updateRoomError', {
+        message: error.message,
+      });
       // if (error instanceof NotFoundException)
       //     console.log("Room not found:", error.message);
       // else
@@ -493,6 +496,9 @@ export class ChatGateway
           });
       });
     } catch (error) {
+      client.emit('leaveRoomError', {
+        message: error.message,
+      });
       console.log(
         'leaveRoom error =' + error.message,
       );
@@ -514,6 +520,9 @@ export class ChatGateway
       );
       this.server.emit('setRoomAdmin');
     } catch (error) {
+      client.emit('setRoomAdminError', {
+        message: error.message,
+      });
       console.log('Subs error =' + error.message);
     }
   }
@@ -534,6 +543,9 @@ export class ChatGateway
       );
       this.server.emit('kickMember');
     } catch (error) {
+      client.emit('kickMemberError', {
+        message: error.message,
+      });
       console.log('Subs error =' + error.message);
     }
   }
@@ -553,6 +565,9 @@ export class ChatGateway
       );
       this.server.emit('muteMember');
     } catch (error) {
+      client.emit('muteMemberError', {
+        message: error.message,
+      });
       console.log('Subs error =' + error.message);
     }
   }
@@ -587,6 +602,9 @@ export class ChatGateway
       );
       this.server.emit('sendMessageToUser');
     } catch (error) {
+      client.emit('sendMessageToUserError', {
+        message: error.message,
+      });
       console.log('Subs error =' + error.message);
     }
   }
@@ -606,6 +624,9 @@ export class ChatGateway
       );
       this.server.emit('sendMessageToRoom');
     } catch (error) {
+      client.emit('sendMessageToRoomError', {
+        message: error.message,
+      });
       console.log('Subs error =' + error.message);
     }
   }
@@ -625,6 +646,9 @@ export class ChatGateway
       );
       this.server.emit('blockUser');
     } catch (error) {
+      client.emit('blockUserError', {
+        message: error.message,
+      });
       console.log('Subs error =' + error.message);
     }
   }
@@ -643,6 +667,9 @@ export class ChatGateway
       );
       this.server.emit('unBlockUser');
     } catch (error) {
+      client.emit('unBlockUserError', {
+        message: error.message,
+      });
       console.log('Subs error =' + error.message);
     }
   }
@@ -662,6 +689,9 @@ export class ChatGateway
       );
       this.server.emit('sendFriendRequest');
     } catch (error) {
+      client.emit('sendFriendRequestError', {
+        message: error.message,
+      });
       console.log(
         'send error = ' + error.message,
       );
@@ -682,6 +712,9 @@ export class ChatGateway
       );
       this.server.emit('acceptFriendRequest');
     } catch (error) {
+      client.emit('acceptFriendRequestError', {
+        message: error.message,
+      });
       console.log(
         'accept error = ' + error.message,
       );
