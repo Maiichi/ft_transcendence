@@ -1,15 +1,8 @@
 import {
   Avatar,
   AvatarGroup,
-  Box,
   Button,
-  Card,
-  CardContent,
-  IconButton,
-  TextField,
-  Typography,
 } from "@mui/material";
-import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
 import {
   ModalComponent,
@@ -25,6 +18,9 @@ import { getMemberships } from "../feat-Chat/channels/redux/roomThunk";
 import { useNavigate } from "react-router-dom";
 import { JoinChannelModal } from "./modal/joinChannelModal";
 import { setCurrentConversation } from "../feat-Chat/chatSlice";
+
+
+
 
 export const Search = () => {
   const dispatch = useAppDispatch();
@@ -66,9 +62,9 @@ export const Search = () => {
     const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
       undefined,
     );
-
+  
     const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
-
+  
     const handleClickModal = (
       childModal: JSX.Element,
       closeType?: "auto" | "click",
@@ -81,7 +77,7 @@ export const Search = () => {
       setOpen(false);
     };
     var title = isUserInRoom(room, userId) ? "ACCESS" : "JOIN";
-
+  
     const handleCLick = () => {
       if (title == 'ACCESS') 
         navigate("/chat");

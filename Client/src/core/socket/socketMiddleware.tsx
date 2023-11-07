@@ -16,6 +16,7 @@ import {
   removeMembership,
   updateRoom,
   updateRoomSucess,
+  addUserToRoom,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import {
   setIsConversation,
@@ -67,7 +68,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(setRoomLeaved(data));
           });
           socket.on("roomJoined", (data) => {
-            console.log("data ins roomJOined ==", data);
+            console.log("data in roomJOined ==", data);
             dispatch(addMembership(data));
           });
           socket.on("userJoinRoom", (data) => {
@@ -95,6 +96,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
       case joinRoom.type:
         socket.emit("joinRoom", action.payload);
         break;
+      case addUserToRoom.type:
+          socket.emit('addUserToRoom', action.payload);
+          break;
       default:
         break;
     }

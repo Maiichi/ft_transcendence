@@ -4,6 +4,7 @@ import { UserService } from "../user.service";
 import { BlacklistService } from "../blacklist/blacklist.service";
 import { AcceptFriendRequestDto, SendFriendRequestDto } from "./dto/friend.dto";
 import { WsException } from "@nestjs/websockets";
+import { Response } from "express";
 
 
 
@@ -15,6 +16,7 @@ export class FriendService
         private userService:        UserService,
         private blacklistService:   BlacklistService
     ){}
+
 
     // TODO: need to check if both users are already friends
     async sendFriendRequest(body: SendFriendRequestDto, userId: number)
