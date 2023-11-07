@@ -12,6 +12,7 @@ import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/di
 import leaderboardSlice from "../../packages/feat-Account/API.d/ProfileSlice";
 import searchSlice from "../../packages/feat-Search/redux/searchSlice";
 import chatSlice from "../../packages/feat-Chat/chatSlice";
+import friendSlice from "../../packages/feat-Chat/friendSlice";
 // ...
 
 const rootReducer = combineReducers({
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   leaderboard: leaderboardSlice,
   search: searchSlice,
   chat: chatSlice,
+  friends: friendSlice,
 });
 
 const persistConfig = {

@@ -32,18 +32,27 @@ export class MuteMemberDto
 }
 
 export class JoinRoomDto
-    {
-        @IsNumber()
-        id: number;
+{
+    @IsNumber()
+    id: number;
 
-        @IsString()
-        @IsOptional()
-        password: string;
+    @IsString()
+    @IsOptional()
+    password: string;
 
-    }
+}
 
 export class LeaveRoomDto
 {
     @IsNumber()
     roomId: number;
+}
+
+export class AddUserToRoomDto
+{
+    @IsNumber()
+    roomId: number;
+
+    @IsNumber()
+    userId: number;
 }
