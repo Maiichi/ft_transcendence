@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 const cardstyle = css`
-  max-width: 47%;
+  max-width: 40%;
   @media (max-width: 940px) {
     max-width: none;
   }
@@ -11,7 +11,6 @@ const smallCard = styled.data`
   justify-content: start;
   align-items: center;
   flex-direction: column;
-  height: 150px;
   min-width: 100px;
   max-width: 150px;
   max-height: 110px;
@@ -23,13 +22,16 @@ const smallCard = styled.data`
 const ProfileCards = styled.main`
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 20px 10px;
+  align-content: flex-start; /* Ensure items align to the start of the container */
   /**  */
   & datalist,
   data,
   div {
-    border: 1px solid black;
+    /* border: 1px solid black; */
   }
+  max-width: 100%;
+  overflow-x: scroll;
 `;
 /**
  * `Usercard` global information of the user as <data />
@@ -58,8 +60,11 @@ const Coalition = styled.data`
   }
 `;
 const Board = styled.datalist`
-  display: inline;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
   min-width: 45%;
+  justify-content: center;
   ${cardstyle}
 `;
 const Matchshistory = styled.datalist`
@@ -74,16 +79,22 @@ const Matchshistory = styled.datalist`
 const Match = styled(smallCard)<{ win: any }>`
   box-shadow: 2px 1px 4px 2px ${(props) => props.win};
   border-radius: 10px;
+  height: 150px;
 `;
 const Achievemets = styled.datalist`
   display: flex;
   flex-wrap: wrap;
-  gap: 45px 15px;
+  gap: 15px 10px;
+  justify-content: center;
+
+  margin: 2%;
   ${cardstyle}
   @media (max-width: 940px) {
   }
 `;
-const Achiv = styled(smallCard)``;
+const Achiv = styled(smallCard)`
+  height: 80px;
+`;
 const style: Record<string, React.CSSProperties> = {
   div1: {
     display: "flex",
@@ -130,8 +141,8 @@ const style: Record<string, React.CSSProperties> = {
     marginRight: "10px",
   },
   achivlogo: {
-    width: '40px',
-    height: '40px'
+    width: "40px",
+    height: "40px",
   },
   userName: {},
   cardName: {

@@ -28,7 +28,7 @@ type AchievementType = {
 };
 type MatchHistoryType = {
   name: string;
-  pic: Module;
+  pic: string;
   time: string;
   gain: number;
   nogain: number;

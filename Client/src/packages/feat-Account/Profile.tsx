@@ -59,10 +59,7 @@ const Profile = () => {
           <Text variant="subtitle2" sx={{ mb: "5px" }}>
             {gamer.coalition.name}
           </Text>
-          <img
-            alt={"Coalition"}
-            src={images[gamer.coalition.logo]}
-          />
+          <img alt={"Coalition"} src={images[gamer.coalition.logo]} />
           <h5 style={{ margin: "7px" }}> #{gamer.rank}</h5>
         </Coalition>
         <div style={style.div1}>
@@ -110,16 +107,15 @@ const Profile = () => {
           </div>
         </div>
       </Usercard>
-
       <Board>
         <Leaderboard primary={false} />
+        <Button onClick={() => navigate("/Leaderboard")}> See more...</Button>
       </Board>
-
       <Matchshistory>
         <Text variant="h5" sx={style.cardName}>
           {`${gamer?.user?.lastName}'s Last Matches`}
         </Text>
-        {matchs?.map((item, index: number) => (
+        {matchs?.map((item, index) => (
           <Match
             win={getresult(item.gain, item.nogain, [
               "#2fa025b8",
@@ -127,7 +123,7 @@ const Profile = () => {
               "#3b4243b7",
             ])}
           >
-            <Avatar alt="we" src={`${item.pic}`} />
+            <Avatar alt="we" src={images[item.pic]} />
             <Text> {item.name} </Text>
             <p> {`${item.gain} : ${item.nogain}`} </p>
             {getresult(item.gain, item.nogain, [
@@ -138,15 +134,18 @@ const Profile = () => {
           </Match>
         ))}
       </Matchshistory>
-
       <Achievemets>
         <Text variant="h5" sx={style.cardName}>
           {`${gamer?.user?.lastName}'s Achievements`}
         </Text>
         {achivs?.map((achiv, index) => (
           <Achiv>
-            <img style={style.achivlogo} alt="logoAchiv" src={images[achiv.logo]} />
-            <p> { achiv.name }</p>
+            <img
+              style={style.achivlogo}
+              alt="logoAchiv"
+              src={images[achiv.logo]}
+            />
+            <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
           </Achiv>
         ))}
       </Achievemets>

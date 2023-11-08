@@ -86,9 +86,6 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
           </Rotate>
         </NoPlayer>
       )}
-      {primary || (
-        <Button onClick={() => navigate("/Leaderboard")}> See more...</Button>
-      )}
     </Root>
   );
 };
