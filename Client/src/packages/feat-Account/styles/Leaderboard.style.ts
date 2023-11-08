@@ -11,6 +11,10 @@ import {
  * `NoPlayer`
  */
 const NoPlayer = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 10%;
   font-size: large;
   & span {
@@ -34,7 +38,7 @@ const Player = styled(ListItemMui)`
   background-color: antiquewhite;
 `;
 const ListItemIcon = styled(ListItemIconMui)`
-  overflow-y: scroll 3px;
+  overflow-y: scroll;
   /* max-width: 25%; */
   @media (max-width: 426px) {
   }
@@ -53,6 +57,16 @@ const Players = styled(ListMui)`
   }
 `;
 
+const styleL: Record<string, React.CSSProperties> = {
+  noplay: {
+    paddingBottom: "20px",
+    marginBottom: "10px",
+    minWidth: "70%",
+    boxShadow: "1px 1px 0 4px #ccc",
+    backgroundColor: "#eee",
+    textAlign: "center",
+  },
+};
 export { Players, Player, NoPlayer, Avatar, Button, ListItemIcon };
-
+export default styleL;
 export { ListItemText, ListItemAvatar, Typography } from "@mui/material";

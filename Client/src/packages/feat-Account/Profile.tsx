@@ -68,7 +68,7 @@ const Profile = () => {
               <Avatar
                 style={style.userAvatar}
                 alt="UserImg"
-                src={/*gamer.user?.avatar_url*/ images.Pic}
+                src={/*gamer.user?.avatar_url*/ images["Pic"]}
               />
               <div style={style.div4}>
                 <Text variant="h5" style={style.userName}>

@@ -1,6 +1,7 @@
-import { style as profileStyle } from "./Profile.style";
+import styleP from "./Profile.style";
+import styleL from "./Leaderboard.style";
 
-const style = Object.assign(profileStyle, {});
+const style = Object.assign(styleL, styleP);
 /**
  * styled Components exporting >/
  */

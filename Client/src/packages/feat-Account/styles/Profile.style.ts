@@ -95,7 +95,7 @@ const Achievemets = styled.datalist`
 const Achiv = styled(smallCard)`
   height: 80px;
 `;
-const style: Record<string, React.CSSProperties> = {
+const styleP: Record<string, React.CSSProperties> = {
   div1: {
     display: "flex",
     flexDirection: "column",
@@ -156,7 +156,7 @@ const style: Record<string, React.CSSProperties> = {
   },
 };
 
-export { style };
+export default styleP;
 export {
   Board,
   ProfileCards,

@@ -3,12 +3,11 @@ import { useEffect } from "react";
 import { Chat, PersonAdd, SportsCricket } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../core";
 import { getLeaderboard, leaderboardType } from "./components";
-import {
+import style, {
   Players,
   Player,
   NoPlayer,
   Avatar,
-  Rotate,
   Button,
   ListItemIcon,
   ListItemText,
@@ -17,7 +16,7 @@ import {
   Title,
   Root,
 } from "./styles";
-import images, { Pic } from "./images_uploads";
+import images from "./images_uploads";
 import { Loading } from "./components";
 
 function sendGameRequist(userName: string) {}
@@ -26,7 +25,7 @@ function sendFriendRequist(userName: string) {}
 const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const navigate = useNavigate();
   const state = useAppSelector((state) => state.profile.lead);
-  const leaderboard: leaderboardType[] = state.leaderboard
+  const leaderboard: leaderboardType[] = state.leaderboard;
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -38,7 +37,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
       {primary && <Title> Leaderboard </Title>}
       {state.isLoading ? (
         <Loading />
-      ) : leaderboard ? (
+      ) : leaderboard?.length ? (
         <Players>
           {leaderboard.map(
             (player, index) =>
@@ -51,10 +50,15 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                     primary={player.name}
                     secondary={`Rank: ${index + 1}`}
                   />
-                  <ListItemText primary={player.loss + player.wins} secondary={`Match played`} />
+                  <ListItemText
+                    primary={player.loss + player.wins}
+                    secondary={`Match played`}
+                  />
                   <ListItemText primary={player.ladder} secondary={`Ladder`} />
                   <ListItemText primary={player.wins} secondary={`Wins`} />
-                  {primary && (<ListItemText primary={player.loss} secondary={`Losses`} />)}
+                  {primary && (
+                    <ListItemText primary={player.loss} secondary={`Losses`} />
+                  )}
                   {primary && (
                     <ListItemIcon>
                       <Button onClick={() => sendGameRequist(player.name)}>
@@ -74,16 +78,18 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
         </Players>
       ) : (
         <NoPlayer>
-          <h3>
-            No Player is registred in <br /> the leaderboard
-            <br />
-            <br /> <span>Play</span> and you'll here!
-          </h3>
-          <Rotate>
+          <div style={style.noplay}>
+            <h3>
+              No Player is registred in <br /> the leaderboard
+              <br />
+              <br /> <span>Play</span> and you'll here!
+            </h3>
+          </div>
+          {primary && (
             <Button variant="contained" onClick={() => navigate("/game")}>
               P l a y
             </Button>
-          </Rotate>
+          )}
         </NoPlayer>
       )}
     </Root>
