@@ -32,7 +32,7 @@ const getLeaderboard = createAsyncThunk(
     } catch (error) {
       console.log("error leaderboard fetching", error);
     }
-  }
+  },
 );
 
 export { getLeaderboard };

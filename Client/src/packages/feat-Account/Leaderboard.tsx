@@ -73,7 +73,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                     </ListItemIcon>
                   )}
                 </Player>
-              )
+              ),
           )}
         </Players>
       ) : (
