@@ -180,9 +180,8 @@ export class AuthService
             return res.status(404).json({ message: 'User not found' });
         }
         const isEnabled = await this.userService.isTwoFactorEnabled(userId);
-        if (!isEnabled)
-            return res.status(404).json({message : 'two factor auth not enabled !'});
-        const secret = authenticator.generateSecret();
+        //If 2FA is already enabled don't generate new secret
+        const secret = isEnabled ? user.twoFactorSecret : authenticator.generateSecret();
         const otpauthUrl = authenticator.keyuri(
             user.userName,
             process.env.APP_NAME,

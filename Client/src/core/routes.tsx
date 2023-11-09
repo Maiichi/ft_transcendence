@@ -1,6 +1,15 @@
-import { Test, Home, Game, Settings, Profile, Chat, Leaderboard } from "../packages";
+import {
+  Test,
+  Home,
+  Game,
+  AccountSettings,
+  Profile,
+  Chat,
+  Leaderboard,
+} from "../packages";
 import Login from "../packages/feat-Auth/Login";
 import FirstLogin from "../packages/feat-Auth/components/FirstLogin";
+import VerifyOtp from "./VerifyOtp";
 import { Search } from "../packages/feat-Search";
 import { Layout } from "./utils";
 import { NotFoundError } from "./utils/components/errors";
@@ -50,7 +59,7 @@ export const routes = [
     path: "/account/settings",
     element: (
       <Layout>
-        <Settings />
+        <AccountSettings />
       </Layout>
     ),
     errorElement: <NotFoundError />,
@@ -82,7 +91,7 @@ export const routes = [
       <Layout>
         <Leaderboard />
       </Layout>
-    ), 
+    ),
     errorElement: <NotFoundError />,
     requireAuth: true,
   },
