@@ -1,8 +1,8 @@
 import React, { PureComponent } from "react";
 import { View, Text, Alert } from "react-native";
 import { GameEngine } from "react-native-game-engine";
-import Circle from "../components/Circle";
-import Box from "../components/Box";
+import Circle from "./Circle";
+import Box from "./Box";
 
 import Matter from "matter-js";
 

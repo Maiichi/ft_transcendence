@@ -1,4 +1,4 @@
-import React , { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
@@ -9,14 +9,13 @@ import DirectionsIcon from "@mui/icons-material/Directions";
 import TuneIcon from "@mui/icons-material/Tune";
 import ClearIcon from "@mui/icons-material/Clear";
 import { makeStyles } from "@material-ui/styles";
-import { useAppDispatch, useAppSelector } from "../../../redux";
-import { setSearchQuery } from "./SearchSlice";
 
 interface Props {
   clear?: boolean;
   setOpen?: any;
-  onInputUpdate: (text: string) => void;
+  onInputUpdate: (str: string) => void;
 }
+
 const useStyles = makeStyles({
   paper: {
     background: " rgb(248, 250, 252)",
@@ -37,15 +36,9 @@ const useStyles = makeStyles({
   },
 });
 export const SearchComponent = (props: Props) => {
-  const { clear, setOpen , onInputUpdate} = props;
-  const [searchValue, setSearchValue] = useState<string>('');
-  const dispatch = useAppDispatch();
+  const { clear, setOpen, onInputUpdate } = props;
   const classes = useStyles();
 
-   useEffect(() => {
-    // Dispatch the action to set the search query
-    dispatch(setSearchQuery(searchValue));
-  }, [searchValue, dispatch]);
   return (
     <div
       className={classes.paper}
@@ -67,7 +60,7 @@ export const SearchComponent = (props: Props) => {
       <InputBase
         sx={{ ml: 1, flex: 1 }}
         placeholder="Search "
-        onChange={(e) => setSearchValue(e.target.value)}
+        onChange={(e) => onInputUpdate(e.target.value)}
       />
       <IconButton
         sx={{

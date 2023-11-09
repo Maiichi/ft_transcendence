@@ -62,10 +62,11 @@ model Message {
 model Room {
      id                  Int                      @id @default(autoincrement())
      name                String                   @db.VarChar()
+     description         String?                  @db.VarChar()
      type                String
      members             Membership[]             @relation("membership")
      conversation        Conversation?             
-     password            String                   @db.VarChar()
+     password            String?                  @db.VarChar()
      createdAt           DateTime                 @default(now()) @db.Timestamp(6)
      updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
 }

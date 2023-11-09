@@ -249,4 +249,33 @@ export class UserService {
             throw new NotFoundException(`userId ${userId} not found`)
     }
 
+    /* get User firends */
+    async getFriends(userId: number, res: Response)
+    {
+        const user = await this.getUser(userId);
+        if(!user)
+            throw new NotFoundException(`userId = ${userId} does not exist !`);
+        const userFriends = await this.prisma.user.findMany({
+            where: {
+                intraId: userId
+            },
+            select: {
+                friends: {
+                    select: {
+                        id: true,
+                        intraId: true,
+                        avatar_url: true,
+                        lastName: true,
+                        firstName: true,
+                        userName: true,
+                    }
+                }
+            }
+        });
+        // if ()
+        console.log('user Friends ==', JSON.stringify(userFriends));
+        return  res.send({
+            data : userFriends[0].friends
+        });
+    }
 }
