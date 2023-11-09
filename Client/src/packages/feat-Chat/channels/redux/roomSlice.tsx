@@ -36,7 +36,6 @@ export const roomSlice = createSlice({
       const index = state.memberships.findIndex(
         (item) => (item.id = action.payload.id)
       );
-      console.log(action.payload);
       state.memberships[index].name = action.payload.name;
       state.memberships[index].type = action.payload.type;
       state.memberships[index].password = action.payload.password;

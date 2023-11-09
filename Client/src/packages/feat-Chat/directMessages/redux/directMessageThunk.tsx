@@ -13,7 +13,6 @@ export const getDirectConversations = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("CONVERSATION () ===" + JSON.stringify(resp.data));
       return resp.data;
     } catch (error) {
       console.log("error in getDirectConversation", error);
@@ -33,7 +32,6 @@ export const getDirectConversationMessages = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("messages =", JSON.stringify(res.data.messages));
       return res.data.messages;
     } catch (error) {}
   }

@@ -4,19 +4,7 @@ export interface I_Room {
   password: string; // must check
   type: "public" | "private" | "protected";
   description: string;
-  members: {
-    isAdmin: boolean;
-    isBanned: boolean;
-    isMute: boolean;
-    isOwner: boolean;
-    user: {
-      firstName: string;
-      lastName: string;
-      userName: string;
-      intraId: number;
-      avatar_url: string;
-    };
-  }[];
+  members: Members[];
   conversation: {
     id: number;
     createdAt: string;
@@ -26,10 +14,24 @@ export interface I_Room {
   createdAt: string;
   updatedAt: string;
 }
+export interface Members {
+  isAdmin: boolean;
+  isBanned: boolean;
+  isMute: boolean;
+  isOwner: boolean;
+  user: User;
+}
 export interface I_Discussion {
   type: "direct" | "channel" | null;
   directConversationId: number | null;
   roomId: number | null;
+}
+export interface User {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  intraId: number;
+  avatar_url?: string;
 }
 
 export interface I_DirectConversation {
@@ -64,4 +66,22 @@ export interface I_Message {
 export interface I_ConversationMessages {
   conversationId: number;
   messages: I_Message[];
+}
+export interface Actions {
+  name: string;
+  type:
+    | "banFromRoom"
+    | "muteFromRoom"
+    | "setAdminRoom"
+    | "message"
+    | "play"
+    | "addFriend"
+    | "blockFriend"
+    | "inviteToRoom";
+  component: JSX.Element;
+  constraint?: {
+    isAdmin?: boolean;
+    isFriend?: boolean;
+    isOwner?: boolean;
+  };
 }
