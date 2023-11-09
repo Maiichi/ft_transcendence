@@ -146,7 +146,7 @@ const Profile = () => {
                   <Dangerous color="disabled" />,
                 ])}
               </Match>
-            )
+            ),
         )}
       </Matchshistory>
       <Achievemets>
@@ -164,7 +164,7 @@ const Profile = () => {
                 />
                 <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
               </Achiv>
-            )
+            ),
         )}
       </Achievemets>
     </ProfileCards>

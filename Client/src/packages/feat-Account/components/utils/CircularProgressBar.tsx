@@ -44,7 +44,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
               strokeDasharray: circumference,
               strokeDashoffset: offset,
             },
-            style.circle
+            style.circle,
           )}
           r="47.2"
           cx="60"
