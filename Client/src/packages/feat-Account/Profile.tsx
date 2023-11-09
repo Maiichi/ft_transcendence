@@ -56,19 +56,23 @@ const Profile = () => {
     <ProfileCards>
       <Usercard>
         <Coalition>
-          <Text variant="subtitle2" sx={{ mb: "5px" }}>
+          <Text variant="h6" sx={{ mb: "5px" }}>
             {gamer.coalition.name}
           </Text>
-          <img alt={"Coalition"} src={images[gamer.coalition.logo]} />
-          <h5 style={{ margin: "7px" }}> #{gamer.rank}</h5>
+          <img
+            alt={"Coalition"}
+            src={images[gamer.coalition.logo]}
+            style={style.coalImg}
+          />
+          <h3 style={{ margin: "7px" }}> #{gamer.rank}</h3>
         </Coalition>
-        <div style={style.div1}>
+        <div style={style.user}>
           <div style={style.div2}>
             <div style={style.div3}>
               <Avatar
-                style={style.userAvatar}
+                sx={style.userAvatar}
                 alt="UserImg"
-                src={/*gamer.user?.avatar_url*/ images["Pic"]}
+                src={images["Pic" /*gamer.user?.avatar_url*/]}
               />
               <div style={style.div4}>
                 <Text variant="h5" style={style.userName}>
@@ -108,6 +112,10 @@ const Profile = () => {
         </div>
       </Usercard>
       <Board>
+        <Text variant="h4" sx={style.cardName}>
+          {" "}
+          Top 3 player
+        </Text>
         <Leaderboard primary={false} />
         <Button onClick={() => navigate("/Leaderboard")}> See more...</Button>
       </Board>
@@ -115,39 +123,49 @@ const Profile = () => {
         <Text variant="h5" sx={style.cardName}>
           {`${gamer?.user?.lastName}'s Last Matches`}
         </Text>
-        {matchs?.map((item, index) => (
-          <Match
-            win={getresult(item.gain, item.nogain, [
-              "#2fa025b8",
-              "#b0141495",
-              "#3b4243b7",
-            ])}
-          >
-            <Avatar alt="we" src={images[item.pic]} />
-            <Text> {item.name} </Text>
-            <p> {`${item.gain} : ${item.nogain}`} </p>
-            {getresult(item.gain, item.nogain, [
-              <CheckCircle color="success" />,
-              <DoNotDisturbOn color="error" />,
-              <Dangerous color="disabled" />,
-            ])}
-          </Match>
-        ))}
+        {matchs?.map(
+          (item, index) =>
+            index < 5 && (
+              <Match
+                win={getresult(item.gain, item.nogain, [
+                  "#2fa025b8",
+                  "#b0141495",
+                  "#3b4243b7",
+                ])}
+              >
+                <Avatar
+                  sx={{ width: 60, height: 60, mb: 2 }}
+                  alt="we"
+                  src={images[item.pic]}
+                />
+                <Text> {item.name} </Text>
+                <p> {`${item.gain} : ${item.nogain}`} </p>
+                {getresult(item.gain, item.nogain, [
+                  <CheckCircle color="success" />,
+                  <DoNotDisturbOn color="error" />,
+                  <Dangerous color="disabled" />,
+                ])}
+              </Match>
+            )
+        )}
       </Matchshistory>
       <Achievemets>
         <Text variant="h5" sx={style.cardName}>
           {`${gamer?.user?.lastName}'s Achievements`}
         </Text>
-        {achivs?.map((achiv, index) => (
-          <Achiv>
-            <img
-              style={style.achivlogo}
-              alt="logoAchiv"
-              src={images[achiv.logo]}
-            />
-            <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
-          </Achiv>
-        ))}
+        {achivs?.map(
+          (achiv, index) =>
+            index < 9 && (
+              <Achiv>
+                <img
+                  style={style.achivlogo}
+                  alt="logoAchiv"
+                  src={images[achiv.logo]}
+                />
+                <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
+              </Achiv>
+            )
+        )}
       </Achievemets>
     </ProfileCards>
   );

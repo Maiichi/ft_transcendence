@@ -1,6 +1,10 @@
+import { SxProps } from "@mui/material";
 import styled, { css } from "styled-components";
 
 const cardstyle = css`
+  margin: 2%;
+  /* margin-top: 0; */
+  /* padding-top: 0; */
   max-width: 40%;
   @media (max-width: 940px) {
     max-width: none;
@@ -13,7 +17,7 @@ const smallCard = styled.data`
   flex-direction: column;
   min-width: 100px;
   max-width: 150px;
-  max-height: 110px;
+  /* max-height: 110px; */
   padding-top: 5px;
 `;
 /**
@@ -40,8 +44,7 @@ const Usercard = styled.data`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-  margin: 2%;
+  align-items: start;
   padding-right: 30px;
   ${cardstyle}
   @media (max-width: 940px) {
@@ -60,7 +63,6 @@ const Coalition = styled.data`
   }
 `;
 const Board = styled.datalist`
-  margin-top: 30px;
   display: flex;
   flex-direction: column;
   min-width: 45%;
@@ -70,24 +72,21 @@ const Board = styled.datalist`
 const Matchshistory = styled.datalist`
   display: flex;
   flex-wrap: wrap;
-  gap: 45px 15px;
+  gap: 45px 10px;
   justify-content: center;
-  margin: 2%;
   padding-bottom: 32px;
   ${cardstyle}
 `;
 const Match = styled(smallCard)<{ win: any }>`
   box-shadow: 2px 1px 4px 2px ${(props) => props.win};
   border-radius: 10px;
-  height: 150px;
+  max-height: 145px;
 `;
 const Achievemets = styled.datalist`
   display: flex;
   flex-wrap: wrap;
   gap: 15px 10px;
   justify-content: center;
-
-  margin: 2%;
   ${cardstyle}
   @media (max-width: 940px) {
   }
@@ -95,15 +94,17 @@ const Achievemets = styled.datalist`
 const Achiv = styled(smallCard)`
   height: 80px;
 `;
-const styleP: Record<string, React.CSSProperties> = {
-  div1: {
+const styleP: Record<string, React.CSSProperties | SxProps> = {
+  user: {
     display: "flex",
     flexDirection: "column",
     minWidth: "80%",
+    marginTop: "6%",
   },
   div2: {
     display: "flex",
     justifyContent: "space-around",
+    padding: "0 20px 0 20px",
   },
   div3: {
     display: "flex",
@@ -135,10 +136,14 @@ const styleP: Record<string, React.CSSProperties> = {
     textAlign: "center",
     padding: "0 2% 0 10%",
   },
+  coalImg: {
+    width: 80,
+    height: 120,
+  },
   userAvatar: {
-    width: "80px",
-    height: "80px",
-    marginRight: "10px",
+    width: 80,
+    height: 80,
+    mr: 2,
   },
   achivlogo: {
     width: "40px",
@@ -146,13 +151,11 @@ const styleP: Record<string, React.CSSProperties> = {
   },
   userName: {},
   cardName: {
-    width: "90%",
-    padding: "0px",
-    margin: "0px",
-    fontSize: "20px",
-    fontFamily: "revert",
-    height: "5px",
-    textAlign: "start",
+    width: "100%",
+    textAlignLast: "center",
+    fontSize: "19px",
+    fontFamily: "monospace",
+    fontWeight: "bolder",
   },
 };
 
