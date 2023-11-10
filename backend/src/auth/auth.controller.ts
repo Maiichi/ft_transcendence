@@ -69,7 +69,7 @@ export class AuthController
     }
 
 
-    
+    //TODO don't generate new secret if user already had done it
     @ApiBearerAuth()
     @ApiOperation({ summary : 'Generate 2FA code'})
     @ApiCreatedResponse({description : "a generated URL returned"})
@@ -100,9 +100,9 @@ export class AuthController
     async verifyTwoFactorCode(@Body() dto: TwoFactorDto,  @GetUser() user: User, @Res() res: Response)
     {
         try {
-            const isEnabled = await this.userService.isTwoFactorEnabled(user.intraId);
-            if (!isEnabled)
-                return res.status(404).json({message : 'two factor auth not enabled !'});
+            // const isEnabled = await this.userService.isTwoFactorEnabled(user.intraId);
+            // if (!isEnabled)
+            //     return res.status(404).json({message : 'two factor auth not enabled !'});
             const isSecretExist = await this.userService.isSecretExist(user.intraId);
             if (!isSecretExist)
                 return res.status(404).json({message : 'secret is not generated'});
