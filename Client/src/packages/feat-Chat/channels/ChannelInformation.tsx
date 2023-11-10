@@ -87,7 +87,7 @@ export const ChannelInformation = () => {
         </ChannelNameHolder>
         <div>
           Owner:
-          {[1, 2, 3, 4].map((item) => (
+          {/* {[1, 2, 3, 4].map((item) => (
             <OwnerDiv>
               <Owner>
                 <Avatar></Avatar>
@@ -95,7 +95,7 @@ export const ChannelInformation = () => {
               </Owner>
               <MoreHorizOutlined></MoreHorizOutlined>
             </OwnerDiv>
-          ))}
+          ))} */}
           <Admins>admin</Admins>
           <Members>member</Members>
         </div>

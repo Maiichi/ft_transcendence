@@ -14,6 +14,11 @@ export interface S_DirectMessages {
   isLoad: boolean;
 }
 
+type MessagePayload = {
+  receiverId: number;
+  content: string;
+};
+
 const initialState: S_DirectMessages = {
   conversations: [],
   conversationsContent: [],
@@ -27,6 +32,26 @@ export const DirectMessageSlice = createSlice({
     setConversations: (state, action: PayloadAction<S_DirectMessages>) => {
       state.conversations = action.payload.conversations;
     },
+    createDirectConversation: (state, action:PayloadAction<MessagePayload>) => {
+      state.isLoad = false;
+    },
+    sendMessageToUser: (state, action: PayloadAction<I_DirectConversation>) => {
+      const conversationId = action.payload.id;
+      const isConversationFound = state.conversations.find((conversation) => conversation.id === conversationId)
+      if (isConversationFound)
+      {
+        state.conversations.splice(
+          state.conversations.findIndex(
+            (conversation: I_DirectConversation) => conversation.id === conversationId),
+            1, action.payload);
+      }
+      else
+        state.conversations.push(action.payload);
+    },
+    addMessageToConversation: (state, action: PayloadAction<I_ConversationMessages>) => {
+      state.conversationsContent.push(action.payload);
+    }
+    
   },
   extraReducers: (builder) => {
     builder
@@ -54,6 +79,11 @@ export const DirectMessageSlice = createSlice({
   },
 });
 
-export const { setConversations } = DirectMessageSlice.actions;
+export const { 
+    setConversations, 
+    createDirectConversation, 
+    sendMessageToUser,
+    addMessageToConversation,
+} = DirectMessageSlice.actions;
 
 export default DirectMessageSlice.reducer;

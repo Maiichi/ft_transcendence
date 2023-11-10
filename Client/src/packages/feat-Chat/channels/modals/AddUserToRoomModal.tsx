@@ -41,7 +41,6 @@ export const AddUserToRoomModal = (props: Props) => {
   };
 
   const handleClickSearch = (str: string) => {
-    console.log("clicked");
     setSearchQuery(str);
   };
 
@@ -50,13 +49,14 @@ export const AddUserToRoomModal = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    console.log("searchQuery ==", searchQuery);
     if (searchQuery.length) {
       const filteredFriends = friends.filter((friend: any) =>
         friend.firstName.toLowerCase().startsWith(searchQuery.toLowerCase())
       );
       setFilteredUsers(filteredFriends);
-    } else setFilteredUsers([]);
+    } 
+    else 
+      setFilteredUsers([]);
   }, [searchQuery]);
 
   return (

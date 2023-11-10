@@ -15,7 +15,7 @@ import { CreateChannelModal } from "../channels/modals/CreateChannelModal";
 import { getMemberships } from "../channels/redux/roomThunk";
 import { getDirectConversations } from "../directMessages/redux/directMessageThunk";
 import { Add } from "@mui/icons-material";
-import { NewDirectMessage } from "../channels/modals/CreateDirectMessageModal";
+import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
 import { setCurrentConversation } from "./chatSlice";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
