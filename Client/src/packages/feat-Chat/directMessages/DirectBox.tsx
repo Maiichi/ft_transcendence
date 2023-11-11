@@ -7,6 +7,7 @@ import { DirectBoxHeader } from "./DirectBoxHeader";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
 import { createDirectConversation, sendMessageToUser } from "./redux/directMessageSlice";
+import { RightSide } from "./DirectBoxRight";
 
 export const DirectBox = (props: {
   directConversation: I_DirectConversation;
@@ -40,7 +41,7 @@ export const DirectBox = (props: {
     <>
       <ChatBox>
         <Header>
-          <DirectBoxHeader directConversation={direct} />
+          <DirectBoxHeader directConversation={conversations[index]} />
         </Header>
         <Wrapper>
           <ChatBoxTop>
@@ -64,7 +65,7 @@ export const DirectBox = (props: {
           <ChatSubmitButtom>Send</ChatSubmitButtom>
         </ChatBoxBottom>
       </ChatBox>
-      <RightSide>onlineUsers</RightSide>
+      <RightSide />
     </>
   );
 };
@@ -126,9 +127,9 @@ const ChatSubmitButtom = styled.button`
   margin-right: 10px;
 `;
 
-const RightSide = styled.div`
-  flex: 2;
-  height: 100%;
-  /* border-radius: 20px; */
-  border-left: 1px solid #d7d7d7;
-`;
+// const RightSide = styled.div`
+//   flex: 2;
+//   height: 100%;
+//   /* border-radius: 20px; */
+//   border-left: 1px solid #d7d7d7;
+// `;
