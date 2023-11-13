@@ -45,9 +45,7 @@ export const AddUserToRoomModal = (props: Props) => {
     setSearchQuery(str);
   };
 
-  useEffect(() => {
-    dispatch(getUserFriends());
-  }, []);
+  
 
   useEffect(() => {
     console.log("searchQuery ==", searchQuery);

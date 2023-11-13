@@ -260,7 +260,6 @@ export class UserService {
             select: {
                 friends: {
                     select: {
-                        id: true,
                         intraId: true,
                         avatar_url: true,
                         lastName: true,

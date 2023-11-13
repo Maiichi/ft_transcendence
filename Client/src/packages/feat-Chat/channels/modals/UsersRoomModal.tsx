@@ -14,6 +14,7 @@ import {
 import { SearchComponent, useAppDispatch } from "../../../../core";
 import { getUserFriends } from "../redux/friendThunk";
 import { setDisplayUserActions } from "../../../../core/CoreSlice";
+import { setSelectedUser } from "../../components/chatSlice";
 
 export const UsersRoom = ({
   channelConversation,
@@ -29,7 +30,8 @@ export const UsersRoom = ({
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const handleClick = () => {
+  const handleClick = (userId: number) => {
+    dispatch(setSelectedUser(userId));
     dispatch(setDisplayUserActions(true));
     setOpen(false);
   };
@@ -69,7 +71,7 @@ export const UsersRoom = ({
               <ListItem alignItems="flex-start">
                 <ListItemButton
                   sx={{ borderRadius: "10px" }}
-                  onClick={handleClick}
+                  onClick={() => handleClick(user.user.intraId)}
                 >
                   <ListItemAvatar>
                     <Avatar

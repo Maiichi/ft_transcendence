@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
-import { Actions, I_Room } from "./types";
+import { Action, I_Room, User } from "./types";
 
 import {
   LogoutRounded,
@@ -12,7 +12,7 @@ import {
 import { Avatar, Badge, Divider } from "@mui/material";
 import { AddUserToRoomModal } from "../channels/modals/AddUserToRoomModal";
 import styled from "styled-components";
-import { changeMessageLength, convertDateTime, isOwner } from "./utils";
+import { changeMessageLength, checkUserRole, convertDateTime, isFriend, isOwner } from "./utils";
 import { UsersRoom } from "../channels/modals/UsersRoomModal";
 import { LeaveRoomModal } from "../channels/modals/leaveChannelModal";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
@@ -28,73 +28,85 @@ import SpeakerNotesOffIcon from "@mui/icons-material/SpeakerNotesOff";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import PersonIcon from "@mui/icons-material/Person";
 import GamesIcon from "@mui/icons-material/Games";
-const Icons: Array<Actions> = [
+
+const Icons: Array<Action> = [
   {
     name: "Ban from channel",
     type: "banFromRoom",
     component: <RemoveCircleOutlineIcon />,
-    constraint: {
-      isAdmin: true,
-    },
+    role: ["admin", "owner"]
   },
   {
     name: "Mute",
     type: "muteFromRoom",
     component: <SpeakerNotesOffIcon />,
-    constraint: {
-      isAdmin: true,
-    },
+    role: ["admin", "owner"]
   },
   {
     name: "Give administrator privileges",
     type: "setAdminRoom",
     component: <AdminPanelSettingsIcon />,
-    constraint: {
-      isAdmin: true,
-    },
+    role: ["owner"]
   },
 
   {
     name: "Send Message",
     type: "message",
     component: <EmailIcon />,
-    constraint: {
-      isFriend: true,
-    },
+    isFriend: true,
+    role: ["member", "admin", "owner"],
   },
   {
     name: "Invite to a game",
     type: "play",
     component: <GamesIcon />,
-    constraint: {},
+    isFriend: true,
+    role: ["member", "admin", "owner"]
   },
   {
     name: "Add to friend list",
     type: "addFriend",
     component: <PersonAddIcon />,
-    constraint: {
-      isFriend: false,
-    },
+    isFriend: false,
+    role : ["member", "admin", "owner"]
   },
   {
     name: "Block",
     type: "blockFriend",
     component: <PersonOffIcon />,
-    constraint: {
-      isFriend: true,
-    },
+    isFriend: true,
+    role: ["member", "admin", "owner"]
   },
   {
     name: "Invite to Room",
     type: "inviteToRoom",
     component: <PersonOffIcon />,
-    constraint: {
-      isAdmin: true,
-    },
+    isFriend: true,
+    role: ["admin", "owner"]
   },
 ];
+
+
 export const UserActions = () => {
   const user = useAppSelector((state) => state.auth.user);
+  const {roomId} = useAppSelector((state) => state.chat.currentConversation);
+  const {selectedUserId} = useAppSelector((state) => state.chat);
+  const { memberships } = useAppSelector((state) => state.channels);
+  const friends : Array<User> = useAppSelector((state) => state.friends.friends);
+  const roomIndex = memberships.findIndex((item: any) => item.id == roomId);
+
+  const checkConstraints = (selectorId: number, selectedId: number, Icon: Action) => {
+      const role = checkUserRole(memberships[roomIndex], selectorId);
+      console.log('isFriend ==', Icon.isFriend);
+      let checkFriend = true;
+      if (typeof(Icon.isFriend) != "undefined")
+      {
+        console.log('dkhal ', Icon.name);
+        checkFriend = isFriend(friends, selectedId) == Icon.isFriend 
+      }
+
+      return Icon.role.includes(role) && checkFriend;
+  };
   const dispatch = useAppDispatch();
 
   return (
@@ -106,11 +118,15 @@ export const UserActions = () => {
       <p>Available</p>
       <Divider variant="inset" />
       <IconsHolder>
-        {Icons.map((icon) => (
-          <IconHolder>
-            {icon.component}
-            {icon.name}
-          </IconHolder>
+        {Icons.map((icon: Action) => (
+          <>
+            {checkConstraints(user.intraId, selectedUserId, icon) && 
+              <IconHolder>
+                {icon.component}
+                {icon.name}
+              </IconHolder>
+            }
+          </>
         ))}
       </IconsHolder>
     </RightSide>
@@ -130,6 +146,7 @@ const RightSide = styled.div`
 const IconHolder = styled.div`
   display: flex;
   margin-top: 15px;
+  gap: 5px;
 `;
 
 const IconsHolder = styled.div``;

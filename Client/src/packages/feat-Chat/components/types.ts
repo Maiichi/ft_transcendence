@@ -67,21 +67,21 @@ export interface I_ConversationMessages {
   conversationId: number;
   messages: I_Message[];
 }
-export interface Actions {
+export interface Action {
   name: string;
   type:
     | "banFromRoom"
     | "muteFromRoom"
     | "setAdminRoom"
+    | "unSetAdminRoom"
     | "message"
     | "play"
     | "addFriend"
     | "blockFriend"
     | "inviteToRoom";
   component: JSX.Element;
-  constraint?: {
-    isAdmin?: boolean;
-    isFriend?: boolean;
-    isOwner?: boolean;
-  };
+  isFriend?: boolean;
+  role: Role[];
 }
+
+export type Role = "admin" | "owner" | "member";

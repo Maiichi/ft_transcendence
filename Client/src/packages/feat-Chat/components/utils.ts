@@ -1,4 +1,4 @@
-import { I_Room, User } from "./types";
+import { I_Room, Role, User } from "./types";
 
 export const changeMessageLength = (message: string) => {
   if (message.length > 60) {
@@ -36,9 +36,25 @@ export const isOwner = (membership: I_Room, userId: number) => {
   const member = membership.members.find(
     (member) => member.user.intraId === userId
   );
-  return member?.isAdmin ? true : false;
+  return member?.isOwner ? true : false;
 };
+
 export const isFriend = (friends: Array<User>, userId: number) => {
+  console.log('userId', userId);
   const isFriend = friends.find((member) => member.intraId === userId);
   return isFriend ? true : false;
 };
+
+export const checkUserRole = (membership: I_Room, userId: number) => {
+  const member = membership.members.find(
+    (member) => member.user.intraId === userId
+  );
+  switch (true) {
+    case member?.isOwner: 
+      return "owner"
+    case member?.isAdmin:
+      return "admin";
+    default:
+      return "member";
+  }
+}
