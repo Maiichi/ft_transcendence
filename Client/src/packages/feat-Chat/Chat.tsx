@@ -3,9 +3,11 @@ import { ChatDiscussion } from "./components/ChatDiscussion";
 import { ChannelBox } from "./channels/ChannelBox";
 import { DirectBox } from "./directMessages/DirectBox";
 import { useAppSelector } from "../../core";
+import { UserActions } from "./components/UserActions";
 
 const ChatBox = () => {
   const { chat } = useAppSelector((state) => state);
+
   if (chat.currentConversation?.type === "direct") {
     return <DirectBox directConversation={chat.currentConversation.direct} />;
   } else if (chat.currentConversation?.type === "channel") {
@@ -18,10 +20,13 @@ const ChatBox = () => {
     );
 };
 export const Chat = () => {
+  const { displayUserActions } = useAppSelector((state) => state.core);
+  console.log(displayUserActions);
   return (
     <Root>
       <ChatDiscussion />
       <ChatBox />
+      {displayUserActions && <UserActions />}
     </Root>
   );
 };
