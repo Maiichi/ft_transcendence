@@ -1075,6 +1075,7 @@ export class RoomService {
           firstName: true,
           intraId: true,
           avatar_url: true,
+          status: true,
         },
       });
     return member;

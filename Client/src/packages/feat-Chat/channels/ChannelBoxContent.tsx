@@ -1,23 +1,36 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../core";
 import { I_Message } from "../components/types";
 import { getChatRoomMessages } from "./redux/roomThunk";
 import { MessageBox } from "../components/MessageBox";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
+import { sendMessageToRoom } from "./redux/roomSlice";
 
 export const ChannelBoxContent = () => {
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
 
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const [messageContent, setMessageContent] = useState<string>("");
   const channelMessages: [] = useAppSelector(
     (state) => state.channels.messages
   );
 
+  const handleCreateRoomMessage = (e: any) => {
+    e.preventDefault();
+    const messageData = {
+      roomId: roomId,
+      senderId: user.intraId,
+      content: messageContent
+    };
+    dispatch(sendMessageToRoom(messageData));
+    setMessageContent('');
+  }
+  console.log('roomId =', roomId);
   useEffect(() => {
     if (roomId) dispatch(getChatRoomMessages(roomId));
-  }, []);
+  }, [roomId]);
 
   return (
     <>
@@ -40,9 +53,15 @@ export const ChannelBoxContent = () => {
           )}
         </ChatBoxTop>
       </Wrapper>
-      <ChatBoxBottom>
-        <ChatMessageInput placeholder="Write your message ..." />
-        <ChatSubmitButtom>Send</ChatSubmitButtom>
+      <ChatBoxBottom
+        onSubmit={handleCreateRoomMessage}
+      >
+        <ChatMessageInput 
+            placeholder="Write your message ..." 
+            value={messageContent}
+            onChange={(e) => setMessageContent(e.target.value)}
+        />
+        <ChatSubmitButtom type="submit">Send</ChatSubmitButtom>
       </ChatBoxBottom>
     </>
   );
@@ -69,7 +88,7 @@ const ChatBoxTop = styled.div`
   scrollbar-width: none; /* Firefox */
 `;
 
-const ChatBoxBottom = styled.div`
+const ChatBoxBottom = styled.form`
   display: flex;
   align-items: center;
   justify-content: space-between;

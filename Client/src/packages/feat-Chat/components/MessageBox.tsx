@@ -18,7 +18,7 @@ interface Props {
 
 export const MessageBox = ({ own, data }: Props) => {
   const Message = own ? MessageBoxOwn : MessageBoxWrapper;
-
+  const MessageContent = own ? MessageBoxOwnText : MessageText;
   return (
     <Message key={data.createdAt}>
       <MessageTop>
@@ -30,7 +30,7 @@ export const MessageBox = ({ own, data }: Props) => {
         ) : (
           <MessageImg src="" alt="" />
         )}
-        <MessageText>{data.content}</MessageText>
+        <MessageContent>{data.content}</MessageContent>
       </MessageTop>
       <MessageBottom>{convertDateTime(data.createdAt)}</MessageBottom>
     </Message>

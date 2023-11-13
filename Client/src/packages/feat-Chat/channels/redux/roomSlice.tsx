@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import { getChatRoomMessages, getMemberships } from "./roomThunk";
-import { I_ConversationMessages, I_Room } from "../../components/types";
+import { I_ConversationMessages, I_Message, I_Room } from "../../components/types";
 
 export interface roomState {
   memberships: I_Room[];
@@ -15,6 +15,13 @@ type RoomPayload = {
   password: string;
   ownerId: string;
 };
+
+type MessagePayload = {
+  senderId: number;
+  roomId: number;
+  content: string;
+};
+
 const initialState: roomState = {
   memberships: [],
   messages: [],
@@ -96,6 +103,12 @@ export const roomSlice = createSlice({
         1
       );
     },
+    sendMessageToRoom: (state, action: PayloadAction<MessagePayload>) => {
+      state.isLoading = false;
+    },
+    addMessageToRoom: (state, action: PayloadAction<I_ConversationMessages>) => {
+        state.messages.push(action.payload);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -136,6 +149,8 @@ export const {
   updateRoom,
   createRoomError,
   updateRoomSucess,
+  sendMessageToRoom,
+  addMessageToRoom,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;
