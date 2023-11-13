@@ -1,7 +1,6 @@
 import { ChannelBoxHeader } from "./ChannelBoxHeader";
 import styled from "styled-components";
 
-import { ChannelInformation } from "./ChannelInformation";
 import { ChannelBoxContent } from "./ChannelBoxContent";
 
 export const ChannelBox = () => {
@@ -11,7 +10,6 @@ export const ChannelBox = () => {
         <ChannelBoxHeader />
         <ChannelBoxContent />
       </ChatBox>
-      <ChannelInformation />
     </>
   );
 };

@@ -5,6 +5,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 // Define a type for the slice state
 export interface CoreState {
   displayNavbar: boolean;
+  displayUserActions: boolean;
   openErrorSnackbar: boolean;
   serverError: string | null;
 }
@@ -12,6 +13,7 @@ export interface CoreState {
 // Define the initial state using that type
 const initialState: CoreState = {
   displayNavbar: true,
+  displayUserActions: false,
   serverError: null,
   openErrorSnackbar: false,
 };
@@ -24,7 +26,9 @@ export const coreSlice = createSlice({
     setDisplayNavbar: (state, action: PayloadAction<boolean>) => {
       state.displayNavbar = !state.displayNavbar;
     },
-
+    setDisplayUserActions: (state, action: PayloadAction<boolean>) => {
+      state.displayUserActions = action.payload;
+    },
     setServerError: (state, action: PayloadAction<string>) => {
       state.serverError = action.payload;
     },
@@ -34,8 +38,12 @@ export const coreSlice = createSlice({
   },
 });
 
-export const { setOpenErrorSnackbar, setServerError, setDisplayNavbar } =
-  coreSlice.actions;
+export const {
+  setDisplayUserActions,
+  setOpenErrorSnackbar,
+  setServerError,
+  setDisplayNavbar,
+} = coreSlice.actions;
 
 // // Other code such as selectors can use the imported `RootState` type
 // export const selectCount = (state: RootState) => state.counter.value;
