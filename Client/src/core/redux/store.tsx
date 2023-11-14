@@ -9,37 +9,37 @@ import SocketMiddleware from "../socket/socketMiddleware";
 import socketSlice from "../socket/socketSlice";
 import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice";
 import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
-import leaderboardSlice from "../../packages/feat-Account/API.d/ProfileSlice";
+import ProfileSlice from "../../packages/feat-Account/components/ProfileSlice";
 import searchSlice from "../../packages/feat-Search/redux/searchSlice";
 import chatSlice from "../../packages/feat-Chat/components/chatSlice";
 import friendSlice from "../../packages/feat-Chat/channels/redux/friendSlice";
 // ...
 
 const rootReducer = combineReducers({
-  auth: authSlice,
-  core: coreSlice,
-  channels: roomSlice,
-  directMessage: DirectMessageSlice,
-  socket: socketSlice,
-  leaderboard: leaderboardSlice,
-  search: searchSlice,
-  chat: chatSlice,
-  friends: friendSlice,
+    auth: authSlice,
+    core: coreSlice,
+    channels: roomSlice,
+    directMessage: DirectMessageSlice,
+    socket: socketSlice,
+    profile: ProfileSlice,
+    search: searchSlice,
+    chat: chatSlice,
+    friends: friendSlice,
 });
 
 const persistConfig = {
-  key: "root", // Key to access your storage
-  storage,
-  whitelist: ["auth"],
-  transforms: [decryptionTransform], // Use the custom transform
+    key: "root", // Key to access your storage
+    storage,
+    whitelist: ["auth"],
+    transforms: [decryptionTransform], // Use the custom transform
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([SocketMiddleware]),
+    reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat([SocketMiddleware]),
 });
 
 export const persistor = persistStore(store);

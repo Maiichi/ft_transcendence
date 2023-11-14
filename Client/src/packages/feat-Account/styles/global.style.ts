@@ -1,6 +1,10 @@
 import styled, { keyframes } from "styled-components";
-import { Typography as TypographyMui } from "@mui/material";
+import { Typography } from "@mui/material";
 
+/**
+ * `as Typography from mui`
+ */
+const Text = styled(Typography)<{}>``;
 const rotate = keyframes`
   from {
     transform: rotate(0deg);
@@ -33,7 +37,7 @@ const Title = styled.section`
  *  `styled component Root`
  */
 const Root = styled.div<{ $primary?: boolean }>`
-  background-color: ${(props) => (props.$primary ? "inherits" : "#f9f9f9")};
+  background-color: "inherits";
   padding: 0;
   margin: 0;
   width: 100%;
@@ -41,4 +45,4 @@ const Root = styled.div<{ $primary?: boolean }>`
   border-radius: 20px;
 `;
 
-export { Root, Title, H5, Rotate };
+export { Root, Title, H5, Rotate, Text };
