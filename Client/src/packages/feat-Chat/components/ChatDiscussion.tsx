@@ -15,8 +15,9 @@ import { CreateChannelModal } from "../channels/modals/CreateChannelModal";
 import { getMemberships } from "../channels/redux/roomThunk";
 import { getDirectConversations } from "../directMessages/redux/directMessageThunk";
 import { Add } from "@mui/icons-material";
-import { NewDirectMessage } from "../channels/modals/CreateDirectMessageModal";
+import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
 import { setCurrentConversation } from "./chatSlice";
+import { getUserFriends } from "../channels/redux/friendThunk";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
   const { channels, directMessage, filter, chat } = useAppSelector(
@@ -42,6 +43,7 @@ export const ChatDiscussion = () => {
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getDirectConversations());
+    dispatch(getUserFriends());
   }, []);
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
     item.name.toLowerCase().startsWith(searchQuery.toLowerCase())

@@ -17,6 +17,8 @@ import {
   updateRoom,
   updateRoomSucess,
   addUserToRoom,
+  sendMessageToRoom,
+  addMessageToRoom,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import { setOpenErrorSnackbar, setServerError } from "../CoreSlice";
 import {
@@ -25,6 +27,8 @@ import {
   setRoomJoined,
   setRoomLeaved,
 } from "../../packages/feat-Search/redux/searchSlice";
+import { addMessageToConversation, createDirectConversation, sendMessageToUser } from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
+import { setCurrentConversation } from "../../packages/feat-Chat/components/chatSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -72,6 +76,27 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on("newRoomJoined", (data) => {
             dispatch(setRoomJoined(data));
           });
+          socket.on('messageSentToRoom', (data) => {
+            console.log('data coming from (messageSentToRoom) =', data);
+            // addMessageToRoom
+            dispatch(addMessageToRoom(data));
+          });
+          socket.on('conversationCreated', (data) => {
+            console.log('data coming from (conversationCreated) =', data);
+            dispatch(sendMessageToUser(data));
+            // dispatch(
+            //   setCurrentConversation({
+            //     roomId: null,
+            //     directConversationId: data.id,
+            //     type: 'direct',
+            //   })
+            // );
+          });
+          socket.on('messageSentToUser', (data) => {
+            console.log('data coming from (messageSentToUser) =', data);
+            dispatch(addMessageToConversation(data));
+            
+          })
         } catch (error) {
           console.log(error);
         }
@@ -93,6 +118,12 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case addUserToRoom.type:
         socket.emit("addUserToRoom", action.payload);
+        break;
+      case sendMessageToRoom.type:
+        socket.emit('sendMessageToRoom', action.payload);
+        break;
+      case createDirectConversation.type:
+        socket.emit('sendMessageToUser', action.payload);
         break;
       default:
         break;

@@ -13,7 +13,6 @@ export const getUserFriends = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("friends ==", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       console.log("error in friendsThunk", error);

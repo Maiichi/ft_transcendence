@@ -474,7 +474,7 @@ export class ChatGateway
           .to(value)
           .emit('roomLeaved', body.roomId);
       });
-      // Ihis event is for the userInRoom exculding the performer
+      // This event is for the userInRoom exculding the performer
       usersInRoom.forEach((userId) => {
         const socketsUser =
           this.userSockets.get(userId);
@@ -650,13 +650,37 @@ export class ChatGateway
     @MessageBody() body: SendMessageToUserDto,
   ) {
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      await this.messageService.sendMessageToUser(
-        body,
-        currentUser.intraId,
-      );
-      this.server.emit('sendMessageToUser');
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const message = await this.messageService.sendMessageToUser(body,currentUser.intraId);
+      const senderSockets: string[] = this.userSockets.get(currentUser.intraId);
+      const receiverSockets: string[] = this.userSockets.get(body.receiverId);
+      
+      const sender = await this.roomService.getMember(currentUser.intraId);
+      const receiver = await this.roomService.getMember(body.receiverId);
+      senderSockets.forEach((value) => {
+        let conversation = Object.assign(message, {receiver: receiver});
+        this.server.to(value).emit('conversationCreated', conversation);
+        this.server.to(value).emit('messageSentToUser', {
+          id: message.lastMessage.id,
+          content: message.lastMessage.content,
+          createdAt: message.lastMessage.createdAt,
+          chatId: message.id,
+          sender: sender
+        });
+      });
+      if (receiverSockets)
+        receiverSockets.forEach((value) => {
+          let conversation = Object.assign(message, {receiver: sender});
+          this.server.to(value).emit('conversationCreated', conversation);
+          this.server.to(value).emit('messageSentToUser', {
+            id: message.lastMessage.id,
+            content: message.lastMessage.content,
+            createdAt: message.lastMessage.createdAt,
+            chatId: message.id,
+            sender: sender
+          });
+        });
+
     } catch (error) {
       client.emit('sendMessageToUserError', {
         message: error.message,
@@ -672,13 +696,30 @@ export class ChatGateway
     @MessageBody() body: SendMessageToRoomDto,
   ) {
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      await this.messageService.sendMessageToRoom(
-        body,
-        currentUser.intraId,
-      );
-      this.server.emit('sendMessageToRoom');
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const message = await this.messageService.sendMessageToRoom(body,currentUser.intraId);
+      const member = await this.roomService.getMember(currentUser.intraId);
+      const roomUsers = await this.roomService.getRoomUsers(body.roomId);
+      
+      // Retrieve the user IDs of users in the room
+      const usersInRoom = roomUsers.map((user) => user.intraId);
+      // This event is for the userInRoom
+      usersInRoom.forEach((userId) => {
+        const socketsUser =
+          this.userSockets.get(userId);
+        if (socketsUser) {
+          socketsUser.forEach((socketId) => {
+            this.server.to(socketId).emit('messageSentToRoom', {
+                id: message.id,
+                content: message.content,
+                createdAt: message.createdAt,
+                chatId: message.chatId,
+                sender: member
+              });
+          });
+        }
+      });
+      // this.server.emit('sendMessageToRoom');
     } catch (error) {
       client.emit('sendMessageToRoomError', {
         message: error.message,

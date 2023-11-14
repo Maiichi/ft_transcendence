@@ -102,6 +102,12 @@ export const routes = [
     requireAuth: true,
   },
   {
+    path: "/verifyOtp",
+    element: <VerifyOtp />,
+    errorElement: <NotFoundError />,
+    requireAuth: true,
+  },
+  {
     path: "/login",
     element: <Login />,
     errorElement: <NotFoundError />,

@@ -1,13 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { User } from "../../components/types";
 import { getUserFriends } from "./friendThunk";
 
 export interface friendState {
-  friends: any;
+  friends: User | null;
   isLoading: boolean;
 }
 
 const initialState: friendState = {
-  friends: [],
+  friends: null,
   isLoading: false,
 };
 
@@ -25,12 +26,11 @@ export const friendSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getUserFriends.fulfilled, (state, action) => {
-        console.log("fullfiled payload ==", action.payload);
         state.friends = action.payload;
         state.isLoading = false;
       })
       .addCase(getUserFriends.rejected, (state, action) => {
-        state.friends = [];
+        state.friends = null;
         state.isLoading = false;
       });
   },

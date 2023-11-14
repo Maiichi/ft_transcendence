@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../core";
 import { I_DirectConversation, I_Message } from "../components/types";
 import { getDirectConversationMessages } from "./redux/directMessageThunk";
@@ -6,45 +6,66 @@ import { MessageBox } from "../components/MessageBox";
 import { DirectBoxHeader } from "./DirectBoxHeader";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
+import { createDirectConversation, sendMessageToUser } from "./redux/directMessageSlice";
+import { RightSide } from "./DirectBoxRight";
 
 export const DirectBox = (props: {
   directConversation: I_DirectConversation;
 }) => {
   // const { directConversation } = props;
-  const { direct } = useAppSelector((state) => state.chat.currentConversation);
-  const { conversations } = useAppSelector((state) => state.directMessage);
-
-  const index = conversations.findIndex((item: any) => item.id == direct.id);
   const dispatch = useAppDispatch();
-  const { directMessage, auth } = useAppSelector((state) => state);
+  const direct  = useAppSelector((state) => state.chat.currentConversation);
+  const user = useAppSelector((state) => state.auth.user);
+  const {conversations} = useAppSelector((state) => state.directMessage);
+  const [messageContent, setMessageContent] = useState<string>('');
+  const conversationMessages: [] = useAppSelector(
+    (state) => state.directMessage.conversationsContent
+  );
+  const index = conversations.findIndex((item: any) => item.id == direct.directConversationId);
+  
+  const handleSendMessage = (e: any) => {
+    e.preventDefault();
+      const messageData = {
+        receiverId: conversations[index].receiver.intraId,
+        content: messageContent,
+      };
+      dispatch(createDirectConversation(messageData));
+      setMessageContent('');
+  }
 
   useEffect(() => {
     // check if directConversation.id is not exist in the state
-    if (direct) dispatch(getDirectConversationMessages(direct.id));
-  }, []);
+    if (direct) dispatch(getDirectConversationMessages(direct.directConversationId));
+  }, [direct.directConversationId]);
   return (
     <>
       <ChatBox>
         <Header>
-          <DirectBoxHeader directConversation={direct} />
+          <DirectBoxHeader directConversation={conversations[index]} />
         </Header>
         <Wrapper>
           <ChatBoxTop>
-            {directMessage.conversationsContent.map((item: I_Message) => (
+            {conversationMessages.map((item: I_Message) => (
               <MessageBox
-                own={isConnectedUser(item.sender.intraId, auth.user.intraId)}
+                own={isConnectedUser(item.sender.intraId, user.intraId)}
                 data={item}
                 key={item.id}
               />
             ))}
           </ChatBoxTop>
         </Wrapper>
-        <ChatBoxBottom>
-          <ChatMessageInput placeholder="Write your message ..."></ChatMessageInput>
+        <ChatBoxBottom
+          onSubmit={handleSendMessage}
+        >
+          <ChatMessageInput 
+              placeholder="Write your message ..."
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+          />
           <ChatSubmitButtom>Send</ChatSubmitButtom>
         </ChatBoxBottom>
       </ChatBox>
-      <RightSide>onlineUsers</RightSide>
+      <RightSide />
     </>
   );
 };
@@ -84,7 +105,7 @@ const ChatBoxTop = styled.div`
   scrollbar-width: none; /* Firefox */
 `;
 
-const ChatBoxBottom = styled.div`
+const ChatBoxBottom = styled.form`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -106,9 +127,9 @@ const ChatSubmitButtom = styled.button`
   margin-right: 10px;
 `;
 
-const RightSide = styled.div`
-  flex: 2;
-  height: 100%;
-  /* border-radius: 20px; */
-  border-left: 1px solid #d7d7d7;
-`;
+// const RightSide = styled.div`
+//   flex: 2;
+//   height: 100%;
+//   /* border-radius: 20px; */
+//   border-left: 1px solid #d7d7d7;
+// `;

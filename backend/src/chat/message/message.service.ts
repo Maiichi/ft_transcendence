@@ -55,13 +55,13 @@ export class MessageService
             where: {
                 type: 'direct',
                 participants: {
-                    some: {
+                    every: {
                         intraId: { in: [sender.intraId, receiver.intraId] },
                     },
                 },
             },
         });
-
+        console.log('cons ===' , JSON.stringify(conversation));
         // If a conversation doesn't exist, create a new one
         if (!conversation) 
         {
@@ -86,8 +86,9 @@ export class MessageService
             chat: { connect: { id: conversation.id } },
             },
         });
+        const retreivedConversation = await this.getRetrivedConvesation(conversation.id, sender.intraId);
         console.log(`${sender.userName} has sent this message : "${message.content}" , to ${receiver.userName}`)
-        return message;
+        return retreivedConversation;
    }
 
 
@@ -436,6 +437,7 @@ export class MessageService
                                 lastName: true,
                                 status: true,
                                 avatar_url: true,
+                                intraId: true,
                             }
                         }
                     }
@@ -458,6 +460,7 @@ export class MessageService
                     createdAt: conversation.messages[0].createdAt,
                 },
                 receiver: {
+                    intraId: conversation.participants[0].intraId,
                     userName: conversation.participants[0].userName,
                     firstName: conversation.participants[0].firstName,
                     lastName: conversation.participants[0].lastName,
@@ -475,5 +478,46 @@ export class MessageService
         
 
         // res.send({data: conversations});
+    }
+
+
+    /********************* getRetrivedConvesation **********************/
+    async getRetrivedConvesation(conversationId: number, senderId: number)
+    {
+        const conversation = await this.prisma.conversation.findFirst({
+            where: {
+                id: conversationId,
+                type: 'direct'
+            },
+            select: {
+                    id: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    type: true,
+                    messages: {
+                        select: {
+                            id: true,
+                            content: true,
+                            createdAt: true,
+                        },
+                        orderBy: {
+                            createdAt: 'desc',
+                        },
+                        take: 1, // Retrieve only the last message
+                    },
+            }
+        });
+        const conversationData = {
+            id: conversation.id,
+            createdAt: conversation.createdAt,
+            updatedAt: conversation.updatedAt,
+            type: conversation.type,
+            lastMessage: {
+                id: conversation.messages[0].id,
+                content: conversation.messages[0].content,
+                createdAt: conversation.messages[0].createdAt,
+            }
+        };
+        return conversationData;
     }
 }
