@@ -4,12 +4,17 @@ import {
   Button as ButtonMui,
   ListItem as ListItemMui,
   List as ListMui,
+  ListItemIcon as ListItemIconMui,
 } from "@mui/material";
 
 /**
  * `NoPlayer`
  */
 const NoPlayer = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 10%;
   font-size: large;
   & span {
@@ -32,6 +37,12 @@ const Player = styled(ListItemMui)`
   border-radius: 8.295px;
   background-color: antiquewhite;
 `;
+const ListItemIcon = styled(ListItemIconMui)`
+  overflow-y: scroll;
+  /* max-width: 25%; */
+  @media (max-width: 426px) {
+  }
+`;
 /**
  * `Players` as  List Mui element
  */
@@ -46,11 +57,16 @@ const Players = styled(ListMui)`
   }
 `;
 
-export { Players, Player, NoPlayer, Avatar, Button };
-
-export {
-  ListItemIcon,
-  ListItemText,
-  ListItemAvatar,
-  Typography,
-} from "@mui/material";
+const styleL: Record<string, React.CSSProperties> = {
+  noplay: {
+    paddingBottom: "20px",
+    marginBottom: "10px",
+    minWidth: "70%",
+    boxShadow: "1px 1px 0 4px #ccc",
+    backgroundColor: "#eee",
+    textAlign: "center",
+  },
+};
+export { Players, Player, NoPlayer, Avatar, Button, ListItemIcon };
+export default styleL;
+export { ListItemText, ListItemAvatar, Typography } from "@mui/material";

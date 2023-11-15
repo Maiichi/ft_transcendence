@@ -74,9 +74,17 @@ export class UserService {
         const userExist = await this.findUserById(userId);
         if (userExist)
         {
-            // check the username provided is already exist or not
+            // check if the username provided is the defalut one for the current user
+            // && check the username provided is already exist or not
             const usernameExist = await this.findUserByUsername(dto.userName);
-            if (!usernameExist)
+            if (usernameExist && usernameExist.userName !== dto.userName)
+            {
+                return res.status(400).json({
+                    status : 400,
+                    message : `Username already exist !`
+                });
+            }
+            else
             {
                 // perform the update
                 const user = await this.prisma.user.update({
@@ -93,11 +101,6 @@ export class UserService {
                             data: user
                         });
             }
-            else
-                return res.status(400).json({
-                    status : 400,
-                    message : `Username already exist !`
-                });
         }
         else
         {
@@ -173,7 +176,9 @@ export class UserService {
         const user = await this.prisma.user.findUnique({
             where : {userName: username}
         });
-        return user ? true : false;
+        // if (!user)
+        //     return null;
+        return (user);
     }
     
     // function to get the user by ID
