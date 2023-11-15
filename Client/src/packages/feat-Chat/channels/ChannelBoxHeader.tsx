@@ -8,7 +8,7 @@ import Badge from "@mui/material/Badge";
 
 import { I_Room } from "../components/types";
 import styled from "styled-components";
-import { LeaveRoomModal } from "./modals/leaveChannelModal copy";
+import { LeaveRoomModal } from "./modals/leaveChannelModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { ModalComponent, useAppSelector } from "../../../core";
 import { UsersRoom } from "./modals/UsersRoomModal";

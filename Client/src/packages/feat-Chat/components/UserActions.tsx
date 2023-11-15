@@ -14,7 +14,7 @@ import { AddUserToRoomModal } from "../channels/modals/AddUserToRoomModal";
 import styled from "styled-components";
 import { changeMessageLength, checkUserRole, convertDateTime, isFriend, isOwner } from "./utils";
 import { UsersRoom } from "../channels/modals/UsersRoomModal";
-import { LeaveRoomModal } from "../channels/modals/leaveChannelModal copy";
+import { LeaveRoomModal } from "../channels/modals/leaveChannelModal";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
 import CircleIcon from "@mui/icons-material/Circle";
 import ClearIcon from "@mui/icons-material/Clear";
