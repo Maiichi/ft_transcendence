@@ -4,12 +4,13 @@ import { ChannelBox } from "./channels/ChannelBox";
 import { DirectBox } from "./directMessages/DirectBox";
 import { useAppSelector } from "../../core";
 import { UserActions } from "./components/UserActions";
+import { useSize } from "../../core/utils/hooks";
 
 const ChatBox = () => {
   const { chat } = useAppSelector((state) => state);
 
   if (chat.currentConversation?.type === "direct") {
-    return <DirectBox directConversation={chat.currentConversation.direct} />;
+    return <DirectBox />;
   } else if (chat.currentConversation?.type === "channel") {
     return <ChannelBox />;
   } else
@@ -21,28 +22,31 @@ const ChatBox = () => {
 };
 export const Chat = () => {
   const { displayUserActions } = useAppSelector((state) => state.core);
+  const { discussionsDisplay } = useAppSelector((state) => state.chat);
+
+  const { isMobile } = useSize();
   console.log(displayUserActions);
   return (
     <Root>
-      <ChatDiscussion />
-      <ChatBox />
-      {displayUserActions && <UserActions />}
+      {((isMobile && discussionsDisplay) || !isMobile) && <ChatDiscussion />}
+      {((isMobile && !discussionsDisplay) || !isMobile) && <ChatBox />}
+
+      {!isMobile && displayUserActions && <UserActions />}
     </Root>
   );
 };
 
 const Root = styled.div`
-  margin: 1vw;
   display: flex;
   background-color: rgb(255, 255, 255);
   border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 0.25rem;auto;
-  height: 800px;
-  border-radius: 20px:
-
+  border-radius: 0.25rem;
+  margin: Opx 1Opx;
+  height: 100%;
 `;
 const BoxNoConversation = styled.div`
   display: grid;
   place-content: center;
   flex: 5;
+  border-left: 1px solid rgb(215, 215, 215);
 `;

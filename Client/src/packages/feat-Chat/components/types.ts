@@ -78,6 +78,7 @@ export interface Action {
     | "play"
     | "addFriend"
     | "blockFriend"
+    | "viewProfile"
     | "inviteToRoom";
   component: JSX.Element;
   isFriend?: boolean;

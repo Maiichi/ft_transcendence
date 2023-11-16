@@ -40,21 +40,21 @@ export const isOwner = (membership: I_Room, userId: number) => {
 };
 
 export const isFriend = (friends: Array<User>, userId: number) => {
-  console.log('userId', userId);
+  console.log("userId", userId);
   const isFriend = friends.find((member) => member.intraId === userId);
   return isFriend ? true : false;
 };
 
 export const checkUserRole = (membership: I_Room, userId: number) => {
-  const member = membership.members.find(
+  const member = membership?.members.find(
     (member) => member.user.intraId === userId
   );
   switch (true) {
-    case member?.isOwner: 
-      return "owner"
+    case member?.isOwner:
+      return "owner";
     case member?.isAdmin:
       return "admin";
     default:
       return "member";
   }
-}
+};
