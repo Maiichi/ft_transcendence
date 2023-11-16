@@ -10,11 +10,18 @@ import {
 import Login from "../packages/feat-Auth/Login";
 import FirstLogin from "../packages/feat-Auth/components/FirstLogin";
 import VerifyOtp from "./VerifyOtp";
-import { Search } from "../packages/feat-Search";
+import { Search } from "../packages/feat-Search/Search";
 import { Layout } from "./utils";
 import { NotFoundError } from "./utils/components/errors";
+import { LandingPage } from "../packages/feat-landing";
 
 export const routes = [
+  {
+    path: "/overView",
+    element: <LandingPage />,
+    errorElement: <NotFoundError />,
+    requireAuth: false,
+  },
   {
     path: "/search",
     element: (
