@@ -1,119 +1,172 @@
-import styled from "styled-components";
-import { Players } from "./Leaderboard.style";
-import { Grid } from "@mui/material";
+import { SxProps } from "@mui/material";
+import styled, { css } from "styled-components";
 
-const TopPlayers = styled(Players)``;
-const Score = styled.div`
-  /* display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: ${(p) => p.color} 0px 0px 8px 0px;
-  margin: 10px;
-  border-radius: 8px; */
+const cardstyle = css`
+  margin: 2%;
+  /* margin-top: 0; */
+  /* padding-top: 0; */
+  max-width: 40%;
+  @media (max-width: 940px) {
+    max-width: none;
+  }
 `;
-const RightCard = styled.div`
-  /* display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 100%;
-  @media (max-width: 768px) {
-    flex: 66%;
-  } */
-`;
-const Achievements = styled.div`
-  /* margin-right: 5px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  -webkit-box-align: center;
-  align-items: center;
-  text-align: center;
-  padding: 10px;
-  overflow-y: scroll;
-  gap: 40px;
-  @media (max-width: 426px) {
-
-  } */
-`;
-const Achievement = styled.div`
-  /* display: flex;
-  background: ${(p) => p.color};
-  margin: 10px;
-  justify-content: space-around;
-  align-items: center; */
-`;
-const MatchHistory = styled.div`
-  /* margin-right: 5px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-  border-radius: 20px;
-  -webkit-box-align: center;
-  padding: 10px;
-  text-align: center;
-  @media (max-width: 426px) {
-  } */
-`;
-/**
- *  `CardAvatar2`: div slector
- */
-const CardAvatar2 = styled.div`
-  /* margin-right: 5px;
-    background-color: rgb(255, 255, 255);
-    color: rgb(17, 25, 39);
-    box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
-    border-radius: 20px;
-    -webkit-box-align: center;
-    align-items: center;
-    text-align: center;
-    display: flex;
-    padding: 0 10px;
-    gap: 40px;
-    @media (max-width: 426px) {
-    } */
-`;
-/**
- * `Left Card`: div selector
- *
- * Contains:
- *  - CardAvatar2
- *  - Achievements
- */
-const Port = styled.div`
-  /* flex: 100%;
+const smallCard = styled.data`
   display: flex;
+  justify-content: start;
+  align-items: center;
   flex-direction: column;
-  gap: 10px;
-  @media (max-width: 768px) {
-    flex: 30%;
-  } */
+  min-width: 100px;
+  max-width: 150px;
+  /* max-height: 110px; */
+  padding-top: 5px;
 `;
 /**
- *  \<Cards> div Selector
- *
- *  Children:
- *    @see LeftCard
- *    @see RightCard
- * */
-const Cards = styled(Grid)`
-  /* padding: 5px;
+ * 1-main component to the User Profile
+ */
+const ProfileCards = styled.main`
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px 10px;
+  align-content: flex-start; /* Ensure items align to the start of the container */
+  /**  */
+  & datalist,
+  data,
+  div {
+    /* border: 1px solid black; */
+  }
+  max-width: 100%;
+  overflow-x: scroll;
+`;
+/**
+ * `Usercard` global information of the user as <data />
+ */
+const Usercard = styled.data`
+  display: flex;
   flex-direction: row;
-  @media (max-width: 768px) {
-    flex-direction: column;
-  } */
+  justify-content: space-between;
+  align-items: start;
+  padding-right: 30px;
+  ${cardstyle}
+  @media (max-width: 940px) {
+  }
 `;
+const Coalition = styled.data`
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  margin: 5px;
+  min-width: 20%;
+  @media (max-width: 540px) {
+    display: none;
+  }
+`;
+const Board = styled.datalist`
+  display: flex;
+  flex-direction: column;
+  min-width: 45%;
+  justify-content: center;
+  ${cardstyle}
+`;
+const Matchshistory = styled.datalist`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 45px 10px;
+  justify-content: center;
+  padding-bottom: 32px;
+  ${cardstyle}
+`;
+const Match = styled(smallCard)<{ win: any }>`
+  box-shadow: 2px 1px 4px 2px ${(props) => props.win};
+  border-radius: 10px;
+  max-height: 145px;
+`;
+const Achievemets = styled.datalist`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 10px;
+  justify-content: center;
+  ${cardstyle}
+  @media (max-width: 940px) {
+  }
+`;
+const Achiv = styled(smallCard)`
+  height: 80px;
+`;
+const styleP: Record<string, React.CSSProperties | SxProps> = {
+  user: {
+    display: "flex",
+    flexDirection: "column",
+    minWidth: "80%",
+    marginTop: "6%",
+  },
+  div2: {
+    display: "flex",
+    justifyContent: "space-around",
+    padding: "0 20px 0 20px",
+  },
+  div3: {
+    display: "flex",
+  },
+  div4: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "start",
+  },
+  div5: {
+    fontSize: "12px",
+  },
+  button1: {
+    padding: "0",
+    textTransform: "lowercase",
+  },
+  box1: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "start",
+  },
+  box2: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "end",
+    textAlign: "center",
+    padding: "0 2% 0 10%",
+  },
+  coalImg: {
+    width: 80,
+    height: 120,
+  },
+  userAvatar: {
+    width: 80,
+    height: 80,
+    mr: 2,
+  },
+  achivlogo: {
+    width: "40px",
+    height: "40px",
+  },
+  userName: {},
+  cardName: {
+    width: "100%",
+    textAlignLast: "center",
+    fontSize: "19px",
+    fontFamily: "monospace",
+    fontWeight: "bolder",
+  },
+};
 
+export default styleP;
 export {
-  Cards,
-  Port as LeftCard,
-  CardAvatar2,
-  MatchHistory,
-  Achievement,
-  Achievements,
-  RightCard,
-  TopPlayers,
-  Score,
+  Board,
+  ProfileCards,
+  Usercard,
+  Coalition,
+  Matchshistory,
+  Match,
+  Achievemets,
+  Achiv,
 };

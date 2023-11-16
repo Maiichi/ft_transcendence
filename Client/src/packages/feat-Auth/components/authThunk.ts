@@ -53,7 +53,7 @@ export const updateUserName = createAsyncThunk(
                 },
                 data: { userName: payload.newUsername },
             });
-
+            
             payload.user = resp.data;
 
             return payload;
