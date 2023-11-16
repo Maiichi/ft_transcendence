@@ -13,38 +13,34 @@ import { Avatar, Badge, Divider } from "@mui/material";
 import { AddUserToRoomModal } from "../channels/modals/AddUserToRoomModal";
 import styled from "styled-components";
 import { changeMessageLength, checkUserRole, convertDateTime, isFriend, isOwner } from "./utils";
-import { UsersRoom } from "../channels/modals/UsersRoomModal";
-import { LeaveRoomModal } from "../channels/modals/leaveChannelModal";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
 import CircleIcon from "@mui/icons-material/Circle";
 import ClearIcon from "@mui/icons-material/Clear";
-import ViewCompactIcon from "@mui/icons-material/ViewCompact";
-import MessageIcon from "@mui/icons-material/Message";
 import EmailIcon from "@mui/icons-material/Email";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SpeakerNotesOffIcon from "@mui/icons-material/SpeakerNotesOff";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import PersonIcon from "@mui/icons-material/Person";
 import GamesIcon from "@mui/icons-material/Games";
+import { SetChannelAdmin } from "../channels/modals/SetChannelAdmin";
 
 const Icons: Array<Action> = [
   {
     name: "Ban from channel",
-    type: "banFromRoom",
+    type: "banFromChannel",
     component: <RemoveCircleOutlineIcon />,
     role: ["admin", "owner"]
   },
   {
     name: "Mute",
-    type: "muteFromRoom",
+    type: "muteFromChannel",
     component: <SpeakerNotesOffIcon />,
     role: ["admin", "owner"]
   },
   {
     name: "Give administrator privileges",
-    type: "setAdminRoom",
+    type: "setAdminChannel",
     component: <AdminPanelSettingsIcon />,
     role: ["owner"]
   },
@@ -79,13 +75,26 @@ const Icons: Array<Action> = [
   },
   {
     name: "Invite to Room",
-    type: "inviteToRoom",
+    type: "inviteToChannel",
     component: <PersonOffIcon />,
     isFriend: true,
     role: ["admin", "owner"]
   },
 ];
 
+
+
+const getDataForModal = (iconType: any, room: I_Room, selectedUserId: number) => {
+  switch (iconType) {
+    case 'setAdminChannel':
+      return {
+        userId: selectedUserId,
+        roomId: room.id,
+      };
+    default:
+      return null;
+  }
+};
 
 export const UserActions = () => {
   const user = useAppSelector((state) => state.auth.user);
@@ -94,39 +103,93 @@ export const UserActions = () => {
   const { memberships } = useAppSelector((state) => state.channels);
   const friends : Array<User> = useAppSelector((state) => state.friends.friends);
   const roomIndex = memberships.findIndex((item: any) => item.id == roomId);
+  const selectdUserIndex = memberships[roomIndex].members.findIndex((member: any) => selectedUserId === member.user.intraId);
+  const selectedUser = memberships[roomIndex].members[selectdUserIndex];
+
+  const [open, setOpen] = useState(false);
+  const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
+    undefined
+  );
+  const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+  const handleClickModal = (
+    childModal: JSX.Element,
+    closeType?: "auto" | "click"
+  ) => {
+    console.log('handleClickModal called !!')
+    setCloseType(closeType);
+    setOpen(true);
+    setChildModal(childModal);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const checkConstraints = (selectorId: number, selectedId: number, Icon: Action) => {
-      const role = checkUserRole(memberships[roomIndex], selectorId);
-      console.log('isFriend ==', Icon.isFriend);
-      let checkFriend = true;
-      if (typeof(Icon.isFriend) != "undefined")
-      {
-        console.log('dkhal ', Icon.name);
-        checkFriend = isFriend(friends, selectedId) == Icon.isFriend 
-      }
+    const role = checkUserRole(memberships[roomIndex], selectorId);
+    console.log('isFriend ==', Icon.isFriend);
+    let checkFriend = true;
+    if (typeof(Icon.isFriend) != "undefined")
+    {
+      console.log('dkhal ', Icon.name);
+      checkFriend = isFriend(friends, selectedId) == Icon.isFriend 
+    }
 
-      return Icon.role.includes(role) && checkFriend;
+    return Icon.role.includes(role) && checkFriend;
   };
+
+  const getModalComponent = (iconType: any, data: any) => {
+    switch (iconType) {
+      case 'setAdminChannel':
+        return <SetChannelAdmin data={data} handleClose={handleClose} />;
+      default:
+        return <></>;
+    }
+  };
+
+  const handleClickIcon = (iconType: any , room: I_Room, selectedUserId: number) => {
+    const dataForModal = getDataForModal(iconType, room, selectedUserId);
+    const modalComponent: JSX.Element = getModalComponent(iconType, dataForModal);
+    handleClickModal(modalComponent);
+  };
+
+  let color, status ;
+  if (selectedUser.user.status == "ONLINE")
+  {
+    color = "green";
+    status = "Available";
+  }
+  else {
+    color = "grey"
+    status = "Not Available";
+  }
+
   const dispatch = useAppDispatch();
 
   return (
     <RightSide>
+      <ModalComponent
+        open={open}
+        ChildComponent={ChildModal}
+        handleClose={handleClose}
+        closeType={closeType}
+      />
       <ClearIcon onClick={() => dispatch(setDisplayUserActions(false))} />
-      <h2>ibouroum</h2>
+      <h2>{selectedUser.user.userName}</h2>
       <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-      <CircleIcon sx={{ color: "green" }} />
-      <p>Available</p>
+      <CircleIcon sx={{ color: color }} />
+      <p>{status}</p>
       <Divider variant="inset" />
       <IconsHolder>
-        {Icons.map((icon: Action) => (
-          <>
+        {Icons.map((icon: Action, index: number) => (
+          <div key={index}>
             {checkConstraints(user.intraId, selectedUserId, icon) && 
-              <IconHolder>
+              <IconHolder 
+                onClick={() => handleClickIcon(icon.type, memberships[roomIndex], selectedUserId)}>
                 {icon.component}
                 {icon.name}
               </IconHolder>
             }
-          </>
+          </div>
         ))}
       </IconsHolder>
     </RightSide>
@@ -145,11 +208,16 @@ const RightSide = styled.div`
 
 const IconHolder = styled.div`
   display: flex;
-  margin-top: 15px;
+  margin: 10px 0px 10px 0px;
   gap: 5px;
+  cursor: pointer;
+  &:hover {
+    background-color: rgb(245, 246, 247)
+  }
 `;
 
-const IconsHolder = styled.div``;
+const IconsHolder = styled.div`
+`;
 
 const Tab = styled.div`
   display: flex;

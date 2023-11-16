@@ -108,7 +108,10 @@ const FullScreenDialog: React.FC<any> = ({ open, setOpen, action }) => {
                         <CloseIcon />
                     </IconButton>
                     <Typography
-                        sx={{ ml: 2, flex: 1 }}
+                        sx={{ 
+                            ml: 2, 
+                            flex: 1,
+                        }}
                         variant="h6"
                         component="div"
                     >
@@ -122,7 +125,8 @@ const FullScreenDialog: React.FC<any> = ({ open, setOpen, action }) => {
             </AppBar>
             <Box
                 sx={{
-                    display: "flex-col",
+                    display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
                     p: 1,
@@ -163,6 +167,7 @@ const FullScreenDialog: React.FC<any> = ({ open, setOpen, action }) => {
                     errorMessage={verifyError}
                 />
                 <Button
+                    style={{marginTop: '10px', textAlign: 'center'}}
                     type="submit"
                     variant="contained"
                     color="primary"

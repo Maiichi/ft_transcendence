@@ -19,6 +19,8 @@ import {
   addUserToRoom,
   sendMessageToRoom,
   addMessageToRoom,
+  setAdminRoom,
+  addAdminToRoom,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import { setOpenErrorSnackbar, setServerError } from "../CoreSlice";
 import {
@@ -96,6 +98,10 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             console.log('data coming from (messageSentToUser) =', data);
             dispatch(addMessageToConversation(data));
             
+          });
+          socket.on('AdminSettedToRoom', (data) => {
+            console.log('data coming from (AdminSettedToRoom) =', data);
+            dispatch(addAdminToRoom(data));
           })
         } catch (error) {
           console.log(error);
@@ -124,6 +130,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case createDirectConversation.type:
         socket.emit('sendMessageToUser', action.payload);
+        break;
+      case setAdminRoom.type:
+        socket.emit('setRoomAdmin', action.payload);
         break;
       default:
         break;

@@ -563,18 +563,26 @@ export class ChatGateway
 
   // set room Admins
   @SubscribeMessage('setRoomAdmin')
-  async setRoomAdmin(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() body: SetRoomAdminDto,
-  ) {
+  async setRoomAdmin(@ConnectedSocket() client: Socket, @MessageBody() body: SetRoomAdminDto) {
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      await this.roomService.setAdminToRoom(
-        body,
-        currentUser.intraId,
-      );
-      this.server.emit('setRoomAdmin');
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const response = await this.roomService.setAdminToRoom(body, currentUser.intraId);
+      console.log('resp ==', response);
+      const roomUsers = await this.roomService.getRoomUsers(body.roomId);
+      
+      // Retrieve the user IDs of users in the room
+      const usersInRoom = roomUsers.map((user) => user.intraId);
+      // This event is for the userInRoom
+      usersInRoom.forEach((userId) => {
+        const socketsUser =
+          this.userSockets.get(userId);
+        if (socketsUser) {
+          socketsUser.forEach((socketId) => {
+            this.server.to(socketId).emit('AdminSettedToRoom', response)
+          });
+        }
+      });
+      // this.server.emit('AdminSettedToRoom', response); 
     } catch (error) {
       client.emit('setRoomAdminError', {
         message: error.message,
@@ -771,6 +779,12 @@ export class ChatGateway
     }
   }
   // ban member
+  @SubscribeMessage('BanMemberFromRoom')
+  async BanMember (@ConnectedSocket() client: Socket, @MessageBody() body)
+  {
+    
+  }
+
 
   @SubscribeMessage('sendFriendRequest')
   async sendFriendRequest(

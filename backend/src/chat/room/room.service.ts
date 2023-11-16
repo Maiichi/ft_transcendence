@@ -619,14 +619,14 @@ export class RoomService {
       throw new WsException(
         `userId = ${body.userId} does not exist !`,
       );
-    // check if the user is who wants to set an admin is also an admin
-    const isAdmin = await this.isAdmin(
+    // check if the user is who wants to set an admin is the owner
+    const isOwner = await this.isOwner(
       userId,
       room.id,
     );
-    if (!isAdmin)
+    if (!isOwner)
       throw new WsException(
-        `User with intraId ${userId} is not an admin in the room, so he can't set an admin`,
+        `User with intraId ${userId} is not the owner of the room, so he can't set an admin`,
       );
     // check if the user is already a member in this room
     // getMemberShip
@@ -640,7 +640,7 @@ export class RoomService {
         `no membership between ${body.userId} and ${room.id}`,
       );
     // set new Admin
-    const newAdmin =
+
       await this.prisma.membership.update({
         where: {
           id: membership.id,
@@ -650,7 +650,7 @@ export class RoomService {
         },
       });
     console.log('Admin setted successfully');
-    return newAdmin;
+    return {roomId: room.id, userId: user.intraId};
   }
 
   // TODO: need improvement || need to remove the user kicked from the room conversation
@@ -1028,6 +1028,8 @@ export class RoomService {
                       lastName: true,
                       userName: true,
                       intraId: true,
+                      avatar_url: true,
+                      status: true,
                     },
                   },
                 },

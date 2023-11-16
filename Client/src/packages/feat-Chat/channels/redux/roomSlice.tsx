@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import { getChatRoomMessages, getMemberships } from "./roomThunk";
 import { I_ConversationMessages, I_Message, I_Room } from "../../components/types";
+import { I_Member } from "../../../feat-Search/types/types";
 
 export interface roomState {
   memberships: I_Room[];
@@ -107,8 +108,23 @@ export const roomSlice = createSlice({
       state.isLoading = false;
     },
     addMessageToRoom: (state, action: PayloadAction<I_ConversationMessages>) => {
-        state.messages.push(action.payload);
-    }
+      state.messages.push(action.payload);
+    },
+    setAdminRoom: (state, action: PayloadAction<any>) => {
+      state.isLoading = false;
+    },
+    addAdminToRoom: (state, action: PayloadAction<any>) => {
+      const { userId, roomId } = action.payload;
+      const roomIndex = state.memberships.findIndex(
+        (item) => (item.id === roomId)
+      );
+      const userIndex = state.memberships[roomIndex].members.findIndex(
+        (member) => (member.user.intraId === userId) );
+      
+      console.log('userIndex (slice) ', userIndex);
+      console.log('isAdmin ==' , state.memberships[roomIndex].members[userIndex].isAdmin);
+      state.memberships[roomIndex].members[userIndex].isAdmin = true;
+    } 
   },
   extraReducers: (builder) => {
     builder
@@ -151,6 +167,8 @@ export const {
   updateRoomSucess,
   sendMessageToRoom,
   addMessageToRoom,
+  setAdminRoom,
+  addAdminToRoom,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

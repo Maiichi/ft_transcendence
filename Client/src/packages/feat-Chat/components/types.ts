@@ -31,6 +31,7 @@ export interface User {
   lastName: string;
   userName: string;
   intraId: number;
+  status: string;
   avatar_url?: string;
 }
 
@@ -70,15 +71,15 @@ export interface I_ConversationMessages {
 export interface Action {
   name: string;
   type:
-    | "banFromRoom"
-    | "muteFromRoom"
-    | "setAdminRoom"
-    | "unSetAdminRoom"
+    | "banFromChannel"
+    | "muteFromChannel"
+    | "setAdminChannel"
+    | "unSetAdminChannel"
     | "message"
     | "play"
     | "addFriend"
     | "blockFriend"
-    | "inviteToRoom";
+    | "inviteToChannel";
   component: JSX.Element;
   isFriend?: boolean;
   role: Role[];

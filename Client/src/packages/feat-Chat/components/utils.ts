@@ -39,6 +39,14 @@ export const isOwner = (membership: I_Room, userId: number) => {
   return member?.isOwner ? true : false;
 };
 
+export const isAdmin = (memberships: I_Room, userId: number) => {
+  const member = memberships.members.find(
+    (member) => member.user.intraId === userId
+  );
+
+  return member?.isAdmin ? true : false;
+}
+
 export const isFriend = (friends: Array<User>, userId: number) => {
   console.log('userId', userId);
   const isFriend = friends.find((member) => member.intraId === userId);
