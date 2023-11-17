@@ -17,4 +17,5 @@ export const ChannelBox = () => {
 const ChatBox = styled.div`
   flex: 5.5;
   height: 100%;
+  border-left: 1px solid rgb(215, 215, 215);
 `;

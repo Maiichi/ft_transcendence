@@ -6,36 +6,40 @@ import { MessageBox } from "../components/MessageBox";
 import { DirectBoxHeader } from "./DirectBoxHeader";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
-import { createDirectConversation, sendMessageToUser } from "./redux/directMessageSlice";
+import {
+  createDirectConversation,
+  sendMessageToUser,
+} from "./redux/directMessageSlice";
 import { RightSide } from "./DirectBoxRight";
 
-export const DirectBox = (props: {
-  directConversation: I_DirectConversation;
-}) => {
+export const DirectBox = () => {
   // const { directConversation } = props;
   const dispatch = useAppDispatch();
-  const direct  = useAppSelector((state) => state.chat.currentConversation);
+  const direct = useAppSelector((state) => state.chat.currentConversation);
   const user = useAppSelector((state) => state.auth.user);
-  const {conversations} = useAppSelector((state) => state.directMessage);
-  const [messageContent, setMessageContent] = useState<string>('');
+  const { conversations } = useAppSelector((state) => state.directMessage);
+  const [messageContent, setMessageContent] = useState<string>("");
   const conversationMessages: [] = useAppSelector(
     (state) => state.directMessage.conversationsContent
   );
-  const index = conversations.findIndex((item: any) => item.id == direct.directConversationId);
-  
+  const index = conversations.findIndex(
+    (item: any) => item.id == direct.directConversationId
+  );
+
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-      const messageData = {
-        receiverId: conversations[index].receiver.intraId,
-        content: messageContent,
-      };
-      dispatch(createDirectConversation(messageData));
-      setMessageContent('');
-  }
+    const messageData = {
+      receiverId: conversations[index].receiver.intraId,
+      content: messageContent,
+    };
+    dispatch(createDirectConversation(messageData));
+    setMessageContent("");
+  };
 
   useEffect(() => {
     // check if directConversation.id is not exist in the state
-    if (direct) dispatch(getDirectConversationMessages(direct.directConversationId));
+    if (direct)
+      dispatch(getDirectConversationMessages(direct.directConversationId));
   }, [direct.directConversationId]);
   return (
     <>
@@ -54,18 +58,16 @@ export const DirectBox = (props: {
             ))}
           </ChatBoxTop>
         </Wrapper>
-        <ChatBoxBottom
-          onSubmit={handleSendMessage}
-        >
-          <ChatMessageInput 
-              placeholder="Write your message ..."
-              value={messageContent}
-              onChange={(e) => setMessageContent(e.target.value)}
+        <ChatBoxBottom onSubmit={handleSendMessage}>
+          <ChatMessageInput
+            placeholder="Write your message ..."
+            value={messageContent}
+            onChange={(e) => setMessageContent(e.target.value)}
           />
           <ChatSubmitButtom>Send</ChatSubmitButtom>
         </ChatBoxBottom>
       </ChatBox>
-      <RightSide />
+      {/* <RightSide /> */}
     </>
   );
 };
@@ -73,6 +75,7 @@ export const DirectBox = (props: {
 const ChatBox = styled.div`
   flex: 5.5;
   height: 100%;
+  border-left: 1px solid rgb(215, 215, 215);
 `;
 
 const Header = styled.div`
