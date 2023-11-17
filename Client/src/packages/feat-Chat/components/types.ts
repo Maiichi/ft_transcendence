@@ -79,7 +79,9 @@ export interface Action {
     | "play"
     | "addFriend"
     | "blockFriend"
-    | "inviteToChannel";
+    | "inviteToChannel"
+    | "viewProfile"
+    | "inviteToRoom";
   component: JSX.Element;
   isFriend?: boolean;
   role: Role[];

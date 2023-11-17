@@ -12,7 +12,15 @@ import {
 import { Avatar, Badge, Divider } from "@mui/material";
 import { AddUserToRoomModal } from "../channels/modals/AddUserToRoomModal";
 import styled from "styled-components";
-import { changeMessageLength, checkUserRole, convertDateTime, isFriend, isOwner } from "./utils";
+import {
+  changeMessageLength,
+  checkUserRole,
+  convertDateTime,
+  isFriend,
+  isOwner,
+} from "./utils";
+import { UsersRoom } from "../channels/modals/UsersRoomModal";
+import { LeaveRoomModal } from "../channels/modals/leaveChannelModal";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
 import CircleIcon from "@mui/icons-material/Circle";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -24,27 +32,33 @@ import SpeakerNotesOffIcon from "@mui/icons-material/SpeakerNotesOff";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import GamesIcon from "@mui/icons-material/Games";
 import { SetChannelAdmin } from "../channels/modals/SetChannelAdmin";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const Icons: Array<Action> = [
   {
     name: "Ban from channel",
     type: "banFromChannel",
     component: <RemoveCircleOutlineIcon />,
-    role: ["admin", "owner"]
+    role: ["admin", "owner"],
   },
   {
     name: "Mute",
     type: "muteFromChannel",
     component: <SpeakerNotesOffIcon />,
-    role: ["admin", "owner"]
+    role: ["admin", "owner"],
   },
   {
     name: "Give administrator privileges",
     type: "setAdminChannel",
     component: <AdminPanelSettingsIcon />,
-    role: ["owner"]
+    role: ["owner"],
   },
-
+  {
+    name: "View profile",
+    type: "viewProfile",
+    component: <AccountCircleIcon />,
+    role: ["member", "admin", "owner"],
+  },
   {
     name: "Send Message",
     type: "message",
@@ -57,36 +71,38 @@ const Icons: Array<Action> = [
     type: "play",
     component: <GamesIcon />,
     isFriend: true,
-    role: ["member", "admin", "owner"]
+    role: ["member", "admin", "owner"],
   },
   {
     name: "Add to friend list",
     type: "addFriend",
     component: <PersonAddIcon />,
     isFriend: false,
-    role : ["member", "admin", "owner"]
+    role: ["member", "admin", "owner"],
   },
   {
     name: "Block",
     type: "blockFriend",
     component: <PersonOffIcon />,
     isFriend: true,
-    role: ["member", "admin", "owner"]
+    role: ["member", "admin", "owner"],
   },
   {
     name: "Invite to Room",
     type: "inviteToChannel",
     component: <PersonOffIcon />,
     isFriend: true,
-    role: ["admin", "owner"]
+    role: ["admin", "owner"],
   },
 ];
 
-
-
-const getDataForModal = (iconType: any, room: I_Room, selectedUserId: number) => {
+const getDataForModal = (
+  iconType: any,
+  room: I_Room,
+  selectedUserId: number
+) => {
   switch (iconType) {
-    case 'setAdminChannel':
+    case "setAdminChannel":
       return {
         userId: selectedUserId,
         roomId: room.id,
@@ -98,13 +114,13 @@ const getDataForModal = (iconType: any, room: I_Room, selectedUserId: number) =>
 
 export const UserActions = () => {
   const user = useAppSelector((state) => state.auth.user);
-  const {roomId} = useAppSelector((state) => state.chat.currentConversation);
-  const {selectedUserId} = useAppSelector((state) => state.chat);
+  const { roomId } = useAppSelector((state) => state.chat.currentConversation);
+  const { selectedUser } = useAppSelector((state) => state.chat);
   const { memberships } = useAppSelector((state) => state.channels);
-  const friends : Array<User> = useAppSelector((state) => state.friends.friends);
+  const friends: Array<User> = useAppSelector((state) => state.friends.friends);
   const roomIndex = memberships.findIndex((item: any) => item.id == roomId);
-  const selectdUserIndex = memberships[roomIndex].members.findIndex((member: any) => selectedUserId === member.user.intraId);
-  const selectedUser = memberships[roomIndex].members[selectdUserIndex];
+  // const selectdUserIndex = memberships[roomIndex].members.findIndex((member: any) => selectedUserId === member.user.intraId);
+  // const selectedUserInfo = memberships[roomIndex].members[selectdUserIndex];
 
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
@@ -115,7 +131,7 @@ export const UserActions = () => {
     childModal: JSX.Element,
     closeType?: "auto" | "click"
   ) => {
-    console.log('handleClickModal called !!')
+    console.log("handleClickModal called !!");
     setCloseType(closeType);
     setOpen(true);
     setChildModal(childModal);
@@ -124,14 +140,16 @@ export const UserActions = () => {
     setOpen(false);
   };
 
-  const checkConstraints = (selectorId: number, selectedId: number, Icon: Action) => {
+  const checkConstraints = (
+    selectorId: number,
+    selectedId: number,
+    Icon: Action
+  ) => {
     const role = checkUserRole(memberships[roomIndex], selectorId);
-    console.log('isFriend ==', Icon.isFriend);
+
     let checkFriend = true;
-    if (typeof(Icon.isFriend) != "undefined")
-    {
-      console.log('dkhal ', Icon.name);
-      checkFriend = isFriend(friends, selectedId) == Icon.isFriend 
+    if (typeof Icon.isFriend != "undefined") {
+      checkFriend = isFriend(friends, selectedId) == Icon.isFriend;
     }
 
     return Icon.role.includes(role) && checkFriend;
@@ -139,27 +157,32 @@ export const UserActions = () => {
 
   const getModalComponent = (iconType: any, data: any) => {
     switch (iconType) {
-      case 'setAdminChannel':
+      case "setAdminChannel":
         return <SetChannelAdmin data={data} handleClose={handleClose} />;
       default:
         return <></>;
     }
   };
 
-  const handleClickIcon = (iconType: any , room: I_Room, selectedUserId: number) => {
+  const handleClickIcon = (
+    iconType: any,
+    room: I_Room,
+    selectedUserId: number
+  ) => {
     const dataForModal = getDataForModal(iconType, room, selectedUserId);
-    const modalComponent: JSX.Element = getModalComponent(iconType, dataForModal);
+    const modalComponent: JSX.Element = getModalComponent(
+      iconType,
+      dataForModal
+    );
     handleClickModal(modalComponent);
   };
 
-  let color, status ;
-  if (selectedUser.user.status == "ONLINE")
-  {
+  let color, status;
+  if (selectedUser.status == "ONLINE") {
     color = "green";
     status = "Available";
-  }
-  else {
-    color = "grey"
+  } else {
+    color = "grey";
     status = "Not Available";
   }
 
@@ -174,22 +197,29 @@ export const UserActions = () => {
         closeType={closeType}
       />
       <ClearIcon onClick={() => dispatch(setDisplayUserActions(false))} />
-      <h2>{selectedUser.user.userName}</h2>
+      <h2>{selectedUser.userName}</h2>
       <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
       <CircleIcon sx={{ color: color }} />
       <p>{status}</p>
       <Divider variant="inset" />
       <IconsHolder>
-        {Icons.map((icon: Action, index: number) => (
-          <div key={index}>
-            {checkConstraints(user.intraId, selectedUserId, icon) && 
-              <IconHolder 
-                onClick={() => handleClickIcon(icon.type, memberships[roomIndex], selectedUserId)}>
+        {Icons.map((icon: Action) => (
+          <>
+            {checkConstraints(user.intraId, selectedUser.intraId, icon) && (
+              <IconHolder
+                onClick={() =>
+                  handleClickIcon(
+                    icon.type,
+                    memberships[roomIndex],
+                    selectedUser.intraId
+                  )
+                }
+              >
                 {icon.component}
                 {icon.name}
               </IconHolder>
-            }
-          </div>
+            )}
+          </>
         ))}
       </IconsHolder>
     </RightSide>
@@ -212,12 +242,11 @@ const IconHolder = styled.div`
   gap: 5px;
   cursor: pointer;
   &:hover {
-    background-color: rgb(245, 246, 247)
+    background-color: rgb(245, 246, 247);
   }
 `;
 
-const IconsHolder = styled.div`
-`;
+const IconsHolder = styled.div``;
 
 const Tab = styled.div`
   display: flex;
