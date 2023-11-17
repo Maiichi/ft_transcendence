@@ -1,6 +1,6 @@
 import { PersonAddAltRounded } from "@mui/icons-material";
 import styled from "styled-components";
-import { I_Room, Members } from "../../components/types";
+import { I_Room, Members, User } from "../../components/types";
 import { useEffect, useState } from "react";
 import {
   Avatar,
@@ -30,8 +30,8 @@ export const UsersRoom = ({
   );
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const handleClick = (userId: number) => {
-    dispatch(setSelectedUser(userId));
+  const handleClick = (user: User) => {
+    dispatch(setSelectedUser(user));
     dispatch(setDisplayUserActions(true));
     setOpen(false);
   };
@@ -71,7 +71,7 @@ export const UsersRoom = ({
               <ListItem alignItems="flex-start">
                 <ListItemButton
                   sx={{ borderRadius: "10px" }}
-                  onClick={() => handleClick(user.user.intraId)}
+                  onClick={() => handleClick(user.user)}
                 >
                   <ListItemAvatar>
                     <Avatar
