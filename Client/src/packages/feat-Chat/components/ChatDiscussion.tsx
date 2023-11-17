@@ -16,8 +16,13 @@ import { getMemberships } from "../channels/redux/roomThunk";
 import { getDirectConversations } from "../directMessages/redux/directMessageThunk";
 import { Add } from "@mui/icons-material";
 import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
-import { setCurrentConversation } from "./chatSlice";
+import {
+  setCurrentConversation,
+  setDiscussionsDisplay,
+  setSelectedUser,
+} from "./chatSlice";
 import { getUserFriends } from "../channels/redux/friendThunk";
+import { setDisplayUserActions } from "../../../core/CoreSlice";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
   const { channels, directMessage, filter, chat } = useAppSelector(
@@ -58,6 +63,7 @@ export const ChatDiscussion = () => {
     type: "direct" | "channel",
     data: I_DirectConversation | I_Room
   ) => {
+    dispatch(setDiscussionsDisplay(false));
     dispatch(
       setCurrentConversation({
         roomId: type == "channel" ? data.id : null,
@@ -101,7 +107,10 @@ export const ChatDiscussion = () => {
               className={`channel-name ${
                 chat.currentConversation?.roomId === item.id ? "selected" : ""
               }`}
-              onClick={() => handleCLick("channel", item)}
+              onClick={() => {
+                dispatch(setDisplayUserActions(false));
+                handleCLick("channel", item);
+              }}
             >
               # {item.name}
             </ChannelName>
@@ -129,7 +138,11 @@ export const ChatDiscussion = () => {
               selected={
                 chat.currentConversation?.directConversationId === discussion.id
               }
-              onClick={() => handleCLick("direct", discussion)}
+              onClick={() => {
+                dispatch(setSelectedUser(discussion.receiver));
+                dispatch(setDisplayUserActions(true));
+                handleCLick("direct", discussion);
+              }}
             >
               <Badge
                 anchorOrigin={{
@@ -181,9 +194,11 @@ const Tab = styled.div`
 
 const Discussions = styled.div`
   overflow: hidden;
-  /* display: inline-block; */
   padding: 5px;
-  border-right: 1px solid #d7d7d7;
+
+  @media (max-width: 425px) {
+    width: 100%;
+  }
 `;
 
 const Discussion = styled.div<{ selected?: boolean }>`
