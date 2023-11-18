@@ -33,6 +33,8 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import GamesIcon from "@mui/icons-material/Games";
 import { SetChannelAdmin } from "../channels/modals/SetChannelAdmin";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { BanUserFromChannelModal } from "../channels/modals/BanUserFromChannelModal";
+import { MuteUserInRoom } from "../channels/modals/MuteUserInRoom";
 
 const Icons: Array<Action> = [
   {
@@ -107,6 +109,16 @@ const getDataForModal = (
         userId: selectedUserId,
         roomId: room.id,
       };
+    case "banFromChannel":
+      return {
+        userId: selectedUserId,
+        roomId: room.id
+      };
+    case "muteFromChannel":
+      return {
+        userId: selectedUserId,
+        roomId: room.id
+      }
     default:
       return null;
   }
@@ -159,6 +171,10 @@ export const UserActions = () => {
     switch (iconType) {
       case "setAdminChannel":
         return <SetChannelAdmin data={data} handleClose={handleClose} />;
+      case "banFromChannel":
+        return <BanUserFromChannelModal data={data} handleClose={handleClose} />;
+      case "muteFromChannel":
+        return <MuteUserInRoom data={data} handleClose={handleClose} />;
       default:
         return <></>;
     }

@@ -1,27 +1,40 @@
 import styled from "styled-components";
-import { banMember } from "../redux/roomSlice";
 import { useAppDispatch } from "../../../../core";
+import { muteMember } from "../redux/roomSlice";
+import { useState } from "react";
 
-export const BanUserFromChannelModal = (props: {
+
+export const MuteUserInRoom = (props: {
   data: any;
   handleClose: () => void;
 }) => {
   const { handleClose, data } = props;
+  const [muteTime, setMuteTime] = useState<number>(0);
   const dispatch = useAppDispatch();
-  const handleBanUser = () => {
-      // dispatch the function to ban a user from a channel
-      dispatch(banMember(data));
-      handleClose();
-  }
+
+    console.log('data ==', data);
+    const handleMuteMember = () => {
+        setMuteTime(60);
+        console.log('time ==', muteTime);
+        const DataMute = {
+            roomId: data.roomId,
+            userId: data.userId,
+            timeMute: 60
+        }
+        console.log("dataMUte =", DataMute);
+        // dispatch the function to set admin in a channel
+        dispatch(muteMember(DataMute));
+        handleClose();
+    }
 
   return (
     <>
       <ModalHeader>
-        <h3>Do you want to ban {`user x`} from {`channel x`} ?</h3>
+        <h3>Do you want to mute {`user x`} ?</h3>
       </ModalHeader>
       <ModalFooter>
         <ButtonCancel onClick={handleClose}>Cancel</ButtonCancel>
-        <ButtonLeave onClick={handleBanUser}>Confirm</ButtonLeave>
+        <ButtonLeave onClick={handleMuteMember}>Confirm</ButtonLeave>
       </ModalFooter>
     </>
   );

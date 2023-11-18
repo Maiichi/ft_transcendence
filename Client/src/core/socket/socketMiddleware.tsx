@@ -21,6 +21,10 @@ import {
   addMessageToRoom,
   setAdminRoom,
   addAdminToRoom,
+  banMember,
+  banMemberFromRoom,
+  muteMember,
+  muteMemberInRoom,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import { setOpenErrorSnackbar, setServerError } from "../CoreSlice";
 import {
@@ -31,6 +35,7 @@ import {
 } from "../../packages/feat-Search/redux/searchSlice";
 import { addMessageToConversation, createDirectConversation, sendMessageToUser } from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
 import { setCurrentConversation } from "../../packages/feat-Chat/components/chatSlice";
+import { MuteUserInRoom } from "../../packages/feat-Chat/channels/modals/MuteUserInRoom";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -102,6 +107,25 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on('AdminSettedToRoom', (data) => {
             console.log('data coming from (AdminSettedToRoom) =', data);
             dispatch(addAdminToRoom(data));
+          });
+          socket.on('userBannedFromRoom', (data) => {
+            console.log('data coming from (userBannedFromRoom) =', data);
+            dispatch(banMemberFromRoom(data));
+          });
+          socket.on('IhaveBeenBanned', (data) => {
+            console.log('i have been banned');
+            dispatch(
+              setCurrentConversation({
+                roomId: null,
+                directConversationId: null,
+                type: null,
+              })
+            );
+            dispatch(removeMembership(data));
+          });
+          socket.on('userMuted', (data) => {
+            console.log('data coming from (userMuted) =', data);
+            dispatch(muteMemberInRoom(data))
           })
         } catch (error) {
           console.log(error);
@@ -133,6 +157,14 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case setAdminRoom.type:
         socket.emit('setRoomAdmin', action.payload);
+        break;
+      case banMember.type:
+        socket.emit('BanMember', action.payload);
+        console.log('action payload ==', action.payload);
+        break;
+      case muteMember.type:
+        console.log('paylod mute ==', action.payload);
+        socket.emit('muteMember', action.payload);
         break;
       default:
         break;
