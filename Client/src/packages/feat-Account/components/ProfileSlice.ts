@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getLeaderboard } from "./ProfileThunk";
+import { getLeaderboard, getuserasgamer } from ".";
 import Module from "module";
-import { useAppSelector } from "../../../core";
-import { TimeLike } from "fs";
 
 type gamerType = {
   user: any;
@@ -38,7 +36,7 @@ export type { gamerType, leaderboardType, AchievementType, MatchHistoryType };
 
 export interface ProfileState {
   gamer: {
-    on: gamerType;
+    on: gamerType | undefined;
     isLoading: boolean;
   };
   lead: {
@@ -62,10 +60,6 @@ const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    getuserasgamer(state: ProfileState, action) {
-      state.gamer.on = require("../static-data/gamer.json");
-      state.gamer.on.user = action.payload;
-    },
     getMatchsHistory(state: ProfileState) {
       state.matchs.MatchHistory = Object.values(
         require("../static-data/MatchesHistory.json").matchs
@@ -81,6 +75,16 @@ const profileSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getuserasgamer.pending, (state) => {
+        state.gamer.isLoading = true;
+      })
+      .addCase(getuserasgamer.fulfilled, (state, action) => {
+        state.gamer.on = action.payload;
+        state.gamer.isLoading = false;
+      })
+      .addCase(getuserasgamer.rejected, (state) => {
+        state.gamer.isLoading = false;
+      })
       .addCase(getLeaderboard.pending, (state) => {
         state.lead.isLoading = true;
       })
@@ -95,7 +99,7 @@ const profileSlice = createSlice({
 });
 
 // export type { leaderboardType, leaderboardState };
-export const { getuserasgamer, getMatchsHistory, getAchievements } =
+export const { getMatchsHistory, getAchievements } =
   profileSlice.actions;
 /** in rootReducer = combineReducers as LeaderBoard */
 export default profileSlice.reducer;

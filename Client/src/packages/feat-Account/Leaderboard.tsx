@@ -24,12 +24,12 @@ function sendFriendRequist(userName: string) {}
 
 const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.profile.lead);
   const leaderboard: leaderboardType[] = state.leaderboard;
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getLeaderboard());
+    primary && dispatch(getLeaderboard());
   }, []);
 
   return (

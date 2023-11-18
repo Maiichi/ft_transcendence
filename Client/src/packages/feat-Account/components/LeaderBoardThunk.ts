@@ -1,11 +1,10 @@
-
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../core/utils/apiRequest";
 import { RootState } from "../../../core";
 import { leaderboardType } from "./ProfileSlice";
 
-const _jui = createAsyncThunk(
-  "profile/sasa",
+const getLeaderboard = createAsyncThunk(
+  "profile/leaderboard",
   async (_, { getState }): Promise<leaderboardType[] | undefined> => {
     try {
       // const token = (getState() as RootState).auth.token;
@@ -36,4 +35,4 @@ const _jui = createAsyncThunk(
   },
 );
 
-export { _jui };
+export { getLeaderboard };
