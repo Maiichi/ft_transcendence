@@ -66,6 +66,16 @@ export const routes = [
     requireAuth: true,
   },
   {
+    path: "/user/:uid",
+    element: (
+      <Layout>
+        <Profile />
+      </Layout>
+    ),
+    errorElement: <NotFoundError />,
+    requireAuth: true,
+  },
+  {
     path: "/account/profile",
     element: (
       <Layout>
