@@ -149,9 +149,10 @@ export class MessageService
        const membership = await this.chatService.getMembership(sender.intraId, room.id);
        if (!membership)
            throw new WsException(`no membership between ${sender.userName} and ${room.id}`);
-       const isMuted = await this.roomService.isMuted(sender.intraId, room.id);
-       if (isMuted)
-           throw new WsException(`You're muted for ${membership.timeMute} please wait until it finishs`);
+        //TODO:  need to be checked !!!!!
+    //    const isMuted = await this.roomService.isMuted(sender.intraId, room.id);
+    //    if (isMuted)
+    //        throw new WsException(`You're muted for ${membership.timeMute} please wait until it finishs`);
        // check block system
        let conversation = await this.prisma.conversation.findUnique({
            where: {

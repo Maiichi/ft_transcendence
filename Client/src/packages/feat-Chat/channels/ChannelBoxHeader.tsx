@@ -5,18 +5,25 @@ import {
   PersonAddAltRounded,
 } from "@mui/icons-material";
 import Badge from "@mui/material/Badge";
+import DehazeIcon from "@mui/icons-material/Dehaze";
 
 import { I_Room } from "../components/types";
 import styled from "styled-components";
 import { LeaveRoomModal } from "./modals/leaveChannelModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { ModalComponent, useAppSelector } from "../../../core";
+import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
 import { UsersRoom } from "./modals/UsersRoomModal";
 import { CreateChannelModal } from "./modals/CreateChannelModal";
-import { isOwner } from "../components/utils";
+import { isAdmin, isOwner } from "../components/utils";
 import { AddUserToRoomModal } from "./modals/AddUserToRoomModal";
+import { useSize } from "../../../core/utils/hooks";
+import { useStyles } from "../components/style";
+import { setDiscussionsDisplay } from "../components/chatSlice";
 
 export const ChannelBoxHeader = () => {
+  const { isMobile } = useSize();
+  const classes = useStyles();
+  const dispatch = useAppDispatch();
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
   const { memberships } = useAppSelector((state) => state.channels);
   const user = useAppSelector((state) => state.auth.user);
@@ -41,7 +48,7 @@ export const ChannelBoxHeader = () => {
     setOpen(false);
   };
   const isChannelOwner = isOwner(memberships[index], user.intraId);
-
+  const isChannelAdmin = isAdmin(memberships[index], user.intraId);
   return (
     <Header>
       <ModalComponent
@@ -50,7 +57,14 @@ export const ChannelBoxHeader = () => {
         handleClose={handleClose}
         closeType={closeType}
       />
-
+      {isMobile && (
+        <DehazeIcon
+          className={classes.iconBase}
+          onClick={() => {
+            dispatch(setDiscussionsDisplay(true));
+          }}
+        />
+      )}
       <h4>
         # {memberships[index].name}
         {isChannelOwner && (
@@ -67,7 +81,7 @@ export const ChannelBoxHeader = () => {
         )}
       </h4>
       <IconHolder>
-        {isChannelOwner && (
+        {isChannelAdmin && (
           <ChannelMembers>
             <PersonAddAltRounded
               sx={{

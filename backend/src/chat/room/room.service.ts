@@ -12,6 +12,7 @@ import {
   JoinRoomDto,
   SetRoomAdminDto,
   AddUserToRoomDto,
+  BanUserFromRoom,
 } from './dto/membership.dto';
 import {
   CreateRoomDto,
@@ -619,14 +620,14 @@ export class RoomService {
       throw new WsException(
         `userId = ${body.userId} does not exist !`,
       );
-    // check if the user is who wants to set an admin is also an admin
-    const isAdmin = await this.isAdmin(
+    // check if the user is who wants to set an admin is the owner
+    const isOwner = await this.isOwner(
       userId,
       room.id,
     );
-    if (!isAdmin)
+    if (!isOwner)
       throw new WsException(
-        `User with intraId ${userId} is not an admin in the room, so he can't set an admin`,
+        `User with intraId ${userId} is not the owner of the room, so he can't set an admin`,
       );
     // check if the user is already a member in this room
     // getMemberShip
@@ -640,7 +641,7 @@ export class RoomService {
         `no membership between ${body.userId} and ${room.id}`,
       );
     // set new Admin
-    const newAdmin =
+
       await this.prisma.membership.update({
         where: {
           id: membership.id,
@@ -650,7 +651,7 @@ export class RoomService {
         },
       });
     console.log('Admin setted successfully');
-    return newAdmin;
+    return {roomId: room.id, userId: user.intraId};
   }
 
   // TODO: need improvement || need to remove the user kicked from the room conversation
@@ -734,86 +735,86 @@ export class RoomService {
     return updatedMembership;
   }
 
-  async muteMember(
-    userId: number,
-    body: MuteMemberDto,
-  ) {
-    if (
-      !body.roomId ||
-      !body.userId ||
-      !body.timeMute
-    )
-      throw new WsException(
-        'some fields are missed !!',
-      );
-    const room = await this.getRoomById(
-      body.roomId,
-    );
+  async muteMember(adminId: number, body: MuteMemberDto) {
+    const {roomId, userId, timeMute} = body
+    if (!body)
+      throw new WsException('some fields are missed !!');
+    const room = await this.getRoomById(roomId);
     // console.log("ROOM ==" + JSON.stringify(room));
     if (!room)
-      throw new WsException(
-        `room ${body.roomId} not found`,
-      );
-    const kicker =
-      await this.userService.getUser(userId);
-    if (!kicker)
-      throw new WsException(
-        `userId (kicker) = ${userId} does not exist !`,
-      );
+      throw new WsException(`room ${roomId} not found`);
+    const muter =
+      await this.userService.getUser(adminId);
+    if (!muter)
+      throw new WsException(`adminId (muter) = ${adminId} does not exist !`);
     // check if the user in the body exists
-    const user = await this.userService.getUser(
-      body.userId,
-    );
+    const user = await this.userService.getUser(userId);
     // console.log("USER == " + JSON.stringify(user));
     if (!user)
-      throw new WsException(
-        `userId = ${body.userId} does not exist !`,
-      );
-    const membership =
-      await this.chatService.getMembership(
-        body.userId,
-        room.id,
-      );
+      throw new WsException(`userId = ${body.userId} does not exist !`);
+    const membership = await this.chatService.getMembership(userId,room.id);
     if (!membership)
-      throw new WsException(
-        `no membership between ${body.userId} and ${room.id}`,
-      );
+      throw new WsException(`no membership between ${body.userId} and ${room.id}`);
     // check if the user that will be muted is the owner of the room
-    const isOwner = await this.isOwner(
-      body.userId,
-      room.id,
-    );
+    const isOwner = await this.isOwner(body.userId, room.id);
     if (isOwner)
-      throw new WsException(
-        `You can't mute the owner of the room`,
-      );
-    const isMuted = await this.isMuted(
-      body.userId,
-      room.id,
-    );
-    if (isMuted)
-      throw new WsException(
-        `This user is already muted. Wait until his muted time ends.`,
-      );
-    // calculate time mute based on the DTO
+      throw new WsException(`You can't mute the owner of the room`);
+
     const now = new Date();
-    const endMutedTime = addMinutes(
-      now,
-      body.timeMute,
-    );
+    console.log('now ==', now);
+    const isMuted = await this.isMuted(now ,membership.timeMute);
+    console.log('isMuted ==', isMuted);
+    if (isMuted)
+      throw new WsException(`This user is already muted. Wait until his muted time ends.`);
+    // calculate time mute based on the DTO 
+    // i have added 60 for the GMT+1
+    const endMutedTime = addMinutes(now,timeMute + 60);
     console.log('endMutedTime = ' + endMutedTime);
-    const updateMembership =
-      await this.prisma.membership.update({
+    await this.prisma.membership.update({
         where: {
           id: membership.id,
         },
         data: {
-          isMute: true,
           timeMute: endMutedTime,
         },
       });
     console.log('User muted successfully');
-    return updateMembership;
+    return ({
+      roomId: roomId,
+      userId: userId,
+      timeMute: timeMute
+    });
+  }
+
+  async banMember(adminId: number, body: BanUserFromRoom)
+  { 
+      const {roomId, userId} = body;
+      if (!body) 
+        throw new WsException('roomId & bannedUserId field are required !');
+      const room = await this.getRoomById(roomId);
+      const user = await this.userService.getUser(userId);
+      if (!user) 
+        throw new WsException(`userId = ${userId} does not exist !`);
+      const isAdmin = await this.isAdmin(adminId, room.id);
+      if (!isAdmin) 
+        throw new WsException('only admins who can ban users from rooms');
+      const isOwner = await this.isOwner(userId,roomId);
+      if (isOwner)
+        throw new WsException(`You can't ban the room owner ${user.userName}`);
+      const membership = await this.chatService.getMembership(userId,roomId);
+      if (!membership)
+        throw new WsException(`no membership between ${userId} and ${roomId}`);
+      await this.prisma.membership.update({
+        where: {
+          id: membership.id
+        },
+        data: {
+          isBanned : true,
+        }
+      });
+      console.log('User banned successfully');
+      return ({roomId: roomId, userId: userId});
+
   }
 
     async addUserToRoom(adminId: number, body: AddUserToRoomDto)
@@ -957,20 +958,27 @@ export class RoomService {
     return isMember ? true : false;
   }
   // isMuted
-  async isMuted(userId: number, roomId: number) {
-    const isMuted =
-      await this.prisma.membership.findFirst({
-        where: {
-          userId: userId,
-          roomId: roomId,
-        },
-        select: {
-          isMute: true,
-        },
-      });
+  // async isMuted(userId: number, roomId: number) {
+  //   const muteTime =
+  //     await this.prisma.membership.findFirst({
+  //       where: {
+  //         userId: userId,
+  //         roomId: roomId,
+  //       },
+  //       select: {
+  //         timeMute: true,
+  //       },
+  //     });
+  //   const date = new Date();
+  //   console.log('date ==', date);
+  //   return (new Date(muteTime.timeMute) > date) ? true : false;
+  // }
 
-    return isMuted.isMute;
+  async isMuted(dateNow: Date, muteTime)
+  {
+    return (new Date(muteTime) > dateNow) ? true: false;
   }
+
   // isBanned
   async isBanned(userId: number, roomId: number) {
     const isBanned =
@@ -1022,12 +1030,15 @@ export class RoomService {
                   isBanned: true,
                   isMute: true,
                   isOwner: true,
+                  timeMute: true,
                   user: {
                     select: {
                       firstName: true,
                       lastName: true,
                       userName: true,
                       intraId: true,
+                      avatar_url: true,
+                      status: true,
                     },
                   },
                 },

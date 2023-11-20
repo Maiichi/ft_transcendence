@@ -19,6 +19,7 @@ export interface Members {
   isBanned: boolean;
   isMute: boolean;
   isOwner: boolean;
+  timeMute: Date,
   user: User;
 }
 export interface I_Discussion {
@@ -26,11 +27,13 @@ export interface I_Discussion {
   directConversationId: number | null;
   roomId: number | null;
 }
+
 export interface User {
   firstName: string;
   lastName: string;
   userName: string;
   intraId: number;
+  status: string;
   avatar_url?: string;
 }
 
@@ -70,14 +73,16 @@ export interface I_ConversationMessages {
 export interface Action {
   name: string;
   type:
-    | "banFromRoom"
-    | "muteFromRoom"
-    | "setAdminRoom"
-    | "unSetAdminRoom"
+    | "banFromChannel"
+    | "muteFromChannel"
+    | "setAdminChannel"
+    | "unSetAdminChannel"
     | "message"
     | "play"
     | "addFriend"
     | "blockFriend"
+    | "inviteToChannel"
+    | "viewProfile"
     | "inviteToRoom";
   component: JSX.Element;
   isFriend?: boolean;

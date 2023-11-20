@@ -1,6 +1,6 @@
 import { PersonAddAltRounded } from "@mui/icons-material";
 import styled from "styled-components";
-import { I_Room, Members } from "../../components/types";
+import { I_Room, Members, User } from "../../components/types";
 import { useEffect, useState } from "react";
 import {
   Avatar,
@@ -11,10 +11,11 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { SearchComponent, useAppDispatch } from "../../../../core";
+import { SearchComponent, useAppDispatch, useAppSelector } from "../../../../core";
 import { getUserFriends } from "../redux/friendThunk";
 import { setDisplayUserActions } from "../../../../core/CoreSlice";
 import { setSelectedUser } from "../../components/chatSlice";
+import { I_Member } from "../../../feat-Search/types/types";
 
 export const UsersRoom = ({
   channelConversation,
@@ -25,13 +26,20 @@ export const UsersRoom = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const [filteredUsers, setFilteredUsers] = useState<Array<Members>>(
-    channelConversation.members
-  );
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const handleClick = (userId: number) => {
-    dispatch(setSelectedUser(userId));
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const [searchQuery, setSearchQuery] = useState<string>(""); 
+  // const [filteredUsers, setFilteredUsers] = useState<Array<Members>>(
+  //   channelConversation.members
+  // );
+  
+  const filtredMembers = channelConversation.members.filter((member: Members) =>
+    ((member.user.intraId !== currentUser.intraId )
+      && (member.user.firstName
+        .toLowerCase()
+        .startsWith(searchQuery.toLowerCase())))
+  )
+  const handleClick = (user: User) => {
+    dispatch(setSelectedUser(user));
     dispatch(setDisplayUserActions(true));
     setOpen(false);
   };
@@ -40,20 +48,21 @@ export const UsersRoom = ({
     setSearchQuery(str);
   };
 
-  useEffect(() => {
-    if (searchQuery.length) {
-      const filteredFriends = channelConversation.members.filter(
-        (member: Members) =>
-          member.user.firstName
-            .toLowerCase()
-            .startsWith(searchQuery.toLowerCase())
-      );
-      setFilteredUsers(filteredFriends);
-    } else setFilteredUsers(channelConversation.members);
-  }, [searchQuery]);
-  useEffect(() => {
-    dispatch(getUserFriends());
-  }, []);
+  // useEffect(() => {
+  //   if (searchQuery.length) {
+  //     const filteredFriends = channelConversation.members.filter(
+  //       (member: Members) =>
+  //         ( member.user.intraId !== currentUser.intraId && (member.user.firstName
+  //           .toLowerCase()
+  //           .startsWith(searchQuery.toLowerCase())))
+  //     );
+  //     setFilteredUsers(filteredFriends);
+  //   } else setFilteredUsers(channelConversation.members);
+  // }, [searchQuery]);
+
+  // useEffect(() => {
+  //   dispatch(getUserFriends());
+  // }, []);
 
   return (
     <>
@@ -62,16 +71,16 @@ export const UsersRoom = ({
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
         >
-          <ListItemButton sx={{ borderRadius: "10px" }}>
+          {/* <ListItemButton sx={{ borderRadius: "10px" }}>
             <PersonAddAltRounded fontSize="large" />
             <h4 style={{ marginLeft: "10px" }}>Invite user</h4>
-          </ListItemButton>
-          {filteredUsers.map((user, index) => (
+          </ListItemButton> */}
+          {filtredMembers.map((user, index) => (
             <>
-              <ListItem alignItems="flex-start">
+              <ListItem alignItems="flex-start" key={index}>
                 <ListItemButton
                   sx={{ borderRadius: "10px" }}
-                  onClick={() => handleClick(user.user.intraId)}
+                  onClick={() => handleClick(user.user)}
                 >
                   <ListItemAvatar>
                     <Avatar
