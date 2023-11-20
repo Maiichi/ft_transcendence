@@ -1,57 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { getLeaderboard, getuserasgamer } from ".";
-import Module from "module";
-
-type gamerType = {
-  user: any;
-  coalition: {
-    name: string | null;
-    logo: string;
-  };
-  rank: number;
-};
-type leaderboardType = {
-  name: string;
-  ladder: number;
-  wins: number;
-  loss: number;
-  achievement: Module;
-  picture: string;
-};
-type AchievementType = {
-  name: string;
-  score: number;
-  logo: string;
-  discription: string;
-};
-type MatchHistoryType = {
-  name: string;
-  pic: string;
-  time: string;
-  gain: number;
-  nogain: number;
-};
-
-export type { gamerType, leaderboardType, AchievementType, MatchHistoryType };
-
-export interface ProfileState {
-  gamer: {
-    on: gamerType | undefined;
-    isLoading: boolean;
-  };
-  lead: {
-    leaderboard: leaderboardType[] | unknown;
-    isLoading: boolean;
-  };
-  achiv: {
-    achievement: AchievementType[] | null;
-    loaded: boolean;
-  };
-  matchs: {
-    MatchHistory: MatchHistoryType[] | null;
-    loaded: boolean;
-  };
-}
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { getLeaderboard, getuserasgamer } from "./thunks";
+import { ProfileState, leaderboardType } from "./statsType";
 
 const initialState: ProfileState =
   require("../static-data/initialStates.json").profile;
@@ -59,47 +8,40 @@ const initialState: ProfileState =
 const profileSlice = createSlice({
   name: "profile",
   initialState,
-  reducers: {
-    getMatchsHistory(state: ProfileState) {
-      state.matchs.MatchHistory = Object.values(
-        require("../static-data/MatchesHistory.json").matchs
-      );
-      state.matchs.loaded = true;
-    },
-    getAchievements(state) {
-      state.achiv.achievement = Object.values(
-        require("../static-data/Achievements.json")
-      );
-      state.achiv.loaded = true;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getuserasgamer.pending, (state) => {
-        state.gamer.isLoading = true;
-      })
-      .addCase(getuserasgamer.fulfilled, (state, action) => {
-        state.gamer.on = action.payload;
-        state.gamer.isLoading = false;
-      })
-      .addCase(getuserasgamer.rejected, (state) => {
-        state.gamer.isLoading = false;
+        state.isLoading = true;
       })
       .addCase(getLeaderboard.pending, (state) => {
         state.lead.isLoading = true;
       })
-      .addCase(getLeaderboard.fulfilled, (state, action) => {
+      .addCase(
+        getuserasgamer.fulfilled,
+        (state, action: PayloadAction<any>) => {
+          state.gamer = action.payload.gamer;
+          state.gamer && (state.gamer.user = action.payload.user);
+          state.achievement = action.payload.achievement;
+          state.MatchHistory = action.payload.matchHistory;
+
+          state.isLoading = false;
+        }
+      )
+      .addCase(getLeaderboard.fulfilled, (state, action:PayloadAction<leaderboardType[]>) => {
         state.lead.leaderboard = action.payload;
         state.lead.isLoading = false;
       })
+      .addCase(getuserasgamer.rejected, (state) => {
+        state.isLoading = false;
+      })
       .addCase(getLeaderboard.rejected, (state) => {
+        console.log('jiuii')
         state.lead.isLoading = false;
       });
   },
 });
 
-// export type { leaderboardType, leaderboardState };
-export const { getMatchsHistory, getAchievements } =
-  profileSlice.actions;
+export const {} = profileSlice.actions;
 /** in rootReducer = combineReducers as LeaderBoard */
 export default profileSlice.reducer;

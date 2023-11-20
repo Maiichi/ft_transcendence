@@ -4,10 +4,9 @@ import { useAppDispatch, useAppSelector } from "../../core";
 import {
   ProfileState,
   getuserasgamer,
-  getMatchsHistory,
-  getAchievements,
-  Loading,
   getLeaderboard,
+  Loading,
+  gamerType,
 } from "./components";
 import images from "./images_uploads";
 import style, {
@@ -42,101 +41,89 @@ const Profile = () => {
 
   const uid: number = typeof _uid.uid === "string" ? parseInt(_uid.uid, 10) : 0;
   const isOwner: boolean =
-    useAppSelector((state) => state.auth.user.id) === uid || !uid;
+    useAppSelector((state) => state.auth.user.intraId) === uid || !uid;
   uid > 0 || isOwner || navigate("/");
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
   const isloading: boolean = useAppSelector(
-    (state) =>
-      state.profile.gamer.isLoading ||
-      state.profile.lead.isLoading ||
-      !state.profile.achiv.loaded ||
-      !state.profile.matchs.loaded
+    (state) => state.profile.isLoading || state.profile.lead.isLoading
   );
 
-  const gamer = profileStates.gamer.on;
-  const user = useAppSelector((state) => state.auth.user);
-  const matchs = profileStates.matchs.MatchHistory;
-  const achivs = profileStates.achiv.achievement;
-
+  const gamer: gamerType = profileStates.gamer;
+  const matchs = profileStates.MatchHistory;
+  const achivs = profileStates.achievement;
 
   useEffect(() => {
     dispatch(getuserasgamer(uid));
-    dispatch(getMatchsHistory());
-    dispatch(getAchievements());
     dispatch(getLeaderboard());
   }, []);
-
   function getresult(one: number, two: number, results: Array<any>) {
     return one > two ? results[0] : one < two ? results[1] : results[2];
   }
 
-  switch (isloading) {
-    case true:
+  const Go = !isloading && gamer.user != null;
+  switch (Go) {
+    case false:
       return <Loading />;
     default:
       return (
         <ProfileCards>
           <Usercard>
-            {/* <Coalition>
-                <Text variant="h6" sx={{ mb: "5px" }}>
-                  {gamer.coalition.name}
-                </Text>
-                <img
-                  alt={"Coalition"}
-                  src={images[gamer.coalition.logo]}
-                  style={style.coalImg}
-                />
-                <h3 style={{ margin: "7px" }}> #{gamer.rank}</h3>
-              </Coalition> */}
-            {/* <div style={style.user}>
-                <div style={style.div2}>
-                  <div style={style.div3}>
-                    <Avatar
-                      sx={style.userAvatar}
-                      alt="UserImg"
-                      src={
-                        images[
-                          gamer.user?.avatar_url || "Pic"
-                        ]
-                      }
-                    />
-                    <div style={style.div4}>
-                      <Text variant="h5" style={style.userName}>
-                        {`${user.firstName} ${user.lastName}`}
-                      </Text>
-                      <Button
-                        sx={style.button1}
-                        size="small"
-                        startIcon={<PersonAddAlt fontSize="small" />}
-                        onClick={() => navigate("/account/profile")}
-                      >
-                        friend requist
-                      </Button>
-                      <Button
-                        sx={style.button1}
-                        size="small"
-                        startIcon={<Message fontSize="small" />}
-                        onClick={() => navigate("/account/profile")}
-                      >
-                        message
-                      </Button>
-                    </div>
+            <Coalition>
+              <Text variant="h6" sx={{ mb: "5px" }}>
+                {gamer.coalition.name}
+              </Text>
+              <img
+                alt={"Coalition"}
+                src={images[gamer.coalition.logo]}
+                style={style.coalImg}
+              />
+              <h3 style={{ margin: "7px" }}> #{gamer.rank}</h3>
+            </Coalition>
+            <div style={style.user}>
+              <div style={style.div2}>
+                <div style={style.div3}>
+                  <Avatar
+                    sx={style.userAvatar}
+                    alt="UserImg"
+                    src={images[gamer.user?.avatar_url || "Pic"]}
+                  />
+                  <div style={style.div4}>
+                    <Text variant="h5" style={style.userName}>
+                      {gamer.user.firstName} {gamer.user.lastName}
+                    </Text>
+                    <Button
+                      sx={style.button1}
+                      size="small"
+                      startIcon={<PersonAddAlt fontSize="small" />}
+                      onClick={() => navigate("/account/profile")}
+                    >
+                      friend requist
+                    </Button>
+                    <Button
+                      sx={style.button1}
+                      size="small"
+                      startIcon={<Message fontSize="small" />}
+                      onClick={() => navigate("/account/profile")}
+                    >
+                      message
+                    </Button>
                   </div>
-                  <CircularProgressBar progress={gamer.rank} />
                 </div>
-                <div style={style.box2}>
-                  <Text variant="body1">
-                    {"Total matches"} <br /> <span> {23} </span>
-                  </Text>
-                  <Text variant="body1">
-                    {"Wins"} <br /> <span> {20} </span>
-                  </Text>
-                  <Text variant="body1">
-                    {"Achievements"} <br /> <span> {13} </span>
-                  </Text>
-                </div>
-              </div> */}
+                <CircularProgressBar progress={gamer.rank} />
+              </div>
+              <div style={style.box2}>
+                <Text variant="body1">
+                  {"Total matches"} <br /> <span> {23} </span>
+                </Text>
+                <Text variant="body1">
+                  {"Wins"} <br /> <span> {20} </span>
+                </Text>
+                <Text variant="body1">
+                  {"Achievements"} <br /> <span> {13} </span>
+                </Text>
+              </div>
+            </div>
           </Usercard>
           <Board>
             {/* <Text variant="h4" sx={style.cardName}>
@@ -149,7 +136,7 @@ const Profile = () => {
           </Board>
           <Matchshistory>
             {/* <Text variant="h5" sx={style.cardName}>
-                {`${gamer?.user?.lastName || user.lastname}'s Last Matches`}
+                {`${gamer?.user?.lastName}'s Last Matches`}
               </Text>
               {matchs?.map(
                 (item, index) =>
@@ -179,7 +166,7 @@ const Profile = () => {
           </Matchshistory>
           <Achievemets>
             {/* <Text variant="h5" sx={style.cardName}>
-                {`${gamer?.user?.lastName || user.lastname}'s Achievements`}
+                {`${gamer?.user?.lastName}'s Achievements`}
               </Text>
               {achivs?.map(
                 (achiv, index) =>

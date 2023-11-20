@@ -1,26 +1,18 @@
 {
   "profile": {
+    "isLoading": false,
     "gamer": {
-      "on": {
-        "user": null,
-        "coalition": {
-          "name": null,
-          "logo": ""
-        },
-        "rank": 0
+      "user": null,
+      "coalition": {
+        "name": null,
+        "logo": ""
       },
-      "Loaded": false
+      "rank": 0
     },
+    "achievement": null,
+    "MatchHistory": null,
     "lead": {
       "leaderboard": null,
-      "Loaded": false
-    },
-    "achiv": {
-      "achievement": null,
-      "Loaded": false
-    },
-    "matchs": {
-      "MatchHistory": null,
       "isLoading": false
     }
   }
