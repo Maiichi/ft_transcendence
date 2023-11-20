@@ -662,77 +662,53 @@ export class RoomService {
             "roomId" : 3,
         }
     */
-  async kickMember(
-    body: KickMemberDto,
-    userId: number,
-  ) {
-    if (!body.roomId || !body.userId)
-      throw new WsException(
-        'roomId or userId is missed !',
-      );
-    const room = await this.getRoomById(
-      body.roomId,
-    );
-    // console.log("ROOM ==" + JSON.stringify(room));
+  async kickMember(body: KickMemberDto,adminId: number) 
+  {
+    const {userId, roomId} = body
+    if (!body)
+      throw new WsException('roomId or userId is missed !');
+    const room = await this.getRoomById(roomId);
     if (!room)
-      throw new WsException(
-        `room ${body.roomId} not found`,
-      );
+      throw new WsException(`room ${roomId} not found`);
     // check if the user that will performs the kick exists
-    const kicker =
-      await this.userService.getUser(userId);
+    const kicker = await this.userService.getUser(adminId);
     if (!kicker)
-      throw new WsException(
-        `userId (kicker) = ${userId} does not exist !`,
-      );
+      throw new WsException(`adminId (kicker) = ${adminId} does not exist !`);
     // check if the user that will be kicked is exists
-    const user = await this.userService.getUser(
-      body.userId,
-    );
+    const user = await this.userService.getUser(userId);
     // console.log("USER == " + JSON.stringify(user));
     if (!user)
-      throw new WsException(
-        `userId = ${body.userId} does not exist !`,
-      );
+      throw new WsException(`userId = ${body.userId} does not exist !`);
     // check if the user that will be kicked is a member in the room or not
-    const membership =
-      await this.chatService.getMembership(
-        body.userId,
-        room.id,
-      );
+    const membership = await this.chatService.getMembership(userId,roomId);
     if (!membership)
-      throw new WsException(
-        `no membership between ${body.userId} and ${room.id}`,
-      );
+      throw new WsException(`no membership between ${userId} and ${roomId}`);
     // check if the user that will performs the kick is an Admin
-    const isAdmin = await this.isAdmin(
-      userId,
-      room.id,
-    );
+    const isAdmin = await this.isAdmin(adminId,roomId);
     if (!isAdmin)
-      throw new WsException(
-        `User with intraId ${userId} is not an admin in the room, so he can't kick a member`,
-      );
-    // check if the user that will be kicked is a the owner of the room
+      throw new WsException(`User with intraId ${adminId} is not an admin in the room, so he can't kick a member`);
+    //check if an admin wants to kick another admin
+    const isKickedAdmin = await this.isAdmin(userId, roomId);
+    if (isKickedAdmin && isAdmin)
+      throw new WsException(`An admin can't kick another admin`);
+      // check if the user that will be kicked is the owner of the room
     // TODO : change isOwner to isAdmin
-    const isOwner = await this.isOwner(
-      body.userId,
-      room.id,
-    );
+    const isOwner = await this.isOwner(userId,roomId);
     if (isOwner)
-      throw new WsException(
-        `You can't kick the owner of the room`,
-      );
-    const updatedMembership =
-      await this.prisma.membership.delete({
-        where: {
-          id: membership.id,
-        },
-      });
+      throw new WsException(`You can't kick the owner of the room`);
+
+    await this.prisma.membership.delete({
+      where: {
+        id: membership.id,
+      },
+    });
     console.log(
       `${user.userName} has been kicked successfully from ${room.name}`,
     );
-    return updatedMembership;
+    return {
+      roomId: roomId,
+      userId: userId
+    };
   }
 
   async muteMember(adminId: number, body: MuteMemberDto) {
@@ -785,6 +761,7 @@ export class RoomService {
       timeMute: timeMute
     });
   }
+  
 
   async banMember(adminId: number, body: BanUserFromRoom)
   { 
@@ -813,6 +790,40 @@ export class RoomService {
         }
       });
       console.log('User banned successfully');
+      return ({roomId: roomId, userId: userId});
+
+  }
+  async unBanMember(adminId: number, body: BanUserFromRoom)
+  { 
+      const {roomId, userId} = body;
+      if (!body) 
+        throw new WsException('roomId & bannedUserId field are required !');
+      const room = await this.getRoomById(roomId);
+      const user = await this.userService.getUser(userId);
+      if (!user) 
+        throw new WsException(`userId = ${userId} does not exist !`);
+      const isAdmin = await this.isAdmin(adminId, room.id);
+      if (!isAdmin) 
+        throw new WsException('only admins who can unBan users from rooms');
+      const isBannedAdmin = await this.isAdmin(userId, roomId);
+      const isOwner = await this.isOwner(adminId,roomId);
+      // if (isOwner)
+      //   throw new WsException(`You can't Unban the room owner ${adminId}`);
+      // check if the bannedUser is an admin and the one who perform the unBan action is also an admin 
+      if (isBannedAdmin && !isOwner)
+        throw new WsException(`only the owner who can unBan an admin`);
+      const membership = await this.chatService.getMembership(userId,roomId);
+      if (!membership)
+        throw new WsException(`no membership between ${userId} and ${roomId}`);
+      await this.prisma.membership.update({
+        where: {
+          id: membership.id
+        },
+        data: {
+          isBanned : false,
+        }
+      });
+      console.log('User unBanned successfully');
       return ({roomId: roomId, userId: userId});
 
   }
@@ -890,26 +901,43 @@ export class RoomService {
 
     }
 
-  // async unSetAdminOfRoom(body: SetRoomAdmin, userId: number)
-  // {
-  //     const room = await this.getRoomById(body.roomId);
-  //     // console.log("ROOM ==" + JSON.stringify(room));
-  //     if (!room)
-  //         throw new WsException(`room ${body.roomId} not found`);
-  //     // check if the user in the body exists
-  //     const user = await this.userService.getUser(body.userId);
-  //     // console.log("USER == " + JSON.stringify(user));
-  //     if(!user)
-  //             throw new WsException(`userId = ${body.userId} does not exist !`);
-  //     const isAdmin = await this.isAdmin(body.userId, room.id);
-  //     if (!isAdmin) {
-  //         throw new WsException(`User with intraId ${userId} is not an admin in the room, so he can't be unsetted`);
-  //     }
-  //     // check if the user is already a member in this room
-  //     const isMember = await this.isMember(body.userId, room.id)
-  //     if (!isMember)
-  //         throw new WsException(`User id ${body.userId} not in the room`);
-  // }
+  async unSetAdminOfRoom(body: SetRoomAdminDto, adminId: number)
+  {
+      const {userId, roomId} = body;
+      const room = await this.getRoomById(roomId);
+      if (!room)
+          throw new WsException(`room ${roomId} not found`);
+      // check if the user in the body exists
+      const user = await this.userService.getUser(userId);
+      if(!user)
+              throw new WsException(`userId = ${userId} does not exist !`);
+      const isOwner = await this.isOwner(adminId, roomId);
+      if (!isOwner) {
+          throw new WsException(`User with intraId ${adminId} is not the owner of the room, so he can't remove the admin privilege`);
+      }
+      const isAdmin = await this.isAdmin(userId, roomId)
+      if (!isAdmin) {
+        throw new WsException(`User with intraId ${userId} is not an admin in the room, so he can't be unsetted`);
+      }
+      // check if the user is already a member in this room
+      const membership = await this.chatService.getMembership(userId,roomId);
+      if (!membership)
+        throw new WsException(`no membership between ${userId} and ${roomId}`);
+      // update Membership
+      await this.prisma.membership.update({
+        where: {
+          id: membership.id
+        },
+        data: {
+          isAdmin: false
+        }
+      });
+      console.log('admin is Unsetted successfully');
+      return ({
+        userId: userId,
+        roomId: roomId
+      });
+  }
 
   /********************************************************************************************************* */
   // isOwner

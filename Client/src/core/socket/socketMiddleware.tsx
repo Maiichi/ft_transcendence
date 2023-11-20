@@ -25,6 +25,12 @@ import {
   banMemberFromRoom,
   muteMember,
   muteMemberInRoom,
+  unSetAdminRoom,
+  RemoveAdminFromRoom,
+  unBanMember,
+  unBanMemberFromRoom,
+  kickMember,
+  kickMemberFromRoom,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import { setOpenErrorSnackbar, setServerError } from "../CoreSlice";
 import {
@@ -108,9 +114,17 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             console.log('data coming from (AdminSettedToRoom) =', data);
             dispatch(addAdminToRoom(data));
           });
+          socket.on('AdminRemovedFromRoom', (data) => {
+            console.log('data coming from (AdminRemovedFromRoom) =', data);
+            dispatch(RemoveAdminFromRoom(data));
+          });
           socket.on('userBannedFromRoom', (data) => {
             console.log('data coming from (userBannedFromRoom) =', data);
             dispatch(banMemberFromRoom(data));
+          });
+          socket.on('userUnBannedFromRoom', (data) => {
+            console.log('data coming from (userUnBannedFromRoom) =', data);
+            dispatch(unBanMemberFromRoom(data));
           });
           socket.on('IhaveBeenBanned', (data) => {
             console.log('i have been banned');
@@ -123,9 +137,38 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             );
             dispatch(removeMembership(data));
           });
+          socket.on('IhaveBeenUnBanned', (data) => {
+            console.log('i have been unbanned');
+            dispatch(addMembership(data));
+            dispatch(
+              setCurrentConversation({
+                roomId: data.id,
+                directConversationId: null,
+                type: "channel",
+              })
+            );
+          });
           socket.on('userMuted', (data) => {
             console.log('data coming from (userMuted) =', data);
             dispatch(muteMemberInRoom(data))
+          });
+          socket.on('userKickedFromRoom', (data) => {
+            console.log('data coming from (userKickedFromRoom) =', data);
+            dispatch(kickMemberFromRoom(data)); 
+          });
+          socket.on('IhaveBeenKicked', (data) => {
+            console.log('i have been kicked');
+            dispatch(removeMembership(data.roomId));
+            dispatch(
+              setCurrentConversation({
+                roomId: null,
+                directConversationId: null,
+                type: null,
+              })
+            );
+          });
+          socket.on('UserHaveBeenKicked', (data) => {
+            dispatch(setRoomLeaved(data));
           })
         } catch (error) {
           console.log(error);
@@ -158,13 +201,21 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
       case setAdminRoom.type:
         socket.emit('setRoomAdmin', action.payload);
         break;
+      case unSetAdminRoom.type:
+        socket.emit('unSetRoomAdmin', action.payload);
+        break;
       case banMember.type:
-        socket.emit('BanMember', action.payload);
+        socket.emit('banMember', action.payload);
         console.log('action payload ==', action.payload);
         break;
+      case unBanMember.type:
+        socket.emit('unBanMember', action.payload);
+        break;
       case muteMember.type:
-        console.log('paylod mute ==', action.payload);
         socket.emit('muteMember', action.payload);
+        break;
+      case kickMember.type:
+        socket.emit('kickMember', action.payload);
         break;
       default:
         break;

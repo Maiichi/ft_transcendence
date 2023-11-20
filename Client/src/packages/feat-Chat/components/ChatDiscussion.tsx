@@ -64,6 +64,7 @@ export const ChatDiscussion = () => {
     data: I_DirectConversation | I_Room
   ) => {
     dispatch(setDiscussionsDisplay(false));
+    console.log('type', type);
     dispatch(
       setCurrentConversation({
         roomId: type == "channel" ? data.id : null,
@@ -125,7 +126,7 @@ export const ChatDiscussion = () => {
             }}
             onClick={() =>
               handleClickModal(
-                <NewDirectMessage handleClose={handleClose} />,
+                <NewDirectMessage handleClose={handleClose} selectedUser={null} />,
                 "auto"
               )
             }

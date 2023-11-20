@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
-import { Action, I_Room, User } from "./types";
+import { Action, I_Room, I_User, Members } from "./types";
 
 import {
+  DoDisturbOffOutlined,
   LogoutRounded,
   MoreHorizOutlined,
   Person,
   PersonAddAltRounded,
+  PersonOffOutlined,
+  RecordVoiceOverOutlined,
+  RemoveModerator,
+  RemoveModeratorOutlined,
   Settings,
 } from "@mui/icons-material";
 import { Avatar, Badge, Divider } from "@mui/material";
@@ -16,7 +21,10 @@ import {
   changeMessageLength,
   checkUserRole,
   convertDateTime,
+  isAdmin,
+  isBanned,
   isFriend,
+  isMuted,
   isOwner,
 } from "./utils";
 import { UsersRoom } from "../channels/modals/UsersRoomModal";
@@ -35,6 +43,10 @@ import { SetChannelAdmin } from "../channels/modals/SetChannelAdmin";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { BanUserFromChannelModal } from "../channels/modals/BanUserFromChannelModal";
 import { MuteUserInRoom } from "../channels/modals/MuteUserInRoom";
+import { UnSetChannelAdmin } from "../channels/modals/unSetChannelAdmin";
+import { UnBanUserFromChannelModal } from "../channels/modals/UnBanUserFromChannel";
+import { KicKFromRoomModal } from "../channels/modals/KickUserFromChannelModal";
+import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
 
 const Icons: Array<Action> = [
   {
@@ -42,6 +54,14 @@ const Icons: Array<Action> = [
     type: "banFromChannel",
     component: <RemoveCircleOutlineIcon />,
     role: ["admin", "owner"],
+    isBanned: false,
+  },
+  {
+    name: "unBan from channel",
+    type: "unBanFromChannel",
+    component: <DoDisturbOffOutlined />,
+    role: ["admin", "owner"],
+    isBanned: true,
   },
   {
     name: "Mute",
@@ -50,10 +70,24 @@ const Icons: Array<Action> = [
     role: ["admin", "owner"],
   },
   {
+    name: "Kick from channel",
+    type: "kickFromChannel",
+    component: <PersonOffOutlined />,
+    role: ["admin", "owner"],
+  },
+  {
     name: "Give administrator privileges",
     type: "setAdminChannel",
     component: <AdminPanelSettingsIcon />,
     role: ["owner"],
+    isAdmin : false,
+  },
+  {
+    name: "remove administrator privileges",
+    type: "unSetAdminChannel",
+    component: <RemoveModerator />,
+    role: ["owner"],
+    isAdmin: true,
   },
   {
     name: "View profile",
@@ -89,47 +123,57 @@ const Icons: Array<Action> = [
     isFriend: true,
     role: ["member", "admin", "owner"],
   },
-  {
-    name: "Invite to Room",
-    type: "inviteToChannel",
-    component: <PersonOffIcon />,
-    isFriend: true,
-    role: ["admin", "owner"],
-  },
 ];
 
 const getDataForModal = (
   iconType: any,
   room: I_Room,
-  selectedUserId: number
+  selectedUser: I_User
 ) => {
   switch (iconType) {
     case "setAdminChannel":
       return {
-        userId: selectedUserId,
+        userId: selectedUser.intraId,
         roomId: room.id,
+      };
+    case "unSetAdminChannel":
+      return {
+        userId: selectedUser.intraId,
+        roomId: room.id
       };
     case "banFromChannel":
       return {
-        userId: selectedUserId,
+        userId: selectedUser.intraId,
+        roomId: room.id
+      };
+    case "unBanFromChannel":
+      return {
+        userId: selectedUser.intraId,
         roomId: room.id
       };
     case "muteFromChannel":
       return {
-        userId: selectedUserId,
+        userId: selectedUser.intraId,
         roomId: room.id
-      }
+      };
+    case "kickFromChannel":
+      return {
+        userId: selectedUser.intraId,
+        roomId: room.id,
+      };
+    case "message": 
+      return selectedUser;
     default:
       return null;
   }
-};
+};  
 
 export const UserActions = () => {
   const user = useAppSelector((state) => state.auth.user);
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
   const { selectedUser } = useAppSelector((state) => state.chat);
   const { memberships } = useAppSelector((state) => state.channels);
-  const friends: Array<User> = useAppSelector((state) => state.friends.friends);
+  const friends: Array<I_User> = useAppSelector((state) => state.friends.friends);
   const roomIndex = memberships.findIndex((item: any) => item.id == roomId);
   // const selectdUserIndex = memberships[roomIndex].members.findIndex((member: any) => selectedUserId === member.user.intraId);
   // const selectedUserInfo = memberships[roomIndex].members[selectdUserIndex];
@@ -163,18 +207,40 @@ export const UserActions = () => {
     if (typeof Icon.isFriend != "undefined") {
       checkFriend = isFriend(friends, selectedId) == Icon.isFriend;
     }
+    let checkIsBanned = true;
+    if (typeof Icon.isBanned != 'undefined')
+      checkIsBanned = isBanned(memberships[roomIndex], selectedId) === Icon.isBanned;
+    
+    let checkIsAdmin = true;
+    if (typeof Icon.isAdmin != 'undefined')
+      checkIsAdmin = isAdmin(memberships[roomIndex], selectedId) === Icon.isAdmin;
 
-    return Icon.role.includes(role) && checkFriend;
+    // let checkIsMute = true;
+    // if (typeof Icon.isMuted != 'undefined')
+    //   checkIsMute = isMuted(memberships[roomIndex], selectedId) === Icon.isMuted;
+    
+    return Icon.role.includes(role) && checkFriend 
+          && checkIsBanned && checkIsAdmin;
   };
+
+  
 
   const getModalComponent = (iconType: any, data: any) => {
     switch (iconType) {
       case "setAdminChannel":
         return <SetChannelAdmin data={data} handleClose={handleClose} />;
+      case "unSetAdminChannel":
+        return <UnSetChannelAdmin data={data} handleClose={handleClose} />;
       case "banFromChannel":
         return <BanUserFromChannelModal data={data} handleClose={handleClose} />;
+      case "unBanFromChannel":
+        return <UnBanUserFromChannelModal data={data} handleClose={handleClose} />;
       case "muteFromChannel":
         return <MuteUserInRoom data={data} handleClose={handleClose} />;
+      case "kickFromChannel":
+        return <KicKFromRoomModal data={data} handleClose={handleClose} />;
+      case "message":
+        return <NewDirectMessage handleClose={handleClose} selectedUser={data}/>
       default:
         return <></>;
     }
@@ -185,12 +251,17 @@ export const UserActions = () => {
     room: I_Room,
     selectedUserId: number
   ) => {
-    const dataForModal = getDataForModal(iconType, room, selectedUserId);
-    const modalComponent: JSX.Element = getModalComponent(
-      iconType,
-      dataForModal
-    );
-    handleClickModal(modalComponent);
+    const selectedUser = room.members.find((member) => member.user.intraId === selectedUserId);  
+    if (selectedUser) {
+      const dataForModal = getDataForModal(iconType, room, selectedUser.user);
+      const modalComponent: JSX.Element = getModalComponent(
+        iconType,
+        dataForModal
+      );
+      handleClickModal(modalComponent);
+    } else {
+      console.error("Selected user not found.");
+    }
   };
 
   let color, status;

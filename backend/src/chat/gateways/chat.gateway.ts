@@ -591,11 +591,39 @@ export class ChatGateway
     }
   }
   // remove Channel Admins
-
+  @SubscribeMessage('unSetRoomAdmin')
+  async unSetRoomAdmin(@ConnectedSocket() client: Socket, @MessageBody() body: SetRoomAdminDto) {
+    try {
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const response = await this.roomService.unSetAdminOfRoom(body, currentUser.intraId);
+      const roomUsers = await this.roomService.getRoomUsers(body.roomId);
+      
+      // Retrieve the user IDs of users in the room
+      const usersInRoom = roomUsers.map((user) => user.intraId);
+      // This event is for the userInRoom
+      usersInRoom.forEach((userId) => {
+        const socketsUser =
+          this.userSockets.get(userId);
+        if (socketsUser) {
+          socketsUser.forEach((socketId) => {
+            this.server.to(socketId).emit('AdminRemovedFromRoom', response)
+          });
+        }
+      });
+      // this.server.emit('AdminSettedToRoom', response); 
+    } catch (error) {
+      client.emit('unSetRoomAdminError', {
+        message: error.message,
+      });
+      console.log('Subs error =' + error.message);
+    }
+  }
   // ban member
-  @SubscribeMessage('BanMember')
+  @SubscribeMessage('banMember')
   async BanMember (@ConnectedSocket() client: Socket, @MessageBody() body: BanUserFromRoom)
   {
+
+      console.log('banMember func (back)');
       try {
         const currentUser = this.findUserByClientSocketId(client.id);
         const response = await this.roomService.banMember(currentUser.intraId, body);
@@ -614,15 +642,50 @@ export class ChatGateway
           }
         });
 
-
-        currentUserSockets.forEach((socketId) => {
-          this.server.to(socketId).emit('IhaveBeenBanned', {
-              roomId: body.roomId,
-            });
-        });
+        if (currentUserSockets)
+          currentUserSockets.forEach((socketId) => {
+            this.server.to(socketId).emit('IhaveBeenBanned', {
+                roomId: body.roomId,
+              });
+          });
 
       } catch (error) {
         client.emit('banMemberError', {
+          message: error.message,
+        });
+        console.log('Subs error =' + error.message);
+      }
+  }
+  // unBan member
+  @SubscribeMessage('unBanMember')
+  async UnBanMember (@ConnectedSocket() client: Socket, @MessageBody() body: BanUserFromRoom)
+  {
+      try {
+        const currentUser = this.findUserByClientSocketId(client.id);
+        const roomUsers = await this.roomService.getRoomUsers(body.roomId);
+        const response = await this.roomService.unBanMember(currentUser.intraId, body);
+        const retrivedRoom = await this.chatService.getRoom(body.roomId);
+
+        const currentUserSockets: string[] = this.userSockets.get(body.userId);
+        // Retrieve the user IDs of users in the room
+        const usersInRoom = roomUsers.map((user) => user.intraId);
+        // This event is for the userInRoom
+        usersInRoom.forEach((userId) => {
+          const socketsUser =
+            this.userSockets.get(userId);
+          if (socketsUser) {
+            socketsUser.forEach((socketId) => {
+              this.server.to(socketId).emit('userUnBannedFromRoom', response)
+            });
+          }
+        });
+        if (currentUserSockets)
+          currentUserSockets.forEach((socketId) => {
+            this.server.to(socketId).emit('IhaveBeenUnBanned', retrivedRoom);
+          });
+
+      } catch (error) {
+        client.emit('unBanMemberError', {
           message: error.message,
         });
         console.log('Subs error =' + error.message);
@@ -636,13 +699,31 @@ export class ChatGateway
     @MessageBody() body: KickMemberDto,
   ) {
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      await this.roomService.kickMember(
-        body,
-        currentUser.intraId,
-      );
-      this.server.emit('kickMember');
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const roomUsers = await this.roomService.getRoomUsers(body.roomId);
+      const response = await this.roomService.kickMember(body,currentUser.intraId);
+      const currentUserSockets: string[] = this.userSockets.get(body.userId);
+        // Retrieve the user IDs of users in the room
+        const usersInRoom = roomUsers.map((user) => user.intraId);
+        // This event is for the userInRoom
+        usersInRoom.forEach((userId) => {
+          const socketsUser =
+            this.userSockets.get(userId);
+          if (socketsUser) {
+            socketsUser.forEach((socketId) => {
+              this.server.to(socketId).emit('userKickedFromRoom', response)
+            });
+          }
+        });
+        if (currentUserSockets)
+          currentUserSockets.forEach((socketId) => {
+            this.server.to(socketId).emit('IhaveBeenKicked', response);
+          });
+
+        // this event is for all user who are connected (for search component)
+        this.userSockets.forEach((value) => {
+          this.server.to(value).emit('UserHaveBeenKicked', response);
+      });
     } catch (error) {
       client.emit('kickMemberError', {
         message: error.message,
