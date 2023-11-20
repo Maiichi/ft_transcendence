@@ -35,6 +35,7 @@ import {
   JoinRoomDto,
   SetRoomAdminDto,
   AddUserToRoomDto,
+  BanUserFromRoom,
 } from '../room/dto/membership.dto';
 import {
   AcceptFriendRequestDto,
@@ -563,18 +564,25 @@ export class ChatGateway
 
   // set room Admins
   @SubscribeMessage('setRoomAdmin')
-  async setRoomAdmin(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() body: SetRoomAdminDto,
-  ) {
+  async setRoomAdmin(@ConnectedSocket() client: Socket, @MessageBody() body: SetRoomAdminDto) {
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      await this.roomService.setAdminToRoom(
-        body,
-        currentUser.intraId,
-      );
-      this.server.emit('setRoomAdmin');
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const response = await this.roomService.setAdminToRoom(body, currentUser.intraId);
+      const roomUsers = await this.roomService.getRoomUsers(body.roomId);
+      
+      // Retrieve the user IDs of users in the room
+      const usersInRoom = roomUsers.map((user) => user.intraId);
+      // This event is for the userInRoom
+      usersInRoom.forEach((userId) => {
+        const socketsUser =
+          this.userSockets.get(userId);
+        if (socketsUser) {
+          socketsUser.forEach((socketId) => {
+            this.server.to(socketId).emit('AdminSettedToRoom', response)
+          });
+        }
+      });
+      // this.server.emit('AdminSettedToRoom', response); 
     } catch (error) {
       client.emit('setRoomAdminError', {
         message: error.message,
@@ -583,6 +591,43 @@ export class ChatGateway
     }
   }
   // remove Channel Admins
+
+  // ban member
+  @SubscribeMessage('BanMember')
+  async BanMember (@ConnectedSocket() client: Socket, @MessageBody() body: BanUserFromRoom)
+  {
+      try {
+        const currentUser = this.findUserByClientSocketId(client.id);
+        const response = await this.roomService.banMember(currentUser.intraId, body);
+        const roomUsers = await this.roomService.getRoomUsers(body.roomId);
+        const currentUserSockets: string[] = this.userSockets.get(body.userId);
+        // Retrieve the user IDs of users in the room
+        const usersInRoom = roomUsers.map((user) => user.intraId);
+        // This event is for the userInRoom
+        usersInRoom.forEach((userId) => {
+          const socketsUser =
+            this.userSockets.get(userId);
+          if (socketsUser) {
+            socketsUser.forEach((socketId) => {
+              this.server.to(socketId).emit('userBannedFromRoom', response)
+            });
+          }
+        });
+
+
+        currentUserSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('IhaveBeenBanned', {
+              roomId: body.roomId,
+            });
+        });
+
+      } catch (error) {
+        client.emit('banMemberError', {
+          message: error.message,
+        });
+        console.log('Subs error =' + error.message);
+      }
+  }
 
   // kick member
   @SubscribeMessage('kickMember')
@@ -612,14 +657,24 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() body: MuteMemberDto,
   ) {
+    console.log('hint !!!!');
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      await this.roomService.muteMember(
-        currentUser.intraId,
-        body,
-      );
-      this.server.emit('muteMember');
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const response = await this.roomService.muteMember(currentUser.intraId, body);
+      const roomUsers = await this.roomService.getRoomUsers(body.roomId);
+        // const currentUserSockets: string[] = this.userSockets.get(body.userId);
+        // Retrieve the user IDs of users in the room
+        const usersInRoom = roomUsers.map((user) => user.intraId);
+        // This event is for the userInRoom
+        usersInRoom.forEach((userId) => {
+          const socketsUser =
+            this.userSockets.get(userId);
+          if (socketsUser) {
+            socketsUser.forEach((socketId) => {
+              this.server.to(socketId).emit('userMuted', response)
+            });
+          }
+        });
     } catch (error) {
       client.emit('muteMemberError', {
         message: error.message,
@@ -770,7 +825,7 @@ export class ChatGateway
       console.log('Subs error =' + error.message);
     }
   }
-  // ban member
+
 
   @SubscribeMessage('sendFriendRequest')
   async sendFriendRequest(

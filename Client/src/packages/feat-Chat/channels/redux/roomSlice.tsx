@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import { getChatRoomMessages, getMemberships } from "./roomThunk";
 import { I_ConversationMessages, I_Message, I_Room } from "../../components/types";
+import { I_Member } from "../../../feat-Search/types/types";
 
 export interface roomState {
   memberships: I_Room[];
@@ -107,8 +108,49 @@ export const roomSlice = createSlice({
       state.isLoading = false;
     },
     addMessageToRoom: (state, action: PayloadAction<I_ConversationMessages>) => {
-        state.messages.push(action.payload);
+      state.messages.push(action.payload);
+    },
+    setAdminRoom: (state, action: PayloadAction<any>) => {
+      state.isLoading = false;
+    },
+    addAdminToRoom: (state, action: PayloadAction<any>) => {
+      const { userId, roomId } = action.payload;
+      const roomIndex = state.memberships.findIndex(
+        (item) => (item.id === roomId)
+      );
+      const userIndex = state.memberships[roomIndex].members.findIndex(
+        (member) => (member.user.intraId === userId) );
+      state.memberships[roomIndex].members[userIndex].isAdmin = true;
+    },
+    banMember: (state, action: PayloadAction<any>) => {
+      state.isLoading = false;
+    },
+    banMemberFromRoom: (state, action: PayloadAction<any>) => {
+      const { userId, roomId } = action.payload;
+      const roomIndex = state.memberships.findIndex(
+        (item) => (item.id === roomId)
+      );
+      const userIndex = state.memberships[roomIndex].members.findIndex(
+        (member) => (member.user.intraId === userId) );
+      state.memberships[roomIndex].members[userIndex].isBanned = true;
+    },
+    muteMember: (state, action:PayloadAction<any>) => {
+      state.isLoading = false;
+    },
+    muteMemberInRoom: (state, action:PayloadAction<any>) => {
+      const { userId, roomId, timeMute } = action.payload;
+      const roomIndex = state.memberships.findIndex(
+        (item) => (item.id === roomId)
+      );
+      const userIndex = state.memberships[roomIndex].members.findIndex(
+        (member) => (member.user.intraId === userId) );
+       // Calculate the time to mute
+      const currentTime = new Date();
+      
+      const minutesToMute = new Date(currentTime.getTime() + (timeMute + 60) * 60000); // Con
+      state.memberships[roomIndex].members[userIndex].timeMute = minutesToMute;
     }
+
   },
   extraReducers: (builder) => {
     builder
@@ -151,6 +193,12 @@ export const {
   updateRoomSucess,
   sendMessageToRoom,
   addMessageToRoom,
+  setAdminRoom,
+  addAdminToRoom,
+  banMember,
+  banMemberFromRoom,
+  muteMember,
+  muteMemberInRoom
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

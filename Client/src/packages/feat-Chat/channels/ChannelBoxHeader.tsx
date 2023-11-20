@@ -14,7 +14,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
 import { UsersRoom } from "./modals/UsersRoomModal";
 import { CreateChannelModal } from "./modals/CreateChannelModal";
-import { isOwner } from "../components/utils";
+import { isAdmin, isOwner } from "../components/utils";
 import { AddUserToRoomModal } from "./modals/AddUserToRoomModal";
 import { useSize } from "../../../core/utils/hooks";
 import { useStyles } from "../components/style";
@@ -48,7 +48,7 @@ export const ChannelBoxHeader = () => {
     setOpen(false);
   };
   const isChannelOwner = isOwner(memberships[index], user.intraId);
-
+  const isChannelAdmin = isAdmin(memberships[index], user.intraId);
   return (
     <Header>
       <ModalComponent
@@ -81,7 +81,7 @@ export const ChannelBoxHeader = () => {
         )}
       </h4>
       <IconHolder>
-        {isChannelOwner && (
+        {isChannelAdmin && (
           <ChannelMembers>
             <PersonAddAltRounded
               sx={{

@@ -56,3 +56,12 @@ export class AddUserToRoomDto
     @IsNumber()
     userId: number;
 }
+
+export class BanUserFromRoom
+{
+    @IsNumber()
+    roomId: number;
+
+    @IsNumber()
+    userId: number;
+}
