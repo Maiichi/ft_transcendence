@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Membership" ALTER COLUMN "timeMute" DROP NOT NULL,
+ALTER COLUMN "timeMute" DROP DEFAULT;
