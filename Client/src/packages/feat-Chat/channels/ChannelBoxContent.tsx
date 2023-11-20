@@ -6,12 +6,15 @@ import { MessageBox } from "../components/MessageBox";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
 import { sendMessageToRoom } from "./redux/roomSlice";
+import { isMuted } from "../components/utils";
 
 export const ChannelBoxContent = () => {
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
 
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const memberships = useAppSelector((state) => state.channels.memberships);
+  const roomIndex = memberships.findIndex((item: any) => item.id == roomId);
   const [messageContent, setMessageContent] = useState<string>("");
   const channelMessages: [] = useAppSelector(
     (state) => state.channels.messages
@@ -32,6 +35,8 @@ export const ChannelBoxContent = () => {
     if (roomId) dispatch(getChatRoomMessages(roomId));
   }, [roomId]);
 
+  const isMute = isMuted(memberships[roomIndex], user.intraId);
+  console.log('isMute ==', isMute);
   return (
     <>
       <Wrapper>
@@ -53,16 +58,19 @@ export const ChannelBoxContent = () => {
           )}
         </ChatBoxTop>
       </Wrapper>
-      <ChatBoxBottom
-        onSubmit={handleCreateRoomMessage}
-      >
-        <ChatMessageInput 
-            placeholder="Write your message ..." 
-            value={messageContent}
-            onChange={(e) => setMessageContent(e.target.value)}
-        />
-        <ChatSubmitButtom type="submit">Send</ChatSubmitButtom>
-      </ChatBoxBottom>
+      {
+        !isMute &&
+        <ChatBoxBottom
+          onSubmit={handleCreateRoomMessage}
+        >
+          <ChatMessageInput 
+              placeholder="Write your message ..." 
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+          />
+          <ChatSubmitButtom type="submit">Send</ChatSubmitButtom>
+        </ChatBoxBottom>
+      }
     </>
   );
 };
