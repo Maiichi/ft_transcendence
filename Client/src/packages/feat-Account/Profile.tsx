@@ -39,9 +39,10 @@ const Profile = () => {
   const dispatch = useAppDispatch();
   const _uid = useParams<{ uid: string }>();
 
-  const uid: number = typeof _uid.uid === "string" ? parseInt(_uid.uid, 10) : 0;
-  const isOwner: boolean =
-    useAppSelector((state) => state.auth.user.intraId) === uid || !uid;
+  const intraId = useAppSelector((state) => state.auth.user.intraId);
+  const uid: number =
+    typeof _uid.uid === "string" ? parseInt(_uid.uid, 10) : intraId;
+  const isOwner: boolean = intraId === uid;
   uid > 0 || isOwner || navigate("/");
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
@@ -49,7 +50,7 @@ const Profile = () => {
     (state) => state.profile.isLoading || state.profile.lead.isLoading
   );
 
-  const gamer: gamerType = profileStates.gamer;
+  const gamer = profileStates.gamer;
   const matchs = profileStates.MatchHistory;
   const achivs = profileStates.achievement;
 
@@ -126,61 +127,61 @@ const Profile = () => {
             </div>
           </Usercard>
           <Board>
-            {/* <Text variant="h4" sx={style.cardName}>
+            <Text variant="h4" sx={style.cardName}>
               Top 3 player
             </Text>
             <Leaderboard primary={false} />
             <Button onClick={() => navigate("/Leaderboard")}>
               See more...
-            </Button> */}
+            </Button>
           </Board>
           <Matchshistory>
-            {/* <Text variant="h5" sx={style.cardName}>
-                {`${gamer?.user?.lastName}'s Last Matches`}
-              </Text>
-              {matchs?.map(
-                (item, index) =>
-                  index < 5 && (
-                    <Match
-                      win={getresult(item.gain, item.nogain, [
-                        "#2fa025b8",
-                        "#b0141495",
-                        "#3b4243b7",
-                      ])}
-                    >
-                      <Avatar
-                        sx={{ width: 60, height: 60, mb: 2 }}
-                        alt="we"
-                        src={images[item.pic]}
-                      />
-                      <Text> {item.name} </Text>
-                      <p> {`${item.gain} : ${item.nogain}`} </p>
-                      {getresult(item.gain, item.nogain, [
-                        <CheckCircle color="success" />,
-                        <DoNotDisturbOn color="error" />,
-                        <Dangerous color="disabled" />,
-                      ])}
-                    </Match>
-                  ),
-              )} */}
+            <Text variant="h5" sx={style.cardName}>
+              {`${gamer.user.lastName}'s Last Matches`}
+            </Text>
+            {matchs?.map(
+              (item, index) =>
+                index < 5 && (
+                  <Match
+                    win={getresult(item.gain, item.nogain, [
+                      "#2fa025b8",
+                      "#b0141495",
+                      "#3b4243b7",
+                    ])}
+                  >
+                    <Avatar
+                      sx={{ width: 60, height: 60, mb: 2 }}
+                      alt="we"
+                      src={images[item.pic]}
+                    />
+                    <Text> {item.name} </Text>
+                    <p> {`${item.gain} : ${item.nogain}`} </p>
+                    {getresult(item.gain, item.nogain, [
+                      <CheckCircle color="success" />,
+                      <DoNotDisturbOn color="error" />,
+                      <Dangerous color="disabled" />,
+                    ])}
+                  </Match>
+                )
+            )}
           </Matchshistory>
           <Achievemets>
-            {/* <Text variant="h5" sx={style.cardName}>
-                {`${gamer?.user?.lastName}'s Achievements`}
-              </Text>
-              {achivs?.map(
-                (achiv, index) =>
-                  index < 9 && (
-                    <Achiv>
-                      <img
-                        style={style.achivlogo}
-                        alt="logoAchiv"
-                        src={images[achiv.logo]}
-                      />
-                      <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
-                    </Achiv>
-                  ),
-              )} */}
+            <Text variant="h5" sx={style.cardName}>
+              {`${gamer.user.lastName}'s Achievements`}
+            </Text>
+            {achivs?.map(
+              (achiv, index) =>
+                index < 9 && (
+                  <Achiv>
+                    <img
+                      style={style.achivlogo}
+                      alt="logoAchiv"
+                      src={images[achiv.logo]}
+                    />
+                    <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
+                  </Achiv>
+                )
+            )}
           </Achievemets>
         </ProfileCards>
       );

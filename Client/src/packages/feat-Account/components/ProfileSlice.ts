@@ -21,22 +21,24 @@ const profileSlice = createSlice({
         getuserasgamer.fulfilled,
         (state, action: PayloadAction<any>) => {
           state.gamer = action.payload.gamer;
-          state.gamer && (state.gamer.user = action.payload.user);
+          state.gamer.user = action.payload.user.message;
           state.achievement = action.payload.achievement;
           state.MatchHistory = action.payload.matchHistory;
 
           state.isLoading = false;
         }
       )
-      .addCase(getLeaderboard.fulfilled, (state, action:PayloadAction<leaderboardType[]>) => {
-        state.lead.leaderboard = action.payload;
-        state.lead.isLoading = false;
-      })
+      .addCase(
+        getLeaderboard.fulfilled,
+        (state, action: PayloadAction<leaderboardType[]>) => {
+          state.lead.leaderboard = action.payload;
+          state.lead.isLoading = false;
+        }
+      )
       .addCase(getuserasgamer.rejected, (state) => {
         state.isLoading = false;
       })
       .addCase(getLeaderboard.rejected, (state) => {
-        console.log('jiuii')
         state.lead.isLoading = false;
       });
   },

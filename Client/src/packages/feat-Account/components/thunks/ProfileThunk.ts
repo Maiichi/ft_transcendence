@@ -1,7 +1,13 @@
-import { PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiRequest } from "../../../../core/utils/apiRequest";
 import { RootState } from "../../../../core";
-import { AchievementType, MatchHistoryType, gamerType } from "../statsType";
+import {
+  AchievementType,
+  MatchHistoryType,
+  gamerType,
+  unformalData,
+  userType,
+} from "../statsType";
 import { getLeaderboard } from "./LeaderBoardThunk";
 
 const getAchievements = createAsyncThunk(
@@ -14,7 +20,7 @@ const getAchievements = createAsyncThunk(
       return new Promise<AchievementType[]>((resolve) => {
         setTimeout(() => {
           resolve(achivs);
-        }, 1000);
+        }, 500);
       });
     } catch (error) {
       console.log("error achievements fetching", error);
@@ -50,10 +56,11 @@ const getGamer = createAsyncThunk(
 );
 const getUser = createAsyncThunk(
   "profile/user",
-  async (uid: number, { getState }): Promise<any> => {
+  async (uid: number, { getState }): Promise<userType> => {
     try {
       const token = (getState() as RootState).auth.token;
-      const userresponse = await apiRequest(`/users/byid/${uid}`, {
+      console.log(token);
+      const userresponse: userType = await apiRequest(`/users/byid/${uid}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -67,12 +74,6 @@ const getUser = createAsyncThunk(
   }
 );
 
-type unformalData = {
-  gamer: gamerType| unknown;
-  user: any;
-  matchHistory: MatchHistoryType[]| unknown;
-  achievement: AchievementType[]|unknown;
-};
 const getuserasgamer = createAsyncThunk(
   "profile/gamer",
   async (uid: number, { dispatch }): Promise<unformalData> => {
@@ -83,11 +84,11 @@ const getuserasgamer = createAsyncThunk(
       const _user = await dispatch(getUser(uid));
       dispatch(getLeaderboard());
 
-      const result:unformalData = {
-        gamer: _gamer.payload,
-        user: _user.payload,
-        matchHistory: _matchHistory.payload,
-        achievement: _achievement.payload,
+      const result: unformalData = {
+        gamer: _gamer.payload as gamerType,
+        user: _user.payload as userType,
+        matchHistory: _matchHistory.payload as MatchHistoryType[],
+        achievement: _achievement.payload as AchievementType[],
       };
       return result;
     } catch (error) {

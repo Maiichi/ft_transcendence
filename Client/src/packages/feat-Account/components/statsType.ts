@@ -1,5 +1,14 @@
 import Module from "module";
 
+type userType = any;
+
+type unformalData = {
+  gamer: gamerType;
+  user: userType;
+  matchHistory: MatchHistoryType[];
+  achievement: AchievementType[];
+};
+
 type gamerType = {
   user: any;
   coalition: {
@@ -41,4 +50,11 @@ export interface ProfileState {
   };
 }
 
-export type { gamerType, leaderboardType, AchievementType, MatchHistoryType };
+export type {
+  gamerType,
+  leaderboardType,
+  AchievementType,
+  MatchHistoryType,
+  userType,
+  unformalData,
+};
