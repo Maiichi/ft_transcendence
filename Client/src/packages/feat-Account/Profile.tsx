@@ -6,7 +6,6 @@ import {
   getuserasgamer,
   getLeaderboard,
   Loading,
-  gamerType,
 } from "./components";
 import images from "./images_uploads";
 import style, {
