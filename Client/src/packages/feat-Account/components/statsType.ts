@@ -1,6 +1,18 @@
 import Module from "module";
 
-type userType = any;
+type userType = {
+  intraId: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  avatar_url: string;
+  status: string;
+  twoFactorActivate: boolean;
+  twoFactorSecret: string;
+  createdAt: string;
+  updatedAt: string;
+} & Record<string, any>;
 
 type unformalData = {
   gamer: gamerType;
@@ -10,7 +22,7 @@ type unformalData = {
 };
 
 type gamerType = {
-  user: any;
+  user: userType;
   coalition: {
     name: string | null;
     logo: string;
