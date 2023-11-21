@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { getLeaderboard, getuserasgamer } from "./thunks";
-import { ProfileState, gamerType, leaderboardType, unformalData } from "./statsType";
+import { ProfileState, leaderboardType, unformalData } from "./statsType";
 
 const initialState: ProfileState =
   require("../static-data/initialStates.json").profile;
@@ -22,11 +22,10 @@ const profileSlice = createSlice({
         (state, action: PayloadAction<unformalData>) => {
           state.gamer = {
             ...action.payload.gamer,
-            user: action.payload.user.message,
+            user: action.payload.user?.message,
           };
           state.achievement = action.payload.achievement;
           state.MatchHistory = action.payload.matchHistory;
-
           state.isLoading = false;
         }
       )

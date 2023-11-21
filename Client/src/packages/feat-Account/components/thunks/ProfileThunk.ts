@@ -23,7 +23,7 @@ const getAchievements = createAsyncThunk(
         }, 500);
       });
     } catch (error) {
-      console.log("error achievements fetching", error);
+      console.error("error achievements fetching", error);
       throw error;
     }
   }
@@ -37,7 +37,7 @@ const getMatchHistory = createAsyncThunk(
       );
       return matchs;
     } catch (error) {
-      console.log("error matchs history fetching", error);
+      console.error("error matchs history fetching", error);
       throw error;
     }
   }
@@ -49,7 +49,7 @@ const getGamer = createAsyncThunk(
       const gamer: gamerType = await require("../../static-data/gamer.json");
       return gamer;
     } catch (error) {
-      console.log("error subofgamer fetching", error);
+      console.error("error subofgamer fetching", error);
       throw error;
     }
   }
@@ -68,7 +68,7 @@ const getUser = createAsyncThunk(
       });
       return userresponse;
     } catch (error) {
-      console.log("error user fetching", error);
+      console.error("error user fetching", error);
       throw error;
     }
   }
@@ -92,7 +92,7 @@ const getuserasgamer = createAsyncThunk(
       };
       return result;
     } catch (error) {
-      console.log("error gamer fetching", error);
+      console.error("error gamer fetching", error);
       throw error;
     }
   }

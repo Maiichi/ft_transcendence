@@ -27,6 +27,9 @@ type gamerType = {
     name: string | null;
     logo: string;
   };
+  totalmatch: 21;
+  wins: 13;
+  achivs: 7;
   rank: number;
 };
 type leaderboardType = {

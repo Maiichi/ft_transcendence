@@ -31,8 +31,6 @@ import {
 import CircularProgressBar from "./components/utils/CircularProgressBar";
 import { Leaderboard } from "./Leaderboard";
 
-type userType = any;
-
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -56,12 +54,19 @@ const Profile = () => {
   useEffect(() => {
     dispatch(getuserasgamer(uid));
     dispatch(getLeaderboard());
-  }, []);
+  }, [_uid]);
   function getresult(one: number, two: number, results: Array<any>) {
     return one > two ? results[0] : one < two ? results[1] : results[2];
   }
 
-  const Go = !isloading && gamer.user != null;
+  const Go = !isloading;
+  if (Go && !gamer.user)
+    return (
+      <>
+        user not found
+        <Button onClick={() => navigate("/")}>go to home</Button>
+      </>
+    );
   switch (Go) {
     case false:
       return <Loading />;
@@ -86,11 +91,11 @@ const Profile = () => {
                   <Avatar
                     sx={style.userAvatar}
                     alt="UserImg"
-                    src={images[gamer.user?.avatar_url || "Pic"]}
+                    src={`/app/images_uploads/${gamer.user.avatar_url}`}
                   />
                   <div style={style.div4}>
                     <Text variant="h5" style={style.userName}>
-                      {gamer.user.firstName} {gamer.user.lastName}
+                      {`${gamer.user.firstName} ${gamer.user.lastName}`}
                     </Text>
                     <Button
                       sx={style.button1}
@@ -114,13 +119,13 @@ const Profile = () => {
               </div>
               <div style={style.box2}>
                 <Text variant="body1">
-                  {"Total matches"} <br /> <span> {23} </span>
+                  {"Total matches"} <br /> <span> {gamer.totalmatch} </span>
                 </Text>
                 <Text variant="body1">
-                  {"Wins"} <br /> <span> {20} </span>
+                  {"Wins"} <br /> <span> {gamer.wins} </span>
                 </Text>
                 <Text variant="body1">
-                  {"Achievements"} <br /> <span> {13} </span>
+                  {"Achievements"} <br /> <span> {gamer.achivs} </span>
                 </Text>
               </div>
             </div>
@@ -136,9 +141,9 @@ const Profile = () => {
           </Board>
           <Matchshistory>
             <Text variant="h5" sx={style.cardName}>
-              {`${gamer.user.lastName}'s Last Matches`}
+              {`${gamer.user.userName}'s Last Matches`}
             </Text>
-            {matchs?.map(
+            {matchs.map(
               (item, index) =>
                 index < 5 && (
                   <Match
@@ -166,9 +171,9 @@ const Profile = () => {
           </Matchshistory>
           <Achievemets>
             <Text variant="h5" sx={style.cardName}>
-              {`${gamer.user.lastName}'s Achievements`}
+              {`${gamer.user.userName}'s Achievements`}
             </Text>
-            {achivs?.map(
+            {achivs.map(
               (achiv, index) =>
                 index < 9 && (
                   <Achiv>
