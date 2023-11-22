@@ -1,34 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { Message, PersonAddAlt } from "@mui/icons-material";
-import { Avatar, Button, Coalition, Text, Usercard } from "../styles";
+import { Avatar, Button, Grow, Text, Usercard } from "../styles";
 import { gamerType } from "./statsType";
 import CircularProgressBar from "./utils/CircularProgressBar";
+import LinearDeterminate from "./utils/linearProgressBar";
 
 const UserCard = (props: { gamer: gamerType }) => {
   const { gamer } = props;
   const navigate = useNavigate();
   return (
     <Usercard>
-      <Coalition>
-        <Text variant="h6" sx={{ mb: "5px" }}>
-          {gamer.coalition.name}
-        </Text>
-        <img
-          alt={"Coalition"}
-          src={`/images/${gamer.coalition.logo}`}
-          style={{
-            width: 80,
-            height: 120,
-          }}
-        />
-        <h3 style={{ margin: "7px" }}> #{gamer.rank}</h3>
-      </Coalition>
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           minWidth: "80%",
-          marginTop: "6%",
         }}
       >
         <div
@@ -45,8 +31,8 @@ const UserCard = (props: { gamer: gamerType }) => {
           >
             <Avatar
               sx={{
-                width: 80,
-                height: 80,
+                width: 100,
+                height: 100,
                 mr: 2,
               }}
               alt="UserImg"
@@ -87,7 +73,9 @@ const UserCard = (props: { gamer: gamerType }) => {
               </Button>
             </div>
           </div>
-          <CircularProgressBar progress={gamer.rank} />
+          <Grow prograssShow="circular">
+            <CircularProgressBar progress={gamer.rank} />
+          </Grow>
         </div>
         <div
           style={{
@@ -109,6 +97,9 @@ const UserCard = (props: { gamer: gamerType }) => {
             {"Achievements"} <br /> <span> {gamer.achivs} </span>
           </Text>
         </div>
+        <Grow prograssShow="linear">
+          <LinearDeterminate progress={gamer.rank} />
+        </Grow>
       </div>
     </Usercard>
   );
