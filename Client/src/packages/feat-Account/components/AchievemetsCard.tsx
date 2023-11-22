@@ -1,4 +1,3 @@
-import images from "../images_uploads";
 import { Achievemets, Achiv, Text } from "../styles";
 import { AchievementType } from "./statsType";
 
@@ -31,7 +30,7 @@ const AchievemetsCard = (props: {
                   height: "40px",
                 }}
                 alt="logoAchiv"
-                src={images[achiv.logo]}
+                src={`/images/${achiv.logo}`}
               />
               <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
             </Achiv>

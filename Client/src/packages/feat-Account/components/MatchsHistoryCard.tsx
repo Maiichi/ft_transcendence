@@ -1,7 +1,6 @@
 import { CheckCircle, DoNotDisturbOn, Dangerous } from "@mui/icons-material";
 import { Avatar, Match, Matchshistory, Text } from "../styles";
 import { MatchHistoryType } from "./statsType";
-import images from "../images_uploads";
 
 const MatchsHistoryCard = (props: {
   userName: string;
@@ -38,7 +37,8 @@ const MatchsHistoryCard = (props: {
               <Avatar
                 sx={{ width: 60, height: 60, mb: 2 }}
                 alt="we"
-                src={images[item.pic]}
+                src={`/images/${item.pic}`}
+
               />
               <Text> {item.name} </Text>
               <p> {`${item.gain} : ${item.nogain}`} </p>

@@ -6,7 +6,7 @@
       "wins": "50",
       "loss": "10",
       "achievement": "Logo",
-      "picture": "Pic"
+      "picture": "Pic.png"
     },
     "2": {
       "name": "mark",
@@ -14,7 +14,7 @@
       "wins": 40,
       "loss": 15,
       "achievement": "Logo",
-      "picture": "Pic"
+      "picture": "Pic.png"
     },
     "3": {
       "name": "john",
@@ -22,7 +22,7 @@
       "wins": "50",
       "loss": "40",
       "achievement": "Logo",
-      "picture": "Pic"
+      "picture": "Pic.png"
     },
     "4": {
       "name": "john",
@@ -30,7 +30,7 @@
       "wins": "50",
       "loss": "40",
       "achievement": "Logo",
-      "picture": "Pic"
+      "picture": "Pic.png"
     }
   }
 }

@@ -3,7 +3,6 @@ import { Message, PersonAddAlt } from "@mui/icons-material";
 import { Avatar, Button, Coalition, Text, Usercard } from "../styles";
 import { gamerType } from "./statsType";
 import CircularProgressBar from "./utils/CircularProgressBar";
-import images from "../images_uploads";
 
 const UserCard = (props: { gamer: gamerType }) => {
   const { gamer } = props;
@@ -16,12 +15,12 @@ const UserCard = (props: { gamer: gamerType }) => {
         </Text>
         <img
           alt={"Coalition"}
-          src={`/app/${images[gamer.coalition.logo]}`}
+          src={`/images/${gamer.coalition.logo}`}
           style={{
             width: 80,
             height: 120,
           }}
-        />  
+        />
         <h3 style={{ margin: "7px" }}> #{gamer.rank}</h3>
       </Coalition>
       <div
@@ -51,7 +50,7 @@ const UserCard = (props: { gamer: gamerType }) => {
                 mr: 2,
               }}
               alt="UserImg"
-              src={`/app/images_uploads/${gamer.user.avatar_url}`}
+              src={`/images/${gamer.user.avatar_url}`}
             />
             <div
               style={{

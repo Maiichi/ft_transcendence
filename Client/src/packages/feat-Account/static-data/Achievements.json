@@ -2,91 +2,91 @@
   "A": {
     "name": "First Serve",
     "score": "",
-    "logo": "five_BB",
+    "logo": "five_BB.png",
     "discription": "Win your first game in the multiplayer mode."
   },
   "B": {
     "name": "Perfect Serve",
     "score": "",
-    "logo": "five_BB",
+    "logo": "five_BB.png",
     "discription": "Score five aces in a single game."
   },
   "C": {
     "name": "Rally Master",
     "score": "",
-    "logo": "medal_A",
+    "logo": "medal_A.png",
     "discription": "Complete a rally of 20 or more hits in a single point."
   },
   "D": {
     "name": "Speed Demon",
     "score": "",
-    "logo": "medal_A",
+    "logo": "medal_A.png",
     "discription": "Score a point with a shot that exceeds a certain speed (e.g., 100 mph)."
   },
   "E": {
     "name": "Accuracy Ace",
     "score": "",
-    "logo": "medal_A",
+    "logo": "medal_A.png",
     "discription": "Win a game without missing a single shot."
   },
   "F": {
     "name": "Shutout",
     "score": "",
-    "logo": "medal_A",
+    "logo": "medal_A.png",
     "discription": "Win a game with a score of 11-0."
   },
   "J": {
     "name": "Comeback Kid",
     "score": "",
-    "logo": "medal_A",
+    "logo": "medal_A.png",
     "discription": "Win a game after trailing by a certain number of points (e.g., 5-10)."
   },
   "H": {
     "name": "Win Streak",
     "score": "",
-    "logo": "five_B",
+    "logo": "five_B.png",
     "discription": "Win five games in a row in multiplayer mode."
   },
   "I": {
     "name": "Top Spin",
     "score": "",
-    "logo": "five_B",
+    "logo": "five_B.png",
     "discription": "Use topspin to score points in a game."
   },
   "G": {
     "name": "Underdog Victory",
     "score": "",
-    "logo": "five_B",
+    "logo": "five_B.png",
     "discription": "Win a game against a player with a higher rank."
   },
   "K": {
     "name": "Tournament Champion",
     "score": "",
-    "logo": "five_B",
+    "logo": "five_B.png",
     "discription": "Win a specific number of tournaments in a row."
   },
   "L": {
     "name": "Quick Reflexes",
     "score": "",
-    "logo": "five_B",
+    "logo": "five_B.png",
     "discription": "Score a point within the first five seconds of a game."
   },
   "M": {
     "name": "Ball Control",
     "score": "",
-    "logo": "five_BB",
+    "logo": "five_BB.png",
     "discription": "Win a game without letting the ball touch the net."
   },
   "N": {
     "name": "Spin Doctor",
     "score": "",
-    "logo": "five_BB",
+    "logo": "five_BB.png",
     "discription": "Score points using a variety of spin shots in a single game."
   },
   "O": {
     "name": "Online Rivalry",
     "score": "",
-    "logo": "five_BB",
+    "logo": "five_BB.png",
     "discription": "Defeat the same player multiple times in online matches."
   }
 }

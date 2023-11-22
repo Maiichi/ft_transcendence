@@ -16,7 +16,6 @@ import {
   Title,
   Root,
 } from "./styles";
-import images from "./images_uploads";
 import { Loading } from "./components";
 
 function sendGameRequist(userName: string) {}
@@ -44,7 +43,9 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
               (!primary && index >= 3) || (
                 <Player>
                   <ListItemAvatar>
-                    <Avatar src={images[player.picture]}>{index + 1}</Avatar>
+                    <Avatar src={`/images/${player.picture}`}>
+                      {index + 1}
+                    </Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={player.name}
