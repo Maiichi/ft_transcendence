@@ -1,23 +1,24 @@
-    import { BadRequestException, Body, Controller, Get, Param, Patch, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-    import { JwtGuard } from '../auth/guard';
-    import { EditUserDto } from './dto';
-    import { UserService } from './user.service';
-    import { Response, Express } from 'express';
-    import { FileInterceptor } from '@nestjs/platform-express';
-    import { MulterExceptionFilter } from './multer/multer.filter';
-    import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
-    import { GetUser } from 'src/auth/decorator';
-    import { User } from '@prisma/client';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { JwtGuard } from '../auth/guard';
+import { EditUserDto } from './dto';
+import { UserService } from './user.service';
+import { Response, Express } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterExceptionFilter } from './multer/multer.filter';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
+import { GetUser } from 'src/auth/decorator';
+import { User } from '@prisma/client';
+import { BlacklistService } from './blacklist/blacklist.service';
 
-    @ApiTags('User')
-    @UseGuards(JwtGuard)
-    @Controller('users')
-    @ApiBearerAuth()
-    export class UserController
-    {
-        constructor(
-            private userService:    UserService,
-        ) {}
+@ApiTags('User')
+@UseGuards(JwtGuard)
+@Controller('users')
+@ApiBearerAuth()
+export class UserController
+{
+    constructor(
+        private userService:    UserService,
+    ) {}
     // GET /api/users/:username
     // @Get(':username')
     // @ApiOperation({ summary : 'Get user by username'})
@@ -141,4 +142,17 @@
         }
     }
 
+    @Get('blacklist/')
+    async getBlackList(@GetUser() user: User ,  @Res() res: Response)
+    {
+        console.log('here ')
+        try {
+            return await this.userService.getBlackList(user.intraId, res);
+        } catch (error) {
+            return res.send({error: error})
+        }
     }
+
+    
+
+}

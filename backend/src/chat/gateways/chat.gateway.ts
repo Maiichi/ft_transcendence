@@ -836,11 +836,13 @@ export class ChatGateway
       const message = await this.messageService.sendMessageToRoom(body,currentUser.intraId);
       const member = await this.roomService.getMember(currentUser.intraId);
       const roomUsers = await this.roomService.getRoomUsers(body.roomId);
-      
+      const blacklist = await this.blacklistService.getBlacklistUsers(currentUser.intraId);
       // Retrieve the user IDs of users in the room
       const usersInRoom = roomUsers.map((user) => user.intraId);
+      // Exclude blacklisted users from the list of users in the room
+      const usersNotBlacklisted = usersInRoom.filter((userId) => !blacklist.includes(userId));
       // This event is for the userInRoom
-      usersInRoom.forEach((userId) => {
+      usersNotBlacklisted.forEach((userId) => {
         const socketsUser =
           this.userSockets.get(userId);
         if (socketsUser) {
@@ -871,13 +873,22 @@ export class ChatGateway
     @MessageBody() body: BlockUserDto,
   ) {
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      await this.blacklistService.blockUser(
-        body,
-        currentUser.intraId,
-      );
-      this.server.emit('blockUser');
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const response = await this.blacklistService.blockUser(body,currentUser.intraId);
+      const blockerSockets: string[] = this.userSockets.get(currentUser.intraId);
+      const blockedSockets: string[] = this.userSockets.get(body.blockedId);
+      
+      // event to the blocker 
+      blockerSockets.forEach((socketId) =>{
+        this.server.to(socketId).emit('blockedByMe', response.blocked);
+      });
+      
+      // event to the blocked
+      if (blockedSockets)
+        blockedSockets.forEach((socketId) =>{
+          this.server.to(socketId).emit('blockedMe', response.blocker);
+        });
+      // this.server.emit('blockUser');
     } catch (error) {
       client.emit('blockUserError', {
         message: error.message,

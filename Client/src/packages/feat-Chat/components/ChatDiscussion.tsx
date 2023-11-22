@@ -23,6 +23,7 @@ import {
 } from "./chatSlice";
 import { getUserFriends } from "../channels/redux/friendThunk";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
+import { getBlacklist } from "./blockThunk";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
   const { channels, directMessage, filter, chat } = useAppSelector(
@@ -46,6 +47,7 @@ export const ChatDiscussion = () => {
     setOpen(false);
   };
   useEffect(() => {
+    dispatch(getBlacklist());
     dispatch(getMemberships());
     dispatch(getDirectConversations());
     dispatch(getUserFriends());
@@ -64,7 +66,6 @@ export const ChatDiscussion = () => {
     data: I_DirectConversation | I_Room
   ) => {
     dispatch(setDiscussionsDisplay(false));
-    console.log('type', type);
     dispatch(
       setCurrentConversation({
         roomId: type == "channel" ? data.id : null,
@@ -141,7 +142,7 @@ export const ChatDiscussion = () => {
               }
               onClick={() => {
                 dispatch(setSelectedUser(discussion.receiver));
-                dispatch(setDisplayUserActions(true));
+                dispatch(setDisplayUserActions(false));
                 handleCLick("direct", discussion);
               }}
             >

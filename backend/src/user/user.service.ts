@@ -24,6 +24,26 @@ export class UserService {
         return user;
     }
 
+    async getUserInfos(userId: number)
+    {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                intraId: userId
+            },
+            select: {
+                intraId: true,
+                userName: true,
+                firstName: true,
+                lastName: true,
+                avatar_url: true,
+                status: true
+            }
+        });
+        if (!user)
+            return null;
+        return user;
+    }
+
     async getUserByIntraId(intraId: number, res: Response)
     {
         const user = await this.getUser(intraId);
@@ -272,14 +292,90 @@ export class UserService {
                         lastName: true,
                         firstName: true,
                         userName: true,
+                        status: true,
                     }
                 }
             }
         });
-        // if ()
-        console.log('user Friends ==', JSON.stringify(userFriends));
         return  res.send({
             data : userFriends[0].friends
         });
     }
+
+    async getBlackList(userId: number, res: Response) {
+        const blackList = await this.prisma.blacklist.findMany({
+            where: {
+                OR: [
+                    {
+                        blockedById: userId,
+                    },
+                    {
+                        blockerById: userId,
+                    },
+                ],
+            },
+            select: {
+                blocked: {
+                    select: {
+                        intraId: true,
+                        userName: true,
+                        lastName: true,
+                        firstName: true,
+                        avatar_url: true,
+                        status: true,
+                    },
+                },
+                blocker: {
+                    select: {
+                        intraId: true,
+                        userName: true,
+                        lastName: true,
+                        firstName: true,
+                        avatar_url: true,
+                        status: true,
+                    },
+                },
+            },
+        });
+    
+        if (!blackList) {
+            return res.send({
+                userBlockedByYou: [],
+                userBlockedYou: [],
+            });
+        }
+    
+        const BlockedByYou = [];
+        const BlockedYou = [];
+    
+        for (const entry of blackList) {
+            if (entry.blocker.intraId === userId) {
+                // User has blocked you
+                BlockedByYou.push({
+                    intraId: entry.blocked.intraId,
+                    userName: entry.blocked.userName,
+                    lastName: entry.blocked.lastName,
+                    firstName: entry.blocked.firstName,
+                    avatar_url: entry.blocked.avatar_url,
+                    status: entry.blocked.status,
+                });
+            } else if (entry.blocked.intraId === userId) {
+                // User has been blocked by you
+                BlockedYou.push({
+                    intraId: entry.blocker.intraId,
+                    userName: entry.blocker.userName,
+                    lastName: entry.blocker.lastName,
+                    firstName: entry.blocker.firstName,
+                    avatar_url: entry.blocker.avatar_url,
+                    status: entry.blocker.status,
+                });
+            }
+        }
+    
+        return res.send({
+            BlockedByYou,
+            BlockedYou,
+        });
+    }
+    
 }

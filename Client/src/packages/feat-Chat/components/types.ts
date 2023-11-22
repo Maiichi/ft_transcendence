@@ -46,13 +46,7 @@ export interface I_DirectConversation {
     content: string;
     createdAt: string;
   };
-  receiver: {
-    userName: string;
-    firstName: string;
-    lastName: string;
-    status: string;
-    avatar_url: string;
-  };
+  receiver: I_User;
 }
 export interface I_Message {
   sender: {
@@ -92,3 +86,4 @@ export interface Action {
 }
 
 export type Role = "admin" | "owner" | "member";
+

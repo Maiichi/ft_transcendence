@@ -400,18 +400,98 @@ export class MessageService
     }
 /***************************************** CONVERSATION  ***********************************************/
 
-    async getUserDirectConversations(userId: number, res: Response)
-    {
+    // async getUserDirectConversations(userId: number, res: Response)
+    // {
+    //     const user = await this.prisma.user.findUnique({
+    //         where : {
+    //             intraId: userId
+    //         },
+    //         select : {
+    //             conversations : {
+    //                 where : {
+    //                     type: 'direct',
+    //                 },
+    //                 select : {
+    //                     id: true,
+    //                     createdAt: true,
+    //                     updatedAt: true,
+    //                     type: true,
+    //                     messages: {
+    //                         select: {
+    //                             content: true,
+    //                             createdAt: true,
+    //                         },
+    //                         orderBy: {
+    //                             createdAt: 'desc',
+    //                         },
+    //                         take: 1, // Retrieve only the last message
+    //                     },
+    //                     participants : {
+    //                         where : {
+    //                             NOT : {
+    //                                 intraId : userId
+    //                             }
+    //                         },
+    //                         select : {
+    //                             userName: true,
+    //                             firstName: true,
+    //                             lastName: true,
+    //                             status: true,
+    //                             avatar_url: true,
+    //                             intraId: true,
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     });
+
+    //     const conversationsData = [];
+    //     for (const conversation of user?.conversations || []) {
+    //         // const lastMessage = conversation.messages[0];
+    //         // console.log("lastMessage (back) ", lastMessage);
+    
+    //         const conversationData = {
+    //             id: conversation.id,
+    //             createdAt: conversation.createdAt,
+    //             updatedAt: conversation.updatedAt,
+    //             type: conversation.type,
+    //             lastMessage: {
+    //                 content: conversation.messages[0].content,
+    //                 createdAt: conversation.messages[0].createdAt,
+    //             },
+    //             receiver: {
+    //                 intraId: conversation.participants[0].intraId,
+    //                 userName: conversation.participants[0].userName,
+    //                 firstName: conversation.participants[0].firstName,
+    //                 lastName: conversation.participants[0].lastName,
+    //                 status: conversation.participants[0].status,
+    //                 avatar_url: conversation.participants[0].avatar_url,
+    //             }
+    //         };
+    
+    //         conversationsData.push(conversationData);
+    //     }
+    //     // console.log("conv (back) ", JSON.stringify(conversationsData));
+    //     return res.json({
+    //         data: conversationsData
+    //     });
+        
+
+    //     // res.send({data: conversations});
+    // }
+
+    async getUserDirectConversations(userId: number, res: Response) {
         const user = await this.prisma.user.findUnique({
-            where : {
-                intraId: userId
+            where: {
+                intraId: userId,
             },
-            select : {
-                conversations : {
-                    where : {
+            select: {
+                conversations: {
+                    where: {
                         type: 'direct',
                     },
-                    select : {
+                    select: {
                         id: true,
                         createdAt: true,
                         updatedAt: true,
@@ -426,60 +506,77 @@ export class MessageService
                             },
                             take: 1, // Retrieve only the last message
                         },
-                        participants : {
-                            where : {
-                                NOT : {
-                                    intraId : userId
-                                }
+                        participants: {
+                            where: {
+                                NOT: {
+                                    intraId: userId,
+                                },
+                                AND: [
+                                    {
+                                        NOT: {
+                                            blockedMe: {
+                                                some: {
+                                                    blockerById: userId,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    {
+                                        NOT: {
+                                            blockedByMe: {
+                                                some: {
+                                                    blockedById: userId,
+                                                },
+                                            },
+                                        },
+                                    },
+                                ],
                             },
-                            select : {
+                            select: {
                                 userName: true,
                                 firstName: true,
                                 lastName: true,
                                 status: true,
                                 avatar_url: true,
                                 intraId: true,
-                            }
-                        }
-                    }
-                }
-            }
+                            },
+                        },
+                    },
+                },
+            },
         });
-
+    
         const conversationsData = [];
         for (const conversation of user?.conversations || []) {
-            // const lastMessage = conversation.messages[0];
-            // console.log("lastMessage (back) ", lastMessage);
-    
-            const conversationData = {
-                id: conversation.id,
-                createdAt: conversation.createdAt,
-                updatedAt: conversation.updatedAt,
-                type: conversation.type,
-                lastMessage: {
-                    content: conversation.messages[0].content,
-                    createdAt: conversation.messages[0].createdAt,
-                },
-                receiver: {
-                    intraId: conversation.participants[0].intraId,
-                    userName: conversation.participants[0].userName,
-                    firstName: conversation.participants[0].firstName,
-                    lastName: conversation.participants[0].lastName,
-                    status: conversation.participants[0].status,
-                    avatar_url: conversation.participants[0].avatar_url,
-                }
-            };
-    
-            conversationsData.push(conversationData);
-        }
-        // console.log("conv (back) ", JSON.stringify(conversationsData));
-        return res.json({
-            data: conversationsData
-        });
-        
+            if (conversation.messages[0]?.content && conversation.messages[0]?.createdAt && conversation.participants[0]?.intraId) {
+                const conversationData = {
+                    id: conversation.id,
+                    createdAt: conversation.createdAt,
+                    updatedAt: conversation.updatedAt,
+                    type: conversation.type,
+                    lastMessage: {
+                        content: conversation.messages[0].content,
+                        createdAt: conversation.messages[0].createdAt,
+                    },
+                    receiver: {
+                        intraId: conversation.participants[0].intraId,
+                        userName: conversation.participants[0].userName,
+                        firstName: conversation.participants[0].firstName,
+                        lastName: conversation.participants[0].lastName,
+                        status: conversation.participants[0].status,
+                        avatar_url: conversation.participants[0].avatar_url,
+                    },
+                };
 
-        // res.send({data: conversations});
+                conversationsData.push(conversationData);
+            }
+        }
+
+        return res.json({
+            data: conversationsData,
+        });
     }
+    
 
 
     /********************* getRetrivedConvesation **********************/

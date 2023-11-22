@@ -1,34 +1,20 @@
 import { useState } from "react";
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
-import { Action, I_Room, I_User, Members } from "./types";
+import { Action, I_Room, I_User } from "./types";
 
 import {
   DoDisturbOffOutlined,
-  LogoutRounded,
-  MoreHorizOutlined,
-  Person,
-  PersonAddAltRounded,
   PersonOffOutlined,
-  RecordVoiceOverOutlined,
   RemoveModerator,
-  RemoveModeratorOutlined,
-  Settings,
 } from "@mui/icons-material";
-import { Avatar, Badge, Divider } from "@mui/material";
-import { AddUserToRoomModal } from "../channels/modals/AddUserToRoomModal";
+import { Avatar, Divider } from "@mui/material";
 import styled from "styled-components";
 import {
-  changeMessageLength,
   checkUserRole,
-  convertDateTime,
   isAdmin,
   isBanned,
   isFriend,
-  isMuted,
-  isOwner,
 } from "./utils";
-import { UsersRoom } from "../channels/modals/UsersRoomModal";
-import { LeaveRoomModal } from "../channels/modals/leaveChannelModal";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
 import CircleIcon from "@mui/icons-material/Circle";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -47,8 +33,9 @@ import { UnSetChannelAdmin } from "../channels/modals/unSetChannelAdmin";
 import { UnBanUserFromChannelModal } from "../channels/modals/UnBanUserFromChannel";
 import { KicKFromRoomModal } from "../channels/modals/KickUserFromChannelModal";
 import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
+import { UserActionInDirectConversation } from "../directMessages/DirectBoxRight";
 
-const Icons: Array<Action> = [
+export const Icons: Array<Action> = [
   {
     name: "Ban from channel",
     type: "banFromChannel",
@@ -169,6 +156,17 @@ const getDataForModal = (
 };  
 
 export const UserActions = () => {
+
+  const { currentConversation } = useAppSelector((state) => state.chat);
+  if (currentConversation.type == "direct")
+    return <UserActionInDirectConversation />;
+  else if (currentConversation.type == "channel")
+    return <UserActionsInRoom />;
+  else 
+    return <></>;
+}
+
+export const UserActionsInRoom = () => {
   const user = useAppSelector((state) => state.auth.user);
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
   const { selectedUser } = useAppSelector((state) => state.chat);
@@ -223,8 +221,6 @@ export const UserActions = () => {
           && checkIsBanned && checkIsAdmin;
   };
 
-  
-
   const getModalComponent = (iconType: any, data: any) => {
     switch (iconType) {
       case "setAdminChannel":
@@ -240,7 +236,7 @@ export const UserActions = () => {
       case "kickFromChannel":
         return <KicKFromRoomModal data={data} handleClose={handleClose} />;
       case "message":
-        return <NewDirectMessage handleClose={handleClose} selectedUser={data}/>
+        return <NewDirectMessage selectedUser={data} handleClose={handleClose} />
       default:
         return <></>;
     }
@@ -259,8 +255,6 @@ export const UserActions = () => {
         dataForModal
       );
       handleClickModal(modalComponent);
-    } else {
-      console.error("Selected user not found.");
     }
   };
 
