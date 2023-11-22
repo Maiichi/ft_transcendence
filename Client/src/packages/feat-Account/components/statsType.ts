@@ -7,7 +7,7 @@ type userType = {
   lastName: string;
   userName: string;
   avatar_url: string;
-  status: string;
+  status: "ONLINE" | "OFFLINE";
   twoFactorActivate: boolean;
   twoFactorSecret: string;
   createdAt: string;

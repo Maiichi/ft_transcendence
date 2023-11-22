@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { Message, PersonAddAlt } from "@mui/icons-material";
-import { Avatar, Button, Grow, Text, Usercard } from "../styles";
+import { Button, Grow, Text, Usercard, Avatar } from "../styles";
 import { gamerType } from "./statsType";
 import CircularProgressBar from "./utils/CircularProgressBar";
 import LinearDeterminate from "./utils/linearProgressBar";
+import { Badge, Stack } from "@mui/material";
 
 const UserCard = (props: { gamer: gamerType }) => {
   const { gamer } = props;
@@ -29,15 +30,30 @@ const UserCard = (props: { gamer: gamerType }) => {
               display: "flex",
             }}
           >
-            <Avatar
-              sx={{
-                width: 100,
-                height: 100,
-                mr: 2,
-              }}
-              alt="UserImg"
-              src={`/images/${gamer.user.avatar_url}`}
-            />
+            <Stack direction="row" spacing={2}>
+              <Avatar
+                sx={{
+                  width: 100,
+                  height: 100,
+                }}
+                alt="UserImg"
+                src={`/images/${gamer.user.avatar_url}`}
+              />
+
+              <Badge
+                sx={{
+                  width: 12,
+                  height: 12,
+                  animation: "ripple 1.2s infinite ease-in-out",
+                  borderRadius: "50%",
+                  top: "77px",
+                  right: "34px",
+                  backgroundColor: `${
+                    gamer.user.status == "ONLINE" ? "green" : "#880b0b"
+                  }`,
+                }}
+              ></Badge>
+            </Stack>
             <div
               style={{
                 display: "flex",
