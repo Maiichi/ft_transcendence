@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Chat, PersonAdd, SportsCricket } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../core";
 import { getLeaderboard, leaderboardType } from "./components";
-import style, {
+import {
   Players,
   Player,
   NoPlayer,
@@ -78,7 +78,16 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
         </Players>
       ) : (
         <NoPlayer>
-          <div style={style.noplay}>
+          <div
+            style={{
+              paddingBottom: "20px",
+              marginBottom: "10px",
+              minWidth: "70%",
+              boxShadow: "1px 1px 0 4px #ccc",
+              backgroundColor: "#eee",
+              textAlign: "center",
+            }}
+          >
             <h3>
               No Player is registred in <br /> the leaderboard
               <br />

@@ -94,72 +94,7 @@ const Achievemets = styled.datalist`
 const Achiv = styled(smallCard)`
   height: 80px;
 `;
-const styleP: Record<string, React.CSSProperties | SxProps> = {
-  user: {
-    display: "flex",
-    flexDirection: "column",
-    minWidth: "80%",
-    marginTop: "6%",
-  },
-  div2: {
-    display: "flex",
-    justifyContent: "space-around",
-    padding: "0 20px 0 20px",
-  },
-  div3: {
-    display: "flex",
-  },
-  div4: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "start",
-  },
-  div5: {
-    fontSize: "12px",
-  },
-  button1: {
-    padding: "0",
-    textTransform: "lowercase",
-  },
-  box1: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "start",
-  },
-  box2: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "end",
-    textAlign: "center",
-    padding: "0 2% 0 10%",
-  },
-  coalImg: {
-    width: 80,
-    height: 120,
-  },
-  userAvatar: {
-    width: 80,
-    height: 80,
-    mr: 2,
-  },
-  achivlogo: {
-    width: "40px",
-    height: "40px",
-  },
-  userName: {},
-  cardName: {
-    width: "100%",
-    textAlignLast: "center",
-    fontSize: "19px",
-    fontFamily: "monospace",
-    fontWeight: "bolder",
-  },
-};
 
-export default styleP;
 export {
   Board,
   ProfileCards,
