@@ -1,13 +1,14 @@
-    import { BadRequestException, Body, Controller, Get, Param, Patch, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-    import { JwtGuard } from '../auth/guard';
-    import { EditUserDto } from './dto';
-    import { UserService } from './user.service';
-    import { Response, Express } from 'express';
-    import { FileInterceptor } from '@nestjs/platform-express';
-    import { MulterExceptionFilter } from './multer/multer.filter';
-    import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
-    import { GetUser } from 'src/auth/decorator';
-    import { User } from '@prisma/client';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { JwtGuard } from '../auth/guard';
+import { EditUserDto } from './dto';
+import { UserService } from './user.service';
+import { Response, Express } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterExceptionFilter } from './multer/multer.filter';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
+import { GetUser } from 'src/auth/decorator';
+import { User } from '@prisma/client';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
     @ApiTags('User')
     @UseGuards(JwtGuard)
@@ -17,6 +18,7 @@
     {
         constructor(
             private userService:    UserService,
+            private readonly cloudinaryService: CloudinaryService
         ) {}
     // GET /api/users/:username
     // @Get(':username')
@@ -88,7 +90,7 @@
     @ApiUnsupportedMediaTypeResponse({description : 'Unsupported Media Type | File extention is not allowed | File size is big'})
     @ApiUnauthorizedResponse({description : 'Unauthorized'})
     @UseInterceptors(FileInterceptor('file'))
-    @UseFilters(MulterExceptionFilter) // Apply the custom exception filter
+    // @UseFilters(MulterExceptionFilter) // Apply the custom exception filter
     async uploadAvatar(@Param('id') id: number, @UploadedFile() file:  Express.Multer.File, @Res() res: Response)
     {
         try {
@@ -96,7 +98,7 @@
                 throw new BadRequestException();
             // Handle the uploaded file here
             // You can access the file properties using file.originalname, file.buffer, file.mimetype, etc.
-            return await this.userService.editAvatar(Number(id), file, res);
+            return await this.cloudinaryService.uploadFile(Number(id), file);
         } catch (error) {
             return res.send({error : error});
         }

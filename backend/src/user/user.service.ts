@@ -124,6 +124,7 @@ export class UserService {
                 data : {
                     avatar_url : avatar.filename
                 }
+            
             }).then((resp) =>{
                 if (resp)
                     return res.status(200).json({

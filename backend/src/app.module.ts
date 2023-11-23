@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
 import { multerConfig } from './user/multer/multer.config';
 import { ChatModule } from './chat/chat.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 
 @Module({
@@ -16,9 +17,9 @@ import { ChatModule } from './chat/chat.module';
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    MulterModule.register(multerConfig),
+    // MulterModule.register(multerConfig),
     AuthModule,
-    PrismaModule, UserModule, ChatModule
+    PrismaModule, UserModule, ChatModule, CloudinaryModule
   ],
   controllers: [UserController],
   providers : [UserService]
