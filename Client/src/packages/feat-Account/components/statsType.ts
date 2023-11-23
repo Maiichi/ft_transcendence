@@ -1,5 +1,3 @@
-import Module from "module";
-
 type userType = {
   intraId: number;
   email: string;
@@ -23,21 +21,18 @@ type unformalData = {
 
 type gamerType = {
   user: userType;
-  coalition: {
-    name: string | null;
-    logo: string;
-  };
   totalmatch: 21;
   wins: 13;
   achivs: 7;
   rank: number;
 };
-type leaderboardType = {
+type leaderboardType = leaderboardplayerType[];
+type leaderboardplayerType = {
   name: string;
   ladder: number;
   wins: number;
   loss: number;
-  achievement: Module;
+  uid: number;
   picture: string;
 };
 type AchievementType = {
@@ -60,7 +55,7 @@ export interface ProfileState {
   achievement: AchievementType[];
   MatchHistory: MatchHistoryType[];
   lead: {
-    leaderboard: leaderboardType[];
+    leaderboard: leaderboardType;
     isLoading: boolean;
   };
 }

@@ -6,8 +6,8 @@ import CircularProgressBar from "./utils/CircularProgressBar";
 import LinearDeterminate from "./utils/linearProgressBar";
 import { Badge, Stack } from "@mui/material";
 
-const UserCard = (props: { gamer: gamerType }) => {
-  const { gamer } = props;
+const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
+  const { gamer, isOwner } = props;
   const navigate = useNavigate();
   return (
     <Usercard>
@@ -37,7 +37,7 @@ const UserCard = (props: { gamer: gamerType }) => {
                   height: 100,
                 }}
                 alt="UserImg"
-                src={`/images/${gamer.user.avatar_url}`}
+                src={`/${gamer.user.avatar_url}`}
               />
 
               <Badge
@@ -65,28 +65,38 @@ const UserCard = (props: { gamer: gamerType }) => {
               <Text variant="h5">
                 {`${gamer.user.firstName} ${gamer.user.lastName}`}
               </Text>
-              <Button
-                sx={{
-                  padding: "0",
-                  textTransform: "lowercase",
-                }}
-                size="small"
-                startIcon={<PersonAddAlt fontSize="small" />}
-                onClick={() => navigate("/account/profile")}
-              >
-                friend requist
-              </Button>
-              <Button
-                sx={{
-                  padding: "0",
-                  textTransform: "lowercase",
-                }}
-                size="small"
-                startIcon={<Message fontSize="small" />}
-                onClick={() => navigate("/account/profile")}
-              >
-                message
-              </Button>
+              {isOwner ? (
+                <span>
+                  ------------------
+                  <br />
+                  ------------------
+                </span>
+              ) : (
+                <>
+                  <Button
+                    sx={{
+                      padding: "0",
+                      textTransform: "lowercase",
+                    }}
+                    size="small"
+                    startIcon={<PersonAddAlt fontSize="small" />}
+                    onClick={() => navigate("/account/profile")}
+                  >
+                    friend requist
+                  </Button>
+                  <Button
+                    sx={{
+                      padding: "0",
+                      textTransform: "lowercase",
+                    }}
+                    size="small"
+                    startIcon={<Message fontSize="small" />}
+                    onClick={() => navigate("/account/profile")}
+                  >
+                    message
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           <Grow prograssShow="circular">

@@ -5,11 +5,11 @@ import { leaderboardType } from "../statsType";
 
 const getLeaderboard = createAsyncThunk(
   "profile/leaderboard",
-  async (): Promise<leaderboardType[]> => {
+  async (): Promise<leaderboardType> => {
     try {
       const Players = require("../../static-data/Players.json").Players;
-      const TopPlayersArr: leaderboardType[] = Object.values(Players);
-      const response = new Promise<leaderboardType[]>((resolve, reject) => {
+      const TopPlayersArr: leaderboardType = Object.values(Players);
+      const response = new Promise<leaderboardType>((resolve, reject) => {
         setTimeout(() => {
           resolve(TopPlayersArr);
         }, 1000);

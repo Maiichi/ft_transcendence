@@ -3,10 +3,6 @@
     "isLoading": false,
     "gamer": {
       "user": null,
-      "coalition": {
-        "name": null,
-        "logo": ""
-      },
       "totalmatch": 0,
       "wins": 0,
       "achivs": 0,

@@ -5,7 +5,7 @@
       "ladder": "100",
       "wins": "50",
       "loss": "10",
-      "achievement": "Logo",
+      "uid": 62427,
       "picture": "Pic.png"
     },
     "2": {
@@ -13,7 +13,7 @@
       "ladder": 90,
       "wins": 40,
       "loss": 15,
-      "achievement": "Logo",
+      "uid": 48834,
       "picture": "Pic.png"
     },
     "3": {
@@ -21,7 +21,7 @@
       "ladder": "75",
       "wins": "50",
       "loss": "40",
-      "achievement": "Logo",
+      "uid": 35,
       "picture": "Pic.png"
     },
     "4": {
@@ -29,7 +29,7 @@
       "ladder": "75",
       "wins": "50",
       "loss": "40",
-      "achievement": "Logo",
+      "uid": 32,
       "picture": "Pic.png"
     }
   }

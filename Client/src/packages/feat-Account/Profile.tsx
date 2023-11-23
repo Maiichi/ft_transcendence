@@ -22,7 +22,6 @@ const Profile = () => {
   const uid: number =
     typeof _uid.uid === "string" ? parseInt(_uid.uid, 10) : intraId;
   const isOwner: boolean = intraId === uid;
-  uid > 0 || isOwner || navigate("/");
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
   const isloading: boolean = useAppSelector(
@@ -36,7 +35,7 @@ const Profile = () => {
   }, [_uid]);
 
   const Go = !isloading;
-  if (Go && !user)
+  if ((Go && !user) || uid < 1)
     return (
       <>
         user not found
@@ -50,7 +49,7 @@ const Profile = () => {
     default:
       return (
         <ProfileCards>
-          <UserCard gamer={profileStates.gamer} />
+          <UserCard gamer={profileStates.gamer} isOwner={isOwner} />
           <BoardCard />
           <MatchsHistoryCard
             matchs={profileStates.MatchHistory}

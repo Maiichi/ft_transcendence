@@ -31,7 +31,7 @@ const profileSlice = createSlice({
       )
       .addCase(
         getLeaderboard.fulfilled,
-        (state, action: PayloadAction<leaderboardType[]>) => {
+        (state, action: PayloadAction<leaderboardType>) => {
           state.lead.leaderboard = action.payload;
           state.lead.isLoading = false;
         }

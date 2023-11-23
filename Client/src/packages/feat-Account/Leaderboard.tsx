@@ -25,18 +25,19 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.profile.lead);
-  const leaderboard: leaderboardType[] = state.leaderboard;
+  const leaderboard: leaderboardType = state.leaderboard;
 
   useEffect(() => {
-    primary && dispatch(getLeaderboard());
+    (primary) && dispatch(getLeaderboard());
   }, []);
+  const Oid: number = useAppSelector((state) => state.auth.user.intraId);
 
   return (
     <Root>
       {primary && <Title> Leaderboard </Title>}
-      {state.isLoading ? (
+      {state.isLoading || !leaderboard ? (
         <Loading />
-      ) : leaderboard?.length ? (
+      ) : leaderboard.length ? (
         <Players>
           {leaderboard.map(
             (player, index) =>
@@ -61,17 +62,27 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                     <ListItemText primary={player.loss} secondary={`Losses`} />
                   )}
                   {primary && (
-                    <ListItemIcon>
-                      <Button onClick={() => sendGameRequist(player.name)}>
-                        <SportsCricket />
-                      </Button>
-                      <Button onClick={() => navigate("/chat")}>
-                        <Chat />
-                      </Button>
-                      <Button onClick={() => sendFriendRequist(player.name)}>
-                        <PersonAdd />
-                      </Button>
-                    </ListItemIcon>
+                    <>
+                      {Oid !== player.uid ? (
+                        <ListItemIcon>
+                          <Button onClick={() => sendGameRequist(player.name)}>
+                            <SportsCricket />
+                          </Button>
+                          <Button onClick={() => navigate("/chat")}>
+                            <Chat />
+                          </Button>
+                          <Button
+                            onClick={() => sendFriendRequist(player.name)}
+                          >
+                            <PersonAdd />
+                          </Button>
+                        </ListItemIcon>
+                      ) : (
+                        <Button onClick={() => navigate("/account/profile")}>
+                          Go to your Profile
+                        </Button>
+                      )}
+                    </>
                   )}
                 </Player>
               )
@@ -106,5 +117,4 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   );
 };
 
-// export default Leaderboard
 export { Leaderboard };
