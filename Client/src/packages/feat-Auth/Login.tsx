@@ -31,7 +31,10 @@ const Login = () => {
 
     if (secT7Param) {
       console.log("firsst");
-      dispatch(login({ token: secT7Param, firstLogin: isFirstLogin }));
+      dispatch(login({
+        token: secT7Param, firstLogin: isFirstLogin,
+        user: null
+      }));
       // navigate("/");
     }
   }, [isAuthenticated]);
@@ -57,7 +60,7 @@ const Login = () => {
       <div
         style={{
           width: "250px",
-          height: "200px",
+          height: "220px",
           textAlign: "center",
           padding: "20px",
           border: "1px solid #ccc",
