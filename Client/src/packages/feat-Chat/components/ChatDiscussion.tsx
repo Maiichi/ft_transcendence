@@ -155,14 +155,10 @@ export const ChatDiscussion = () => {
                 overlap="circular"
                 variant="dot"
               >
-                {discussion.receiver.avatar_url !== null ? (
                   <AvatarImage
-                    src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)}
+                    src={`${discussion.receiver.avatar_url}`}
                     alt=""
                   />
-                ) : (
-                  <AvatarImage src="" alt="" />
-                )}
               </Badge>
               <ContactDescription>
                 <DiscussionName>

@@ -17,7 +17,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    // MulterModule.register(multerConfig),
+    MulterModule.register(multerConfig),
     AuthModule,
     PrismaModule, UserModule, ChatModule, CloudinaryModule
   ],

@@ -124,8 +124,7 @@ export const AccountSettings = () => {
             alt={auth.user.userName}
             src={
               selectedImage ||
-              `/app/images_uploads/${auth.user.avatar_url}` ||
-              "/static/images/avatar/1.jpg"
+              `${auth.user.avatar_url}`
             }
           />
           <Title style={{ fontSize: "1rem" }}>{auth.user.userName}</Title>

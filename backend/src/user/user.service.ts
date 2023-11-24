@@ -3,6 +3,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EditUserDto } from './dto';
 import * as path from 'path';
 import { Response } from 'express';
+import { v2 as cloudinary } from 'cloudinary';
+const streamifier = require('streamifier');
 
 
 @Injectable()
@@ -112,55 +114,100 @@ export class UserService {
     }
 
     // function to upload avatar for the user
-    async editAvatar(userId: number, avatar: Express.Multer.File, res: Response)
-    {   
-        // find user by username if it exists
-        const userExist = await this.findUserById(userId);
-        // const usernameExist = await this.findUserByUsername(username);
-        if (userExist)
-        {
-            this.prisma.user.update({
-                where: {intraId: userId} ,
-                data : {
-                    avatar_url : avatar.filename
-                }
+    // async editAvatar(userId: number, avatar: Express.Multer.File, res: Response)
+    // {   
+    //     // find user by username if it exists
+    //     const userExist = await this.findUserById(userId);
+    //     // const usernameExist = await this.findUserByUsername(username);
+    //     if (userExist)
+    //     {
+    //         this.prisma.user.update({
+    //             where: {intraId: userId} ,
+    //             data : {
+    //                 avatar_url : avatar.filename
+    //             }
             
-            }).then((resp) =>{
-                if (resp)
-                    return res.status(200).json({
-                        status: 200,
-                        message: 'Avatar updated successfully',
-                        data: resp
-                    })
-            })
+    //         }).then((resp) =>{
+    //             if (resp)
+    //                 return res.status(200).json({
+    //                     status: 200,
+    //                     message: 'Avatar updated successfully',
+    //                     data: resp
+    //                 })
+    //         })
+    //     }
+    //     else
+    //         return res.status(400).json({
+    //             status: 400,
+    //             message: `User not found with the id = ${userId}`
+    //         })
+    // }
+
+    async editAvatar(userId: number, avatar: Express.Multer.File, res: Response) {
+        try {
+            const userExist = await this.findUserById(userId);
+
+            if (!userExist) {
+                return res.status(400).json({
+                    status: 400,
+                    message: `User not found with the id = ${userId}`
+                });
+            }
+
+            const uploadStream = cloudinary.uploader.upload_stream(async (error, result) => {
+                if (error) {
+                    return res.status(500).json({
+                        status: 500,
+                        message: 'Error uploading avatar to Cloudinary',
+                        error: error.message
+                    });
+                }
+
+                // Update the user in the database with the Cloudinary URL
+                const updatedUser = await this.prisma.user.update({
+                    where: { intraId: userId },
+                    data: {
+                        avatar_url: result.secure_url
+                    }
+                });
+
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Avatar updated successfully',
+                    data: updatedUser
+                });
+            });
+
+            streamifier.createReadStream(avatar.buffer).pipe(uploadStream);
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                error: error.message
+            });
         }
-        else
-            return res.status(400).json({
-                status: 400,
-                message: `User not found with the id = ${userId}`
-            })
     }
 
     //function to get the user Avatar 
     // TODO: need to improve ------------
-    async getUserAvatar(userId: number, res: Response)
-    {
-        // find user by username if it exists
-        const userExist = await this.findUserById(userId);
-        // const usernameExist = await this.findUserByUsername(username);
-        if (userExist)
-        {
-            const user = await this.getUser(userId);
-            const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
-            console.log('filePath == ', filePath);
-            res.sendFile(filePath);
-        }
-        else
-            return res.status(400).json({
-                status: 400,
-                message: `User not found with the id = ${userId}`
-            })
-    }
+    // async getUserAvatar(userId: number, res: Response)
+    // {
+    //     // find user by username if it exists
+    //     const userExist = await this.findUserById(userId);
+    //     // const usernameExist = await this.findUserByUsername(username);
+    //     if (userExist)
+    //     {
+    //         const user = await this.getUser(userId);
+    //         const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
+    //         console.log('filePath == ', filePath);
+    //         res.sendFile(filePath);
+    //     }
+    //     else
+    //         return res.status(400).json({
+    //             status: 400,
+    //             message: `User not found with the id = ${userId}`
+    //         })
+    // }
 
     // function to check if the user exist using it's ID
     async findUserById(userId: number)
