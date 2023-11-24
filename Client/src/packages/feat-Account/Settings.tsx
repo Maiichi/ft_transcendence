@@ -39,6 +39,7 @@ const VisuallyHiddenInput = muiStyled("input")({
 });
 
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
 export const AccountSettings = () => {
   const auth = useAppSelector((state) => state.auth);
@@ -57,6 +58,13 @@ export const AccountSettings = () => {
 
       if (file) {
         // Read the selected image and set it in the state for preview
+        // Check if the selected file type is allowed
+        if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+          setImageError("Invalid file type. Please select a valid image file.");
+          // Optionally, you can reset the input to clear the selected file
+          event.target.value = "";
+          return;
+        }
         const reader = new FileReader();
 
         reader.onload = (e) => {

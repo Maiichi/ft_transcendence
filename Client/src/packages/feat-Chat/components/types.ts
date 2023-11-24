@@ -67,7 +67,7 @@ export interface I_Message {
   createdAt: string;
 }
 export interface I_ConversationMessages {
-  conversationId: number;
+  chatId: number;
   messages: I_Message[];
 }
 export interface Action {

@@ -97,7 +97,7 @@ const Wrapper = styled.div`
 const ChatBoxTop = styled.div`
   height: 100%;
   overflow-y: scroll;
-
+  scroll-snap-align: end;
   /* Hide scrollbar for Chrome, Safari, and Opera */
   &::-webkit-scrollbar {
     display: none;

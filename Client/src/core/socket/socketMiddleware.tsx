@@ -36,6 +36,7 @@ import {
 import { addMessageToConversation, createDirectConversation, sendMessageToUser } from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
 import { setCurrentConversation } from "../../packages/feat-Chat/components/chatSlice";
 import { MuteUserInRoom } from "../../packages/feat-Chat/channels/modals/MuteUserInRoom";
+import { I_ConversationMessages } from "../../packages/feat-Chat/components/types";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -84,13 +85,22 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(setRoomJoined(data));
           });
           socket.on('messageSentToRoom', (data) => {
-            console.log('data coming from (messageSentToRoom) =', data);
-            // addMessageToRoom
-            dispatch(addMessageToRoom(data));
+            const {currentConversation} = getState().chat;
+            if (currentConversation.roomId 
+              && currentConversation.roomId === data.roomId)
+            {
+              const conversationMessage = {
+                id: data.id,
+                content: data.content,
+                createdAt: data.createdAt,
+                chatId: data.chatId,
+                sender: data.sender,
+              } 
+              dispatch(addMessageToRoom(conversationMessage));
+            }
           });
           socket.on('conversationCreated', (data) => {
-            console.log('data coming from (conversationCreated) =', data);
-            dispatch(sendMessageToUser(data));
+              dispatch(sendMessageToUser(data));
             // dispatch(
             //   setCurrentConversation({
             //     roomId: null,
@@ -100,9 +110,11 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             // );
           });
           socket.on('messageSentToUser', (data) => {
-            console.log('data coming from (messageSentToUser) =', data);
-            dispatch(addMessageToConversation(data));
-            
+            console.log('data coming from (messageSentToUser) =', JSON.stringify(data));
+            const {currentConversation} = getState().chat;
+            if (currentConversation.directConversationId 
+              && currentConversation.directConversationId === data.chatId)
+              dispatch(addMessageToConversation(data));
           });
           socket.on('AdminSettedToRoom', (data) => {
             console.log('data coming from (AdminSettedToRoom) =', data);

@@ -107,7 +107,8 @@ export const roomSlice = createSlice({
     sendMessageToRoom: (state, action: PayloadAction<MessagePayload>) => {
       state.isLoading = false;
     },
-    addMessageToRoom: (state, action: PayloadAction<I_ConversationMessages>) => {
+    addMessageToRoom: (state, action: PayloadAction<any>) => {
+      console.log('action Payload ==', action.payload);
       state.messages.push(action.payload);
     },
     setAdminRoom: (state, action: PayloadAction<any>) => {

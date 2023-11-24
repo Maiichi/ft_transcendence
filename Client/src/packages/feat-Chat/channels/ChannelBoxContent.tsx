@@ -27,7 +27,8 @@ export const ChannelBoxContent = () => {
       senderId: user.intraId,
       content: messageContent
     };
-    dispatch(sendMessageToRoom(messageData));
+    if (messageContent.length)
+      dispatch(sendMessageToRoom(messageData));
     setMessageContent('');
   }
   console.log('roomId =', roomId);

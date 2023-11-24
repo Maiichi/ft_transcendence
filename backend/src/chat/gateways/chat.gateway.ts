@@ -769,7 +769,8 @@ export class ChatGateway
                 content: message.content,
                 createdAt: message.createdAt,
                 chatId: message.chatId,
-                sender: member
+                sender: member,
+                roomId: body.roomId
               });
           });
         }
