@@ -1,9 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { User } from "../../components/types";
+import { I_User } from "../../components/types";
 import { getUserFriends } from "./friendThunk";
 
 export interface friendState {
-  friends: User | null;
+  friends: I_User | null;
   isLoading: boolean;
 }
 

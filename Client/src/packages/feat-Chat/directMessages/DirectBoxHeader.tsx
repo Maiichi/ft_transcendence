@@ -4,6 +4,7 @@ import { useSize } from "../../../core/utils/hooks";
 import { setDiscussionsDisplay } from "../components/chatSlice";
 import { useAppDispatch } from "../../../core";
 import { useStyles } from "../components/style";
+import { setDisplayUserActions } from "../../../core/CoreSlice";
 
 export const DirectBoxHeader = (props: {
   directConversation: I_DirectConversation;
@@ -24,7 +25,13 @@ export const DirectBoxHeader = (props: {
           }}
         />
       )}
-      <h4>{directConversation?.receiver?.userName}</h4>
+      <h4>{directConversation?.receiver?.firstName} {directConversation?.receiver?.lastName}</h4>
+      <DehazeIcon
+          className={classes.iconBase}
+          onClick={() => {
+            dispatch(setDisplayUserActions(true))
+          }}
+      />
     </>
   );
 };

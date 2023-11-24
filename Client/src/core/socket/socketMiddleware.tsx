@@ -25,6 +25,12 @@ import {
   banMemberFromRoom,
   muteMember,
   muteMemberInRoom,
+  unSetAdminRoom,
+  RemoveAdminFromRoom,
+  unBanMember,
+  unBanMemberFromRoom,
+  kickMember,
+  kickMemberFromRoom,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
 import { setOpenErrorSnackbar, setServerError } from "../CoreSlice";
 import {
@@ -33,22 +39,24 @@ import {
   setRoomJoined,
   setRoomLeaved,
 } from "../../packages/feat-Search/redux/searchSlice";
-import { addMessageToConversation, createDirectConversation, sendMessageToUser } from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
+import { addMessageToConversation, createDirectConversation, removeConversation, sendMessageToUser } from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
 import { setCurrentConversation } from "../../packages/feat-Chat/components/chatSlice";
 import { MuteUserInRoom } from "../../packages/feat-Chat/channels/modals/MuteUserInRoom";
 import { I_ConversationMessages } from "../../packages/feat-Chat/components/types";
+import { blockUser, userBlockedByMe, userBlockedMe } from "../../packages/feat-Chat/components/blockSlice";
+import { useAppSelector } from "../redux";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
-
+  
   return (next) => (action) => {
     switch (action.type) {
       case ConnectSocket.type:
         try {
           let serverUrl =
             process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
-          socket = initializeSocket(serverUrl, getState().auth.token);
-          dispatch(SocketConnected());
+            socket = initializeSocket(serverUrl, getState().auth.token);
+            dispatch(SocketConnected());
           socket.onAny((eventName, data) => {
             if (eventName.toLowerCase().includes("error")) {
               dispatch(setServerError(data.message));
@@ -120,25 +128,92 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             console.log('data coming from (AdminSettedToRoom) =', data);
             dispatch(addAdminToRoom(data));
           });
+          socket.on('AdminRemovedFromRoom', (data) => {
+            console.log('data coming from (AdminRemovedFromRoom) =', data);
+            dispatch(RemoveAdminFromRoom(data));
+          });
           socket.on('userBannedFromRoom', (data) => {
             console.log('data coming from (userBannedFromRoom) =', data);
             dispatch(banMemberFromRoom(data));
           });
+          socket.on('userUnBannedFromRoom', (data) => {
+            console.log('data coming from (userUnBannedFromRoom) =', data);
+            dispatch(unBanMemberFromRoom(data));
+          });
           socket.on('IhaveBeenBanned', (data) => {
-            console.log('i have been banned');
-            dispatch(
-              setCurrentConversation({
-                roomId: null,
-                directConversationId: null,
-                type: null,
-              })
-            );
+            const {currentConversation} = getState().chat;
+            if (currentConversation.roomId == data.roomId)
+              dispatch(
+                setCurrentConversation({
+                  roomId: null,
+                  directConversationId: null,
+                  type: null,
+                })
+              );
             dispatch(removeMembership(data));
+          });
+          socket.on('IhaveBeenUnBanned', (data) => {
+            console.log('i have been unbanned');
+            dispatch(addMembership(data));
+            const {currentConversation} = getState().chat;
+            if (currentConversation.roomId == data.roomId)
+              dispatch(
+                setCurrentConversation({
+                  roomId: data.id,
+                  directConversationId: null,
+                  type: "channel",
+                })
+              );
           });
           socket.on('userMuted', (data) => {
             console.log('data coming from (userMuted) =', data);
             dispatch(muteMemberInRoom(data))
-          })
+          });
+          socket.on('userKickedFromRoom', (data) => {
+            console.log('data coming from (userKickedFromRoom) =', data);
+            dispatch(kickMemberFromRoom(data)); 
+          });
+          socket.on('IhaveBeenKicked', (data) => {
+            const {currentConversation} = getState().chat;
+            if (currentConversation.roomId == data.roomId)
+            {
+              dispatch(
+                setCurrentConversation({
+                  roomId: null,
+                  directConversationId: null,
+                  type: null,
+                })
+              );
+            }
+            dispatch(removeMembership(data.roomId));
+          });
+          socket.on('UserHaveBeenKicked', (data) => {
+            dispatch(setRoomLeaved(data));
+          });
+          socket.on('blockedByMe', (data) => {
+            console.log('data coming from (blockedByMe) =', data);
+            dispatch(userBlockedByMe(data));
+            dispatch(removeConversation(data.intraId));
+            const {selectedUser} = getState().chat;
+            if (selectedUser.intraId == data.intraId)
+              dispatch(setCurrentConversation({
+                directConversationId: null,
+                roomId: null,
+                type: null
+              }));
+          });
+          socket.on('blockedMe', (data) => {
+            dispatch(userBlockedMe(data));
+            dispatch(removeConversation(data.intraId));
+            const {selectedUser} = getState().chat;
+            console.log('selectedUser ==', selectedUser);
+            if (selectedUser && selectedUser.intraId == data.intraId)
+              dispatch(setCurrentConversation({
+                directConversationId: null,
+                roomId: null,
+                type: null
+              }));
+          });
         } catch (error) {
           console.log(error);
         }
@@ -170,13 +245,24 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
       case setAdminRoom.type:
         socket.emit('setRoomAdmin', action.payload);
         break;
+      case unSetAdminRoom.type:
+        socket.emit('unSetRoomAdmin', action.payload);
+        break;
       case banMember.type:
-        socket.emit('BanMember', action.payload);
+        socket.emit('banMember', action.payload);
         console.log('action payload ==', action.payload);
         break;
+      case unBanMember.type:
+        socket.emit('unBanMember', action.payload);
+        break;
       case muteMember.type:
-        console.log('paylod mute ==', action.payload);
         socket.emit('muteMember', action.payload);
+        break;
+      case kickMember.type:
+        socket.emit('kickMember', action.payload);
+        break;
+      case blockUser.type:
+        socket.emit('blockUser', action.payload);
         break;
       default:
         break;

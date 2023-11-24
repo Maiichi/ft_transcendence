@@ -20,7 +20,7 @@ export interface Members {
   isMute: boolean;
   isOwner: boolean;
   timeMute: Date,
-  user: User;
+  user: I_User;
 }
 export interface I_Discussion {
   type: "direct" | "channel" | null;
@@ -28,7 +28,7 @@ export interface I_Discussion {
   roomId: number | null;
 }
 
-export interface User {
+export interface I_User {
   firstName: string;
   lastName: string;
   userName: string;
@@ -46,13 +46,7 @@ export interface I_DirectConversation {
     content: string;
     createdAt: string;
   };
-  receiver: {
-    userName: string;
-    firstName: string;
-    lastName: string;
-    status: string;
-    avatar_url: string;
-  };
+  receiver: I_User;
 }
 export interface I_Message {
   sender: {
@@ -74,19 +68,22 @@ export interface Action {
   name: string;
   type:
     | "banFromChannel"
+    | "unBanFromChannel"
     | "muteFromChannel"
+    | "kickFromChannel"
     | "setAdminChannel"
     | "unSetAdminChannel"
     | "message"
     | "play"
     | "addFriend"
     | "blockFriend"
-    | "inviteToChannel"
     | "viewProfile"
-    | "inviteToRoom";
   component: JSX.Element;
   isFriend?: boolean;
+  isBanned?:boolean;
+  isAdmin?: boolean;
   role: Role[];
 }
 
 export type Role = "admin" | "owner" | "member";
+

@@ -9,15 +9,15 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFound
 import { GetUser } from 'src/auth/decorator';
 import { User } from '@prisma/client';
 
-    @ApiTags('User')
-    @UseGuards(JwtGuard)
-    @Controller('users')
-    @ApiBearerAuth()
-    export class UserController
-    {
-        constructor(
-            private userService:    UserService,
-        ) {}
+@ApiTags('User')
+@UseGuards(JwtGuard)
+@Controller('users')
+@ApiBearerAuth()
+export class UserController
+{
+    constructor(
+        private userService:    UserService,
+    ) {}
     // GET /api/users/:username
     // @Get(':username')
     // @ApiOperation({ summary : 'Get user by username'})
@@ -142,4 +142,17 @@ import { User } from '@prisma/client';
         }
     }
 
+    @Get('blacklist/')
+    async getBlackList(@GetUser() user: User ,  @Res() res: Response)
+    {
+        console.log('here ')
+        try {
+            return await this.userService.getBlackList(user.intraId, res);
+        } catch (error) {
+            return res.send({error: error})
+        }
     }
+
+    
+
+}

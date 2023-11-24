@@ -10,7 +10,6 @@ import {
   createDirectConversation,
   sendMessageToUser,
 } from "./redux/directMessageSlice";
-import { RightSide } from "./DirectBoxRight";
 
 export const DirectBox = () => {
   // const { directConversation } = props;

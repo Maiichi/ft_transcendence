@@ -3,6 +3,7 @@ import { UserService } from "../user.service";
 import { Injectable } from "@nestjs/common";
 import { BlockUserDto, UnBlockUserDto } from "src/user/blacklist/dto/handle.block.dto";
 import { WsException } from "@nestjs/websockets";
+import { Response } from "express";
 
 @Injectable()
 export class BlacklistService
@@ -14,10 +15,10 @@ export class BlacklistService
 
     async blockUser(body: BlockUserDto, userId: number)
     {
-        const blocker = await this.userService.getUser(userId);
+        const blocker = await this.userService.getUserInfos(userId);
         if (!blocker)
             throw new WsException(`userId (blocker) = ${userId} does not exist !`);
-        const blocked = await this.userService.getUser(body.blockedId);
+        const blocked = await this.userService.getUserInfos(body.blockedId);
         if (!blocked)
             throw new WsException(`userId (blocked) = ${body.blockedId} does not exist !`);
         if (blocker.intraId === blocked.intraId)
@@ -31,7 +32,7 @@ export class BlacklistService
             throw new WsException(`${blocked.userName} is Blocking you`);
         if (isBlockedByYou)
             throw new WsException(`${blocked.userName} is already blocked by you`);
-        const newBlockEntry = await this.prisma.blacklist.create({
+        await this.prisma.blacklist.create({
             data : {
                 blocked: {
                     connect : { intraId: blocked.intraId}
@@ -41,9 +42,11 @@ export class BlacklistService
                 }
             }
         });
-
         console.log(`${blocker.userName} has blocked ${blocked.userName}`);
-        return newBlockEntry;
+        return {
+            blocker: blocker,
+            blocked: blocked
+        };
     }
 
     async unBlockUser(body: UnBlockUserDto, userId: number)
@@ -121,5 +124,39 @@ export class BlacklistService
         });
         const res = isBlocked ? true : false;
         return res;
+    }
+
+    async getBlacklistUsers(userId: number)
+    {
+        const blacklist = await this.prisma.user.findMany({
+            where: {
+                intraId: userId
+            },
+            select: {
+                blockedByMe: {
+                    select: {
+                        blocked: {
+                            select: {
+                                intraId: true,
+                            }
+                        }
+                    }
+                },
+                blockedMe: {
+                    select: {
+                        blocker: {
+                            select: {
+                                intraId: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        const intraIds = blacklist.flatMap((user) => [
+            ...user.blockedByMe.map((item) => item.blocked.intraId),
+            ...user.blockedMe.map((item) => item.blocker.intraId),
+          ]);
+        return intraIds;
     }
 }
