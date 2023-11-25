@@ -24,31 +24,42 @@ const MatchsHistoryCard = (props: {
       >
         {`${userName}'s Last Matches`}
       </Text>
-      {matchs.map(
-        (item, index) =>
-          index < 5 && (
-            <Match
-              win={getresult(item.gain, item.nogain, [
-                "#2fa025b8",
-                "#b0141495",
-                "#3b4243b7",
-              ])}
-            >
-              <Avatar
-                sx={{ width: 60, height: 60, mb: 2 }}
-                alt="we"
-                src={`/images/${item.pic}`}
-
-              />
-              <Text> {item.name} </Text>
-              <p> {`${item.gain} : ${item.nogain}`} </p>
-              {getresult(item.gain, item.nogain, [
-                <CheckCircle color="success" />,
-                <DoNotDisturbOn color="error" />,
-                <Dangerous color="disabled" />,
-              ])}
-            </Match>
-          )
+      {matchs && matchs.length ? (
+        matchs.map(
+          (item, index) =>
+            index < 5 && (
+              <Match
+                win={getresult(item.gain, item.nogain, [
+                  "#2fa025b8",
+                  "#b0141495",
+                  "#3b4243b7",
+                ])}
+              >
+                <Avatar
+                  sx={{ width: 60, height: 60, mb: 2 }}
+                  alt="we"
+                  src={`/images/${item.pic}`}
+                />
+                <Text> {item.name} </Text>
+                <p> {`${item.gain} : ${item.nogain}`} </p>
+                {getresult(item.gain, item.nogain, [
+                  <CheckCircle color="success" />,
+                  <DoNotDisturbOn color="error" />,
+                  <Dangerous color="disabled" />,
+                ])}
+              </Match>
+            )
+        )
+      ) : (
+        <div
+          style={{
+            textAlign: "center",
+            lineHeight: "35px",
+            fontFamily: "Roboto, sans-serif",
+          }}
+        >
+          No match palyed yet <br /> Play to see your history
+        </div>
       )}
     </Matchshistory>
   );
