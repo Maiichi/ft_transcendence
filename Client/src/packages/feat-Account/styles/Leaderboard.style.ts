@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { StyledProps, ThemedStyledProps } from "styled-components";
 import {
   Avatar as AvatarMui,
   Button as ButtonMui,
@@ -43,6 +43,7 @@ const ListItemIcon = styled(ListItemIconMui)`
   @media (max-width: 426px) {
   }
 `;
+
 /**
  * `Players` as  List Mui element
  */
@@ -57,16 +58,5 @@ const Players = styled(ListMui)`
   }
 `;
 
-const styleL: Record<string, React.CSSProperties> = {
-  noplay: {
-    paddingBottom: "20px",
-    marginBottom: "10px",
-    minWidth: "70%",
-    boxShadow: "1px 1px 0 4px #ccc",
-    backgroundColor: "#eee",
-    textAlign: "center",
-  },
-};
 export { Players, Player, NoPlayer, Avatar, Button, ListItemIcon };
-export default styleL;
 export { ListItemText, ListItemAvatar, Typography } from "@mui/material";
