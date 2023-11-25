@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../core";
 import { useNavigate } from "react-router-dom";
 import { useAuthentication } from "./authUtils";
 import { login } from "./components/authThunk";
 import { initializeSocket } from "../../core/socket/socketManager";
-import { Button } from "@mui/material";
+import { Backdrop, Button, CircularProgress } from "@mui/material";
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -31,16 +31,21 @@ const Login = () => {
 
     if (secT7Param) {
       console.log("firsst");
-      dispatch(login({
-        token: secT7Param, firstLogin: isFirstLogin,
-        user: null
-      }));
+      dispatch(
+        login({
+          token: secT7Param,
+          firstLogin: isFirstLogin,
+          user: null,
+        })
+      );
       // navigate("/");
     }
   }, [isAuthenticated]);
 
+  const [open, setOpen] = useState(false);
   const handleLogin = () => {
     //@TODO Make this dynamic
+    setOpen(true);
     window.location.href =
       process.env.REACT_APP_BACKEND_CALLBACK_URL ||
       "http://localhost:5001/api/auth/callback";
@@ -85,6 +90,12 @@ const Login = () => {
         >
           Login
         </Button>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={open}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     </div>
   );
