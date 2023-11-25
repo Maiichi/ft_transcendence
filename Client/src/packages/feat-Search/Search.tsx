@@ -103,6 +103,15 @@ export const Search = () => {
     return roomS.members.find((item) => item.user.intraId == userID);
   };
 
+  /** show list slected */
+  const [selectedList, setSelected] = useState<"channels" | "users" | null>(
+    null
+  );
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = event.target.value as "users" | "channels" | "";
+    setSelected(selectedValue === "" ? null : selectedValue);
+  };
+  const users = [1, 2, 3, 4];
   // console.log("rooms length==", rooms.length);
   return (
     <Root>
@@ -130,48 +139,87 @@ export const Search = () => {
             // onChange={}
           /> */}
         </SearchBar>
-        <Select name="Channels">
+        <Select
+          name="Channels"
+          id="dropdown"
+          value={selectedList || ""}
+          onChange={handleSelectChange}
+        >
+          <option value="" selected>
+            Select...
+          </option>
           <option value="channels">channels</option>
           <option value="users">users</option>
         </Select>
       </Holder>
       <ListHolder>
-        {filteredRooms.length !== 0 ? (
-          filteredRooms.map((room: I_Room_Search) => (
-            <Channel key={room.id}>
-              <ButtonNameHolder>
-                <div
-                  style={
-                    {
-                      // display: 'flex',
-                      // flexDirection: 'column',
-                      // alignItem: 'center'
-                    }
-                  }
-                >
-                  <ChannelName>{room.name}</ChannelName>
-                  <ChannelType>{room.type}</ChannelType>
-                </div>
-                <ButtonRoom room={room} userId={user.intraId} />
-              </ButtonNameHolder>
-              <AvatarGroup max={4} style={{ justifyContent: "flex-end" }}>
-                {room.members.map((member: any) => (
+        {selectedList === "users" ? (
+          users.length ? (
+            users.map(() => (
+              <StyledLink onClick={() => navigate(`/user/${user.intraId}`)}>
+                <StyledUserCard>
                   <Avatar
-                    key={member.user.intraId}
-                    alt="user"
-                    src={
-                      member.user.avatar_url
-                        ? require(`/app/images_uploads/${member.user.avatar_url}`)
-                        : ""
-                    }
+                    sx={{ height: 60, width: 60 }}
+                    src={user.avatar_url}
+                    alt="avatar"
                   />
-                ))}
-              </AvatarGroup>
-            </Channel>
-          ))
-        ) : (
-          <div>No Room available</div>
-        )}
+                  <UserInfoContainer>
+                    <UserName>{`${user.firstName} ${user.lastName}`}</UserName>
+                    <br />
+                    <UserLogin>@{user.userName}</UserLogin>
+                  </UserInfoContainer>
+                  <RatingContainer>
+                    <img
+                      src="/img/applogo.svg"
+                      alt="logo"
+                      height={20}
+                      width={20}
+                    />
+                  </RatingContainer>
+                </StyledUserCard>
+              </StyledLink>
+            ))
+          ) : (
+            <NoMatchesFound>No matches found</NoMatchesFound>
+          )
+        ) : selectedList === "channels" ? (
+          filteredRooms.length !== 0 ? (
+            filteredRooms.map((room: I_Room_Search) => (
+              <Channel key={room.id}>
+                <ButtonNameHolder>
+                  <div
+                    style={
+                      {
+                        // display: 'flex',
+                        // flexDirection: 'column',
+                        // alignItem: 'center'
+                      }
+                    }
+                  >
+                    <ChannelName>{room.name}</ChannelName>
+                    <ChannelType>{room.type}</ChannelType>
+                  </div>
+                  <ButtonRoom room={room} userId={user.intraId} />
+                </ButtonNameHolder>
+                <AvatarGroup max={4} style={{ justifyContent: "flex-end" }}>
+                  {room.members.map((member: any) => (
+                    <Avatar
+                      key={member.user.intraId}
+                      alt="user"
+                      src={
+                        member.user.avatar_url
+                          ? require(`/app/images_uploads/${member.user.avatar_url}`)
+                          : ""
+                      }
+                    />
+                  ))}
+                </AvatarGroup>
+              </Channel>
+            ))
+          ) : (
+            <div>No Room available</div>
+          )
+        ) : null}
       </ListHolder>
     </Root>
   );
@@ -277,3 +325,73 @@ const JoinButton = styled.button`
 `;
 
 const ChannelType = styled.div``;
+
+const NoMatchesFound = styled.div`
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #3498db; /* Replace with your primary color */
+`;
+
+const StyledLink = styled.button`
+  width: 100%;
+  display: block;
+  padding: 0;
+  margin-top: 5px;
+  border-radius: 9999px;
+`;
+
+const StyledUserCard = styled.div`
+  display: flex;
+  height: 3rem;
+  width: 100%;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  background-color: #8c8c8c; /* Replace with your tertiary color */
+  padding-right: 0.5rem;
+
+  &:hover {
+    background-color: #6b6b6b; /* Replace with your hover color */
+  }
+`;
+
+const RankContainer = styled.div`
+  flex-basis: 25%;
+`;
+
+const UserInfoContainer = styled.div`
+  flex-grow: 1;
+  padding: 0 1rem;
+
+  @media (min-width: 768px) {
+    padding: 0.75rem;
+  }
+`;
+
+const UserName = styled.span`
+  text-align: left;
+  font-size: 0.75rem;
+  color: #fff;
+`;
+
+const UserLogin = styled.span`
+  text-align: left;
+  font-size: 0.75rem;
+  color: #fff;
+`;
+
+const RatingContainer = styled.div`
+  display: none;
+
+  @media (min-width: 640px) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-right: 2rem;
+    font-size: 0.75rem;
+    color: #fff;
+  }
+`;
