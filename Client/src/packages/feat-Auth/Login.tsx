@@ -60,6 +60,8 @@ const Login = () => {
         height: "100vh",
         margin: 0,
         backgroundColor: "#eee",
+        background: 'url("https://picsum.photos/1600/900/?blur")',
+        backgroundSize: "cover",
       }}
     >
       <div
