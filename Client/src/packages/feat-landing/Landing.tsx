@@ -2,16 +2,18 @@ import {
   Filter1Rounded,
   Filter2Rounded,
   Filter3Rounded,
-  Login,
+  Login as LoginIcon,
   SportsTennis,
 } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Backdrop, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router";
 import "./components/style.css";
 import images from "./images_uploads";
+import { useState } from "react";
+import Login from "../feat-Auth/Login";
+
 const LandingPage = () => {
   const navigate = useNavigate();
-
   const cards = [
     {
       image: images["serve"],
@@ -33,6 +35,17 @@ const LandingPage = () => {
     },
   ];
 
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+    setTimeout(() => {
+      navigate("/login");
+    }, 500);
+  };
+
   return (
     <>
       <header role="banner" className="ui-section-header">
@@ -41,11 +54,18 @@ const LandingPage = () => {
             <h1> {"PING PONG"} </h1>
             <Button
               variant="contained"
-              onClick={() => navigate("/login")}
-              endIcon={<Login />}
+              onClick={() => handleOpen()}
+              endIcon={<LoginIcon />}
             >
               Login
             </Button>
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+              onClick={handleClose}
+            >
+              {/* <CircularProgress color="inherit" /> */}
+            </Backdrop>
           </div>
         </div>
       </header>
