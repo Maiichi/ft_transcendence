@@ -37,9 +37,9 @@ type leaderboardplayerType = {
 };
 type AchievementType = {
   name: string;
-  score: number;
   logo: string;
   discription: string;
+  progress: number;
 };
 type MatchHistoryType = {
   name: string;

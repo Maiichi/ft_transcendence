@@ -30,9 +30,17 @@ const AchievemetsCard = (props: {
                   height: "40px",
                 }}
                 alt="logoAchiv"
-                src={`/images/${achiv.logo}`}
+                src={
+                  achiv.progress >= 100
+                    ? `/images/${achiv.logo}`
+                    : `/images/padlocki.png`
+                }
               />
-              <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
+              {achiv.progress >= 100 ? (
+                <a title={achiv.name}> {achiv.name.slice(0, 6)}</a>
+              ) : (
+                <a title="paly to get more"> locked </a>
+              )}{" "}
             </Achiv>
           )
       )}
