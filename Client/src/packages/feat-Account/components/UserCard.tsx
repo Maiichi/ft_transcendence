@@ -38,7 +38,7 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
                   height: 100,
                 }}
                 alt="UserImg"
-                src={`/${gamer.user.avatar_url}`}
+                src={gamer.user.avatar_url}
               />
 
               <Badge
