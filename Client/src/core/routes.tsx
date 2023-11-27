@@ -15,7 +15,14 @@ import { Layout } from "./utils";
 import { NotFoundError } from "./utils/components/errors";
 import { LandingPage } from "../packages/feat-landing";
 
-export const routes = [
+export interface route {
+  path: string;
+  element: JSX.Element;
+  errorElement: JSX.Element;
+  requireAuth: boolean;
+}
+
+export const routes: route[] = [
   {
     path: "/overView",
     element: <LandingPage />,
