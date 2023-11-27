@@ -1,6 +1,5 @@
 import PersonAdd from "@mui/icons-material/PersonAdd";
-import { Button, Backdrop, Alert, AlertTitle } from "@mui/material";
-import zIndex from "@mui/material/styles/zIndex";
+import { Button, Alert, AlertTitle, Snackbar } from "@mui/material";
 import { useState } from "react";
 
 function SendFriendRequist(props: { onlyIcon?: boolean; userName: string }) {
@@ -8,13 +7,14 @@ function SendFriendRequist(props: { onlyIcon?: boolean; userName: string }) {
   const sendFriendRequist = () => "";
   const [open, setOpen] = useState(false);
 
-  const handleOpen = () => {
+  const send = () => {
     setOpen(true);
     sendFriendRequist();
+  };
+  const handelClose = () =>
     setTimeout(() => {
       setOpen(false);
-    }, 1000);
-  };
+    }, 500);
 
   return (
     <>
@@ -25,20 +25,15 @@ function SendFriendRequist(props: { onlyIcon?: boolean; userName: string }) {
         }}
         startIcon={<PersonAdd />}
         size={onlyIcon ? "large" : "small"}
-        onClick={() => handleOpen()}
+        onClick={() => send()}
       >
         {onlyIcon ? null : "friend requist"}
       </Button>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-        onClick={() => setOpen(false)}
-      >
-        <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          frind requist was sent
+      <Snackbar open={open} autoHideDuration={4000} onClose={(handelClose)}>
+        <Alert onClose={handelClose} severity="success" sx={{ width: "100%" }}>
+          frind requist was sent to {userName}!{" "}
         </Alert>
-      </Backdrop>
+      </Snackbar>
     </>
   );
 }
