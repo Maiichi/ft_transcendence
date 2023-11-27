@@ -47,10 +47,10 @@ const ListItemIcon = styled(ListItemIconMui)`
 /**
  * `Players` as  List Mui element
  */
-const Players = styled(ListMui)`
+const Players = styled(ListMui)<{ primary: boolean }>`
   padding: 24px 12px !important;
   display: flex;
-  max-height: 90%;
+  max-height: ${(props) => (props.primary ? "90%" : "100%")};
   overflow-y: scroll;
   flex-direction: column;
   gap: 10px;

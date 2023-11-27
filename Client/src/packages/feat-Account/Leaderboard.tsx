@@ -41,7 +41,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
       {state.isLoading ? (
         <Loading />
       ) : leaderboard && leaderboard.length ? (
-        <Players>
+        <Players primary={primary} >
           {leaderboard.map(
             (player, index) =>
               (!primary && index >= 3) || (
