@@ -107,7 +107,8 @@ export const roomSlice = createSlice({
     sendMessageToRoom: (state, action: PayloadAction<MessagePayload>) => {
       state.isLoading = false;
     },
-    addMessageToRoom: (state, action: PayloadAction<I_ConversationMessages>) => {
+    addMessageToRoom: (state, action: PayloadAction<any>) => {
+      console.log('action Payload ==', action.payload);
       state.messages.push(action.payload);
     },
     setAdminRoom: (state, action: PayloadAction<any>) => {
@@ -122,6 +123,18 @@ export const roomSlice = createSlice({
         (member) => (member.user.intraId === userId) );
       state.memberships[roomIndex].members[userIndex].isAdmin = true;
     },
+    unSetAdminRoom: (state, action: PayloadAction<any>) => {
+      state.isLoading = false;
+    },
+    RemoveAdminFromRoom: (state, action: PayloadAction<any>) => {
+      const { userId, roomId } = action.payload;
+      const roomIndex = state.memberships.findIndex(
+        (item) => (item.id === roomId)
+      );
+      const userIndex = state.memberships[roomIndex].members.findIndex(
+        (member) => (member.user.intraId === userId) );
+      state.memberships[roomIndex].members[userIndex].isAdmin = false;
+    },
     banMember: (state, action: PayloadAction<any>) => {
       state.isLoading = false;
     },
@@ -133,6 +146,18 @@ export const roomSlice = createSlice({
       const userIndex = state.memberships[roomIndex].members.findIndex(
         (member) => (member.user.intraId === userId) );
       state.memberships[roomIndex].members[userIndex].isBanned = true;
+    },
+    unBanMember: (state, action: PayloadAction<any>) => {
+      state.isLoading = false;
+    },
+    unBanMemberFromRoom: (state, action: PayloadAction<any>) => {
+      const { userId, roomId } = action.payload;
+      const roomIndex = state.memberships.findIndex(
+        (item) => (item.id === roomId)
+      );
+      const userIndex = state.memberships[roomIndex].members.findIndex(
+        (member) => (member.user.intraId === userId) );
+      state.memberships[roomIndex].members[userIndex].isBanned = false;
     },
     muteMember: (state, action:PayloadAction<any>) => {
       state.isLoading = false;
@@ -149,6 +174,18 @@ export const roomSlice = createSlice({
       
       const minutesToMute = new Date(currentTime.getTime() + (timeMute + 60) * 60000); // Con
       state.memberships[roomIndex].members[userIndex].timeMute = minutesToMute;
+    },
+    kickMember: (state, action:PayloadAction<any>) => {
+      state.isLoading = false;
+    },
+    kickMemberFromRoom: (state, action:PayloadAction<any>) => {
+      const { userId, roomId } = action.payload;
+      const roomIndex = state.memberships.findIndex(
+        (item) => (item.id === roomId)
+      );
+      const userIndex = state.memberships[roomIndex].members.findIndex(
+        (member) => (member.user.intraId === userId) );
+      state.memberships[roomIndex].members.splice(userIndex, 1);
     }
 
   },
@@ -198,7 +235,13 @@ export const {
   banMember,
   banMemberFromRoom,
   muteMember,
-  muteMemberInRoom
+  muteMemberInRoom,
+  unSetAdminRoom,
+  RemoveAdminFromRoom,
+  unBanMember,
+  unBanMemberFromRoom,
+  kickMember,
+  kickMemberFromRoom,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

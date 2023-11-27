@@ -1,45 +1,112 @@
 import { Avatar, Divider } from "@mui/material";
 import { Block, Gamepad, Person, PersonAddAlt1 } from "@mui/icons-material";
 import styled from "styled-components";
+import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
+import { setDisplayUserActions } from "../../../core/CoreSlice";
+import ClearIcon from "@mui/icons-material/Clear";
+import CircleIcon from "@mui/icons-material/Circle";
+import { useState } from "react";
+import { Action, I_User } from "../components/types";
+import GamesIcon from "@mui/icons-material/Games";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { BlockUserModal } from "./modals/BlockUserModal";
 
-export const RightSide = () => {
-    return (
-      <Root>
-        <Header>
-            {/* <h3>{directConversation?.participants[0].userName}</h3> */}
-            <Avatar
-            sx={{height: 200, width: 200}}
-            src="https://www.shareicon.net/data/512x512/2016/05/24/770117_people_512x512.png" 
-            alt="" />
-            <StatusHolder>
-                <h4 style={{margin: '0px'}}>Not Available</h4>
-                <StatusCercle />
-            </StatusHolder>      
-        </Header>
-        <Divider style={{height : '2px', margin : '0px 30px 0px 30px'}} />
-        <Body>
-            <IconHolder>
-                <Person /> 
-                <IconText>View Profile</IconText>
-            </IconHolder>
-            <IconHolder>
-                <Gamepad /> 
-                <IconText>Invite to game</IconText>
-            </IconHolder>
-            <IconHolder>
-                <PersonAddAlt1 /> 
-                {/* <IconText >{directConversation?.id ? 'send Message' : 'Add to friend list'}</IconText> */}
-            </IconHolder>
-            <IconHolder>
-                <Block /> 
-                <IconText>Block</IconText>
-            </IconHolder>
+export const Icons: Array<Action> = [
+    
+    {
+      name: "View profile",
+      type: "viewProfile",
+      component: <AccountCircleIcon />,
+      role: ["member"],
+    },
+    {
+      name: "Invite to a game",
+      type: "play",
+      component: <GamesIcon />,
+      role: ["member"],
+    },
+    {
+      name: "Block",
+      type: "blockFriend",
+      component: <PersonOffIcon />,
+      role: ["member"],
+    },
+  ];
+
+export const UserActionInDirectConversation = () => {
+    const dispatch = useAppDispatch();
+    const { selectedUser } = useAppSelector((state) => state.chat);
+    const [open, setOpen] = useState(false);
+    const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
+        undefined
+    );
+    const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+    const handleClickModal = (
+        childModal: JSX.Element,
+        closeType?: "auto" | "click"
+    ) => {
+        setCloseType(closeType);
+        setOpen(true);
+        setChildModal(childModal);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleClickIcon = (iconType: any, selectedUser: I_User) => {
+        switch (iconType) {
+            case "blockFriend":
+                handleClickModal( <BlockUserModal data={selectedUser} handleClose={handleClose}/>);
+                break;
             
-        </Body>
-        </Root>
+            default:
+                break;
+        }
+
+    }
+
+    return (
+        <RightSide>
+            <ModalComponent
+                open={open}
+                ChildComponent={ChildModal}
+                handleClose={handleClose}
+                closeType={closeType}
+            />
+            <ClearIcon onClick={() => dispatch(setDisplayUserActions(false))} />
+            <h2></h2>
+            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <CircleIcon sx={{ color: 'GREY' }} />
+            <p>Not available</p>
+            <Divider variant="inset" />
+            <IconsHolder>
+                {
+                    Icons.map((icon) => (
+                        <IconHolder 
+                            onClick={() => handleClickIcon(icon.type, selectedUser)}
+                        >
+                            {icon.component}
+                            {icon.name}
+                        </IconHolder>
+                    ))
+                }
+            </IconsHolder>
+        </RightSide>
     );
   };
-  
+
+const RightSide = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    flex: 2 1 0%;
+    border-left: 1px solid rgb(215, 215, 215);
+`;
+
+/** CHANNEL USERS **/
+
+const IconsHolder = styled.div``;
 const Root = styled.div`
 flex : 2;
 height: 100%;

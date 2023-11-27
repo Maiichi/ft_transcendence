@@ -17,7 +17,7 @@ model User {
      firstName           String                   @db.VarChar(255)
      lastName            String                   @db.VarChar(255)    
      userName            String                   @unique @db.VarChar(255) 
-     avatar_url          String?                  @db.VarChar(255)
+     avatar_url          String?                  @db.VarChar(255) @default("https://res.cloudinary.com/dt62qdmrg/image/upload/v1700783661/messi_hu50hp.jpg")
      status              String                   @default("OFFLINE")
      twoFactorActivate   Boolean?                 @default(false)
      twoFactorSecret     String?                  @db.VarChar(255)  

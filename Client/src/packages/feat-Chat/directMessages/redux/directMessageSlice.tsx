@@ -35,6 +35,14 @@ export const DirectMessageSlice = createSlice({
     createDirectConversation: (state, action:PayloadAction<MessagePayload>) => {
       state.isLoad = false;
     },
+    removeConversation: (state, action:PayloadAction<number>) => {
+      const intraId = action.payload; 
+      console.log('intraId || ' , intraId);
+      const conversationIndex = state.conversations.findIndex(
+          (conversation: I_DirectConversation)=> conversation.receiver.intraId === intraId );
+      console.log('Conv Index ==', conversationIndex);
+      state.conversations.splice(conversationIndex, 1);
+    },
     sendMessageToUser: (state, action: PayloadAction<I_DirectConversation>) => {
       const conversationId = action.payload.id;
       const isConversationFound = state.conversations.find((conversation) => conversation.id === conversationId)
@@ -50,7 +58,8 @@ export const DirectMessageSlice = createSlice({
     },
     addMessageToConversation: (state, action: PayloadAction<I_ConversationMessages>) => {
       state.conversationsContent.push(action.payload);
-    }
+    },
+    
     
   },
   extraReducers: (builder) => {
@@ -84,6 +93,7 @@ export const {
     createDirectConversation, 
     sendMessageToUser,
     addMessageToConversation,
+    removeConversation,
 } = DirectMessageSlice.actions;
 
 export default DirectMessageSlice.reducer;

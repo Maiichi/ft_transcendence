@@ -13,6 +13,7 @@ import searchSlice from "../../packages/feat-Search/redux/searchSlice";
 import chatSlice from "../../packages/feat-Chat/components/chatSlice";
 import friendSlice from "../../packages/feat-Chat/channels/redux/friendSlice";
 import ProfileSlice from "../../packages/feat-Account/components/ProfileSlice";
+import blockSlice from "../../packages/feat-Chat/components/blockSlice";
 
 // ...
 
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   chat: chatSlice,
   friends: friendSlice,
   profile: ProfileSlice,
+  block: blockSlice
 });
 
 const persistConfig = {

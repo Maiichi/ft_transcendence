@@ -159,11 +159,7 @@ export const Search = () => {
                   <Avatar
                     key={member.user.intraId}
                     alt="user"
-                    src={
-                      member.user.avatar_url
-                        ? require(`/app/images_uploads/${member.user.avatar_url}`)
-                        : ""
-                    }
+                    src={`${member.user.avatar_url}`}
                   />
                 ))}
               </AvatarGroup>
