@@ -5,6 +5,7 @@ import { gamerType } from "./statsType";
 import CircularProgressBar from "./utils/CircularProgressBar";
 import LinearDeterminate from "./utils/linearProgressBar";
 import { Badge, Stack } from "@mui/material";
+import SendFriendRequist from "./utils/frindrequist";
 
 const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
   const { gamer, isOwner } = props;
@@ -73,17 +74,7 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
                 </span>
               ) : (
                 <>
-                  <Button
-                    sx={{
-                      padding: "0",
-                      textTransform: "lowercase",
-                    }}
-                    size="small"
-                    startIcon={<PersonAddAlt fontSize="small" />}
-                    onClick={() => navigate("/account/profile")}
-                  >
-                    friend requist
-                  </Button>
+                  <SendFriendRequist userName={gamer.user.userName} />
                   <Button
                     sx={{
                       padding: "0",

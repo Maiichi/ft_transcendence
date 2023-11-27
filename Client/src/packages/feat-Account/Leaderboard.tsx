@@ -1,15 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import {
-  Add,
-  Chat,
-  MoreVert,
-  Person,
-  PersonAdd,
-  SportsCricket,
-} from "@mui/icons-material";
+import { useEffect } from "react";
+import { Chat } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../core";
-import { getLeaderboard, leaderboardType } from "./components";
+import {
+  ListButton,
+  SendFriendRequist,
+  SendGameRequist,
+  getLeaderboard,
+  leaderboardType,
+} from "./components";
 import {
   Players,
   Player,
@@ -18,63 +17,12 @@ import {
   Button,
   ListItemText,
   ListItemAvatar,
-  ListItemIcon,
   /***global**/
   Title,
   Root,
 } from "./styles";
 import { Loading } from "./components";
 import { useSize } from "../../core/utils/hooks";
-import {
-  Backdrop,
-  Alert,
-  AlertTitle,
-  Dialog,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemButton,
-} from "@mui/material";
-import { blue } from "@mui/material/colors";
-
-function SendGameRequist({ userName }: { userName: string }) {
-  const sendGameRequist = () => "";
-  return (
-    <Button onClick={() => sendGameRequist()}>
-      <SportsCricket />
-    </Button>
-  );
-}
-function SendFriendRequist({ userName }: { userName: string }) {
-  const sendFriendRequist = () => "";
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-    sendFriendRequist();
-    setTimeout(() => {
-      setOpen(false);
-    }, 1000);
-  };
-
-  return (
-    <>
-      <Button onClick={() => handleOpen()}>
-        <PersonAdd />
-      </Button>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-        onClick={() => setOpen(false)}
-      >
-        <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          frind requist was sent
-        </Alert>
-      </Backdrop>
-    </>
-  );
-}
 
 const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const navigate = useNavigate();
@@ -82,11 +30,11 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.profile.lead);
   const leaderboard: leaderboardType = state.leaderboard;
+  const Oid: number = useAppSelector((state) => state.auth.user.intraId);
 
   useEffect(() => {
     primary && dispatch(getLeaderboard());
   }, []);
-  const Oid: number = useAppSelector((state) => state.auth.user.intraId);
 
   return (
     <Root>
@@ -126,7 +74,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                         <Button onClick={() => navigate("/chat")}>
                           <Chat />
                         </Button>
-                        <SendFriendRequist userName={player.name} />
+                        <SendFriendRequist onlyIcon userName={player.name} />
                       </ListButton>
                     ) : (
                       <Button onClick={() => navigate("/account/profile")}>
@@ -167,46 +115,3 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
 };
 
 export { Leaderboard };
-
-export interface SimpleDialogProps {
-  open: boolean;
-  children: React.ReactNode;
-  onClose: () => void;
-}
-function SimpleDialog(props: SimpleDialogProps) {
-  const { onClose, open, children } = props;
-
-  return (
-    <Dialog onClose={() => onClose()} open={open}>
-      <List>{children}</List>
-    </Dialog>
-  );
-}
-
-const ListButton: React.FC<{
-  children?: React.ReactNode;
-  isTab?: boolean;
-}> = ({ children, isTab }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  return isTab ? (
-    <>
-      <Button
-        variant="text"
-        onClick={handleClickOpen}
-        startIcon={<MoreVert />}
-      />
-      <SimpleDialog open={open} onClose={handleClose}>
-        {children}
-      </SimpleDialog>
-    </>
-  ) : (
-    <ListItemIcon>{children}</ListItemIcon>
-  );
-};
