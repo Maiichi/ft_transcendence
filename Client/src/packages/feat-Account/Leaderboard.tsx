@@ -38,9 +38,9 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   return (
     <Root>
       {primary && <Title> Leaderboard </Title>}
-      {state.isLoading || !leaderboard ? (
+      {state.isLoading ? (
         <Loading />
-      ) : leaderboard.length ? (
+      ) : leaderboard && leaderboard.length ? (
         <Players>
           {leaderboard.map(
             (player, index) =>

@@ -50,6 +50,8 @@ const ListItemIcon = styled(ListItemIconMui)`
 const Players = styled(ListMui)`
   padding: 24px 12px !important;
   display: flex;
+  max-height: 90%;
+  overflow-y: scroll;
   flex-direction: column;
   gap: 10px;
   margin: 0;
