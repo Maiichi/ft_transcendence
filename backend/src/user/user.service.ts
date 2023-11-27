@@ -3,6 +3,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EditUserDto } from './dto';
 import * as path from 'path';
 import { Response } from 'express';
+import { v2 as cloudinary } from 'cloudinary';
+const streamifier = require('streamifier');
 
 
 @Injectable()
@@ -18,6 +20,26 @@ export class UserService {
     {
         const user = await this.prisma.user.findUnique({
             where: {intraId : intraId}
+        });
+        if (!user)
+            return null;
+        return user;
+    }
+
+    async getUserInfos(userId: number)
+    {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                intraId: userId
+            },
+            select: {
+                intraId: true,
+                userName: true,
+                firstName: true,
+                lastName: true,
+                avatar_url: true,
+                status: true
+            }
         });
         if (!user)
             return null;
@@ -112,54 +134,100 @@ export class UserService {
     }
 
     // function to upload avatar for the user
-    async editAvatar(userId: number, avatar: Express.Multer.File, res: Response)
-    {   
-        // find user by username if it exists
-        const userExist = await this.findUserById(userId);
-        // const usernameExist = await this.findUserByUsername(username);
-        if (userExist)
-        {
-            this.prisma.user.update({
-                where: {intraId: userId} ,
-                data : {
-                    avatar_url : avatar.filename
+    // async editAvatar(userId: number, avatar: Express.Multer.File, res: Response)
+    // {   
+    //     // find user by username if it exists
+    //     const userExist = await this.findUserById(userId);
+    //     // const usernameExist = await this.findUserByUsername(username);
+    //     if (userExist)
+    //     {
+    //         this.prisma.user.update({
+    //             where: {intraId: userId} ,
+    //             data : {
+    //                 avatar_url : avatar.filename
+    //             }
+            
+    //         }).then((resp) =>{
+    //             if (resp)
+    //                 return res.status(200).json({
+    //                     status: 200,
+    //                     message: 'Avatar updated successfully',
+    //                     data: resp
+    //                 })
+    //         })
+    //     }
+    //     else
+    //         return res.status(400).json({
+    //             status: 400,
+    //             message: `User not found with the id = ${userId}`
+    //         })
+    // }
+
+    async editAvatar(userId: number, avatar: Express.Multer.File, res: Response) {
+        try {
+            const userExist = await this.findUserById(userId);
+
+            if (!userExist) {
+                return res.status(400).json({
+                    status: 400,
+                    message: `User not found with the id = ${userId}`
+                });
+            }
+
+            const uploadStream = cloudinary.uploader.upload_stream(async (error, result) => {
+                if (error) {
+                    return res.status(500).json({
+                        status: 500,
+                        message: 'Error uploading avatar to Cloudinary',
+                        error: error.message
+                    });
                 }
-            }).then((resp) =>{
-                if (resp)
-                    return res.status(200).json({
-                        status: 200,
-                        message: 'Avatar updated successfully',
-                        data: resp
-                    })
-            })
+
+                // Update the user in the database with the Cloudinary URL
+                const updatedUser = await this.prisma.user.update({
+                    where: { intraId: userId },
+                    data: {
+                        avatar_url: result.secure_url
+                    }
+                });
+
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Avatar updated successfully',
+                    data: updatedUser
+                });
+            });
+
+            streamifier.createReadStream(avatar.buffer).pipe(uploadStream);
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal Server Error',
+                error: error.message
+            });
         }
-        else
-            return res.status(400).json({
-                status: 400,
-                message: `User not found with the id = ${userId}`
-            })
     }
 
     //function to get the user Avatar 
     // TODO: need to improve ------------
-    async getUserAvatar(userId: number, res: Response)
-    {
-        // find user by username if it exists
-        const userExist = await this.findUserById(userId);
-        // const usernameExist = await this.findUserByUsername(username);
-        if (userExist)
-        {
-            const user = await this.getUser(userId);
-            const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
-            console.log('filePath == ', filePath);
-            res.sendFile(filePath);
-        }
-        else
-            return res.status(400).json({
-                status: 400,
-                message: `User not found with the id = ${userId}`
-            })
-    }
+    // async getUserAvatar(userId: number, res: Response)
+    // {
+    //     // find user by username if it exists
+    //     const userExist = await this.findUserById(userId);
+    //     // const usernameExist = await this.findUserByUsername(username);
+    //     if (userExist)
+    //     {
+    //         const user = await this.getUser(userId);
+    //         const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
+    //         console.log('filePath == ', filePath);
+    //         res.sendFile(filePath);
+    //     }
+    //     else
+    //         return res.status(400).json({
+    //             status: 400,
+    //             message: `User not found with the id = ${userId}`
+    //         })
+    // }
 
     // function to check if the user exist using it's ID
     async findUserById(userId: number)
@@ -272,14 +340,90 @@ export class UserService {
                         lastName: true,
                         firstName: true,
                         userName: true,
+                        status: true,
                     }
                 }
             }
         });
-        // if ()
-        console.log('user Friends ==', JSON.stringify(userFriends));
         return  res.send({
             data : userFriends[0].friends
         });
     }
+
+    async getBlackList(userId: number, res: Response) {
+        const blackList = await this.prisma.blacklist.findMany({
+            where: {
+                OR: [
+                    {
+                        blockedById: userId,
+                    },
+                    {
+                        blockerById: userId,
+                    },
+                ],
+            },
+            select: {
+                blocked: {
+                    select: {
+                        intraId: true,
+                        userName: true,
+                        lastName: true,
+                        firstName: true,
+                        avatar_url: true,
+                        status: true,
+                    },
+                },
+                blocker: {
+                    select: {
+                        intraId: true,
+                        userName: true,
+                        lastName: true,
+                        firstName: true,
+                        avatar_url: true,
+                        status: true,
+                    },
+                },
+            },
+        });
+    
+        if (!blackList) {
+            return res.send({
+                userBlockedByYou: [],
+                userBlockedYou: [],
+            });
+        }
+    
+        const BlockedByYou = [];
+        const BlockedYou = [];
+    
+        for (const entry of blackList) {
+            if (entry.blocker.intraId === userId) {
+                // User has blocked you
+                BlockedByYou.push({
+                    intraId: entry.blocked.intraId,
+                    userName: entry.blocked.userName,
+                    lastName: entry.blocked.lastName,
+                    firstName: entry.blocked.firstName,
+                    avatar_url: entry.blocked.avatar_url,
+                    status: entry.blocked.status,
+                });
+            } else if (entry.blocked.intraId === userId) {
+                // User has been blocked by you
+                BlockedYou.push({
+                    intraId: entry.blocker.intraId,
+                    userName: entry.blocker.userName,
+                    lastName: entry.blocker.lastName,
+                    firstName: entry.blocker.firstName,
+                    avatar_url: entry.blocker.avatar_url,
+                    status: entry.blocker.status,
+                });
+            }
+        }
+    
+        return res.send({
+            BlockedByYou,
+            BlockedYou,
+        });
+    }
+    
 }

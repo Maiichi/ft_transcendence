@@ -1,6 +1,6 @@
 import { PersonAddAltRounded } from "@mui/icons-material";
 import styled from "styled-components";
-import { I_Room, Members, User } from "../../components/types";
+import { I_Room, Members, I_User } from "../../components/types";
 import { useEffect, useState } from "react";
 import {
   Avatar,
@@ -28,17 +28,31 @@ export const UsersRoom = ({
 
   const currentUser = useAppSelector((state) => state.auth.user);
   const [searchQuery, setSearchQuery] = useState<string>(""); 
+  const block  = useAppSelector((state) => state.block);
+  console.log('block ==', block);
   // const [filteredUsers, setFilteredUsers] = useState<Array<Members>>(
   //   channelConversation.members
   // );
   
+  const isBlacklisted = (intraId: number): boolean => {
+    const isBlockedByYou = block.blockedByYou.some((blockedMember: any) => blockedMember.intraId === intraId);
+    const isBlockedYou = block.blockedYou.some((blockedMember: any) => blockedMember.intraId === intraId);
+    console.log('isBlockedByYou =', isBlockedByYou);
+    console.log('isBlockedYou =', isBlockedYou);
+    return isBlockedByYou || isBlockedYou ;
+  }
+
   const filtredMembers = channelConversation.members.filter((member: Members) =>
-    ((member.user.intraId !== currentUser.intraId )
+    (
+      (!isBlacklisted(member.user.intraId))
+      && (member.user.intraId !== currentUser.intraId )
       && (member.user.firstName
         .toLowerCase()
         .startsWith(searchQuery.toLowerCase())))
-  )
-  const handleClick = (user: User) => {
+  );
+  
+
+  const handleClick = (user: I_User) => {
     dispatch(setSelectedUser(user));
     dispatch(setDisplayUserActions(true));
     setOpen(false);

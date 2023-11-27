@@ -1,9 +1,9 @@
 import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
-import { I_Discussion, User } from "./types";
+import { I_Discussion, I_User } from "./types";
 
 export interface roomState {
   currentConversation: I_Discussion | null;
-  selectedUser: User | null;
+  selectedUser: I_User | null;
   discussionsDisplay: boolean;
   chatBoxDisplay: boolean;
 }
@@ -21,7 +21,7 @@ export const chatSlice = createSlice({
     setCurrentConversation: (state, action: PayloadAction<I_Discussion>) => {
       state.currentConversation = action.payload;
     },
-    setSelectedUser: (state, action: PayloadAction<User>) => {
+    setSelectedUser: (state, action: PayloadAction<I_User>) => {
       state.selectedUser = action.payload;
     },
     setDiscussionsDisplay: (state, action: PayloadAction<boolean>) => {
