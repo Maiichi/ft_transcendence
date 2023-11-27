@@ -30,7 +30,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   }, [isAuthenticated]);
 
   // Render the wrapped content if authenticated
-  return children.element;
+  return isAuthenticated ? children.element : null;
 };
 
 export default RequireAuth;
