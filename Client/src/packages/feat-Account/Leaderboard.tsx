@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Chat } from "@mui/icons-material";
-import { useAppDispatch, useAppSelector } from "../../core";
+import { Loading, useAppDispatch, useAppSelector } from "../../core";
 import {
   ListButton,
   SendFriendRequist,
@@ -21,7 +21,6 @@ import {
   Title,
   Root,
 } from "./styles";
-import { Loading } from "./components";
 import { useSize } from "../../core/utils/hooks";
 
 const Leaderboard = ({ primary = true }: { primary?: boolean }) => {

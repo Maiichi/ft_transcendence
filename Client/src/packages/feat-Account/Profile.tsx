@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../core";
+import { Loading, useAppDispatch, useAppSelector } from "../../core";
 import {
   ProfileState,
   getuserasgamer,
   getLeaderboard,
-  Loading,
   BoardCard,
   AchievemetsCard,
   MatchsHistoryCard,

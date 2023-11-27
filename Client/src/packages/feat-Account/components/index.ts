@@ -1,4 +1,3 @@
-import Loading from "./Loading";
 import UserCard from "./UserCard";
 import BoardCard from "./BoardCard";
 import MatchsHistoryCard from "./MatchsHistoryCard";
@@ -16,7 +15,6 @@ export {
   BoardCard,
   MatchsHistoryCard,
   AchievemetsCard,
-  Loading,
   SendFriendRequist,
   SendGameRequist,
   ListButton,
