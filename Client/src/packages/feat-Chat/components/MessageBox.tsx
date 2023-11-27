@@ -24,7 +24,7 @@ export const MessageBox = ({ own, data }: Props) => {
       <MessageTop>
         {data.sender.avatar_url !== null ? (
           <MessageImg
-            src={require(`/app/images_uploads/${data.sender.avatar_url}`)}
+            src={`${data.sender.avatar_url}`}
             alt=""
           />
         ) : (

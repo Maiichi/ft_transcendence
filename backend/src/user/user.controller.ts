@@ -1,23 +1,23 @@
-    import { BadRequestException, Body, Controller, Get, Param, Patch, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-    import { JwtGuard } from '../auth/guard';
-    import { EditUserDto } from './dto';
-    import { UserService } from './user.service';
-    import { Response, Express } from 'express';
-    import { FileInterceptor } from '@nestjs/platform-express';
-    import { MulterExceptionFilter } from './multer/multer.filter';
-    import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
-    import { GetUser } from 'src/auth/decorator';
-    import { User } from '@prisma/client';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Res, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { JwtGuard } from '../auth/guard';
+import { EditUserDto } from './dto';
+import { UserService } from './user.service';
+import { Response, Express } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterExceptionFilter } from './multer/multer.filter';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
+import { GetUser } from 'src/auth/decorator';
+import { User } from '@prisma/client';
 
-    @ApiTags('User')
-    @UseGuards(JwtGuard)
-    @Controller('users')
-    @ApiBearerAuth()
-    export class UserController
-    {
-        constructor(
-            private userService:    UserService,
-        ) {}
+@ApiTags('User')
+@UseGuards(JwtGuard)
+@Controller('users')
+@ApiBearerAuth()
+export class UserController
+{
+    constructor(
+        private userService:    UserService,
+    ) {}
     // GET /api/users/:username
     // @Get(':username')
     // @ApiOperation({ summary : 'Get user by username'})
@@ -96,6 +96,7 @@
                 throw new BadRequestException();
             // Handle the uploaded file here
             // You can access the file properties using file.originalname, file.buffer, file.mimetype, etc.
+            // return await this.cloudinaryService.uploadFile(Number(id), file);
             return await this.userService.editAvatar(Number(id), file, res);
         } catch (error) {
             return res.send({error : error});
@@ -103,32 +104,32 @@
     }
 
     // GET /api/users/:id/avatar
-    @Get(':id/avatar/')
-    @ApiOperation({ summary: 'Get User Avatar' })
-    @ApiParam({ name: 'id', description: 'User ID' })
-    @ApiResponse({
-        status: 200,
-        description: 'OK',
-        content: {
-            '*/*': {
-                schema: {
-                type: 'string',
-                format: 'binary',
-                },
-            },
-        },
-    })
-    @ApiResponse({ status: 404, description: 'Not Found' })
-    @ApiUnauthorizedResponse({description : 'Unauthorized'})
-    @ApiBadRequestResponse({description : 'Id does not exist'})
-    async getAvatar(@Param('id') id: number ,@Res() res: Response)
-    {
-        try {
-            return await this.userService.getUserAvatar(Number(id), res);
-        } catch (error) {
-            return res.send({error : error})
-        }
-    }
+    // @Get(':id/avatar/')
+    // @ApiOperation({ summary: 'Get User Avatar' })
+    // @ApiParam({ name: 'id', description: 'User ID' })
+    // @ApiResponse({
+    //     status: 200,
+    //     description: 'OK',
+    //     content: {
+    //         '*/*': {
+    //             schema: {
+    //             type: 'string',
+    //             format: 'binary',
+    //             },
+    //         },
+    //     },
+    // })
+    // @ApiResponse({ status: 404, description: 'Not Found' })
+    // @ApiUnauthorizedResponse({description : 'Unauthorized'})
+    // @ApiBadRequestResponse({description : 'Id does not exist'})
+    // async getAvatar(@Param('id') id: number ,@Res() res: Response)
+    // {
+    //     try {
+    //         return await this.userService.getUserAvatar(Number(id), res);
+    //     } catch (error) {
+    //         return res.send({error : error})
+    //     }
+    // }
 
     @Get('friends/')
     async getFriend(@GetUser() user: User ,  @Res() res: Response)
@@ -141,4 +142,17 @@
         }
     }
 
+    @Get('blacklist/')
+    async getBlackList(@GetUser() user: User ,  @Res() res: Response)
+    {
+        console.log('here ')
+        try {
+            return await this.userService.getBlackList(user.intraId, res);
+        } catch (error) {
+            return res.send({error: error})
+        }
     }
+
+    
+
+}

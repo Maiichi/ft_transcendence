@@ -4,7 +4,6 @@ export class BlockUserDto
 {
     @IsNumber()
     blockedId: number;
-
 }
 
 export class UnBlockUserDto 
