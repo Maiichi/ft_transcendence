@@ -22,7 +22,7 @@ const MatchsHistoryCard = (props: {
           fontWeight: "bolder",
         }}
       >
-        {`${userName}'s Last Matches`}
+        {`${userName.slice(0, 8)}'s Last Matches`}
       </Text>
       {matchs && matchs.length ? (
         matchs.map(

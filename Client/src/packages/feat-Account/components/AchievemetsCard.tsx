@@ -18,7 +18,7 @@ const AchievemetsCard = (props: {
           fontWeight: "bolder",
         }}
       >
-        {`${userName}'s Achievements`}
+        {`${userName.slice(0, 8)}'s Achievements`}
       </Text>
       {achivs.map(
         (achiv, index) =>
