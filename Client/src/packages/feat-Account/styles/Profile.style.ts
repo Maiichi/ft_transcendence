@@ -61,7 +61,7 @@ const Matchshistory = styled.datalist`
   flex-wrap: wrap;
   gap: 45px 10px;
   justify-content: center;
-  padding-bottom: 32px;
+  padding-bottom: 44px;
   ${cardstyle}
 `;
 const Match = styled(smallCard)<{ win: any }>`
