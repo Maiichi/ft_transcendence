@@ -23,7 +23,7 @@ const Profile = () => {
   const isOwner: boolean = intraId === uid;
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
-  const isloading: boolean = useAppSelector(
+  const Go: boolean = !useAppSelector(
     (state) => state.profile.isLoading || state.profile.lead.isLoading
   );
 
@@ -33,12 +33,11 @@ const Profile = () => {
     dispatch(getLeaderboard());
   }, [_uid]);
 
-  const Go = !isloading;
   if ((Go && !user) || uid < 1)
     return (
       <>
         user not found
-        <Button onClick={() => navigate("/")}>go to home</Button>
+        <Button onClick={() => navigate("/")}>go to home Page</Button>
       </>
     );
 
