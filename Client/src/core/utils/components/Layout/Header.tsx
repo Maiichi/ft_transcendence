@@ -208,7 +208,7 @@ export const Header = () => {
     <>
       {isMobile && (
         <Drawer
-          anchor={"left"}
+          anchor={"top"}
           state={state}
           children={<ListNav toggleDrawer={toggleDrawer} />}
           toggleDrawer={toggleDrawer}
@@ -233,7 +233,7 @@ export const Header = () => {
           <>
             <AppsIcon
               className={classes.iconBase}
-              onClick={toggleDrawer("left", true)}
+              onClick={toggleDrawer("top", true)}
             />
 
             {/* <SearchIcon

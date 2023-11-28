@@ -4,14 +4,16 @@ import {
   Person,
   PersonAddAltRounded,
 } from "@mui/icons-material";
-import Badge from "@mui/material/Badge";
 import DehazeIcon from "@mui/icons-material/Dehaze";
-
-import { I_Room } from "../components/types";
 import styled from "styled-components";
 import { LeaveRoomModal } from "./modals/leaveChannelModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
+import {
+  ModalComponent,
+  PopperComponent,
+  useAppDispatch,
+  useAppSelector,
+} from "../../../core";
 import { UsersRoom } from "./modals/UsersRoomModal";
 import { CreateChannelModal } from "./modals/CreateChannelModal";
 import { isAdmin, isOwner } from "../components/utils";
@@ -19,6 +21,7 @@ import { AddUserToRoomModal } from "./modals/AddUserToRoomModal";
 import { useSize } from "../../../core/utils/hooks";
 import { useStyles } from "../components/style";
 import { setDiscussionsDisplay } from "../components/chatSlice";
+import { UserActions } from "../components/UserActions";
 
 export const ChannelBoxHeader = () => {
   const { isMobile } = useSize();
@@ -30,11 +33,17 @@ export const ChannelBoxHeader = () => {
 
   const index = memberships.findIndex((item: any) => item.id == roomId);
   const [open, setOpen] = useState(false);
+  const [openPopper, setOpenPopper] = useState(false);
+  const [openPopperAction, setOpenPopperAction] = useState(false);
+
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
   );
 
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+  const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
+
+  const [anchorEl, setAnchorEl] = useState<any | null>(null);
 
   const handleClickModal = (
     childModal: JSX.Element,
@@ -42,13 +51,27 @@ export const ChannelBoxHeader = () => {
   ) => {
     setCloseType(closeType);
     setOpen(true);
+    setOpenPopper(false);
     setChildModal(childModal);
+  };
+  const handleClickPopper = (
+    e: React.MouseEvent<any>,
+    childPopper: JSX.Element
+  ) => {
+    setAnchorEl(e.currentTarget);
+    setOpenPopper(true);
+    setOpen(false);
+    setChildPopper(childPopper);
   };
   const handleClose = () => {
     setOpen(false);
   };
+  const handleClosePopper = () => {
+    setOpenPopper(false);
+  };
   const isChannelOwner = isOwner(memberships[index], user.intraId);
   const isChannelAdmin = isAdmin(memberships[index], user.intraId);
+
   return (
     <Header>
       <ModalComponent
@@ -56,6 +79,38 @@ export const ChannelBoxHeader = () => {
         ChildComponent={ChildModal}
         handleClose={handleClose}
         closeType={closeType}
+      />
+      <PopperComponent
+        paperStyle={{
+          backgroundColor: "rgb(255, 255, 255)",
+          color: "rgb(54, 65, 82)",
+          borderRadius: "10px",
+          overflow: "hidden",
+          border: "none rgba(144, 202, 249, 0.145)",
+        }}
+        popperStyle={{
+          paddingTop: "5px",
+        }}
+        anchorEl={anchorEl}
+        open={openPopperAction && isMobile}
+        placement={"bottom-start"}
+        ChildComponent={<UserActions handleClosePopper={setOpenPopperAction} />}
+      />
+      <PopperComponent
+        paperStyle={{
+          backgroundColor: "rgb(255, 255, 255)",
+          color: "rgb(54, 65, 82)",
+          borderRadius: "10px",
+          overflow: "hidden",
+          border: "none rgba(144, 202, 249, 0.145)",
+        }}
+        popperStyle={{
+          paddingTop: "5px",
+        }}
+        anchorEl={anchorEl}
+        open={openPopper}
+        placement={"bottom-start"}
+        ChildComponent={ChildPopper}
       />
       {isMobile && (
         <DehazeIcon
@@ -88,22 +143,24 @@ export const ChannelBoxHeader = () => {
                 cursor: "pointer",
                 "&:hover": { backgroundColor: "rgb(245, 246, 247)" },
               }}
-              onClick={() => {
-                handleClickModal(
-                  <AddUserToRoomModal handleClose={handleClose} />
+              onClick={(e) => {
+                handleClickPopper(
+                  e,
+                  <AddUserToRoomModal handleClose={handleClosePopper} />
                 );
               }}
             />
           </ChannelMembers>
         )}
         <ChannelMembers
-          onClick={() =>
-            handleClickModal(
+          onClick={(e) =>
+            handleClickPopper(
+              e,
               <UsersRoom
                 channelConversation={memberships[index]}
-                setOpen={setOpen}
-              />,
-              "auto"
+                setOpenPopper={setOpenPopper}
+                setOpenPopperAction={setOpenPopperAction}
+              />
             )
           }
         >

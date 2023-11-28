@@ -127,7 +127,10 @@ export const ChatDiscussion = () => {
             }}
             onClick={() =>
               handleClickModal(
-                <NewDirectMessage handleClose={handleClose} selectedUser={null} />,
+                <NewDirectMessage
+                  handleClose={handleClose}
+                  selectedUser={null}
+                />,
                 "auto"
               )
             }
@@ -142,7 +145,7 @@ export const ChatDiscussion = () => {
               }
               onClick={() => {
                 dispatch(setSelectedUser(discussion.receiver));
-                dispatch(setDisplayUserActions(false));
+                dispatch(setDisplayUserActions(true));
                 handleCLick("direct", discussion);
               }}
             >
@@ -157,10 +160,7 @@ export const ChatDiscussion = () => {
                 overlap="circular"
                 variant="dot"
               >
-                  <AvatarImage
-                    src={`${discussion.receiver.avatar_url}`}
-                    alt=""
-                  />
+                <AvatarImage src={`${discussion.receiver.avatar_url}`} alt="" />
               </Badge>
               <ContactDescription>
                 <DiscussionName>
