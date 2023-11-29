@@ -46,8 +46,6 @@ const Usercard = styled.data`
   justify-content: center;
   padding-top: 4%;
   ${cardstyle}
-  @media (max-width: 940px) {
-  }
 `;
 const Board = styled.datalist`
   display: flex;
@@ -75,8 +73,6 @@ const Achievemets = styled.datalist`
   gap: 15px 10px;
   justify-content: center;
   ${cardstyle}
-  @media (max-width: 940px) {
-  }
 `;
 const Achiv = styled(smallCard)`
   height: 80px;

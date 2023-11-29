@@ -77,12 +77,12 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
                   <SendFriendRequist userName={gamer.user.userName} />
                   <Button
                     sx={{
-                      padding: "0",
+                      padding: 0,
                       textTransform: "lowercase",
                     }}
                     size="small"
                     startIcon={<Message fontSize="small" />}
-                    onClick={() => navigate("/account/profile")}
+                    onClick={() => navigate('/chat')}
                   >
                     message
                   </Button>

@@ -1,16 +1,15 @@
 import {
+  Diversity1,
   Filter1Rounded,
   Filter2Rounded,
   Filter3Rounded,
-  Login as LoginIcon,
   SportsTennis,
 } from "@mui/icons-material";
-import { Backdrop, Button, CircularProgress } from "@mui/material";
+import { Backdrop, Button } from "@mui/material";
 import { useNavigate } from "react-router";
 import "./components/style.css";
 import images from "./images_uploads";
 import { useState } from "react";
-import Login from "../feat-Auth/Login";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -55,9 +54,9 @@ const LandingPage = () => {
             <Button
               variant="contained"
               onClick={() => handleOpen()}
-              endIcon={<LoginIcon />}
+              endIcon={<Diversity1 />}
             >
-              Login
+              Jion us
             </Button>
             <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
