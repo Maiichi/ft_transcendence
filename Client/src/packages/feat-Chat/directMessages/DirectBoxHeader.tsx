@@ -6,7 +6,7 @@ import { PopperComponent, useAppDispatch } from "../../../core";
 import { useStyles } from "../components/style";
 import { UserActions } from "../components/UserActions";
 import { useState } from "react";
-
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 export const DirectBoxHeader = (props: {
   directConversation: I_DirectConversation;
 }) => {
@@ -57,15 +57,17 @@ export const DirectBoxHeader = (props: {
         />
       )}
       <h4>
-        {directConversation?.receiver?.firstName}{" "}
+        {directConversation?.receiver?.firstName}
         {directConversation?.receiver?.lastName}
       </h4>
-      <DehazeIcon
-        className={classes.iconBase}
-        onClick={(e) =>
-          handleClickModal(e, <UserActions handleClosePopper={setOpen} />)
-        }
-      />
+      {isMobile && (
+        <ManageAccountsIcon
+          className={classes.iconBase}
+          onClick={(e) =>
+            handleClickModal(e, <UserActions handleClosePopper={setOpen} />)
+          }
+        />
+      )}
     </>
   );
 };

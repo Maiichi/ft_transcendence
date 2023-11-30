@@ -42,8 +42,8 @@ export const IconHolder = styled.div`
 `;
 export const RightSide = styled.div`
   display: flex;
+  padding: 16px;
   flex-direction: column;
-  padding: 5px;
-  flex: 2 1 0%;
+  gap: 16px;
   border-left: 1px solid rgb(215, 215, 215);
 `;

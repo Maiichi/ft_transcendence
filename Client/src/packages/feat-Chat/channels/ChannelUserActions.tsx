@@ -136,7 +136,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
   const dispatch = useAppDispatch();
 
   return (
-    <RightSide>
+    <>
       <ModalComponent
         open={open}
         ChildComponent={ChildModal}
@@ -168,6 +168,6 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
           </>
         ))}
       </Actions>
-    </RightSide>
+    </>
   );
 };

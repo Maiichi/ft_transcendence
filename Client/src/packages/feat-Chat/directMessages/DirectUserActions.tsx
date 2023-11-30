@@ -5,7 +5,7 @@ import { I_User } from "../components/types";
 
 import { BlockUserModal } from "./modals/BlockUserModal";
 import { Actions } from "../components/UserActions";
-import { IconHolder, RightSide } from "../components/style";
+import { IconHolder } from "../components/style";
 import { DirectIcons } from "../components/utils";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,14 +49,13 @@ export const UserActionInDirectConversation = ({
     else dispatch(setDisplayUserActions(false));
   };
   return (
-    <RightSide>
+    <>
       <ModalComponent
         open={open}
         ChildComponent={ChildModal}
         handleClose={handleClose}
         closeType={closeType}
       />
-
       <Actions
         handleCLose={handleClearIcon}
         username={selectedUser.userName}
@@ -70,6 +69,6 @@ export const UserActionInDirectConversation = ({
           </IconHolder>
         ))}
       </Actions>
-    </RightSide>
+    </>
   );
 };

@@ -61,15 +61,41 @@ export const Actions = ({
 }) => {
   return (
     <RightSide>
-      <ClearIcon onClick={handleCLose} />
-      <h2>{username}</h2>
-      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-      <CircleIcon sx={{ color: color }} />
-      <p>{status}</p>
-      <Divider variant="inset" />
+      <Header>
+        <h2 style={{ margin: 0 }}>{username}</h2>
+        <ClearIcon onClick={handleCLose} />
+      </Header>
+      <AvatarHolder>
+        <Avatar
+          sx={{ width: "120px", height: "120px" }}
+          alt="Remy Sharp"
+          src="/static/images/avatar/1.jpg"
+        />
+        <StatusHolder>
+          <CircleIcon sx={{ color: color }} />
+          <p style={{ margin: 0 }}>{status}</p>
+        </StatusHolder>
+      </AvatarHolder>
+      <Divider sx={{ width: "80%", margin: "6px auto" }} />
       <IconsHolder>{children}</IconsHolder>
     </RightSide>
   );
 };
 
-const IconsHolder = styled.div``;
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+`;
+const AvatarHolder = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 368px;
+  align-items: center;
+`;
+const StatusHolder = styled.div`
+  display: flex;
+`;
+const IconsHolder = styled.div`
+  padding: 5px;
+`;
