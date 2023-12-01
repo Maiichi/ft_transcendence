@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { Backdrop, Button } from "@mui/material";
 import {
   Diversity1,
   Filter1Rounded,
@@ -5,29 +8,25 @@ import {
   Filter3Rounded,
   SportsTennis,
 } from "@mui/icons-material";
-import { Backdrop, Button } from "@mui/material";
-import { useNavigate } from "react-router";
 import "./components/style.css";
-import images from "./images_uploads";
-import { useState } from "react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const cards = [
     {
-      image: images["serve"],
+      image: "/images/serve.jpeg",
       title: "Serve",
       intro:
         "Learn the perfect technique to start the game with precision and power.",
     },
     {
-      image: images["backhand"],
+      image: "/images//backhand.jpeg",
       title: "backhand",
       intro:
         "Improve your backhand technique and gain an edge over your competitors.",
     },
     {
-      image: images["forehand"],
+      image: "/images//forehand.jpeg",
       title: "forehand",
       intro:
         "Discover the secrets to a strong and deadly forehand shot that will leave your opponents in awe.",
@@ -79,7 +78,7 @@ const LandingPage = () => {
               <div className="ui-component-cta ui-layout-flex"></div>
             </div>
             <img
-              src={images["landingImage"]}
+              src={"/images/landing.jpg"}
               alt="ping"
               className="ui-section-hero--image"
             />
@@ -224,4 +223,6 @@ const LandingPage = () => {
     </>
   );
 };
+
+export default LandingPage;
 export { LandingPage };
