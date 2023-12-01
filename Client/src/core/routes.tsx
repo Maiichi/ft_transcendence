@@ -15,14 +15,14 @@ import { Layout } from "./utils";
 import { NotFoundError } from "./utils/components/errors";
 import { LandingPage } from "../packages/feat-landing";
 
-export interface route {
+export interface Route {
   path: string;
   element: JSX.Element;
   errorElement: JSX.Element;
   requireAuth: boolean;
 }
 
-export const routes: route[] = [
+export const routes: Route[] = [
   {
     path: "/overView",
     element: <LandingPage />,

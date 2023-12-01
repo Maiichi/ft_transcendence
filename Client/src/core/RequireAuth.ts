@@ -2,10 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthentication } from "../packages/feat-Auth/authUtils";
 import { useAppSelector } from "./redux";
-import { route } from "./routes";
+import { Route } from "./routes";
 
 interface RequireAuthProps {
-  children: route;
+  children: Route;
 }
 
 const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
