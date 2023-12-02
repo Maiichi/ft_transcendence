@@ -10,6 +10,7 @@ import { UserService } from './user/user.service';
 import { multerConfig } from './user/multer/multer.config';
 import { ChatModule } from './chat/chat.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { GameModule } from './game/game.module';
 
 
 @Module({
@@ -19,7 +20,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     }),
     MulterModule.register(multerConfig),
     AuthModule,
-    PrismaModule, UserModule, ChatModule, CloudinaryModule
+    PrismaModule, UserModule, ChatModule, CloudinaryModule, GameModule
   ],
   controllers: [UserController],
   providers : [UserService]

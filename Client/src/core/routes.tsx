@@ -65,16 +65,16 @@ export const routes = [
     errorElement: <NotFoundError />,
     requireAuth: true,
   },
-  {
-    path: "/account/profile",
-    element: (
-      <Layout>
-        <Profile />
-      </Layout>
-    ),
-    errorElement: <NotFoundError />,
-    requireAuth: true,
-  },
+  // {
+  //   path: "/account/profile",
+  //   element: (
+  //     <Layout>
+  //       <Profile />
+  //     </Layout>
+  //   ),
+  //   errorElement: <NotFoundError />,
+  //   requireAuth: true,
+  // },
   {
     path: "/chat",
     element: (
@@ -85,16 +85,16 @@ export const routes = [
     errorElement: <NotFoundError />,
     requireAuth: true,
   },
-  {
-    path: "/leaderboard",
-    element: (
-      <Layout>
-        <Leaderboard />
-      </Layout>
-    ),
-    errorElement: <NotFoundError />,
-    requireAuth: true,
-  },
+  // {
+  //   path: "/leaderboard",
+  //   element: (
+  //     <Layout>
+  //       <Leaderboard />
+  //     </Layout>
+  //   ),
+  //   errorElement: <NotFoundError />,
+  //   requireAuth: true,
+  // },
   {
     path: "/firstlogin",
     element: <FirstLogin />,

@@ -19,6 +19,7 @@ model User {
      userName            String                   @unique @db.VarChar(255) 
      avatar_url          String?                  @db.VarChar(255) @default("https://res.cloudinary.com/dt62qdmrg/image/upload/v1700783661/messi_hu50hp.jpg")
      status              String                   @default("OFFLINE")
+     inGame              Boolean                  @default(false)
      twoFactorActivate   Boolean?                 @default(false)
      twoFactorSecret     String?                  @db.VarChar(255)  
      memberships         Membership[]
@@ -33,6 +34,9 @@ model User {
      receivedRequests    FriendRequest[]          @relation("receiverRequests")
      friends             User[]                   @relation("friends")
      friendsOf           User[]                   @relation("friends")
+
+     participant1        Game[]                   @relation("participant1")
+     participant2        Game[]                   @relation("participant2")
 
      @@map("users")
 }
@@ -103,4 +107,18 @@ model FriendRequest {
      createdAt           DateTime                 @default(now()) @db.Timestamp(6)
 
      @@unique([senderId, receiverId])
+}
+
+model Game {
+     id                  Int            @id @default(autoincrement())
+     type                String
+     participant1        User           @relation("participant1", fields: [participant1Id], references: [intraId], onDelete: Cascade)
+     participant2        User           @relation("participant2", fields: [participant2Id], references: [intraId], onDelete: Cascade)
+     participant1Id      Int
+     participant2Id      Int
+     winnerId            Int?
+     score1              Int
+     score2              Int
+     createdAt           DateTime       @default(now())
+     updatedAt           DateTime       @updatedAt
 }

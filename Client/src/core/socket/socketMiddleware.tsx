@@ -54,7 +54,8 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
       case ConnectSocket.type:
         try {
           let serverUrl =
-            process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
+            `${process.env.REACT_APP_BACKEND_URL}`;
+            console.log('serverURL == ', serverUrl);
             socket = initializeSocket(serverUrl, getState().auth.token);
             dispatch(SocketConnected());
           socket.onAny((eventName, data) => {
@@ -94,17 +95,20 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           socket.on('messageSentToRoom', (data) => {
             const {currentConversation} = getState().chat;
-            if (currentConversation.roomId 
-              && currentConversation.roomId === data.roomId)
+            console.log("Current Conversation ==", currentConversation);
+            if (currentConversation)
             {
-              const conversationMessage = {
-                id: data.id,
-                content: data.content,
-                createdAt: data.createdAt,
-                chatId: data.chatId,
-                sender: data.sender,
-              } 
-              dispatch(addMessageToRoom(conversationMessage));
+              if (currentConversation.roomId === data.roomId)
+              {
+                const conversationMessage = {
+                  id: data.id,
+                  content: data.content,
+                  createdAt: data.createdAt,
+                  chatId: data.chatId,
+                  sender: data.sender,
+                } 
+                dispatch(addMessageToRoom(conversationMessage));
+              }
             }
           });
           socket.on('conversationCreated', (data) => {
@@ -120,9 +124,11 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on('messageSentToUser', (data) => {
             console.log('data coming from (messageSentToUser) =', JSON.stringify(data));
             const {currentConversation} = getState().chat;
-            if (currentConversation.directConversationId 
-              && currentConversation.directConversationId === data.chatId)
-              dispatch(addMessageToConversation(data));
+            if (currentConversation)
+            {
+              if (currentConversation.directConversationId === data.chatId)
+                dispatch(addMessageToConversation(data));
+            }
           });
           socket.on('AdminSettedToRoom', (data) => {
             console.log('data coming from (AdminSettedToRoom) =', data);
@@ -142,7 +148,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           socket.on('IhaveBeenBanned', (data) => {
             const {currentConversation} = getState().chat;
-            if (currentConversation.roomId == data.roomId)
+            if (currentConversation && currentConversation.roomId == data.roomId)
               dispatch(
                 setCurrentConversation({
                   roomId: null,
@@ -155,15 +161,15 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on('IhaveBeenUnBanned', (data) => {
             console.log('i have been unbanned');
             dispatch(addMembership(data));
-            const {currentConversation} = getState().chat;
-            if (currentConversation.roomId == data.roomId)
-              dispatch(
-                setCurrentConversation({
-                  roomId: data.id,
-                  directConversationId: null,
-                  type: "channel",
-                })
-              );
+            // const {currentConversation} = getState().chat;
+            // if (currentConversation.roomId == data.roomId)
+            //   dispatch(
+            //     setCurrentConversation({
+            //       roomId: data.id,
+            //       directConversationId: null,
+            //       type: "channel",
+            //     })
+            //   );
           });
           socket.on('userMuted', (data) => {
             console.log('data coming from (userMuted) =', data);
@@ -175,15 +181,17 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           socket.on('IhaveBeenKicked', (data) => {
             const {currentConversation} = getState().chat;
-            if (currentConversation.roomId == data.roomId)
-            {
-              dispatch(
-                setCurrentConversation({
-                  roomId: null,
-                  directConversationId: null,
-                  type: null,
-                })
-              );
+            if (currentConversation){
+              if (currentConversation.roomId == data.roomId)
+              {
+                dispatch(
+                  setCurrentConversation({
+                    roomId: null,
+                    directConversationId: null,
+                    type: null,
+                  })
+                );
+              }
             }
             dispatch(removeMembership(data.roomId));
           });
@@ -192,27 +200,33 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           socket.on('blockedByMe', (data) => {
             console.log('data coming from (blockedByMe) =', data);
+            const {selectedUser} = getState().chat;
             dispatch(userBlockedByMe(data));
             dispatch(removeConversation(data.intraId));
-            const {selectedUser} = getState().chat;
-            if (selectedUser.intraId == data.intraId)
-              dispatch(setCurrentConversation({
-                directConversationId: null,
-                roomId: null,
-                type: null
-              }));
+            if (selectedUser)
+            {
+              if (selectedUser.intraId == data.intraId)
+                dispatch(setCurrentConversation({
+                  directConversationId: null,
+                  roomId: null,
+                  type: null
+                }));
+            }
           });
           socket.on('blockedMe', (data) => {
+            const {selectedUser} = getState().chat;
             dispatch(userBlockedMe(data));
             dispatch(removeConversation(data.intraId));
-            const {selectedUser} = getState().chat;
             console.log('selectedUser ==', selectedUser);
-            if (selectedUser && selectedUser.intraId == data.intraId)
-              dispatch(setCurrentConversation({
-                directConversationId: null,
-                roomId: null,
-                type: null
-              }));
+            if (selectedUser)
+            {
+              if (selectedUser.intraId == data.intraId)
+                dispatch(setCurrentConversation({
+                  directConversationId: null,
+                  roomId: null,
+                  type: null
+                }));
+            }
           });
         } catch (error) {
           console.log(error);

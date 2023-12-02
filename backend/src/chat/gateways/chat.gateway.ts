@@ -43,32 +43,24 @@ import {
 } from 'src/user/friend/dto/friend.dto';
 import { FriendService } from 'src/user/friend/friend.service';
 
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-    credentials: true,
-  },
-})
-export class ChatGateway
-  implements
-    OnGatewayConnection,
-    OnGatewayDisconnect
-{
-  @WebSocketServer()
-  server: Server;
+  @WebSocketGateway({
+    cors: {
+      origin: `${process.env.FRONTEND_URL}`,
+      credentials: true,
+    },
+  })
+  export class ChatGateway
+    implements
+      OnGatewayConnection,
+      OnGatewayDisconnect
+  {
+    @WebSocketServer()
+    server: Server;
 
-  private connectedClients = new Map<
-    string,
-    User
-  >();
-  private userSockets = new Map<
-    number,
-    string[]
-  >();
-  private BlackListedTokens = new Map<
-    string,
-    number
-  >();
+  private connectedClients = new Map<string,User>();
+  private userSockets = new Map<number,string[]>();
+  private BlackListedTokens = new Map<string,number>();
+  
 
   constructor(
     private chatService: ChatService,
@@ -220,6 +212,7 @@ export class ChatGateway
       return response;
     }
   }
+
 
   // TODO: need to be tested to check if the user is logged of from all the tabs
   // async handleDisconnect(client: Socket) {
