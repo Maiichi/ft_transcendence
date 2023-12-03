@@ -14,7 +14,7 @@ function SendFriendRequist(props: { onlyIcon?: boolean; userName: string }) {
   const handelClose = () =>
     setTimeout(() => {
       setOpen(false);
-    }, 500);
+    }, 100);
 
   return (
     <>
@@ -29,9 +29,9 @@ function SendFriendRequist(props: { onlyIcon?: boolean; userName: string }) {
       >
         {onlyIcon ? null : "friend requist"}
       </Button>
-      <Snackbar open={open} autoHideDuration={4000} onClose={(handelClose)}>
+      <Snackbar open={open} autoHideDuration={2000} onClose={handelClose}>
         <Alert onClose={handelClose} severity="success" sx={{ width: "100%" }}>
-          frind requist was sent to {userName}!{" "}
+          frind requist was sent to {userName}!
         </Alert>
       </Snackbar>
     </>

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { Chat } from "@mui/icons-material";
 import { Loading, useAppDispatch, useAppSelector } from "../../core";
 import {
@@ -30,7 +30,13 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const state = useAppSelector((state) => state.profile.lead);
   const leaderboard: leaderboardType = state.leaderboard;
   const Oid: number = useAppSelector((state) => state.auth.user.intraId);
+  const [open, setOpen] = useState(-1);
+  const [anchorEl, setAnchorEl] = useState<any>(null);
 
+  const handleClickOpen = (event: React.MouseEvent<any>, index: number) => {
+    setAnchorEl(event.currentTarget);
+    setOpen(index);
+  };
   useEffect(() => {
     primary && dispatch(getLeaderboard());
   }, []);
@@ -41,7 +47,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
       {state.isLoading ? (
         <Loading />
       ) : leaderboard && leaderboard.length ? (
-        <Players primary={primary} >
+        <Players primary={primary}>
           {leaderboard.map(
             (player, index) =>
               (!primary && index >= 3) || (
@@ -68,7 +74,13 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                   )}
                   {primary &&
                     (Oid !== player.uid ? (
-                      <ListButton isTab={isTab || isMobile}>
+                      <ListButton
+                        isTab={isTab || isMobile}
+                        foo={handleClickOpen}
+                        anchorEl={anchorEl}
+                        open={open === index}
+                        index={index}
+                      >
                         <SendGameRequist userName={player.name} />
                         <Button onClick={() => navigate("/chat")}>
                           <Chat />

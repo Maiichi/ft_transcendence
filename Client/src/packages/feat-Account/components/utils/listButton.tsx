@@ -1,45 +1,30 @@
 import { MoreVert } from "@mui/icons-material";
-import { Dialog, List, Button, ListItemIcon } from "@mui/material";
-import { useState } from "react";
-
-export interface SimpleDialogProps {
-  open: boolean;
-  children: React.ReactNode;
-  onClose: () => void;
-}
-
-function SimpleDialog(props: SimpleDialogProps) {
-  const { onClose, open, children } = props;
-
-  return (
-    <Dialog onClose={() => onClose()} open={open}>
-      <List>{children}</List>
-    </Dialog>
-  );
-}
+import { Button, ListItemIcon } from "@mui/material";
+import { PopperComponent } from "../../../../core";
 
 const ListButton: React.FC<{
   children?: React.ReactNode;
   isTab?: boolean;
-}> = ({ children, isTab }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
+  foo: (event: React.MouseEvent<any>, index: number) => void;
+  anchorEl: any;
+  open: boolean;
+  index: number;
+}> = ({ children, isTab, foo, anchorEl, open, index }) => {
+  const handleClick = (event: React.MouseEvent<any>) => {
+    foo(event, anchorEl === event.currentTarget && open ? -1 : index);
   };
   return isTab ? (
     <>
-      <Button
-        variant="text"
-        onClick={handleClickOpen}
-        startIcon={<MoreVert />}
+      <Button variant="text" onClick={handleClick} startIcon={<MoreVert />} />
+
+      <PopperComponent
+        anchorEl={anchorEl}
+        popperStyle={{ paddingTop: "2px" }}
+        placement="bottom-end"
+        open={open}
+        ChildComponent={<>{children}</>}
+        paperStyle={{}}
       />
-      <SimpleDialog open={open} onClose={handleClose}>
-        {children}
-      </SimpleDialog>
     </>
   ) : (
     <ListItemIcon>{children}</ListItemIcon>
