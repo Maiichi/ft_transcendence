@@ -43,6 +43,7 @@ export const IconHolder = styled.div`
 export const RightSide = styled.div`
   display: flex;
   padding: 16px;
+  width: 160px;
   flex-direction: column;
   gap: 16px;
   border-left: 1px solid rgb(215, 215, 215);

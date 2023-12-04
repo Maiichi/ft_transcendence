@@ -41,6 +41,7 @@ const StyledBox = styled(Box)`
   border: 1px solid rgb(0, 0, 0);
   border-radius: 20px;
   overflow: hidden;
+  padding: 10px;
   @media (max-width: 426px) {
     width: 90%;
     left: 10%;

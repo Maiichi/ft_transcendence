@@ -103,6 +103,7 @@ export const ChannelBoxHeader = () => {
           borderRadius: "10px",
           overflow: "hidden",
           border: "none rgba(144, 202, 249, 0.145)",
+          padding: "10px",
         }}
         popperStyle={{
           paddingTop: "5px",

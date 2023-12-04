@@ -51,7 +51,10 @@ export const UsersRoom = ({
     (member: Members) =>
       !isBlacklisted(member.user.intraId) &&
       member.user.intraId !== currentUser.intraId &&
-      member.user.firstName.toLowerCase().startsWith(searchQuery.toLowerCase())
+      (!searchQuery ||
+        member.user.firstName
+          .toLowerCase()
+          .startsWith(searchQuery.toLowerCase()))
   );
 
   const handleClick = (user: I_User) => {
@@ -70,7 +73,7 @@ export const UsersRoom = ({
   return (
     <>
       <Header>
-        <SearchComponent onInputUpdate={handleClickSearch} />
+        <Title>Users</Title>
         <Close
           sx={{
             "&:hover": {
@@ -83,33 +86,36 @@ export const UsersRoom = ({
           onClick={() => setOpenPopper(false)}
         />
       </Header>
+      <SearchComponent onInputUpdate={handleClickSearch} />
       <UsersModal>
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
         >
-          {filtredMembers.map((user, index) => (
-            <>
-              <ListItem alignItems="flex-start" key={index}>
-                <ListItemButton
-                  sx={{ borderRadius: "10px" }}
-                  onClick={() => handleClick(user.user)}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src="/static/images/avatar/1.jpg"
+          {filtredMembers.length != 0 ? (
+            filtredMembers.map((user, index) => (
+              <>
+                <ListItem alignItems="flex-start" key={index}>
+                  <ListItemButton
+                    sx={{ borderRadius: "10px" }}
+                    onClick={() => handleClick(user.user)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="/static/images/avatar/1.jpg"
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={`${user.user.firstName} ${user.user.lastName}`}
+                      secondary={"14 mutual Friend"}
                     />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={`${user.user.firstName} ${user.user.lastName}`}
-                    secondary={"14 mutual Friend"}
-                  />
-                </ListItemButton>
-              </ListItem>
-
-              <Divider variant="inset" component="li" />
-            </>
-          ))}
+                  </ListItemButton>
+                </ListItem>
+              </>
+            ))
+          ) : (
+            <NotFound>No user Found</NotFound>
+          )}
         </List>
       </UsersModal>
     </>
@@ -123,4 +129,14 @@ const UsersModal = styled.div`
 `;
 const Header = styled.div`
   display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+`;
+const Title = styled.h3`
+  margin: 0;
+`;
+const NotFound = styled.h4`
+  margin: 0px;
+  padding: 5px 0;
+  text-align: center;
 `;

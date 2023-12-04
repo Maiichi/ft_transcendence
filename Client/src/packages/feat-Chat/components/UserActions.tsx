@@ -90,7 +90,6 @@ const Header = styled.div`
 const AvatarHolder = styled.div`
   display: flex;
   flex-direction: column;
-  width: 368px;
   align-items: center;
 `;
 const StatusHolder = styled.div`

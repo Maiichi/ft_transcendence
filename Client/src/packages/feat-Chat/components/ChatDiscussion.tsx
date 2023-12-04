@@ -193,7 +193,7 @@ const Tab = styled.div`
 const Discussions = styled.div`
   overflow: hidden;
   padding: 5px;
-
+  width: 220px;
   @media (max-width: 425px) {
     width: 100%;
   }
