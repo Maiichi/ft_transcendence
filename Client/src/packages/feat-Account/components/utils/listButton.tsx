@@ -1,30 +1,39 @@
 import { MoreVert } from "@mui/icons-material";
-import { Button, ListItemIcon } from "@mui/material";
-import { PopperComponent } from "../../../../core";
+import { Button, ListItemIcon, Popover } from "@mui/material";
 
-const ListButton: React.FC<{
+interface ListButtonProps {
   children?: React.ReactNode;
   isTab?: boolean;
-  foo: (event: React.MouseEvent<any>, index: number) => void;
+  onCklick: (event: React.MouseEvent<any>) => void;
   anchorEl: any;
   open: boolean;
-  index: number;
-}> = ({ children, isTab, foo, anchorEl, open, index }) => {
-  const handleClick = (event: React.MouseEvent<any>) => {
-    foo(event, anchorEl === event.currentTarget && open ? -1 : index);
-  };
+  setOpen: any;
+}
+
+const ListButton: React.FC<ListButtonProps> = ({
+  children,
+  isTab,
+  onCklick,
+  anchorEl,
+  open,
+  setOpen,
+}) => {
+  const handleClick = onCklick;
   return isTab ? (
     <>
       <Button variant="text" onClick={handleClick} startIcon={<MoreVert />} />
 
-      <PopperComponent
-        anchorEl={anchorEl}
-        popperStyle={{ paddingTop: "2px" }}
-        placement="bottom-end"
+      <Popover
         open={open}
-        ChildComponent={<>{children}</>}
-        paperStyle={{}}
-      />
+        anchorEl={anchorEl}
+        onClose={() => setOpen(false)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        {children}
+      </Popover>
     </>
   ) : (
     <ListItemIcon>{children}</ListItemIcon>

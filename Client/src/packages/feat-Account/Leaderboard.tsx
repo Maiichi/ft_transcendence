@@ -30,12 +30,12 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const state = useAppSelector((state) => state.profile.lead);
   const leaderboard: leaderboardType = state.leaderboard;
   const Oid: number = useAppSelector((state) => state.auth.user.intraId);
-  const [open, setOpen] = useState(-1);
+  const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<any>(null);
 
-  const handleClickOpen = (event: React.MouseEvent<any>, index: number) => {
+  const handleClickOpen = (event: React.MouseEvent<any>) => {
     setAnchorEl(event.currentTarget);
-    setOpen(index);
+    setOpen(!open);
   };
   useEffect(() => {
     primary && dispatch(getLeaderboard());
@@ -76,10 +76,10 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                     (Oid !== player.uid ? (
                       <ListButton
                         isTab={isTab || isMobile}
-                        foo={handleClickOpen}
+                        onCklick={handleClickOpen}
                         anchorEl={anchorEl}
-                        open={open === index}
-                        index={index}
+                        open={open}
+                        setOpen={setOpen}
                       >
                         <SendGameRequist userName={player.name} />
                         <Button onClick={() => navigate("/chat")}>

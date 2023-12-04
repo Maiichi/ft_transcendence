@@ -1,5 +1,5 @@
 import PersonAdd from "@mui/icons-material/PersonAdd";
-import { Button, Alert, AlertTitle, Snackbar } from "@mui/material";
+import { Button, Alert, Snackbar, Slide } from "@mui/material";
 import { useState } from "react";
 
 function SendFriendRequist(props: { onlyIcon?: boolean; userName: string }) {
@@ -29,7 +29,12 @@ function SendFriendRequist(props: { onlyIcon?: boolean; userName: string }) {
       >
         {onlyIcon ? null : "friend requist"}
       </Button>
-      <Snackbar open={open} autoHideDuration={2000} onClose={handelClose}>
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handelClose}
+        TransitionComponent={Slide}
+      >
         <Alert onClose={handelClose} severity="success" sx={{ width: "100%" }}>
           frind requist was sent to {userName}!
         </Alert>
