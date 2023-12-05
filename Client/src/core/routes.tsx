@@ -10,11 +10,25 @@ import {
 import Login from "../packages/feat-Auth/Login";
 import FirstLogin from "../packages/feat-Auth/components/FirstLogin";
 import VerifyOtp from "./VerifyOtp";
-import { Search } from "../packages/feat-Search";
+import { Search } from "../packages/feat-Search/Search";
 import { Layout } from "./utils";
 import { NotFoundError } from "./utils/components/errors";
+import { LandingPage } from "../packages/feat-landing";
 
-export const routes = [
+export interface Route {
+  path: string;
+  element: JSX.Element;
+  errorElement: JSX.Element;
+  requireAuth: boolean;
+}
+
+export const routes: Route[] = [
+  {
+    path: "/overView",
+    element: <LandingPage />,
+    errorElement: <NotFoundError />,
+    requireAuth: false,
+  },
   {
     path: "/search",
     element: (
@@ -60,6 +74,16 @@ export const routes = [
     element: (
       <Layout>
         <AccountSettings />
+      </Layout>
+    ),
+    errorElement: <NotFoundError />,
+    requireAuth: true,
+  },
+  {
+    path: "/user/:uid",
+    element: (
+      <Layout>
+        <Profile />
       </Layout>
     ),
     errorElement: <NotFoundError />,

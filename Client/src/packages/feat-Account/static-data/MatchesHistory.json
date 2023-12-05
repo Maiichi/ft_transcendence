@@ -2,56 +2,56 @@
   "matchs": {
     "1": {
       "name": "ishaq1",
-      "pic": "Pic",
+      "pic": "Pic.png",
       "time": "xxxx-xx-xx",
       "gain": "23",
       "nogain": "10"
     },
     "2": {
       "name": "ishaq2",
-      "pic": "thimoj",
+      "pic": "thimoj.jpeg",
       "time": "xxxx-xx-xx",
       "gain": "0",
       "nogain": "56"
     },
     "3": {
       "name": "isha3",
-      "pic": "Logo2",
+      "pic": "Logo2.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99"
     },
     "4": {
       "name": "isha3",
-      "pic": "Picture",
+      "pic": "Picture.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99"
     },
     "5": {
       "name": "isha3",
-      "pic": "",
+      "pic": "Pic.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99"
     },
     "6": {
       "name": "women",
-      "pic": "Women",
+      "pic": "Women.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99"
     },
     "7": {
       "name": "isha3",
-      "pic": "Logo4",
+      "pic": "Logo4.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99"
     },
     "8": {
       "name": "isha3",
-      "pic": "Logo4",
+      "pic": "Logo4.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99"

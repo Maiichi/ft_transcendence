@@ -1,13 +1,20 @@
-import { SxProps } from "@mui/material";
 import styled, { css } from "styled-components";
 
+const Grow = styled.div<{ prograssShow: "circular" | "linear" }>`
+  display: ${(props) => (props.prograssShow === "linear" ? "none" : "inline")};
+  @media (max-width: 1200px) {
+    display: ${(props) =>
+      props.prograssShow === "circular" ? "none" : "inline"};
+  }
+`;
 const cardstyle = css`
   margin: 2%;
-  /* margin-top: 0; */
-  /* padding-top: 0; */
-  max-width: 40%;
+  border: 0px inset black; /* tmp */
+
+  margin-top: 0;
+  width: 45%;
   @media (max-width: 940px) {
-    max-width: none;
+    width: 95%;
   }
 `;
 const smallCard = styled.data`
@@ -26,14 +33,8 @@ const smallCard = styled.data`
 const ProfileCards = styled.main`
   display: flex;
   flex-wrap: wrap;
-  gap: 20px 10px;
-  align-content: flex-start; /* Ensure items align to the start of the container */
-  /**  */
-  & datalist,
-  data,
-  div {
-    /* border: 1px solid black; */
-  }
+  gap: 2% 1%;
+  align-content: flex-start;
   max-width: 100%;
   overflow-x: scroll;
 `;
@@ -42,25 +43,9 @@ const ProfileCards = styled.main`
  */
 const Usercard = styled.data`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: start;
-  padding-right: 30px;
-  ${cardstyle}
-  @media (max-width: 940px) {
-  }
-`;
-const Coalition = styled.data`
-  display: inline-flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  padding: 5px;
-  margin: 5px;
-  min-width: 20%;
-  @media (max-width: 540px) {
-    display: none;
-  }
+  padding-top: 4%;
+  ${cardstyle}
 `;
 const Board = styled.datalist`
   display: flex;
@@ -74,7 +59,7 @@ const Matchshistory = styled.datalist`
   flex-wrap: wrap;
   gap: 45px 10px;
   justify-content: center;
-  padding-bottom: 32px;
+  padding-bottom: 44px;
   ${cardstyle}
 `;
 const Match = styled(smallCard)<{ win: any }>`
@@ -88,85 +73,18 @@ const Achievemets = styled.datalist`
   gap: 15px 10px;
   justify-content: center;
   ${cardstyle}
-  @media (max-width: 940px) {
-  }
 `;
 const Achiv = styled(smallCard)`
   height: 80px;
 `;
-const styleP: Record<string, React.CSSProperties | SxProps> = {
-  user: {
-    display: "flex",
-    flexDirection: "column",
-    minWidth: "80%",
-    marginTop: "6%",
-  },
-  div2: {
-    display: "flex",
-    justifyContent: "space-around",
-    padding: "0 20px 0 20px",
-  },
-  div3: {
-    display: "flex",
-  },
-  div4: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "start",
-  },
-  div5: {
-    fontSize: "12px",
-  },
-  button1: {
-    padding: "0",
-    textTransform: "lowercase",
-  },
-  box1: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "start",
-  },
-  box2: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "end",
-    textAlign: "center",
-    padding: "0 2% 0 10%",
-  },
-  coalImg: {
-    width: 80,
-    height: 120,
-  },
-  userAvatar: {
-    width: 80,
-    height: 80,
-    mr: 2,
-  },
-  achivlogo: {
-    width: "40px",
-    height: "40px",
-  },
-  userName: {},
-  cardName: {
-    width: "100%",
-    textAlignLast: "center",
-    fontSize: "19px",
-    fontFamily: "monospace",
-    fontWeight: "bolder",
-  },
-};
 
-export default styleP;
 export {
   Board,
   ProfileCards,
   Usercard,
-  Coalition,
   Matchshistory,
   Match,
   Achievemets,
   Achiv,
+  Grow,
 };

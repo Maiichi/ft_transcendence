@@ -5,32 +5,32 @@
       "ladder": "100",
       "wins": "50",
       "loss": "10",
-      "achievement": "Logo",
-      "picture": "Pic"
+      "uid": 62427,
+      "picture": "Pic.png"
     },
     "2": {
       "name": "mark",
       "ladder": 90,
       "wins": 40,
       "loss": 15,
-      "achievement": "Logo",
-      "picture": "Pic"
+      "uid": 48834,
+      "picture": "Pic.png"
     },
     "3": {
       "name": "john",
       "ladder": "75",
       "wins": "50",
       "loss": "40",
-      "achievement": "Logo",
-      "picture": "Pic"
+      "uid": 35,
+      "picture": "Pic.png"
     },
     "4": {
       "name": "john",
       "ladder": "75",
       "wins": "50",
       "loss": "40",
-      "achievement": "Logo",
-      "picture": "Pic"
+      "uid": 32,
+      "picture": "Pic.png"
     }
   }
 }

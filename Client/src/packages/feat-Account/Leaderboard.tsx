@@ -1,35 +1,44 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { Chat, PersonAdd, SportsCricket } from "@mui/icons-material";
-import { useAppDispatch, useAppSelector } from "../../core";
-import { getLeaderboard, leaderboardType } from "./components";
-import style, {
+import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { Chat } from "@mui/icons-material";
+import { Loading, useAppDispatch, useAppSelector } from "../../core";
+import {
+  ListButton,
+  SendFriendRequist,
+  SendGameRequist,
+  getLeaderboard,
+  leaderboardType,
+} from "./components";
+import {
   Players,
   Player,
   NoPlayer,
   Avatar,
   Button,
-  ListItemIcon,
   ListItemText,
   ListItemAvatar,
   /***global**/
   Title,
   Root,
 } from "./styles";
-import images from "./images_uploads";
-import { Loading } from "./components";
-
-function sendGameRequist(userName: string) {}
-function sendFriendRequist(userName: string) {}
+import { useSize } from "../../core/utils/hooks";
 
 const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const navigate = useNavigate();
-  const state = useAppSelector((state) => state.profile.lead);
-  const leaderboard: leaderboardType[] = state.leaderboard;
+  const { isTab, isMobile } = useSize();
   const dispatch = useAppDispatch();
+  const state = useAppSelector((state) => state.profile.lead);
+  const leaderboard: leaderboardType = state.leaderboard;
+  const Oid: number = useAppSelector((state) => state.auth.user.intraId);
+  const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<any>(null);
 
+  const handleClickOpen = (event: React.MouseEvent<any>) => {
+    setAnchorEl(event.currentTarget);
+    setOpen(!open);
+  };
   useEffect(() => {
-    dispatch(getLeaderboard());
+    primary && dispatch(getLeaderboard());
   }, []);
 
   return (
@@ -37,14 +46,16 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
       {primary && <Title> Leaderboard </Title>}
       {state.isLoading ? (
         <Loading />
-      ) : leaderboard?.length ? (
-        <Players>
+      ) : leaderboard && leaderboard.length ? (
+        <Players primary={primary}>
           {leaderboard.map(
             (player, index) =>
               (!primary && index >= 3) || (
                 <Player>
                   <ListItemAvatar>
-                    <Avatar src={images[player.picture]}>{index + 1}</Avatar>
+                    <Avatar src={`/images/${player.picture}`}>
+                      {index + 1}
+                    </Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={player.name}
@@ -52,33 +63,51 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                   />
                   <ListItemText
                     primary={player.loss + player.wins}
-                    secondary={`Match played`}
+                    secondary={`Matchs ${isTab ? "" : "played"}`}
                   />
                   <ListItemText primary={player.ladder} secondary={`Ladder`} />
-                  <ListItemText primary={player.wins} secondary={`Wins`} />
-                  {primary && (
+                  {isMobile || (
+                    <ListItemText primary={player.wins} secondary={`Wins`} />
+                  )}
+                  {primary && !isTab && (
                     <ListItemText primary={player.loss} secondary={`Losses`} />
                   )}
-                  {primary && (
-                    <ListItemIcon>
-                      <Button onClick={() => sendGameRequist(player.name)}>
-                        <SportsCricket />
+                  {primary &&
+                    (Oid !== player.uid ? (
+                      <ListButton
+                        isTab={isTab || isMobile}
+                        onCklick={handleClickOpen}
+                        anchorEl={anchorEl}
+                        open={open}
+                        setOpen={setOpen}
+                      >
+                        <SendGameRequist userName={player.name} />
+                        <Button onClick={() => navigate("/chat")}>
+                          <Chat />
+                        </Button>
+                        <SendFriendRequist onlyIcon userName={player.name} />
+                      </ListButton>
+                    ) : (
+                      <Button onClick={() => navigate("/account/profile")}>
+                        {isTab || isMobile ? "You" : "Go to your Profile"}
                       </Button>
-                      <Button onClick={() => navigate("/chat")}>
-                        <Chat />
-                      </Button>
-                      <Button onClick={() => sendFriendRequist(player.name)}>
-                        <PersonAdd />
-                      </Button>
-                    </ListItemIcon>
-                  )}
+                    ))}
                 </Player>
-              ),
+              )
           )}
         </Players>
       ) : (
         <NoPlayer>
-          <div style={style.noplay}>
+          <div
+            style={{
+              paddingBottom: "20px",
+              marginBottom: "10px",
+              minWidth: "70%",
+              boxShadow: "1px 1px 0 4px #ccc",
+              backgroundColor: "#eee",
+              textAlign: "center",
+            }}
+          >
             <h3>
               No Player is registred in <br /> the leaderboard
               <br />
@@ -96,5 +125,4 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   );
 };
 
-// export default Leaderboard
 export { Leaderboard };

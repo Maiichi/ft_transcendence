@@ -54,7 +54,7 @@ function App() {
                 path={item.path}
                 element={
                   item?.requireAuth ? (
-                    <RequireAuth>{item.element}</RequireAuth>
+                    <RequireAuth>{item}</RequireAuth>
                   ) : (
                     item.element
                   )
