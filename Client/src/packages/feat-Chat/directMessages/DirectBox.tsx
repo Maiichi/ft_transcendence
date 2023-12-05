@@ -48,7 +48,7 @@ export const DirectBox = () => {
         </Header>
         <Wrapper>
           <ChatBoxTop>
-            {conversationMessages.map((item: I_Message) => (
+            {conversationMessages?.map((item: I_Message) => (
               <MessageBox
                 own={isConnectedUser(item.sender.intraId, user.intraId)}
                 data={item}
