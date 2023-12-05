@@ -100,7 +100,7 @@ const LandingPage = () => {
               <p className="ui-text-intro">Master Your Skills</p>
               <div className="ui-section-skills__layout ui-layout-grid ui-layout-grid-3">
                 {cards.map((item) => (
-                  <div className="ui-component-card ui-layout-column-4">
+                  <div className="ui-component-card">
                     <img
                       src={item.image}
                       loading="lazy"
@@ -159,7 +159,7 @@ const LandingPage = () => {
                 conversation going, including:
               </p>
               <div className="ui-section-skills__layout ui-layout-grid ui-layout-grid-3">
-                <div className="ui-component-card ui-layout-column-4">
+                <div className="ui-component-card">
                   <h4 className="ui-component-card--title">Private Chat</h4>
                   <p>
                     Enjoy a private conversation with another user, whether it's
@@ -167,14 +167,14 @@ const LandingPage = () => {
                     pong strategies.
                   </p>
                 </div>
-                <div className="ui-component-card ui-layout-column-4">
+                <div className="ui-component-card">
                   <h4 className="ui-component-card--title">Group Chat</h4>
                   <p>
                     Join and create groups to chat with multiple users at once,
                     coordinate games, and share tips and tricks.
                   </p>
                 </div>
-                <div className="ui-component-card ui-layout-column-4">
+                <div className="ui-component-card">
                   <h4 className="ui-component-card--title">Channels</h4>
                   <p>
                     <br />
