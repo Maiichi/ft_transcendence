@@ -24,6 +24,7 @@ import {
 import { getUserFriends } from "../channels/redux/friendThunk";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
 import { getBlacklist } from "./blockThunk";
+import { NotFound } from "./style";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
   const { channels, directMessage, filter, chat } = useAppSelector(
@@ -103,20 +104,24 @@ export const ChatDiscussion = () => {
           />
         </Tab>
         <ChannelListHolder>
-          {filteredRooms.map((item: I_Room) => (
-            <ChannelName
-              key={item.id}
-              className={`channel-name ${
-                chat.currentConversation?.roomId === item.id ? "selected" : ""
-              }`}
-              onClick={() => {
-                dispatch(setDisplayUserActions(false));
-                handleCLick("channel", item);
-              }}
-            >
-              # {item.name}
-            </ChannelName>
-          ))}
+          {filteredRooms.length != 0 ? (
+            filteredRooms.map((item: I_Room) => (
+              <ChannelName
+                key={item.id}
+                className={`channel-name ${
+                  chat.currentConversation?.roomId === item.id ? "selected" : ""
+                }`}
+                onClick={() => {
+                  dispatch(setDisplayUserActions(false));
+                  handleCLick("channel", item);
+                }}
+              >
+                # {item.name}
+              </ChannelName>
+            ))
+          ) : (
+            <NotFound>Channel name is not found</NotFound>
+          )}
         </ChannelListHolder>
         <Tab>
           <p>Direct Messages</p>
@@ -137,44 +142,55 @@ export const ChatDiscussion = () => {
           />
         </Tab>
         <DirectMessageListHolder>
-          {filteredConversations.map((discussion: any) => (
-            <Discussion
-              key={discussion.id}
-              selected={
-                chat.currentConversation?.directConversationId === discussion.id
-              }
-              onClick={() => {
-                dispatch(setSelectedUser(discussion.receiver));
-                dispatch(setDisplayUserActions(true));
-                handleCLick("direct", discussion);
-              }}
-            >
-              <Badge
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                color={
-                  discussion.receiver.status === "ONLINE" ? "success" : "error"
+          {filteredConversations.length != 0 ? (
+            filteredConversations.map((discussion: any) => (
+              <Discussion
+                key={discussion.id}
+                selected={
+                  chat.currentConversation?.directConversationId ===
+                  discussion.id
                 }
-                overlap="circular"
-                variant="dot"
+                onClick={() => {
+                  dispatch(setSelectedUser(discussion.receiver));
+                  dispatch(setDisplayUserActions(true));
+                  handleCLick("direct", discussion);
+                }}
               >
-                <AvatarImage src={`${discussion.receiver.avatar_url}`} alt="" />
-              </Badge>
-              <ContactDescription>
-                <DiscussionName>
-                  {discussion.receiver.firstName} {discussion.receiver.lastName}
-                </DiscussionName>
-                <DiscussionMessage>
-                  {changeMessageLength(discussion.lastMessage.content)}
-                </DiscussionMessage>
-              </ContactDescription>
-              <p style={{ fontSize: 13 }}>
-                {convertDateTime(discussion.lastMessage.createdAt)}
-              </p>
-            </Discussion>
-          ))}
+                <Badge
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  color={
+                    discussion.receiver.status === "ONLINE"
+                      ? "success"
+                      : "error"
+                  }
+                  overlap="circular"
+                  variant="dot"
+                >
+                  <AvatarImage
+                    src={`${discussion.receiver.avatar_url}`}
+                    alt=""
+                  />
+                </Badge>
+                <ContactDescription>
+                  <DiscussionName>
+                    {discussion.receiver.firstName}{" "}
+                    {discussion.receiver.lastName}
+                  </DiscussionName>
+                  <DiscussionMessage>
+                    {changeMessageLength(discussion.lastMessage.content)}
+                  </DiscussionMessage>
+                </ContactDescription>
+                <p style={{ fontSize: 13 }}>
+                  {convertDateTime(discussion.lastMessage.createdAt)}
+                </p>
+              </Discussion>
+            ))
+          ) : (
+            <NotFound>Username is not found</NotFound>
+          )}
         </DirectMessageListHolder>
       </Discussions>
     </>

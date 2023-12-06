@@ -20,6 +20,7 @@ import { setDisplayUserActions } from "../../../../core/CoreSlice";
 import { setSelectedUser } from "../../components/chatSlice";
 import { UserActions } from "../../components/UserActions";
 import { useSize } from "../../../../core/utils/hooks";
+import { NotFound } from "../../components/style";
 
 export const UsersRoom = ({
   channelConversation,
@@ -134,9 +135,4 @@ const Header = styled.div`
 `;
 const Title = styled.h3`
   margin: 0;
-`;
-const NotFound = styled.h4`
-  margin: 0px;
-  padding: 5px 0;
-  text-align: center;
 `;

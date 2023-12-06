@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../core";
 import { I_DirectConversation, I_Message } from "../components/types";
 import { getDirectConversationMessages } from "./redux/directMessageThunk";
@@ -39,7 +39,14 @@ export const DirectBox = () => {
     // check if directConversation.id is not exist in the state
     if (direct)
       dispatch(getDirectConversationMessages(direct.directConversationId));
-  }, [direct.directConversationId]);
+  }, []);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [conversationMessages]);
   return (
     <>
       <ChatBox>
@@ -47,7 +54,7 @@ export const DirectBox = () => {
           <DirectBoxHeader directConversation={conversations[index]} />
         </Header>
         <Wrapper>
-          <ChatBoxTop>
+          <ChatBoxTop ref={chatContainerRef}>
             {conversationMessages?.map((item: I_Message) => (
               <MessageBox
                 own={isConnectedUser(item.sender.intraId, user.intraId)}

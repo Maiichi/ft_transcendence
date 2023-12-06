@@ -17,7 +17,7 @@ import { UnSetChannelAdmin } from "../channels/modals/unSetChannelAdmin";
 import { UnBanUserFromChannelModal } from "../channels/modals/UnBanUserFromChannel";
 import { KicKFromRoomModal } from "../channels/modals/KickUserFromChannelModal";
 import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
-import { IconHolder, RightSide } from "../components/style";
+import { IconHolder } from "../components/style";
 import { Actions } from "../components/UserActions";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -94,6 +94,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         return <MuteUserInRoom data={data} handleClose={handleClose} />;
       case "kickFromChannel":
         return <KicKFromRoomModal data={data} handleClose={handleClose} />;
+
       case "message":
         return (
           <NewDirectMessage selectedUser={data} handleClose={handleClose} />
