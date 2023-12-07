@@ -1,8 +1,6 @@
-import styled from "styled-components";
-import { kickMember, leaveRoom } from "../redux/roomSlice";
+import { kickMember } from "../redux/roomSlice";
 import { useAppDispatch } from "../../../../core";
-import { I_Room } from "../../components/types";
-import { setCurrentConversation } from "../../components/chatSlice";
+
 import { setDisplayUserActions } from "../../../../core/CoreSlice";
 import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
 

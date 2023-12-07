@@ -1,7 +1,7 @@
 import { leaveRoom } from "../redux/roomSlice";
 import { useAppDispatch } from "../../../../core";
-import { I_Room } from "../../components/types";
-import { setCurrentConversation } from "../../components/chatSlice";
+import { I_Room } from "../types";
+import { setCurrentConversation } from "../redux/chatSlice";
 
 import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
 export const LeaveRoomModal = (props: {

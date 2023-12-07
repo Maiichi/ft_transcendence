@@ -1,6 +1,7 @@
-import { unBanMember } from "../redux/roomSlice";
+// import { unBanMember } from "../../channels/redux/roomSlice";
 import { useAppDispatch } from "../../../../core";
 import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
+import { unBanMember } from "../redux/roomSlice";
 
 export const UnBanUserFromChannelModal = (props: {
   data: any;

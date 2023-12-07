@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../core";
 import { I_Message } from "../components/types";
-import { getChatRoomMessages } from "./redux/roomThunk";
+import { getChatRoomMessages } from "../components/redux/roomThunk";
 import { MessageBox } from "../components/MessageBox";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
-import { sendMessageToRoom } from "./redux/roomSlice";
+import { sendMessageToRoom } from "../components/redux/roomSlice";
 import { isMuted } from "../components/utils";
 
 export const ChannelBoxContent = () => {
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
-
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const memberships = useAppSelector((state) => state.channels.memberships);
@@ -19,7 +18,6 @@ export const ChannelBoxContent = () => {
   const channelMessages: [] = useAppSelector(
     (state) => state.channels.messages
   );
-
   const handleCreateRoomMessage = (e: any) => {
     e.preventDefault();
     const messageData = {
@@ -30,13 +28,11 @@ export const ChannelBoxContent = () => {
     if (messageContent.length) dispatch(sendMessageToRoom(messageData));
     setMessageContent("");
   };
-  console.log("roomId =", roomId);
   useEffect(() => {
     if (roomId) dispatch(getChatRoomMessages(roomId));
   }, [roomId]);
 
   const isMute = isMuted(memberships[roomIndex], user.intraId);
-  console.log("isMute ==", isMute);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (chatContainerRef.current) {

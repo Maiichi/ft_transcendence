@@ -1,18 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../core";
-import { I_DirectConversation, I_Message } from "../components/types";
-import { getDirectConversationMessages } from "./redux/directMessageThunk";
+import {  I_Message } from "../components/types";
+import { getDirectConversationMessages } from "../components/redux/directMessageThunk";
 import { MessageBox } from "../components/MessageBox";
 import { DirectBoxHeader } from "./DirectBoxHeader";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
 import {
   createDirectConversation,
-  sendMessageToUser,
-} from "./redux/directMessageSlice";
+} from "../components/redux/directMessageSlice";
 
 export const DirectBox = () => {
-  // const { directConversation } = props;
   const dispatch = useAppDispatch();
   const direct = useAppSelector((state) => state.chat.currentConversation);
   const user = useAppSelector((state) => state.auth.user);
@@ -73,7 +71,6 @@ export const DirectBox = () => {
           <ChatSubmitButtom>Send</ChatSubmitButtom>
         </ChatBoxBottom>
       </ChatBox>
-      {/* <RightSide /> */}
     </>
   );
 };
@@ -136,9 +133,3 @@ const ChatSubmitButtom = styled.button`
   margin-right: 10px;
 `;
 
-// const RightSide = styled.div`
-//   flex: 2;
-//   height: 100%;
-//   /* border-radius: 20px; */
-//   border-left: 1px solid #d7d7d7;
-// `;

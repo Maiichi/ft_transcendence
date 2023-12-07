@@ -1,7 +1,6 @@
-import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { getChatRoomMessages, getMemberships } from "./roomThunk";
-import { I_ConversationMessages, I_Message, I_Room } from "../../components/types";
-import { I_Member } from "../../../feat-Search/types/types";
+import { I_ConversationMessages,  I_Room } from "../types";
 
 export interface roomState {
   memberships: I_Room[];
@@ -85,7 +84,6 @@ export const roomSlice = createSlice({
       });
     },
     addMemberToRoom: (state, action: PayloadAction<any>) => {
-      console.log("addMemberToRoom (payload) ==", action.payload);
       state.memberships.map((membership) => {
         if (membership.id == action.payload.roomId)
           membership.members.push(action.payload.user);
@@ -108,7 +106,6 @@ export const roomSlice = createSlice({
       state.isLoading = false;
     },
     addMessageToRoom: (state, action: PayloadAction<any>) => {
-      console.log('action Payload ==', action.payload);
       state.messages.push(action.payload);
     },
     setAdminRoom: (state, action: PayloadAction<any>) => {
@@ -117,10 +114,11 @@ export const roomSlice = createSlice({
     addAdminToRoom: (state, action: PayloadAction<any>) => {
       const { userId, roomId } = action.payload;
       const roomIndex = state.memberships.findIndex(
-        (item) => (item.id === roomId)
+        (item) => item.id === roomId
       );
       const userIndex = state.memberships[roomIndex].members.findIndex(
-        (member) => (member.user.intraId === userId) );
+        (member) => member.user.intraId === userId
+      );
       state.memberships[roomIndex].members[userIndex].isAdmin = true;
     },
     unSetAdminRoom: (state, action: PayloadAction<any>) => {
@@ -129,10 +127,11 @@ export const roomSlice = createSlice({
     RemoveAdminFromRoom: (state, action: PayloadAction<any>) => {
       const { userId, roomId } = action.payload;
       const roomIndex = state.memberships.findIndex(
-        (item) => (item.id === roomId)
+        (item) => item.id === roomId
       );
       const userIndex = state.memberships[roomIndex].members.findIndex(
-        (member) => (member.user.intraId === userId) );
+        (member) => member.user.intraId === userId
+      );
       state.memberships[roomIndex].members[userIndex].isAdmin = false;
     },
     banMember: (state, action: PayloadAction<any>) => {
@@ -141,10 +140,11 @@ export const roomSlice = createSlice({
     banMemberFromRoom: (state, action: PayloadAction<any>) => {
       const { userId, roomId } = action.payload;
       const roomIndex = state.memberships.findIndex(
-        (item) => (item.id === roomId)
+        (item) => item.id === roomId
       );
       const userIndex = state.memberships[roomIndex].members.findIndex(
-        (member) => (member.user.intraId === userId) );
+        (member) => member.user.intraId === userId
+      );
       state.memberships[roomIndex].members[userIndex].isBanned = true;
     },
     unBanMember: (state, action: PayloadAction<any>) => {
@@ -153,41 +153,45 @@ export const roomSlice = createSlice({
     unBanMemberFromRoom: (state, action: PayloadAction<any>) => {
       const { userId, roomId } = action.payload;
       const roomIndex = state.memberships.findIndex(
-        (item) => (item.id === roomId)
+        (item) => item.id === roomId
       );
       const userIndex = state.memberships[roomIndex].members.findIndex(
-        (member) => (member.user.intraId === userId) );
+        (member) => member.user.intraId === userId
+      );
       state.memberships[roomIndex].members[userIndex].isBanned = false;
     },
-    muteMember: (state, action:PayloadAction<any>) => {
+    muteMember: (state, action: PayloadAction<any>) => {
       state.isLoading = false;
     },
-    muteMemberInRoom: (state, action:PayloadAction<any>) => {
+    muteMemberInRoom: (state, action: PayloadAction<any>) => {
       const { userId, roomId, timeMute } = action.payload;
       const roomIndex = state.memberships.findIndex(
-        (item) => (item.id === roomId)
+        (item) => item.id === roomId
       );
       const userIndex = state.memberships[roomIndex].members.findIndex(
-        (member) => (member.user.intraId === userId) );
-       // Calculate the time to mute
+        (member) => member.user.intraId === userId
+      );
+      // Calculate the time to mute
       const currentTime = new Date();
-      
-      const minutesToMute = new Date(currentTime.getTime() + (timeMute + 60) * 60000); // Con
+
+      const minutesToMute = new Date(
+        currentTime.getTime() + (timeMute + 60) * 60000
+      ); // Con
       state.memberships[roomIndex].members[userIndex].timeMute = minutesToMute;
     },
-    kickMember: (state, action:PayloadAction<any>) => {
+    kickMember: (state, action: PayloadAction<any>) => {
       state.isLoading = false;
     },
-    kickMemberFromRoom: (state, action:PayloadAction<any>) => {
+    kickMemberFromRoom: (state, action: PayloadAction<any>) => {
       const { userId, roomId } = action.payload;
       const roomIndex = state.memberships.findIndex(
-        (item) => (item.id === roomId)
+        (item) => item.id === roomId
       );
       const userIndex = state.memberships[roomIndex].members.findIndex(
-        (member) => (member.user.intraId === userId) );
+        (member) => member.user.intraId === userId
+      );
       state.memberships[roomIndex].members.splice(userIndex, 1);
-    }
-
+    },
   },
   extraReducers: (builder) => {
     builder

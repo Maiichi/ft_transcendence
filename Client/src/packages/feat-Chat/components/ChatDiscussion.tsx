@@ -11,19 +11,19 @@ import { Badge } from "@mui/material";
 import { convertDateTime, changeMessageLength } from "./utils";
 import { I_DirectConversation, I_Room } from "./types";
 
-import { CreateChannelModal } from "../channels/modals/CreateChannelModal";
-import { getMemberships } from "../channels/redux/roomThunk";
-import { getDirectConversations } from "../directMessages/redux/directMessageThunk";
+import { CreateChannelModal } from "./modals/CreateChannelModal";
+import { getMemberships } from "./redux/roomThunk";
+import { getDirectConversations } from "./redux/directMessageThunk";
 import { Add } from "@mui/icons-material";
-import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
+import { NewDirectMessage } from "./modals/CreateDirectMessageModal";
 import {
   setCurrentConversation,
   setDiscussionsDisplay,
   setSelectedUser,
-} from "./chatSlice";
-import { getUserFriends } from "../channels/redux/friendThunk";
+} from "./redux/chatSlice";
+import { getUserFriends } from "./redux/friendThunk";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
-import { getBlacklist } from "./blockThunk";
+import { getBlacklist } from "./redux/blockThunk";
 import { NotFound } from "./style";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
@@ -119,8 +119,10 @@ export const ChatDiscussion = () => {
                 # {item.name}
               </ChannelName>
             ))
-          ) : (
+          ) : channels.memberships != 0 ? (
             <NotFound>Channel name is not found</NotFound>
+          ) : (
+            <NotFound>You should join or create a new room</NotFound>
           )}
         </ChannelListHolder>
         <Tab>
@@ -188,8 +190,10 @@ export const ChatDiscussion = () => {
                 </p>
               </Discussion>
             ))
-          ) : (
+          ) : directMessage.conversations != 0 ? (
             <NotFound>Username is not found</NotFound>
+          ) : (
+            <NotFound>You should start new conversation</NotFound>
           )}
         </DirectMessageListHolder>
       </Discussions>
