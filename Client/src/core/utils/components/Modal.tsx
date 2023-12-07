@@ -39,11 +39,11 @@ const StyledBox = styled(Box)`
   left: 40%;
   background: rgb(255, 255, 255);
   border: 1px solid rgb(0, 0, 0);
-  border-radius: 20px;
+  border-radius: 5px;
   overflow: hidden;
   padding: 10px;
   @media (max-width: 426px) {
-    width: 90%;
-    left: 10%;
+    width: 80%;
+    left: 6%;
   }
 `;

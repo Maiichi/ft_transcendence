@@ -12,11 +12,7 @@ const Menu = [
     render: "Home",
     icon: HomeIcon,
   },
-  {
-    redirect: "/test",
-    render: "Login",
-    icon: SearchIcon,
-  },
+
   {
     redirect: "/search",
     render: "Search",

@@ -1,10 +1,9 @@
 import { Close } from "@mui/icons-material";
 import styled from "styled-components";
-import { I_Room, Members, I_User } from "../../components/types";
-import { useEffect, useState } from "react";
+import { I_Room, Members, I_User } from "../types";
+import {  useState } from "react";
 import {
   Avatar,
-  Divider,
   List,
   ListItem,
   ListItemAvatar,
@@ -17,9 +16,10 @@ import {
   useAppSelector,
 } from "../../../../core";
 import { setDisplayUserActions } from "../../../../core/CoreSlice";
-import { setSelectedUser } from "../../components/chatSlice";
-import { UserActions } from "../../components/UserActions";
+import { setSelectedUser } from "../redux/chatSlice";
 import { useSize } from "../../../../core/utils/hooks";
+import { NotFound } from "../style";
+import { isAdmin, isBlockedYou, isOwner } from "../utils";
 
 export const UsersRoom = ({
   channelConversation,
@@ -49,7 +49,11 @@ export const UsersRoom = ({
 
   const filtredMembers = channelConversation.members.filter(
     (member: Members) =>
-      !isBlacklisted(member.user.intraId) &&
+      !(
+        isBlockedYou(member.user.intraId, block) &&
+        !isAdmin(channelConversation, currentUser.intraId) &&
+        !isOwner(channelConversation, currentUser.intraId)
+      ) &&
       member.user.intraId !== currentUser.intraId &&
       (!searchQuery ||
         member.user.firstName
@@ -134,9 +138,4 @@ const Header = styled.div`
 `;
 const Title = styled.h3`
   margin: 0;
-`;
-const NotFound = styled.h4`
-  margin: 0px;
-  padding: 5px 0;
-  text-align: center;
 `;

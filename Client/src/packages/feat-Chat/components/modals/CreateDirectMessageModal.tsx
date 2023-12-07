@@ -1,16 +1,18 @@
 import styled from "styled-components";
-import { SearchComponent, useAppDispatch, useAppSelector } from "../../../../core";
+import {
+  SearchComponent,
+  useAppDispatch,
+  useAppSelector,
+} from "../../../../core";
 import { useEffect, useState } from "react";
 import { Close } from "@mui/icons-material";
-import { getUserFriends } from "../../channels/redux/friendThunk";
+import { getUserFriends } from "../redux/friendThunk";
 import { Avatar } from "@mui/material";
 import { createDirectConversation } from "../redux/directMessageSlice";
-import { I_User } from "../../components/types";
-
-
+import { I_User } from "../types";
 
 const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
-  const {onUserSelect} = props;
+  const { onUserSelect } = props;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const friends: [] = useAppSelector((state) => state.friends.friends);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -25,33 +27,30 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
         friend.firstName.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredUsers(filteredFriends);
-    } 
-    else 
-      setFilteredUsers([]);
+    } else setFilteredUsers([]);
   }, [searchQuery]);
-  return  (
+  return (
     <>
       <SearchComponent onInputUpdate={handleClickSearch} />
-        {filteredUsers.length > 0 && (
-          <UserListOverlay>
+      {filteredUsers.length > 0 && (
+        <UserListOverlay>
           {filteredUsers.map((item: I_User) => (
-            <UserList 
-              key={item.intraId} 
-              onClick={() => onUserSelect(item)}
-            >
+            <UserList key={item.intraId} onClick={() => onUserSelect(item)}>
               <Avatar />
               {item.firstName} {item.lastName}
             </UserList>
           ))}
         </UserListOverlay>
-        )}
+      )}
     </>
   );
-
 };
 
-export const NewDirectMessage = (props: { handleClose: () => void, selectedUser: I_User | null}) => {
-  const { handleClose , selectedUser} = props;
+export const NewDirectMessage = (props: {
+  handleClose: () => void;
+  selectedUser: I_User | null;
+}) => {
+  const { handleClose, selectedUser } = props;
   const dispatch = useAppDispatch();
   const [selectUser, setSelectUser] = useState<I_User | null>(selectedUser);
   const [messageContent, setMessageContent] = useState<string>("");
@@ -65,8 +64,7 @@ export const NewDirectMessage = (props: { handleClose: () => void, selectedUser:
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-    if (selectUser)
-    {
+    if (selectUser) {
       const messageData = {
         receiverId: selectUser.intraId,
         content: messageContent,
@@ -74,13 +72,11 @@ export const NewDirectMessage = (props: { handleClose: () => void, selectedUser:
       dispatch(createDirectConversation(messageData));
     }
     handleClose();
-  }
+  };
 
   useEffect(() => {
     dispatch(getUserFriends());
   }, []);
-
-  
 
   return (
     <>
@@ -99,32 +95,25 @@ export const NewDirectMessage = (props: { handleClose: () => void, selectedUser:
         />
       </ModalHeader>
       <ModalBody>
-        {
-          selectUser ? 
-          (
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              To : 
-              <UserList>
-                <Avatar />
-                  {selectUser.firstName} {selectUser.lastName}
-              </UserList>
-            </div>
-          )
-           : 
-          (<ReceiverComponent onUserSelect={handleSelectedUser}/>)
-        }
-        <form
-          onSubmit={handleSendMessage}
-        >
+        {selectUser ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            To :
+            <UserList>
+              <Avatar />
+              {selectUser.firstName} {selectUser.lastName}
+            </UserList>
+          </div>
+        ) : (
+          <ReceiverComponent onUserSelect={handleSelectedUser} />
+        )}
+        <form onSubmit={handleSendMessage}>
           <MessageInput
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}
           />
           <ModalFooter>
             <CancelButton onClick={closeModal}>Cancel</CancelButton>
-            <CreateButton type="submit">
-              Send
-            </CreateButton>
+            <CreateButton type="submit">Send</CreateButton>
           </ModalFooter>
         </form>
       </ModalBody>
@@ -139,7 +128,7 @@ const ModalHeader = styled.div`
 `;
 
 const ModalBody = styled.div`
-  align-items: center;
+  text-align: center;
   height: 100%;
 `;
 
@@ -154,9 +143,11 @@ const SearchBar = styled.div`
 `;
 
 const MessageInput = styled.textarea`
-  width: 300px;
+  width: 85%;
   height: 100px;
   resize: none;
+  padding: 10px;
+  margin-top: 6px;
 `;
 
 const CreateButton = styled.button`
