@@ -5,15 +5,9 @@ import { Close } from "@mui/icons-material";
 import { getUserFriends } from "../../channels/redux/friendThunk";
 import { Avatar } from "@mui/material";
 import { createDirectConversation } from "../redux/directMessageSlice";
-import { setCurrentConversation } from "../../components/chatSlice";
+import { I_User } from "../../components/types";
 
-interface I_User {
-  userName: string;
-  firstName: string;
-  lastName: string;
-  avatar_url: string;
-  intraId: number
-}
+
 
 const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const {onUserSelect} = props;
@@ -56,26 +50,25 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
 
 };
 
-export const NewDirectMessage = (props: { handleClose: () => void }) => {
-  const { handleClose } = props;
+export const NewDirectMessage = (props: { handleClose: () => void, selectedUser: I_User | null}) => {
+  const { handleClose , selectedUser} = props;
   const dispatch = useAppDispatch();
-  const [selectedUser, setSelectedUser] = useState<I_User | null>(null);
+  const [selectUser, setSelectUser] = useState<I_User | null>(selectedUser);
   const [messageContent, setMessageContent] = useState<string>("");
-
   const closeModal = () => {
     handleClose();
   };
 
   const handleSelectedUser = (user: I_User) => {
-    setSelectedUser(user);
+    setSelectUser(user);
   };
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-    if (selectedUser)
+    if (selectUser)
     {
       const messageData = {
-        receiverId: selectedUser.intraId,
+        receiverId: selectUser.intraId,
         content: messageContent,
       };
       dispatch(createDirectConversation(messageData));
@@ -107,13 +100,13 @@ export const NewDirectMessage = (props: { handleClose: () => void }) => {
       </ModalHeader>
       <ModalBody>
         {
-          selectedUser ? 
+          selectUser ? 
           (
             <div style={{display: 'flex', alignItems: 'center'}}>
               To : 
               <UserList>
                 <Avatar />
-                  {selectedUser.firstName} {selectedUser.lastName}
+                  {selectUser.firstName} {selectUser.lastName}
               </UserList>
             </div>
           )

@@ -23,6 +23,7 @@ import {
 } from "./chatSlice";
 import { getUserFriends } from "../channels/redux/friendThunk";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
+import { getBlacklist } from "./blockThunk";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
   const { channels, directMessage, filter, chat } = useAppSelector(
@@ -46,6 +47,7 @@ export const ChatDiscussion = () => {
     setOpen(false);
   };
   useEffect(() => {
+    dispatch(getBlacklist());
     dispatch(getMemberships());
     dispatch(getDirectConversations());
     dispatch(getUserFriends());
@@ -125,7 +127,10 @@ export const ChatDiscussion = () => {
             }}
             onClick={() =>
               handleClickModal(
-                <NewDirectMessage handleClose={handleClose} />,
+                <NewDirectMessage
+                  handleClose={handleClose}
+                  selectedUser={null}
+                />,
                 "auto"
               )
             }
@@ -155,14 +160,7 @@ export const ChatDiscussion = () => {
                 overlap="circular"
                 variant="dot"
               >
-                {discussion.receiver.avatar_url !== null ? (
-                  <AvatarImage
-                    src={require(`/app/images_uploads/${discussion.receiver.avatar_url}`)}
-                    alt=""
-                  />
-                ) : (
-                  <AvatarImage src="" alt="" />
-                )}
+                <AvatarImage src={`${discussion.receiver.avatar_url}`} alt="" />
               </Badge>
               <ContactDescription>
                 <DiscussionName>
@@ -195,7 +193,7 @@ const Tab = styled.div`
 const Discussions = styled.div`
   overflow: hidden;
   padding: 5px;
-
+  width: 220px;
   @media (max-width: 425px) {
     width: 100%;
   }

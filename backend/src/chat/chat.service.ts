@@ -15,7 +15,7 @@ export class ChatService {
         where: {
           userId: userId,
           roomId: roomId,
-          isBanned: false,
+          // isBanned: false,
         },
       });
     // console.log("mem ==", JSON.stringify(memberShip));

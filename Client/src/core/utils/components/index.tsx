@@ -3,3 +3,4 @@ export * from "./Modal";
 export * from "./Popper";
 export * from "./Input";
 export * from "./List";
+export * from "./Loading";

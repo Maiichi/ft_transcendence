@@ -1,4 +1,4 @@
-import { CSSProperties, FC } from "react";
+import { CSSProperties } from "react";
 
 /* CircularProgressBar.css */
 const style: Record<string, CSSProperties> = {
@@ -6,7 +6,7 @@ const style: Record<string, CSSProperties> = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    margin: "0 2% 0 1%",
+    // margin: "0 2% 0 1%",
     paddingBottom: "16px",
   },
   svg: {
@@ -44,7 +44,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
               strokeDasharray: circumference,
               strokeDashoffset: offset,
             },
-            style.circle,
+            style.circle
           )}
           r="47.2"
           cx="60"

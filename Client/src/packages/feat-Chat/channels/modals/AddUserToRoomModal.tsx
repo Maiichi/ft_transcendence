@@ -5,11 +5,9 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "../../../../core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Avatar } from "@mui/material";
-import { joinRoom } from "../../../feat-Search/redux/searchSlice";
-import { addMemberToRoom, addUserToRoom } from "../redux/roomSlice";
-import { getUserFriends } from "../redux/friendThunk";
+import { addUserToRoom } from "../redux/roomSlice";
 
 interface Props {
   handleClose: () => void;
@@ -23,13 +21,6 @@ export const AddUserToRoomModal = (props: Props) => {
   const index = memberships.findIndex((item: any) => item.id == roomId);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const friends: [] = useAppSelector((state) => state.friends.friends);
-  const [filteredUsers, setFilteredUsers] = useState([]); // Initialize with an empty array
-  // const filtredUsers = friends.filter((friend: any) =>
-  //     friend.firstName
-  //     .toLowerCase()
-  //     .startsWith(searchQuery.toLowerCase())
-  // );
-  // Update the filteredUsers when searchQuery changes
 
   const handleClickOnUser = (item: any) => {
     const data = {
@@ -43,19 +34,11 @@ export const AddUserToRoomModal = (props: Props) => {
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
   };
-
-  
-
-  useEffect(() => {
-    if (searchQuery.length) {
-      const filteredFriends = friends.filter((friend: any) =>
-        friend.firstName.toLowerCase().startsWith(searchQuery.toLowerCase())
-      );
-      setFilteredUsers(filteredFriends);
-    } 
-    else 
-      setFilteredUsers([]);
-  }, [searchQuery]);
+  const filteredFriends = friends.filter(
+    (friend: any) =>
+      !searchQuery ||
+      friend.firstName.toLowerCase().startsWith(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -75,12 +58,17 @@ export const AddUserToRoomModal = (props: Props) => {
       </ModalHeader>
       <ModalBody>
         <SearchComponent onInputUpdate={handleClickSearch} />
-        {filteredUsers.map((item: any) => (
-          <UserList key={item.intraId} onClick={() => handleClickOnUser(item)}>
-            <Avatar />
-            {item.firstName} {item.lastName}
-          </UserList>
-        ))}
+        <UsersList length={filteredFriends.length}>
+          {filteredFriends.map((item: any) => (
+            <UserList
+              key={item.intraId}
+              onClick={() => handleClickOnUser(item)}
+            >
+              <Avatar />
+              {item.firstName} {item.lastName}
+            </UserList>
+          ))}
+        </UsersList>
       </ModalBody>
     </>
   );
@@ -91,18 +79,13 @@ const ModalHeader = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
-
+const UsersList = styled.div<{ length: number }>`
+  overflow-y: scroll;
+  height: ${(props) => (props.length > 1 ? "100px" : "60px")};
+`;
 const ModalBody = styled.div`
   align-items: center;
   height: 100%;
-`;
-
-const SearchBar = styled.input`
-  padding: 10px;
-  border: 1px solid #d5d0d0;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  width: 44.5vh;
 `;
 
 const UserList = styled.div`
