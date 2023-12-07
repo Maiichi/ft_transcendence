@@ -1,4 +1,13 @@
-import { Avatar, AvatarGroup, Button } from "@mui/material";
+import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  SelectChangeEvent,
+  Select,
+} from "@mui/material";
 import styled from "styled-components";
 import {
   ModalComponent,
@@ -107,7 +116,7 @@ export const Search = () => {
   const [selectedList, setSelected] = useState<"channels" | "users" | null>(
     null
   );
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectChange = (event: SelectChangeEvent) => {
     const selectedValue = event.target.value as "users" | "channels" | "";
     setSelected(selectedValue === "" ? null : selectedValue);
   };
@@ -139,18 +148,26 @@ export const Search = () => {
             // onChange={}
           /> */}
         </SearchBar>
-        <Select
-          name="Channels"
-          id="dropdown"
-          value={selectedList || ""}
-          onChange={handleSelectChange}
-        >
-          <option value="" selected>
+        <FormControl variant="standard" sx={{ m: 0, pb: 3, minWidth: 120 }}>
+          <InputLabel
+            sx={{ display: `${selectedList ? "none" : "inline"}` }}
+            id="demo-simple-select-standard-label"
+          >
             Select...
-          </option>
-          <option value="channels">channels</option>
-          <option value="users">users</option>
-        </Select>
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-standard-label"
+            name="Channels"
+            id="dropdown"
+            value={selectedList || ""}
+            onChange={handleSelectChange}
+            label="Age"
+          >
+            {selectedList ? <MenuItem value={""}>none</MenuItem> : null}
+            <MenuItem value={"channels"}>channels</MenuItem>
+            <MenuItem value={"users"}>users</MenuItem>
+          </Select>
+        </FormControl>
       </Holder>
       <ListHolder>
         {selectedList === "users" ? (
@@ -260,12 +277,6 @@ const SearchBar = styled.div`
   padding: 10px;
   border-radius: 5px;
   position: relative;
-`;
-
-const Select = styled.select`
-  width: 20%;
-  height: 60%;
-  border-radius: 5px;
 `;
 
 const ListHolder = styled.div`
