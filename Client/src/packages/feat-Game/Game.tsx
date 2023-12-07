@@ -9,11 +9,12 @@ import {
 import { useKeyboardControls } from "./hooks/useKeyboardControls";
 import { GameCanvas } from "./components/GameCanvas";
 import { Socket, io } from "socket.io-client";
-import { useAppSelector } from "../../core";
+import { useAppDispatch, useAppSelector } from "../../core";
+import { setOpenErrorSnackbar, setServerError } from "../../core/CoreSlice";
 
 export const Game: React.FC = () => {
     const ref = useRef<HTMLCanvasElement>(null);
-
+    const dispatch = useAppDispatch();
     const initialState: GameState = {
         ball: {
             x: WIDTH / 2,
@@ -58,6 +59,10 @@ export const Game: React.FC = () => {
         };
     }, []); //
 
+    socket?.on('joinQueueError', (data) => {
+        dispatch(setServerError(data));
+        dispatch(setOpenErrorSnackbar(true));
+    })
 
     // Define emitEvent function
     const emitEvent = (event: string, data?: any) => {

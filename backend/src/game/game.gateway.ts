@@ -1,9 +1,18 @@
-import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { OnGatewayConnection, 
+          OnGatewayDisconnect, 
+          OnGatewayInit, 
+          SubscribeMessage, 
+          WebSocketGateway, 
+          WebSocketServer,
+          WsException
+      } from '@nestjs/websockets';
 import { GameService } from './game.service';
+import { JwtService } from '@nestjs/jwt';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import Game from './models/game';
 import Player from './models/player';
+import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
   namespace: "game",
@@ -13,7 +22,11 @@ import Player from './models/player';
   }
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit{
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly gameService: GameService,
+    private userService: UserService,
+    private jwtService: JwtService,
+    ) {}
 
   @WebSocketServer()
   server: Server;
@@ -21,22 +34,89 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   private logger: Logger = new Logger('MatchGateway');
 
   private unique: Set<Socket> = new Set();
+  private playerSockets = new Map<number, string[]>();
   private normalGameQueue: Socket[] = [];
   private tripleGameQueue: Socket[] = [];
   private games: Game[] = [];
 
-  handleConnection(client: Socket, ...args: any[]) {
-    // this.logger.log(`Client connected: ${client.id}`);
-    console.log(`--------Gamer connected: ${client.id}`);
+  private getUserIdFromSocketId(socketId: string): number | null {
+    for (const [userId, sockets] of this.playerSockets.entries()) {
+      if (sockets.includes(socketId)) {
+        return userId;
+      }
+    }
+    return null;
+  }
+  
+  
+  private printPlayerSockets() {
+    console.log('player sockets {');
+    this.playerSockets.forEach((value, key) => {
+      console.log(
+        'player = ' +
+          key +
+          ' || socketID = ' +
+          value
+      );
+    });
+    console.log('}');
+  }
+
+
+  async handleConnection(client: Socket) {
+    const token = client.handshake.headers.authorization;
+    try {
+      const decodedToken =
+        await this.jwtService.verify(token, {
+          secret: process.env.JWT_SECRET,
+        });
+      const user = await this.userService.getUser(decodedToken.sub);
+      if (!user) {
+        throw new WsException('User not found.');
+      }
+      if (!this.playerSockets.has(user.intraId)) {
+        this.playerSockets.set(user.intraId, []);
+      }
+      this.playerSockets.get(user.intraId).push(client.id);
+      console.log(user.userName + ' (GAMER) is Connected ' + client.id);
+      this.printPlayerSockets();
+    } catch (error) {
+      client.disconnect();
+      console.log('Gamer disconnected due to invalid authorization');
+      const response = {
+        success: false,
+        message: error.message,
+      };
+      console.log(response);
+      return response;
+    }
   }
 
   handleDisconnect(client: Socket) {
     // this.logger.log(`Client disconnected: ${client.id}`);
-    console.log(`--------Gamer disconnected: ${client.id}`);
-    const game = this.games.find((gm) => gm.hasSocket(client));
-    if (game) {
-      game.handlePlayerDisconnect(client);
-      game.stop();
+    const intraId = this.getUserIdFromSocketId(client.id);
+    if (intraId)
+    {
+      const socketsOfPlayer = this.playerSockets.get(intraId) || [];
+      const updatedSockets = socketsOfPlayer.filter(
+        (socketId) => socketId !== client.id
+      );
+      if (updatedSockets.length === 0)
+        this.playerSockets.delete(intraId);
+      else
+        this.playerSockets.set(intraId, updatedSockets);
+      const game = this.games.find((gm) => gm.hasSocket(client));
+      if (game) {
+        game.handlePlayerDisconnect(client);
+        game.stop();
+      }
+      client.disconnect();
+      console.log(`--------Gamer disconnected: ${client.id}`);
+      this.printPlayerSockets();
+    }
+    else
+    {
+      console.log('intraId not found');
     }
   }
 
@@ -50,10 +130,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (game) {
       let player = game.getPlayerBySocket(client);
       if (payload === 'down') {
-        console.log('up_paddle down')
         player.getPaddle().up(true);
       } else if (payload === 'up') {
-        console.log('up_paddle up')
         player.getPaddle().up(false);
       }
     }
@@ -65,10 +143,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (game) {
       let player = game.getPlayerBySocket(client);
       if (payload === 'down') {
-        console.log('down_paddle down')
         player.getPaddle().down(true);
       } else if (payload === 'up') {
-        console.log('down_paddle up')
         player.getPaddle().down(false);
       }
     }
@@ -76,6 +152,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   private _removeOverGame(game: Game): void {
     const sockets = game.getSockets();
+    console.log('sockets == ', sockets[0].id);
+    sockets.forEach((socket) => {
+      console.log('(gameOver) socketId === ', socket.id);
+      if (this.getUserIdFromSocketId(socket.id))
+        this.gameService.updateUserStatusInGame(
+          this.getUserIdFromSocketId(socket.id), false);
+    });
     this.unique.delete(sockets[0]);
     this.unique.delete(sockets[1]);
     this.games.splice(this.games.indexOf(game), 1);
@@ -86,6 +169,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   private _startNewGame(socketsArr: Socket[], payload: any): void {
     console.log('startNewGame');
+    socketsArr.forEach((socket) => {
+      // console.log('socketId === ', socket.id);
+      this.gameService.updateUserStatusInGame(
+        this.getUserIdFromSocketId(socket.id), true);
+    });
     this.games.push(
       new Game(
         new Player(socketsArr[0], false),
@@ -100,15 +188,28 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('join_queue_match')
   joinQueue(client: Socket, payload: any) {
     if (this.unique.has(client)) {
-      console.log('unique ==', this.unique);
+      // console.log('unique ==', this.unique);
       console.log('it goes here');
+      const message = `You cannot join again.`;
+      this.server.to(client.id).emit('joinQueueError', message);
+      // need to emit an event to tell the user that he's already in the queue.
       return;
     }
-    // this.logger.log(`Client ${client.id} joined queue`);
     console.log(`Client ${client.id} joined queue`);
     this.unique.add(client);
-    console.log("norrmalQueue Before :\n",this.normalGameQueue.length);
+    const userId = this.getUserIdFromSocketId(client.id);
+    const isInQueue = 
+      this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
+      this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
+
+    if (isInQueue) {
+      const message = `User ${userId} is already in the queue. Cannot join again.`;
+      console.log(message);
+      this.server.to(client.id).emit('joinQueueError', message);
+      return;
+    }
     if (payload === 'dual') {
+      console.log('normalGameQueue ==', this.normalGameQueue.length);
       if (this.normalGameQueue.push(client) > 1)
         this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
     }
@@ -116,7 +217,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (this.tripleGameQueue.push(client) > 1)
       this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
     }
-    // console.log("norrmalQueue after: \n",this.normalGameQueue.length);
   }
   // private   matchmakingQueue: string[] = [];
   // private logger: Logger = new Logger('Game Gateway');

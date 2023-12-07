@@ -104,8 +104,7 @@ import { FriendService } from 'src/user/friend/friend.service';
     const sockets = this.userSockets.get(intraId);
     if (sockets) {
       sockets.forEach((socketId) => {
-        const socket =
-          this.server.sockets.sockets[socketId];
+        const socket = this.server.sockets.sockets[socketId];
         if (socket) {
           socket.disconnect();
         }
@@ -150,22 +149,19 @@ import { FriendService } from 'src/user/friend/friend.service';
     this.connectedClients.forEach(
       (user, socketId) => {
         if (socketId == clientId) ret = user;
-      },
+      }
     );
     return ret;
   }
 
   async handleConnection(client: Socket) {
-    const token =
-      client.handshake.headers.authorization;
+    const token = client.handshake.headers.authorization;
     try {
       const decodedToken =
         await this.jwtService.verify(token, {
           secret: process.env.JWT_SECRET,
         });
-      const user = await this.userService.getUser(
-        decodedToken.sub,
-      );
+      const user = await this.userService.getUser(decodedToken.sub);
       if (!user) {
         throw new WsException('User not found.');
       }
@@ -181,24 +177,15 @@ import { FriendService } from 'src/user/friend/friend.service';
         this.userSockets.set(user.intraId, []);
       }
 
-      this.userSockets
-        .get(user.intraId)
-        .push(client.id);
-      this.userService.updateUserStatus(
-        user.intraId,
-        'ONLINE',
-      );
+      this.userSockets.get(user.intraId).push(client.id);
+      this.userService.updateUserStatus(user.intraId,'ONLINE',);
       this.server.emit('userConnected', {
         userId: client.id,
       });
       // this.printClients();
-      console.log(
-        user.userName +
-          ' is Connected ' +
-          client.id,
-      );
-      this.printClients();
-      this.printClientSockets();
+      console.log(user.userName + ' is Connected ' + client.id);
+      // this.printClients();
+      // this.printClientSockets();
     } catch (error) {
       client.disconnect();
       console.log(
