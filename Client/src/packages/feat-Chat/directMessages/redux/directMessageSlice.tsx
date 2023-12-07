@@ -1,5 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { I_DirectConversation, I_ConversationMessages } from "../types";
+import {
+  I_DirectConversation,
+  I_ConversationMessages,
+} from "../../components/types";
 import {
   getDirectConversationMessages,
   getDirectConversations,
@@ -29,44 +32,35 @@ export const DirectMessageSlice = createSlice({
     setConversations: (state, action: PayloadAction<S_DirectMessages>) => {
       state.conversations = action.payload.conversations;
     },
-    createDirectConversation: (
-      state,
-      action: PayloadAction<MessagePayload>
-    ) => {
+    createDirectConversation: (state, action:PayloadAction<MessagePayload>) => {
       state.isLoad = false;
     },
-    removeConversation: (state, action: PayloadAction<number>) => {
-      const intraId = action.payload;
-      console.log("intraId || ", intraId);
+    removeConversation: (state, action:PayloadAction<number>) => {
+      const intraId = action.payload; 
+      console.log('intraId || ' , intraId);
       const conversationIndex = state.conversations.findIndex(
-        (conversation: I_DirectConversation) =>
-          conversation.receiver.intraId === intraId
-      );
-      console.log("Conv Index ==", conversationIndex);
+          (conversation: I_DirectConversation)=> conversation.receiver.intraId === intraId );
+      console.log('Conv Index ==', conversationIndex);
       state.conversations.splice(conversationIndex, 1);
     },
     sendMessageToUser: (state, action: PayloadAction<I_DirectConversation>) => {
       const conversationId = action.payload.id;
-      const isConversationFound = state.conversations.find(
-        (conversation) => conversation.id === conversationId
-      );
-      if (isConversationFound) {
+      const isConversationFound = state.conversations.find((conversation) => conversation.id === conversationId)
+      if (isConversationFound)
+      {
         state.conversations.splice(
           state.conversations.findIndex(
-            (conversation: I_DirectConversation) =>
-              conversation.id === conversationId
-          ),
-          1,
-          action.payload
-        );
-      } else state.conversations.push(action.payload);
+            (conversation: I_DirectConversation) => conversation.id === conversationId),
+            1, action.payload);
+      }
+      else
+        state.conversations.push(action.payload);
     },
-    addMessageToConversation: (
-      state,
-      action: PayloadAction<I_ConversationMessages>
-    ) => {
+    addMessageToConversation: (state, action: PayloadAction<I_ConversationMessages>) => {
       state.conversationsContent.push(action.payload);
     },
+    
+    
   },
   extraReducers: (builder) => {
     builder
@@ -94,12 +88,12 @@ export const DirectMessageSlice = createSlice({
   },
 });
 
-export const {
-  setConversations,
-  createDirectConversation,
-  sendMessageToUser,
-  addMessageToConversation,
-  removeConversation,
+export const { 
+    setConversations, 
+    createDirectConversation, 
+    sendMessageToUser,
+    addMessageToConversation,
+    removeConversation,
 } = DirectMessageSlice.actions;
 
 export default DirectMessageSlice.reducer;

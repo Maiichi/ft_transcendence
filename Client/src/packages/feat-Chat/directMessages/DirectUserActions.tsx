@@ -3,7 +3,7 @@ import { setDisplayUserActions } from "../../../core/CoreSlice";
 import { useState } from "react";
 import { I_User } from "../components/types";
 
-import { BlockUserModal } from "../components/modals/BlockUserModal";
+import { BlockUserModal } from "./modals/BlockUserModal";
 import { Actions } from "../components/UserActions";
 import { IconHolder } from "../components/style";
 import { DirectIcons } from "../components/utils";
@@ -36,10 +36,7 @@ export const UserActionInDirectConversation = ({
     switch (iconType) {
       case "blockFriend":
         handleClickModal(
-          <BlockUserModal
-            intraId={selectedUser.intraId}
-            handleClose={handleClose}
-          />
+          <BlockUserModal data={selectedUser} handleClose={handleClose} />
         );
         break;
 

@@ -17,8 +17,7 @@ export const SnackBarComponent = ({
     <Snackbar
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
       open={open}
-      autoHideDuration={6000}
-      onClose={handleClose}
+      autoHideDuration={1000}
       key={"top" + "center"}
     >
       <Alert onClose={handleClose} severity={severity} sx={style}>

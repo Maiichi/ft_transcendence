@@ -48,9 +48,3 @@ export const RightSide = styled.div`
   gap: 16px;
   border-left: 1px solid rgb(215, 215, 215);
 `;
-export const NotFound = styled.h4`
-  margin: 0px;
-  padding: 5px 0;
-  text-align: center;
-  font-weight: 200;
-`;

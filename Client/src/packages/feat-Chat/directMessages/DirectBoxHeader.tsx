@@ -1,7 +1,7 @@
 import { I_DirectConversation } from "../components/types";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import { useSize } from "../../../core/utils/hooks";
-import { setDiscussionsDisplay } from "../components/redux/chatSlice";
+import { setDiscussionsDisplay } from "../components/chatSlice";
 import { PopperComponent, useAppDispatch } from "../../../core";
 import { useStyles } from "../components/style";
 import { UserActions } from "../components/UserActions";

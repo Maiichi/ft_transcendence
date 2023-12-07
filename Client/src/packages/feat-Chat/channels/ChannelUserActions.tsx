@@ -8,19 +8,17 @@ import {
   isAdmin,
   isBanned,
   isFriend,
-  isBlockedYou,
 } from "../components/utils";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
-import { SetChannelAdmin } from "../components/modals/SetChannelAdmin";
-import { BanUserFromChannelModal } from "../components/modals/BanUserFromChannelModal";
-import { MuteUserInRoom } from "../components/modals/MuteUserInRoom";
-import { UnSetChannelAdmin } from "../components/modals/unSetChannelAdmin";
-import { UnBanUserFromChannelModal } from "../components/modals/UnBanUserFromChannel";
-import { KicKFromRoomModal } from "../components/modals/KickUserFromChannelModal";
-import { NewDirectMessage } from "../components/modals/CreateDirectMessageModal";
-import { IconHolder } from "../components/style";
+import { SetChannelAdmin } from "../channels/modals/SetChannelAdmin";
+import { BanUserFromChannelModal } from "../channels/modals/BanUserFromChannelModal";
+import { MuteUserInRoom } from "../channels/modals/MuteUserInRoom";
+import { UnSetChannelAdmin } from "../channels/modals/unSetChannelAdmin";
+import { UnBanUserFromChannelModal } from "../channels/modals/UnBanUserFromChannel";
+import { KicKFromRoomModal } from "../channels/modals/KickUserFromChannelModal";
+import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
+import { IconHolder, RightSide } from "../components/style";
 import { Actions } from "../components/UserActions";
-import { BlockUserModal } from "../components/modals/BlockUserModal";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -32,7 +30,6 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
   const friends: Array<I_User> = useAppSelector(
     (state) => state.friends.friends
   );
-  const block = useAppSelector((state) => state.block);
   const roomIndex = memberships.findIndex((item: any) => item.id == roomId);
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
@@ -71,26 +68,11 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     if (typeof Icon.isAdmin != "undefined")
       checkIsAdmin =
         isAdmin(memberships[roomIndex], selectedId) === Icon.isAdmin;
-    let checkIsBlockedYou = true;
-    if (typeof Icon.isBlockedYou != "undefined") {
-      checkIsBlockedYou = isBlockedYou(selectedId, block) === Icon.isBlockedYou;
-    }
-    let checkIsBlockedByeYou = true;
-    if (typeof Icon.isBlockedByYou != "undefined") {
-      checkIsBlockedByeYou =
-        isBlockedYou(selectedId, block) === Icon.isBlockedByYou;
-    }
-
     // let checkIsMute = true;
     // if (typeof Icon.isMuted != 'undefined')
     //   checkIsMute = isMuted(memberships[roomIndex], selectedId) === Icon.isMuted;
     return (
-      Icon.role.includes(role) &&
-      checkFriend &&
-      checkIsBanned &&
-      checkIsAdmin &&
-      checkIsBlockedByeYou &&
-      checkIsBlockedYou
+      Icon.role.includes(role) && checkFriend && checkIsBanned && checkIsAdmin
     );
   };
 
@@ -112,10 +94,6 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         return <MuteUserInRoom data={data} handleClose={handleClose} />;
       case "kickFromChannel":
         return <KicKFromRoomModal data={data} handleClose={handleClose} />;
-      case "blockFriend":
-        return (
-          <BlockUserModal intraId={data.intraId} handleClose={handleClose} />
-        );
       case "message":
         return (
           <NewDirectMessage selectedUser={data} handleClose={handleClose} />

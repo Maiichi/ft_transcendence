@@ -19,7 +19,7 @@ export interface Members {
   isBanned: boolean;
   isMute: boolean;
   isOwner: boolean;
-  timeMute: Date;
+  timeMute: Date,
   user: I_User;
 }
 export interface I_Discussion {
@@ -77,15 +77,13 @@ export interface Action {
     | "play"
     | "addFriend"
     | "blockFriend"
-    | "unblockFriend"
-    | "viewProfile";
+    | "viewProfile"
   component: JSX.Element;
   isFriend?: boolean;
-  isBanned?: boolean;
+  isBanned?:boolean;
   isAdmin?: boolean;
-  isBlockedByYou?: boolean;
-  isBlockedYou?: boolean;
   role: Role[];
 }
 
 export type Role = "admin" | "owner" | "member";
+

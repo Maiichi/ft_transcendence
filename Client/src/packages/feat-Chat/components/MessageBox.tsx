@@ -15,15 +15,18 @@ interface Props {
     createdAt: string;
   };
 }
+
 export const MessageBox = ({ own, data }: Props) => {
   const Message = own ? MessageBoxOwn : MessageBoxWrapper;
   const MessageContent = own ? MessageBoxOwnText : MessageText;
-
   return (
     <Message key={data.createdAt}>
       <MessageTop>
         {data.sender.avatar_url !== null ? (
-          <MessageImg src={`${data.sender.avatar_url}`} alt="" />
+          <MessageImg
+            src={`${data.sender.avatar_url}`}
+            alt=""
+          />
         ) : (
           <MessageImg src="" alt="" />
         )}

@@ -23,7 +23,9 @@ const ChatBox = () => {
 export const Chat = () => {
   const { displayUserActions } = useAppSelector((state) => state.core);
   const { discussionsDisplay } = useAppSelector((state) => state.chat);
+
   const { isMobile } = useSize();
+  console.log(displayUserActions);
   return (
     <Root>
       {((isMobile && discussionsDisplay) || !isMobile) && <ChatDiscussion />}

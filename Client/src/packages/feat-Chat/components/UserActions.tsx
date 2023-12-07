@@ -1,10 +1,35 @@
-import { useAppSelector } from "../../../core";
+import { Children, useState } from "react";
+import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
+import { Action, I_Room, I_User } from "./types";
+
+import {
+  DoDisturbOffOutlined,
+  PersonOffOutlined,
+  RemoveModerator,
+} from "@mui/icons-material";
 import { Avatar, Divider } from "@mui/material";
 import styled from "styled-components";
+import { checkUserRole, isAdmin, isBanned, isFriend } from "./utils";
+import { setDisplayUserActions } from "../../../core/CoreSlice";
 import CircleIcon from "@mui/icons-material/Circle";
 import ClearIcon from "@mui/icons-material/Clear";
+import EmailIcon from "@mui/icons-material/Email";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SpeakerNotesOffIcon from "@mui/icons-material/SpeakerNotesOff";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import GamesIcon from "@mui/icons-material/Games";
+import { SetChannelAdmin } from "../channels/modals/SetChannelAdmin";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { BanUserFromChannelModal } from "../channels/modals/BanUserFromChannelModal";
+import { MuteUserInRoom } from "../channels/modals/MuteUserInRoom";
+import { UnSetChannelAdmin } from "../channels/modals/unSetChannelAdmin";
+import { UnBanUserFromChannelModal } from "../channels/modals/UnBanUserFromChannel";
+import { KicKFromRoomModal } from "../channels/modals/KickUserFromChannelModal";
+import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
 import { UserActionInDirectConversation } from "../directMessages/DirectUserActions";
-import { RightSide } from "./style";
+import { IconHolder, RightSide } from "./style";
 import { UserActionsInRoom } from "../channels/ChannelUserActions";
 
 interface UserActionsProps {
