@@ -1,15 +1,12 @@
 import styled from "styled-components";
-import { SearchComponent, useAppDispatch, useAppSelector } from "../../../../core";
 import { useEffect, useState } from "react";
 import { Close } from "@mui/icons-material";
-import { getUserFriends } from "../../channels/redux/friendThunk";
 import { Avatar } from "@mui/material";
-import { createDirectConversation } from "../redux/directMessageSlice";
-import { I_User } from "../../components/types";
+import { SearchComponent, useAppDispatch, useAppSelector } from "../../../core";
+import { I_User } from "../../feat-Chat/components/types";
+import { getUserFriends } from "../../feat-Chat/channels/redux/friendThunk";
 
-
-
-const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
+const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const {onUserSelect} = props;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const friends: [] = useAppSelector((state) => state.friends.friends);
@@ -39,7 +36,7 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
               key={item.intraId} 
               onClick={() => onUserSelect(item)}
             >
-              <Avatar src={item.avatar_url} />
+              <Avatar src= {item.avatar_url} />
               {item.firstName} {item.lastName}
             </UserList>
           ))}
@@ -50,7 +47,7 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
 
 };
 
-export const NewDirectMessage = (props: { handleClose: () => void, selectedUser: I_User | null}) => {
+export const InviteUserToGame = (props: { handleClose: () => void, selectedUser: I_User | null}) => {
   const { handleClose , selectedUser} = props;
   const dispatch = useAppDispatch();
   const [selectUser, setSelectUser] = useState<I_User | null>(selectedUser);
@@ -71,7 +68,7 @@ export const NewDirectMessage = (props: { handleClose: () => void, selectedUser:
         receiverId: selectUser.intraId,
         content: messageContent,
       };
-      dispatch(createDirectConversation(messageData));
+    //   dispatch(createDirectConversation(messageData));
     }
     handleClose();
   }
@@ -85,7 +82,7 @@ export const NewDirectMessage = (props: { handleClose: () => void, selectedUser:
   return (
     <>
       <ModalHeader>
-        <h3>Start a new conversation</h3>
+        <h3>Invite a player to the game</h3>
         <Close
           sx={{
             "&:hover": {
@@ -103,27 +100,27 @@ export const NewDirectMessage = (props: { handleClose: () => void, selectedUser:
           selectUser ? 
           (
             <div style={{display: 'flex', alignItems: 'center'}}>
-              To : 
+              Opponent : 
               <UserList>
-                <Avatar src={selectUser.avatar_url}/>
+                <Avatar src={selectUser.avatar_url} />
                   {selectUser.firstName} {selectUser.lastName}
               </UserList>
             </div>
           )
            : 
-          (<ReceiverComponent onUserSelect={handleSelectedUser}/>)
+          (<OponentComponent onUserSelect={handleSelectedUser}/>)
         }
         <form
           onSubmit={handleSendMessage}
         >
-          <MessageInput
+          {/* <MessageInput
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}
-          />
+          /> */}
           <ModalFooter>
             <CancelButton onClick={closeModal}>Cancel</CancelButton>
             <CreateButton type="submit">
-              Send
+              Challenge
             </CreateButton>
           </ModalFooter>
         </form>

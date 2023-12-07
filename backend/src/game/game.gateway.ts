@@ -107,6 +107,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         this.playerSockets.set(intraId, updatedSockets);
       const game = this.games.find((gm) => gm.hasSocket(client));
       if (game) {
+        console.log('-------------------- is in game');
+        this.gameService.updateUserStatusInGame(intraId, false);
         game.handlePlayerDisconnect(client);
         game.stop();
       }
@@ -151,10 +153,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   private _removeOverGame(game: Game): void {
+    console.log('remove Over game');
     const sockets = game.getSockets();
-    console.log('sockets == ', sockets[0].id);
+    // console.log('sockets == ', sockets[0].id);
     sockets.forEach((socket) => {
-      console.log('(gameOver) socketId === ', socket.id);
+      // console.log('(gameOver) socketId === ', socket.id);
       if (this.getUserIdFromSocketId(socket.id))
         this.gameService.updateUserStatusInGame(
           this.getUserIdFromSocketId(socket.id), false);

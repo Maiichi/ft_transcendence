@@ -945,4 +945,24 @@ import { FriendService } from 'src/user/friend/friend.service';
       );
     }
   }
+  @SubscribeMessage('inviteToGame')
+  async inviteUserToGame( 
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: SendFriendRequestDto)
+  {
+    try {
+      const currentUser =
+        this.findUserByClientSocketId(client.id);
+      this.server.emit('sendGameInvitation', {
+        opponent: body.receiverId
+      });
+    } catch (error) {
+      client.emit('sendGameInvitationError', {
+        message: error.message,
+      });
+      console.log(
+        'send error = ' + error.message,
+      );
+    }
+  }
 }

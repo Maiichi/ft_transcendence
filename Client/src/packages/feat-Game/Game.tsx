@@ -9,8 +9,9 @@ import {
 import { useKeyboardControls } from "./hooks/useKeyboardControls";
 import { GameCanvas } from "./components/GameCanvas";
 import { Socket, io } from "socket.io-client";
-import { useAppDispatch, useAppSelector } from "../../core";
+import { ModalComponent, useAppDispatch, useAppSelector } from "../../core";
 import { setOpenErrorSnackbar, setServerError } from "../../core/CoreSlice";
+import { InviteUserToGame } from "./components/InviteGame";
 
 export const Game: React.FC = () => {
     const ref = useRef<HTMLCanvasElement>(null);
@@ -85,9 +86,42 @@ export const Game: React.FC = () => {
         setFrame(newFrame);
     });
 
+    // properties for modal
+    const [open, setOpen] = useState(false);
+    const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
+      undefined
+    );
+    const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+    const handleClickModal = (
+      childModal: JSX.Element,
+      closeType?: "auto" | "click"
+    ) => {
+      console.log("handleClickModal called !!");
+      setCloseType(closeType);
+      setOpen(true);
+      setChildModal(childModal);
+    };
+    const handleClose = () => {
+      setOpen(false);
+    };
+
     return (
         <div>
+            <ModalComponent
+                open={open}
+                ChildComponent={ChildModal}
+                handleClose={handleClose}
+                closeType={closeType}
+            />
             <h1>Join a game</h1>
+            <button
+                id="btn_join_dual"
+                onClick={() => {
+                    handleClickModal(<InviteUserToGame selectedUser={null} handleClose={handleClose} />)
+                }}
+            >
+                Invite player to game
+            </button>
             <button
                 id="btn_join_dual"
                 onClick={() => {
