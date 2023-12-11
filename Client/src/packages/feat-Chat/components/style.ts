@@ -54,3 +54,9 @@ export const NotFound = styled.h4`
   text-align: center;
   font-weight: 200;
 `;
+export const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  font-family: monospace;
+  font-size: small;
+`;

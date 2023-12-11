@@ -64,7 +64,7 @@ export const NewDirectMessage = (props: {
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-    if (selectUser) {
+    if (selectUser && messageContent) {
       const messageData = {
         receiverId: selectUser.intraId,
         content: messageContent,

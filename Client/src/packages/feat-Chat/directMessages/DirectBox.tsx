@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../core";
-import {  I_Message } from "../components/types";
+import { I_Message } from "../components/types";
 import { getDirectConversationMessages } from "../components/redux/directMessageThunk";
 import { MessageBox } from "../components/MessageBox";
 import { DirectBoxHeader } from "./DirectBoxHeader";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
-import {
-  createDirectConversation,
-} from "../components/redux/directMessageSlice";
+import { createDirectConversation } from "../components/redux/directMessageSlice";
 
 export const DirectBox = () => {
   const dispatch = useAppDispatch();
@@ -25,12 +23,14 @@ export const DirectBox = () => {
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-    const messageData = {
-      receiverId: conversations[index].receiver.intraId,
-      content: messageContent,
-    };
-    dispatch(createDirectConversation(messageData));
-    setMessageContent("");
+    if (messageContent) {
+      const messageData = {
+        receiverId: conversations[index].receiver.intraId,
+        content: messageContent,
+      };
+      dispatch(createDirectConversation(messageData));
+      setMessageContent("");
+    }
   };
 
   useEffect(() => {
@@ -132,4 +132,3 @@ const ChatSubmitButtom = styled.button`
   border-radius: 5px;
   margin-right: 10px;
 `;
-
