@@ -11,7 +11,13 @@ import { GameCanvas } from "./components/GameCanvas";
 import { Socket, io } from "socket.io-client";
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../core";
 import { setOpenErrorSnackbar, setServerError } from "../../core/CoreSlice";
+import { I_User } from "../feat-Chat/components/types";
+import styled from "styled-components";
 import { InviteUserToGame } from "./components/InviteGame";
+import { initializeSocket } from "./socketUtils";
+import { setInviteAccepted, setInviteDeclined } from "./redux/GameSlice";
+
+
 
 export const Game: React.FC = () => {
     const ref = useRef<HTMLCanvasElement>(null);
@@ -58,7 +64,13 @@ export const Game: React.FC = () => {
         return () => {
             newSocket.disconnect();
         };
-    }, []); //
+    }); //
+
+    // useEffect(() => {
+    //     const newSocket = initializeSocket(token);
+    //     if (newSocket)
+    //         setSocket(newSocket);
+    // })
 
     socket?.on('joinQueueError', (data) => {
         dispatch(setServerError(data));
@@ -86,6 +98,21 @@ export const Game: React.FC = () => {
         setFrame(newFrame);
     });
 
+    // invite Game modal
+    const isInviteAccepted = useAppSelector((state) => state.gameState.inviteAccepted);
+    // const isInviteDeclined = useAppSelector((state) => state.gameState.inviteDeclined);
+    useEffect(() => {
+        console.log('is this is shown at the inviter (invite) ')
+        if (isInviteAccepted)
+        {
+          console.log('invited joins the queue !!!!')
+          console.log(' == socket == ', socket );
+          // socket?.emit('join_queue_match_invitaion', "dual");
+          emitEvent("join_queue_match_invitaion", "dual");
+          dispatch(setInviteAccepted(false));
+        } 
+    }, [isInviteAccepted]);
+
     // properties for modal
     const [open, setOpen] = useState(false);
     const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
@@ -96,7 +123,6 @@ export const Game: React.FC = () => {
       childModal: JSX.Element,
       closeType?: "auto" | "click"
     ) => {
-      console.log("handleClickModal called !!");
       setCloseType(closeType);
       setOpen(true);
       setChildModal(childModal);
@@ -113,11 +139,11 @@ export const Game: React.FC = () => {
                 handleClose={handleClose}
                 closeType={closeType}
             />
-            <h1>Join a game</h1>
+            <h1>Pong Game</h1>
             <button
-                id="btn_join_dual"
+                id="invite_user_to_game"
                 onClick={() => {
-                    handleClickModal(<InviteUserToGame selectedUser={null} handleClose={handleClose} />)
+                   socket && handleClickModal(<InviteUserToGame selectedUser={null} socket={socket} handleClose={handleClose} />)
                 }}
             >
                 Invite player to game
@@ -145,3 +171,73 @@ export const Game: React.FC = () => {
         </div>
     );
 };
+
+
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const ModalBody = styled.div`
+  align-items: center;
+  height: 100%;
+`;
+
+const ModalFooter = styled.div`
+  margin: 25px 0px 0px 0px;
+  display: flex;
+  justify-content: space-evenly;
+`;
+
+const SearchBar = styled.div`
+  display: flex;
+`;
+
+const MessageInput = styled.textarea`
+  width: 300px;
+  height: 100px;
+  resize: none;
+`;
+
+const CreateButton = styled.button`
+  height: 40px;
+  width: 100px;
+  border: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: rgb(178, 163, 201);
+`;
+
+const CancelButton = styled.button`
+  height: 40px;
+  width: 100px;
+  border: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+const UserList = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  margin: 10px;
+  &:hover {
+    cursor: pointer;
+    background-color: #f5f6f7;
+  }
+`;
+
+const UserListOverlay = styled.div`
+  position: absolute;
+  z-index: 1;
+  background-color: white;
+  border: 1px solid #ccc;
+  margin-top: -10px; /* Adjust this value to fit your design */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
+const UserHolder = styled.div`
+  display: flex;
+`;

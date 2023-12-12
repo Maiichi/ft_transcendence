@@ -7,7 +7,7 @@ export const handleKeyDown = (
     emitEvent: (event: string, data?: any) => void,
     socket: Socket | null
 ) => {
-    console.log('socket (handleKeyDown) ==', socket);
+    // console.log('socket (handleKeyDown) ==', socket);
     if (socket && e.code === "ArrowUp") {
         emitEvent("up_paddle", "down");
         console.log('up_paddle (arrowUp)')
@@ -20,7 +20,7 @@ export const handleKeyUp = (
     emitEvent: (event: string, data?: any) => void,
     socket: Socket | null
 ) => {
-    console.log('socket (handleKeyUp) ==', socket);
+    // console.log('socket (handleKeyUp) ==', socket);
     if (socket && e.code === "ArrowUp") {
         emitEvent("up_paddle", "up");
     } else if (socket && e.code === "ArrowDown") {

@@ -5,8 +5,11 @@ import { Avatar } from "@mui/material";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../../core";
 import { I_User } from "../../feat-Chat/components/types";
 import { getUserFriends } from "../../feat-Chat/channels/redux/friendThunk";
+import { Socket } from "socket.io-client";
+import { inviteUserToGame } from "../redux/GameSlice";
+import { SocketInit } from "../../../App";
 
-const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
+export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const {onUserSelect} = props;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const friends: [] = useAppSelector((state) => state.friends.friends);
@@ -47,28 +50,29 @@ const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
 
 };
 
-export const InviteUserToGame = (props: { handleClose: () => void, selectedUser: I_User | null}) => {
-  const { handleClose , selectedUser} = props;
+export const InviteUserToGame = (props: { handleClose: () => void, selectedUser: I_User | null, socket: Socket}) => {
+  const { handleClose , selectedUser, socket} = props;
   const dispatch = useAppDispatch();
   const [selectUser, setSelectUser] = useState<I_User | null>(selectedUser);
-  const [messageContent, setMessageContent] = useState<string>("");
   const closeModal = () => {
     handleClose();
   };
+
+  console.log('socket from game component === ', socket);
 
   const handleSelectedUser = (user: I_User) => {
     setSelectUser(user);
   };
 
-  const handleSendMessage = (e: any) => {
-    e.preventDefault();
+  const handleChallengePlayer = () => {
     if (selectUser)
     {
-      const messageData = {
-        receiverId: selectUser.intraId,
-        content: messageContent,
-      };
-    //   dispatch(createDirectConversation(messageData));
+      if (socket)
+      { 
+        dispatch(inviteUserToGame({receiverId : selectUser.intraId}));
+        // dispatch(setInvited)
+        socket.emit('join_queue_match_invitaion', "dual");
+      }
     }
     handleClose();
   }
@@ -80,7 +84,7 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
   
 
   return (
-    <>
+    <SocketInit>
       <ModalHeader>
         <h3>Invite a player to the game</h3>
         <Close
@@ -111,12 +115,8 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
           (<OponentComponent onUserSelect={handleSelectedUser}/>)
         }
         <form
-          onSubmit={handleSendMessage}
+          onSubmit={handleChallengePlayer}
         >
-          {/* <MessageInput
-            value={messageContent}
-            onChange={(e) => setMessageContent(e.target.value)}
-          /> */}
           <ModalFooter>
             <CancelButton onClick={closeModal}>Cancel</CancelButton>
             <CreateButton type="submit">
@@ -125,7 +125,7 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
           </ModalFooter>
         </form>
       </ModalBody>
-    </>
+    </SocketInit>
   );
 };
 

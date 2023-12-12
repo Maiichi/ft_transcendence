@@ -10,7 +10,7 @@ export const useKeyboardControls = (
 ) => {
     useEffect(() => {
         // console.log('emitEvent (useKey) ==', emitEvent);
-        console.log('socket (useKeyboardControls) ==', socket);
+        // console.log('socket (useKeyboardControls) ==', socket);
         const onKeyDown = (e: KeyboardEvent) => handleKeyDown(e, emitEvent, socket);
         const onKeyUp = (e: KeyboardEvent) => handleKeyUp(e, emitEvent, socket);
 

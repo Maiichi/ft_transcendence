@@ -32,7 +32,7 @@ import {
   kickMember,
   kickMemberFromRoom,
 } from "../../packages/feat-Chat/channels/redux/roomSlice";
-import { setOpenErrorSnackbar, setServerError } from "../CoreSlice";
+import { setDisplayGameInvitation, setOpenErrorSnackbar, setServerError } from "../CoreSlice";
 import {
   addRoom,
   joinRoom,
@@ -45,6 +45,7 @@ import { MuteUserInRoom } from "../../packages/feat-Chat/channels/modals/MuteUse
 import { I_ConversationMessages } from "../../packages/feat-Chat/components/types";
 import { blockUser, userBlockedByMe, userBlockedMe } from "../../packages/feat-Chat/components/blockSlice";
 import { useAppSelector } from "../redux";
+import { inviteUserToGame, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../packages/feat-Game/redux/GameSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -228,6 +229,20 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                 }));
             }
           });
+          socket.on('gameInvitationReceived' , (data) => {
+            console.log('gameInvitationReceived');
+            console.log ('data (gameInvitationReceived) == ', data);
+            dispatch(setDisplayGameInvitation(true));
+            dispatch(receiveGameInvitation(true));
+          });
+          socket.on('gameInvitationAccepted', () => {
+            dispatch(setDisplayGameInvitation(false));
+            dispatch(setInviteAccepted(true));
+          });
+          socket.on('gameInvitationDeclined', () => {
+            dispatch(setDisplayGameInvitation(false));
+            dispatch(setInviteDeclined(true));
+          })
         } catch (error) {
           console.log(error);
         }
@@ -277,6 +292,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case blockUser.type:
         socket.emit('blockUser', action.payload);
+        break;
+      case inviteUserToGame.type:
+        socket.emit('inviteToGame', action.payload);
         break;
       default:
         break;

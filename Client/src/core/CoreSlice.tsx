@@ -7,6 +7,7 @@ export interface CoreState {
   displayNavbar: boolean;
   displayUserActions: boolean;
   openErrorSnackbar: boolean;
+  displayGameInvitation: boolean;
   serverError: string | null;
 }
 
@@ -15,6 +16,7 @@ const initialState: CoreState = {
   displayNavbar: true,
   displayUserActions: false,
   serverError: null,
+  displayGameInvitation: false,
   openErrorSnackbar: false,
 };
 
@@ -35,6 +37,9 @@ export const coreSlice = createSlice({
     setOpenErrorSnackbar: (state, action: PayloadAction<boolean>) => {
       state.openErrorSnackbar = action.payload;
     },
+    setDisplayGameInvitation: (state, action: PayloadAction<boolean>) => {
+      state.displayGameInvitation = action.payload;
+    }
   },
 });
 
@@ -43,6 +48,7 @@ export const {
   setOpenErrorSnackbar,
   setServerError,
   setDisplayNavbar,
+  setDisplayGameInvitation,
 } = coreSlice.actions;
 
 // // Other code such as selectors can use the imported `RootState` type

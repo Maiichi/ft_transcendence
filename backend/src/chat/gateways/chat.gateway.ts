@@ -945,19 +945,31 @@ import { FriendService } from 'src/user/friend/friend.service';
       );
     }
   }
+  
   @SubscribeMessage('inviteToGame')
   async inviteUserToGame( 
     @ConnectedSocket() client: Socket,
     @MessageBody() body: SendFriendRequestDto)
   {
     try {
+      console.log('userInvitedToGame');
       const currentUser =
         this.findUserByClientSocketId(client.id);
-      this.server.emit('sendGameInvitation', {
-        opponent: body.receiverId
-      });
+        console.log('body  ==', body);
+        const invitedSockets : string[] = this.userSockets.get(body.receiverId);
+        console.log('invitedSockets ==', invitedSockets);
+      // if (blockedSockets)
+      // blockedSockets.forEach((socketId) =>{
+      //   this.server.to(socketId).emit('blockedMe', response.blocker);
+      // });
+      if (invitedSockets)
+        invitedSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('gameInvitationReceived', {
+            opponent: currentUser.intraId
+            })
+        });
     } catch (error) {
-      client.emit('sendGameInvitationError', {
+      client.emit('gameInvitationReceivedError', {
         message: error.message,
       });
       console.log(

@@ -34,6 +34,8 @@ import { UnBanUserFromChannelModal } from "../channels/modals/UnBanUserFromChann
 import { KicKFromRoomModal } from "../channels/modals/KickUserFromChannelModal";
 import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageModal";
 import { UserActionInDirectConversation } from "../directMessages/DirectBoxRight";
+import { setSelectedUser } from "./chatSlice";
+import { useNavigate } from "react-router-dom";
 
 export const Icons: Array<Action> = [
   {
@@ -175,7 +177,7 @@ export const UserActionsInRoom = () => {
   const roomIndex = memberships.findIndex((item: any) => item.id == roomId);
   // const selectdUserIndex = memberships[roomIndex].members.findIndex((member: any) => selectedUserId === member.user.intraId);
   // const selectedUserInfo = memberships[roomIndex].members[selectdUserIndex];
-
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
@@ -249,6 +251,11 @@ export const UserActionsInRoom = () => {
   ) => {
     const selectedUser = room.members.find((member) => member.user.intraId === selectedUserId);  
     if (selectedUser) {
+      if (iconType === 'play')
+      {
+        dispatch(setSelectedUser(selectedUser.user));
+        navigate('/game');
+      }
       const dataForModal = getDataForModal(iconType, room, selectedUser.user);
       const modalComponent: JSX.Element = getModalComponent(
         iconType,
@@ -279,10 +286,10 @@ export const UserActionsInRoom = () => {
       />
       <ClearIcon onClick={() => dispatch(setDisplayUserActions(false))} />
       <h2>{selectedUser.userName}</h2>
-      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+      <Avatar sx={{ height : 100, width : 100 }} src={selectedUser.avatar_url} alt={selectedUser.userName} />
       <CircleIcon sx={{ color: color }} />
       <p>{status}</p>
-      <Divider variant="inset" />
+      <Divider variant="fullWidth" />
       <IconsHolder>
         {Icons.map((icon: Action) => (
           <>
