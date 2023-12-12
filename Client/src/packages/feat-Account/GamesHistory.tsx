@@ -1,5 +1,5 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import {  useAppSelector } from "../../core";
+import { useAppSelector } from "../../core";
 import { Fragment, useEffect, useState } from "react";
 import {
   Paper,
@@ -18,18 +18,14 @@ import {
   Tooltip,
   Zoom,
   Rating,
+  Grid,
+  Alert,
 } from "@mui/material";
 import { GameslogType, MatchHistoryType } from "./components";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import { Container } from "./styles";
 import { useSize } from "../../core/utils/hooks";
 import { styled } from "@mui/material/styles";
-
-const Div = styled("div")(({ theme }) => ({
-  ...theme.typography.button,
-  backgroundColor: theme.palette.background.paper,
-  padding: theme.spacing(1),
-}));
 
 // TODO: not all suppoerted to see the history of other
 // must be friend, other ways you are able to show last n=5 games
@@ -39,6 +35,9 @@ const GamesHistory = () => {
   const gidPath = searchParams.get("uid");
   const oId: number = useAppSelector((state) => state.auth.user.intraId);
 
+  const matchs: GameslogType = Object.values(
+    require("./static-data/MatchesHistory.json").matchs
+  );
   const gid: number =
     gidPath && /^[0-9]+$/.test(gidPath) ? parseInt(gidPath, 10) : oId;
   const isOwner: boolean = gid === oId;
@@ -48,48 +47,63 @@ const GamesHistory = () => {
     // setSearchParams({ uid: 'newValue' });
   }, []);
 
-  return <CollapsibleTable />;
-  // return (
-  //   <>
-  //     <Relationship elseId={gid} user={oId} relation={"friend"}>
-  //     </Relationship>
-  //   </>
-  // );
+  return (
+    <Container>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+            <TableCell />
+            <TableCell align="left">palyer1</TableCell>
+            <TableCell align="center">Score</TableCell>
+            <TableCell align="right">player2</TableCell>
+          </TableRow>
+          </TableHead>
+          <TableBody>
+            {matchs.map((mathc) => (
+              <Row row={mathc} />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
+  );
 };
-const matchs: GameslogType = Object.values(
-  require("./static-data/MatchesHistory.json").matchs
-);
 
 function Row(props: { row: MatchHistoryType }) {
   const { row } = props;
   const [open, setOpen] = useState(false);
   const isMobile = useSize().isMobile;
 
+  row.result = row.gain < row.nogain || (row.gain > row.nogain ? -1 : false);
   return (
     <Fragment>
       <TableRow
         onClick={() => (isMobile ? setOpen(!open) : null)}
         sx={{ "& > *": { borderBottom: "unset" } }}
       >
-        <TableCell component="th" scope="row">
-          <Tooltip
-            sx={{ borderRadius: "50%" }}
-            TransitionComponent={Zoom}
-            title={<Avatar alt="pop" src={row.pic} />}
-          >
-            <p>{row.name}</p>
-          </Tooltip>
+        <TableCell component="th" scope="row" >
+          <Grid container={!isMobile} spacing={3} sx={{}}>
+            <Grid item xs={3} md={2}>
+              <Avatar alt="pop" src={row.pic} />
+            </Grid>
+            <Grid item xs={3} md={4}>
+              <Typography>{row.name}</Typography>
+            </Grid>
+          </Grid>
         </TableCell>
         <TableCell align="right">{row.gain}</TableCell>
         <TableCell align="center">{":"}</TableCell>
         <TableCell align="left">{row.nogain}</TableCell>
         <TableCell align="right">
-          <Tooltip
-            TransitionComponent={Zoom}
-            title={<Avatar alt="pop" src={row.pic} />}
-          >
-            <p>{"youu"}</p>
-          </Tooltip>
+          <Grid container={!isMobile} spacing={3} direction="row-reverse">
+            <Grid item xs={3} md={2}>
+              <Avatar alt="pop" src={row.pic} />
+            </Grid>
+            <Grid item xs={3} md={4}>
+              <Typography>{"youu"}</Typography>
+            </Grid>
+          </Grid>
         </TableCell>
         {isMobile || (
           <TableCell align="right">
@@ -100,20 +114,33 @@ function Row(props: { row: MatchHistoryType }) {
         )}
       </TableRow>
       <TableRow>
-        <TableCell sx={{ pb: 0, pt: 0 }} colSpan={6}>
-          <Collapse in={open} unmountOnExit>
-            <Table size="medium">
+        <TableCell sx={{ p: 0 }} colSpan={6}>
+          <Collapse in={open} unmountOnExit sx={{}}>
+            <Table size="medium" sx={{ pb: 1, pt: 1 }}>
               <TableHead hidden></TableHead>
               <TableBody>
-                <Div>
-                  {row.gain > row.nogain
-                    ? "you win"
-                    : row.gain === row.nogain
-                    ? "eq"
-                    : "you lost"}
-                  {` on `}
-                  {row.time}
-                </Div>
+                <Alert
+                  severity={
+                    row.result
+                      ? row.result === -1
+                        ? "error"
+                        : "success"
+                      : "warning"
+                  }
+                  color={
+                    row.result
+                      ? row.result === -1
+                        ? "error"
+                        : "success"
+                      : "info"
+                  }
+                >
+                  {row.result
+                    ? row.result === -1
+                      ? `A valiant effort, but ${row.name} claimed victory over you on ${row.time}`
+                      : `Victory is yours! You conquered ${row.name} on ${row.time}`
+                    : `Neither victory nor defeat! The match with ${row.name} on ${row.time} resulted in a tie`}
+                </Alert>
               </TableBody>
             </Table>
           </Collapse>
@@ -123,28 +150,5 @@ function Row(props: { row: MatchHistoryType }) {
   );
 }
 
-function CollapsibleTable() {
-  return (
-    <Container>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            {/* <TableRow>
-              <TableCell />
-              <TableCell>palyer1</TableCell>
-              <TableCell align="right">Score</TableCell>
-              <TableCell align="right">player2</TableCell>
-            </TableRow> */}
-          </TableHead>
-          <TableBody>
-            {matchs.map((mathc) => (
-              <Row row={mathc}/>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Container>
-  );
-}
 export default GamesHistory;
 export { GamesHistory };

@@ -52,6 +52,7 @@ type MatchHistoryType = {
   time: string;
   gain: number;
   nogain: number;
+  result: boolean | -1;
 };
 
 export interface ProfileState {
