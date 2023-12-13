@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { acceptUserGameInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../../packages/feat-Game/redux/GameSlice";
+import { acceptUserGameInvite, declineUserGameInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../../packages/feat-Game/redux/GameSlice";
 import { setDisplayGameInvitation } from "../../CoreSlice";
 
 
@@ -11,14 +11,14 @@ export const InvitationGameModal = (props :
 }) => {
     const { handleClose} = props;
     const dispatch = useAppDispatch();
-    const user = useAppSelector((state) => state.auth.user)
+    const user = useAppSelector((state) => state.auth.user);
+    const inviterId = useAppSelector((state) => state.gameState.inviterId);
     const navigate = useNavigate();
     const location = useLocation();
+
     const handleAcceptGameInvitation = () => {
       dispatch(receiveGameInvitation(false));
-      // dispatch(setInviteAccepted(true));
-      // dispatch(setDisplayGameInvitation(false));
-      dispatch(acceptUserGameInvite(user.intraId));
+      dispatch(acceptUserGameInvite({inviterId: inviterId}));
       if (location.pathname !== "/game")
         navigate('/game');
       handleClose();
@@ -26,7 +26,7 @@ export const InvitationGameModal = (props :
 
     const handleDeclineGameInvitation = () => {
         dispatch(receiveGameInvitation(false));
-        dispatch(setDisplayGameInvitation(false));
+        dispatch(declineUserGameInvite({inviterId: inviterId}));
         dispatch(setInviteDeclined(true));
         handleClose();
     };
@@ -34,7 +34,7 @@ export const InvitationGameModal = (props :
     return (
         <>
         <ModalHeader>
-            <h3>User X challenge you to dual game Pong?</h3>
+            <h3>User {inviterId} challenge you to dual game Pong?</h3>
         </ModalHeader>
         <ModalFooter>
             <ButtonCancel onClick={handleDeclineGameInvitation}>Decline</ButtonCancel>

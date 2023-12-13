@@ -255,7 +255,10 @@ export const UserActionsInRoom = () => {
       if (iconType === 'play')
       {
         // dispatch(setSelectedUser(selectedUser.user));
-        dispatch(inviteUserToGame({receiverId : selectedUser.user.intraId}));
+        dispatch(inviteUserToGame({
+          invitedId : selectedUserId,
+          inviterId : user.intraId
+        }));
         dispatch(inviteUserToGameFromChat(true));
         navigate('/game');
       }

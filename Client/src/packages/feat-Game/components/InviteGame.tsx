@@ -53,6 +53,7 @@ export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }
 export const InviteUserToGame = (props: { handleClose: () => void, selectedUser: I_User | null, socket: Socket}) => {
   const { handleClose , selectedUser, socket} = props;
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const [selectUser, setSelectUser] = useState<I_User | null>(selectedUser);
   const closeModal = () => {
     handleClose();
@@ -69,9 +70,12 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
     {
       if (socket)
       { 
-        dispatch(inviteUserToGame({receiverId : selectUser.intraId}));
+        dispatch(inviteUserToGame({
+          invitedId : selectUser.intraId,
+          inviterId : user.intraId
+        }));
         // dispatch(setInvited)
-        socket.emit('join_queue_match_invitaion', "dual");
+        // socket.emit('join_queue_match_invitaion', "dual");
       }
     }
     handleClose();

@@ -949,14 +949,14 @@ import { FriendService } from 'src/user/friend/friend.service';
   @SubscribeMessage('inviteToGame')
   async inviteUserToGame( 
     @ConnectedSocket() client: Socket,
-    @MessageBody() body: SendFriendRequestDto)
+    @MessageBody() body: any)
   {
     try {
       console.log('userInvitedToGame');
       const currentUser =
         this.findUserByClientSocketId(client.id);
-        console.log('body  ==', body);
-        const invitedSockets : string[] = this.userSockets.get(body.receiverId);
+        // console.log('body  ==', body);
+        const invitedSockets : string[] = this.userSockets.get(body.invitedId);
         console.log('invitedSockets ==', invitedSockets);
       // if (blockedSockets)
       // blockedSockets.forEach((socketId) =>{
@@ -965,7 +965,8 @@ import { FriendService } from 'src/user/friend/friend.service';
       if (invitedSockets)
         invitedSockets.forEach((socketId) => {
           this.server.to(socketId).emit('gameInvitationReceived', {
-            opponent: currentUser.intraId
+            inviterId: body.inviterId,
+            invitedId: body.invitedId
             })
         });
     } catch (error) {
@@ -987,17 +988,50 @@ import { FriendService } from 'src/user/friend/friend.service';
         console.log('acceptGameInvite');
         const currentUser =
         this.findUserByClientSocketId(client.id);
-        console.log('body  ==', body);
-        const inviterSockets : string[] = this.userSockets.get(currentUser.intraId);
-        console.log('invitedrSockets ==', inviterSockets);
-        if (inviterSockets)
-          inviterSockets.forEach((socketId) => {
-            this.server.to(socketId).emit('gameInvitationAccepted', {
-              opponent: currentUser.intraId
-              })
+        console.log('body (acceptGameInvite)== ', body);
+        const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
+        const inviterSockets: string[] = this.userSockets.get(body.inviterId);
+        console.log('inviter == ', currentUser.intraId);
+        console.log('invited == ', body.invitedId);
+        if (invitedSockets)
+          invitedSockets.forEach((socketId) => {
+            this.server.to(socketId).emit('gameInvitationAccepted')
           });
+        inviterSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('opponentAcceptGameInvite');
+        });
     } catch (error) {
       client.emit('gameInvitationAcceptedError', {
+        message: error.message,
+      });
+      console.log(
+        'send error = ' + error.message,
+      );
+    }
+  } 
+  @SubscribeMessage('declineGameInvite')
+  async declineGameInvite( 
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: any)
+  {
+    try {
+        console.log('declineGameInvite');
+        const currentUser =
+        this.findUserByClientSocketId(client.id);
+        console.log('body (declineGameInvite) == ', body);
+        const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
+        const inviterSockets: string[] = this.userSockets.get(body.inviterId);
+        if (invitedSockets)
+          invitedSockets.forEach((socketId) => {
+            this.server.to(socketId).emit('gameInvitationDeclined')
+          });
+        inviterSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('opponentDeclineGameInvite', {
+            inviterId: body.inviterId
+          });
+        });
+    } catch (error) {
+      client.emit('gameInvitationDeclinedError', {
         message: error.message,
       });
       console.log(

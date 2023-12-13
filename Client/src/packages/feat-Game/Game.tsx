@@ -69,12 +69,6 @@ export const Game: React.FC = () => {
         };
     }, [token]); //
 
-    // useEffect(() => {
-    //     const newSocket = initializeSocket(token);
-    //     if (newSocket)
-    //         setSocket(newSocket);
-    // })
-
     socket?.on('joinQueueError', (data) => {
         dispatch(setServerError(data));
         dispatch(setOpenErrorSnackbar(true));
@@ -117,9 +111,10 @@ export const Game: React.FC = () => {
     }, [isInviteAccepted, socketReady]);
 
     const isChatInvite = useAppSelector((state) => state.gameState.chatInvite);
+    const isOpponentAcceptInvite = useAppSelector((state) => state.gameState.acceptOpponentInvite);
     useEffect(() => {
       console.log('is this is shown at the inviter (invite) ')
-      if (isChatInvite && socketReady)
+      if (isChatInvite && socketReady && isOpponentAcceptInvite)
       {
         console.log('inviter joins the queue !!!!')
         console.log(' == socket == ', socket );
@@ -127,7 +122,20 @@ export const Game: React.FC = () => {
         emitEvent("join_queue_match_invitaion", "dual");
         dispatch(inviteUserToGameFromChat(false));
       } 
-  }, [isChatInvite, socketReady]);
+    }, [isChatInvite, socketReady, isOpponentAcceptInvite]);
+
+    useEffect(() => {
+      console.log('is this is shown at the inviter (invite) ')
+      if (socketReady && isOpponentAcceptInvite)
+      {
+        console.log('inviter joins the queue !!!!')
+        console.log(' == socket == ', socket );
+        // socket?.emit('join_queue_match_invitaion', "dual");
+        emitEvent("join_queue_match_invitaion", "dual");
+        dispatch(inviteUserToGameFromChat(false));
+      } 
+    }, [socketReady, isOpponentAcceptInvite]);
+
     // properties for modal
     const [open, setOpen] = useState(false);
     const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
@@ -146,7 +154,7 @@ export const Game: React.FC = () => {
       setOpen(false);
     };
 
-    // Wait until the socket is ready before rendering the component content
+    // Wait until the socket is ready before rendering the game component
   if (!socketReady) {
     return <div>Loading...</div>;
   }

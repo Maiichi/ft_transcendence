@@ -45,7 +45,7 @@ import { MuteUserInRoom } from "../../packages/feat-Chat/channels/modals/MuteUse
 import { I_ConversationMessages } from "../../packages/feat-Chat/components/types";
 import { blockUser, userBlockedByMe, userBlockedMe } from "../../packages/feat-Chat/components/blockSlice";
 import { useAppSelector } from "../redux";
-import { acceptUserGameInvite, inviteUserToGame, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../packages/feat-Game/redux/GameSlice";
+import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, opponentDeclineInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -232,6 +232,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on('gameInvitationReceived' , (data) => {
             console.log('gameInvitationReceived');
             console.log ('data (gameInvitationReceived) == ', data);
+            dispatch(setInviterId(data.inviterId));
             dispatch(setDisplayGameInvitation(true));
             dispatch(receiveGameInvitation(true));
           });
@@ -240,7 +241,18 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(setDisplayGameInvitation(false));
             dispatch(setInviteAccepted(true));
           });
+          socket.on('opponentAcceptGameInvite', (data) => {
+            console.log ('data (opponentAcceptGameInvite) == ', data);
+            console.log('listen for the event (gameInvitationAccepted) should be display in all accepterSocket')
+            dispatch(opponentAcceptInvite(true));
+          });
+          socket.on('opponentDeclineGameInvite', (data) => {
+            dispatch(setServerError(`User ${data.inviterId} decline your game Invite`));
+              dispatch(setOpenErrorSnackbar(true));
+            dispatch(opponentDeclineInvite(true));
+          });
           socket.on('gameInvitationDeclined', () => {
+            console.log('listen for the event (gameInvitationDeclined) should be display in all declinerSocket')
             dispatch(setDisplayGameInvitation(false));
             dispatch(setInviteDeclined(true));
           })
@@ -299,7 +311,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case acceptUserGameInvite.type:
         socket.emit('acceptGameInvite', action.payload);
-        console.log('(acceptGameInvite) Payload ==', action.payload);
+        break;
+      case declineUserGameInvite.type:
+        socket.emit('declineGameInvite', action.payload);
         break;
       default:
         break;
