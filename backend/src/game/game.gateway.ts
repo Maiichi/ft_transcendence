@@ -102,8 +102,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const updatedSockets = socketsOfPlayer.filter(
         (socketId) => socketId !== client.id
       );
+      
       if (updatedSockets.length === 0)
+      {
+        this.gameService.updateUserStatusInGame(intraId, false);
         this.playerSockets.delete(intraId);
+      }
       else
         this.playerSockets.set(intraId, updatedSockets);
       const game = this.games.find((gm) => gm.hasSocket(client));

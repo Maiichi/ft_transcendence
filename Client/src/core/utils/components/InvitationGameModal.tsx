@@ -15,8 +15,8 @@ export const InvitationGameModal = (props :
     const location = useLocation();
     const handleAcceptGameInvitation = () => {
       dispatch(receiveGameInvitation(false));
-      // dispatch(setDisplayGameInvitation(false));
       dispatch(setInviteAccepted(true));
+      dispatch(setDisplayGameInvitation(false));
       if (location.pathname !== "/game")
         navigate('/game');
       handleClose();
@@ -24,6 +24,7 @@ export const InvitationGameModal = (props :
 
     const handleDeclineGameInvitation = () => {
         dispatch(receiveGameInvitation(false));
+        dispatch(setDisplayGameInvitation(false));
         dispatch(setInviteDeclined(true));
         handleClose();
     };

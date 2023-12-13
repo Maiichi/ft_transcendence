@@ -36,6 +36,7 @@ import { NewDirectMessage } from "../directMessages/modals/CreateDirectMessageMo
 import { UserActionInDirectConversation } from "../directMessages/DirectBoxRight";
 import { setSelectedUser } from "./chatSlice";
 import { useNavigate } from "react-router-dom";
+import { inviteUserToGame } from "../../feat-Game/redux/GameSlice";
 
 export const Icons: Array<Action> = [
   {
@@ -253,7 +254,8 @@ export const UserActionsInRoom = () => {
     if (selectedUser) {
       if (iconType === 'play')
       {
-        dispatch(setSelectedUser(selectedUser.user));
+        // dispatch(setSelectedUser(selectedUser.user));
+        dispatch(inviteUserToGame({receiverId : selectedUser.user.intraId}));
         navigate('/game');
       }
       const dataForModal = getDataForModal(iconType, room, selectedUser.user);

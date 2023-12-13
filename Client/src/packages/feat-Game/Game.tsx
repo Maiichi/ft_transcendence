@@ -45,18 +45,21 @@ export const Game: React.FC = () => {
     const [gameMode, setGameMode] = useState<GameMode>("Dual");
     const token = useAppSelector((state) => state.auth.token);
     const [socket, setSocket] = useState<Socket | null>(null);
+    const [socketReady, setSocketReady] = useState<boolean>(false);
 
     useEffect(() => {
         // Establish the socket connection when the component mounts
         const SOCKET_URL = `${process.env.REACT_APP_BACKEND_URL}/game`;
 
         const newSocket = io(SOCKET_URL, {
-            reconnectionDelayMax: 10000,
             extraHeaders: {
                 authorization: `${token}`,
             },
         });
 
+        newSocket.on('connect', () => {
+          setSocketReady(true);
+        });
         // Set the socket in the state
         setSocket(newSocket);
 
@@ -64,7 +67,7 @@ export const Game: React.FC = () => {
         return () => {
             newSocket.disconnect();
         };
-    }); //
+    }, [token]); //
 
     // useEffect(() => {
     //     const newSocket = initializeSocket(token);
@@ -103,7 +106,7 @@ export const Game: React.FC = () => {
     // const isInviteDeclined = useAppSelector((state) => state.gameState.inviteDeclined);
     useEffect(() => {
         console.log('is this is shown at the inviter (invite) ')
-        if (isInviteAccepted)
+        if (isInviteAccepted && socketReady)
         {
           console.log('invited joins the queue !!!!')
           console.log(' == socket == ', socket );
@@ -111,7 +114,7 @@ export const Game: React.FC = () => {
           emitEvent("join_queue_match_invitaion", "dual");
           dispatch(setInviteAccepted(false));
         } 
-    }, [isInviteAccepted]);
+    }, [isInviteAccepted, socketReady]);
 
     // properties for modal
     const [open, setOpen] = useState(false);
@@ -130,6 +133,11 @@ export const Game: React.FC = () => {
     const handleClose = () => {
       setOpen(false);
     };
+
+    // Wait until the socket is ready before rendering the component content
+  if (!socketReady) {
+    return <div>Loading...</div>;
+  }
 
     return (
         <div>
