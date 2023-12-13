@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   LogoutRounded,
   Person,
@@ -6,7 +6,7 @@ import {
 } from "@mui/icons-material";
 import DehazeIcon from "@mui/icons-material/Dehaze";
 import styled from "styled-components";
-import { LeaveRoomModal } from "./modals/leaveChannelModal";
+import { LeaveRoomModal } from "../components/modals/leaveChannelModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {
   ModalComponent,
@@ -14,13 +14,13 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "../../../core";
-import { UsersRoom } from "./modals/UsersRoomModal";
-import { CreateChannelModal } from "./modals/CreateChannelModal";
+import { UsersRoom } from "../components/modals/UsersRoomModal";
+import { CreateChannelModal } from "../components/modals/CreateChannelModal";
 import { isAdmin, isOwner } from "../components/utils";
-import { AddUserToRoomModal } from "./modals/AddUserToRoomModal";
+import { AddUserToRoomModal } from "../components/modals/AddUserToRoomModal";
 import { useSize } from "../../../core/utils/hooks";
 import { useStyles } from "../components/style";
-import { setDiscussionsDisplay } from "../components/chatSlice";
+import { setDiscussionsDisplay } from "../components/redux/chatSlice";
 import { UserActions } from "../components/UserActions";
 
 export const ChannelBoxHeader = () => {

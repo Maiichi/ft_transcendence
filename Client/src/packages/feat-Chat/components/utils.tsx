@@ -1,4 +1,4 @@
-import { I_Room, Members, Role, I_User, Action } from "./types";
+import { I_Room, I_User, Action } from "./types";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {
   DoDisturbOffOutlined,
@@ -6,13 +6,14 @@ import {
   RemoveModerator,
 } from "@mui/icons-material";
 import EmailIcon from "@mui/icons-material/Email";
-import PersonOffIcon from "@mui/icons-material/PersonOff";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SpeakerNotesOffIcon from "@mui/icons-material/SpeakerNotesOff";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import GamesIcon from "@mui/icons-material/Games";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-
+import BlockIcon from "@mui/icons-material/Block";
+import HideSourceIcon from "@mui/icons-material/HideSource";
+import { blockState } from "./redux/blockSlice";
 export const changeMessageLength = (message: string) => {
   if (message.length > 60) {
     message = message.substring(0, 60);
@@ -53,6 +54,7 @@ export const isOwner = (membership: I_Room, userId: number) => {
 };
 
 export const isAdmin = (memberships: I_Room, userId: number) => {
+
   const member = memberships.members.find(
     (member) => member.user.intraId === userId
   );
@@ -73,7 +75,6 @@ export const isMuted = (room: I_Room, userId: number) => {
 
 export const isBanned = (room: I_Room, userId: number) => {
   const member = room.members.find((member) => member.user.intraId === userId);
-  console.log("isBanned ==", member?.isBanned);
   return member?.isBanned ? true : false;
 };
 
@@ -89,6 +90,18 @@ export const checkUserRole = (membership: I_Room, userId: number) => {
     default:
       return "member";
   }
+};
+export const isBlockedByYou = (intraId: number, block: blockState): boolean => {
+  const isBlockedByYou = block.blockedByYou.some(
+    (blockedMember: any) => blockedMember.intraId === intraId
+  );
+  return isBlockedByYou;
+};
+export const isBlockedYou = (intraId: number, block: blockState): boolean => {
+  const isBlockedYou = block.blockedYou.some(
+    (blockedMember: any) => blockedMember.intraId === intraId
+  );
+  return isBlockedYou;
 };
 export const ChannelIcons: Array<Action> = [
   {
@@ -135,6 +148,8 @@ export const ChannelIcons: Array<Action> = [
     name: "View profile",
     type: "viewProfile",
     component: <AccountCircleIcon />,
+    isBlockedYou: false,
+    isBlockedByYou: false,
     role: ["member", "admin", "owner"],
   },
   {
@@ -142,13 +157,16 @@ export const ChannelIcons: Array<Action> = [
     type: "message",
     component: <EmailIcon />,
     isFriend: true,
+    isBlockedYou: false,
+    isBlockedByYou: false,
     role: ["member", "admin", "owner"],
   },
   {
     name: "Invite to a game",
     type: "play",
     component: <GamesIcon />,
-    isFriend: true,
+    isBlockedYou: false,
+    isBlockedByYou: false,
     role: ["member", "admin", "owner"],
   },
   {
@@ -156,13 +174,24 @@ export const ChannelIcons: Array<Action> = [
     type: "addFriend",
     component: <PersonAddIcon />,
     isFriend: false,
+    isBlockedYou: false,
+    isBlockedByYou: false,
     role: ["member", "admin", "owner"],
   },
   {
     name: "Block",
     type: "blockFriend",
-    component: <PersonOffIcon />,
+    component: <BlockIcon />,
+    isBlockedByYou: false,
     isFriend: true,
+    role: ["member", "admin", "owner"],
+  },
+  {
+    name: "UnBlock",
+    type: "unblockFriend",
+    component: <HideSourceIcon />,
+    isBlockedByYou: true,
+
     role: ["member", "admin", "owner"],
   },
 ];
@@ -182,8 +211,15 @@ export const DirectIcons: Array<Action> = [
   {
     name: "Block",
     type: "blockFriend",
-    component: <PersonOffIcon />,
+    component: <BlockIcon />,
     role: ["member"],
+  },
+  {
+    name: "UnBlock",
+    type: "unblockFriend",
+    component: <HideSourceIcon />,
+    isFriend: true,
+    role: ["member", "admin", "owner"],
   },
 ];
 export const getDataForModal = (
@@ -221,6 +257,10 @@ export const getDataForModal = (
       return {
         userId: selectedUser.intraId,
         roomId: room.id,
+      };
+    case "blockFriend":
+      return {
+        userId: selectedUser.intraId,
       };
     case "message":
       return selectedUser;

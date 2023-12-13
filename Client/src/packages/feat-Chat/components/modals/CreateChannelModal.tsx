@@ -4,8 +4,9 @@ import { useAppDispatch, useAppSelector } from "../../../../core";
 import { createRoom, updateRoom } from "../redux/roomSlice";
 import styled from "styled-components";
 import { Field, Form } from "react-final-form";
-import { I_Room } from "../../components/types";
+import { I_Room } from "../types";
 import { FormControl, MenuItem, Select } from "@mui/material";
+import { ErrorMessage } from "../style";
 interface Props {
   handleClose: () => void;
   channelConversation?: I_Room;
@@ -71,7 +72,7 @@ export const CreateChannelModal = (props: Props) => {
     },
     {
       name: "type",
-      value: channelConversation?.type || "public",
+      value: channelConversation?.type,
       required: true,
       label: "Channel Type",
       type: "select",
@@ -97,16 +98,26 @@ export const CreateChannelModal = (props: Props) => {
       holder: "password",
     },
   ];
+  const initialValues = {
+    type: channelConversation ? channelConversation.type : "public",
+    name: channelConversation ? channelConversation.name : "",
+    description: channelConversation ? channelConversation.description : "",
+  };
+
   const validate = (values: any) => {
     const errors: any = {};
+
     fields.forEach((field: Field) => {
       if (
-        !Object.keys(values).includes(field.name) &&
-        (field.required ||
-          (field.dependencies &&
-            checkRequiredDependencies(values, field.dependencies)))
+        (!Object.keys(values).includes(field.name) &&
+          (field.required ||
+            (field.dependencies &&
+              checkRequiredDependencies(values, field.dependencies)))) ||
+        (field.required && values[field.name] == "")
       )
-        errors[field.name] = `${field.label} must be required`;
+        errors[field.name] = `${field.label} is required`;
+      else if (channelConversation) {
+      }
     });
     return errors;
   };
@@ -156,6 +167,7 @@ export const CreateChannelModal = (props: Props) => {
         <Form
           onSubmit={handleCreateRoom}
           validate={validate}
+          initialValues={initialValues}
           render={({ handleSubmit, values }) => (
             <form onSubmit={handleSubmit}>
               <>
@@ -232,10 +244,6 @@ const ModalHeader = styled.div`
 `;
 
 const ModalBody = styled.div``;
-
-const ErrorMessage = styled.div`
-  color: red;
-`;
 
 const ChannelFieldHolder = styled.div`
   display: flex;
