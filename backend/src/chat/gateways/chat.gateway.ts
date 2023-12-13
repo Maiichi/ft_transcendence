@@ -977,4 +977,32 @@ import { FriendService } from 'src/user/friend/friend.service';
       );
     }
   }
+
+  @SubscribeMessage('acceptGameInvite')
+  async acceptGameInvite( 
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: any)
+  {
+    try {
+        console.log('acceptGameInvite');
+        const currentUser =
+        this.findUserByClientSocketId(client.id);
+        console.log('body  ==', body);
+        const inviterSockets : string[] = this.userSockets.get(currentUser.intraId);
+        console.log('invitedrSockets ==', inviterSockets);
+        if (inviterSockets)
+          inviterSockets.forEach((socketId) => {
+            this.server.to(socketId).emit('gameInvitationAccepted', {
+              opponent: currentUser.intraId
+              })
+          });
+    } catch (error) {
+      client.emit('gameInvitationAcceptedError', {
+        message: error.message,
+      });
+      console.log(
+        'send error = ' + error.message,
+      );
+    }
+  } 
 }

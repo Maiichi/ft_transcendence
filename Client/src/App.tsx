@@ -51,6 +51,7 @@ const HandleError = () => {
 
 const GameInvitationModal = () => {
   const inviteReceived = useAppSelector((state) => state.gameState.inviteReceived);
+  const displayGameInviteModal = useAppSelector((state) => state.core.displayGameInvitation);
   // properties for modal
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
@@ -68,6 +69,11 @@ const GameInvitationModal = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (!displayGameInviteModal)
+      handleClose();
+  }, [displayGameInviteModal]);
 
   useEffect(() => {
     // Check if an invitation has been received

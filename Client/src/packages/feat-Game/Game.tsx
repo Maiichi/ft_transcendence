@@ -15,7 +15,7 @@ import { I_User } from "../feat-Chat/components/types";
 import styled from "styled-components";
 import { InviteUserToGame } from "./components/InviteGame";
 import { initializeSocket } from "./socketUtils";
-import { setInviteAccepted, setInviteDeclined } from "./redux/GameSlice";
+import { inviteUserToGameFromChat, setInviteAccepted, setInviteDeclined } from "./redux/GameSlice";
 
 
 
@@ -116,6 +116,18 @@ export const Game: React.FC = () => {
         } 
     }, [isInviteAccepted, socketReady]);
 
+    const isChatInvite = useAppSelector((state) => state.gameState.chatInvite);
+    useEffect(() => {
+      console.log('is this is shown at the inviter (invite) ')
+      if (isChatInvite && socketReady)
+      {
+        console.log('inviter joins the queue !!!!')
+        console.log(' == socket == ', socket );
+        // socket?.emit('join_queue_match_invitaion', "dual");
+        emitEvent("join_queue_match_invitaion", "dual");
+        dispatch(inviteUserToGameFromChat(false));
+      } 
+  }, [isChatInvite, socketReady]);
     // properties for modal
     const [open, setOpen] = useState(false);
     const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(

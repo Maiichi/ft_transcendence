@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { useAppDispatch } from "../../redux";
+import { useAppDispatch, useAppSelector } from "../../redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../../packages/feat-Game/redux/GameSlice";
+import { acceptUserGameInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../../packages/feat-Game/redux/GameSlice";
 import { setDisplayGameInvitation } from "../../CoreSlice";
 
 
@@ -11,12 +11,14 @@ export const InvitationGameModal = (props :
 }) => {
     const { handleClose} = props;
     const dispatch = useAppDispatch();
+    const user = useAppSelector((state) => state.auth.user)
     const navigate = useNavigate();
     const location = useLocation();
     const handleAcceptGameInvitation = () => {
       dispatch(receiveGameInvitation(false));
-      dispatch(setInviteAccepted(true));
-      dispatch(setDisplayGameInvitation(false));
+      // dispatch(setInviteAccepted(true));
+      // dispatch(setDisplayGameInvitation(false));
+      dispatch(acceptUserGameInvite(user.intraId));
       if (location.pathname !== "/game")
         navigate('/game');
       handleClose();

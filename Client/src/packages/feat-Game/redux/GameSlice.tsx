@@ -7,6 +7,7 @@ export interface GameState {
     // declineOpponentInvite: boolean;
     inviteAccepted: boolean;
     inviteDeclined: boolean;
+    chatInvite: boolean;
     isLoading: boolean;
 }
 const initialState: GameState = {
@@ -16,6 +17,7 @@ const initialState: GameState = {
     // declineOpponentInvite: false,
     inviteAccepted: false,
     inviteDeclined: false,
+    chatInvite: false,
     isLoading: false,
 };
 
@@ -26,12 +28,19 @@ export const GameSlice = createSlice({
     inviteUserToGame :(state, action: PayloadAction<any>) => {
         state.inviteSent = action.payload;
     },
+    inviteUserToGameFromChat: (state, action:PayloadAction<any>)=> {
+      state.chatInvite = action.payload;
+    },
     receiveGameInvitation : (state, action: PayloadAction<any>) => {
       state.inviteReceived = action.payload;
     },
     clearGameInvitation: (state) => {
       state.inviteReceived = false;
     },
+    acceptUserGameInvite: (state, action:PayloadAction<any>)=> {
+      state.isLoading = false;
+    },
+    // need to add DeclinGameInvite
     // setAcceptOpponentInvite : (state , action: PayloadAction<any>) => {
     //   state.acceptOpponentInvite = action.payload;
     // },
@@ -55,7 +64,9 @@ export const {
     // setAcceptOpponentInvite,
     // setDeclineOpponentInvite,
     setInviteAccepted,
-    setInviteDeclined
+    setInviteDeclined,
+    inviteUserToGameFromChat,
+    acceptUserGameInvite,
 } = GameSlice.actions;
 
 export default GameSlice.reducer;

@@ -45,7 +45,7 @@ import { MuteUserInRoom } from "../../packages/feat-Chat/channels/modals/MuteUse
 import { I_ConversationMessages } from "../../packages/feat-Chat/components/types";
 import { blockUser, userBlockedByMe, userBlockedMe } from "../../packages/feat-Chat/components/blockSlice";
 import { useAppSelector } from "../redux";
-import { inviteUserToGame, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../packages/feat-Game/redux/GameSlice";
+import { acceptUserGameInvite, inviteUserToGame, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../packages/feat-Game/redux/GameSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -236,6 +236,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(receiveGameInvitation(true));
           });
           socket.on('gameInvitationAccepted', () => {
+            console.log('listen for the event (gameInvitationAccepted) should be display in all accepterSocket')
             dispatch(setDisplayGameInvitation(false));
             dispatch(setInviteAccepted(true));
           });
@@ -295,6 +296,10 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case inviteUserToGame.type:
         socket.emit('inviteToGame', action.payload);
+        break;
+      case acceptUserGameInvite.type:
+        socket.emit('acceptGameInvite', action.payload);
+        console.log('(acceptGameInvite) Payload ==', action.payload);
         break;
       default:
         break;
