@@ -1,11 +1,10 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { PaletteMode, Theme, createTheme } from "@mui/material";
-
-const initialTheme: Theme = createTheme({});
+import { PaletteMode, Theme } from "@mui/material";
+import { initialTheme } from "./globalTheme";
 
 const appTheme = createSlice({
   name: "AppTheme",
-  initialState: initialTheme,
+  initialState: initialTheme as Theme,
   reducers: {
     setMode: (state, action: PayloadAction<PaletteMode>) => {
       state.palette.mode = action.payload;
