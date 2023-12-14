@@ -7,6 +7,7 @@ import { useAuthentication } from "./packages/feat-Auth/authUtils";
 import { ConnectSocket } from "./packages";
 import { SnackBarComponent } from "./core/utils/components/SnackBar";
 import { setOpenErrorSnackbar } from "./core/CoreSlice";
+import { AppThemeProvider } from "./core/theme";
 const SocketInit = (props: any) => {
   const socket = useAppSelector((state) => state.socket);
   const isAuthenticated = useAuthentication();
@@ -44,27 +45,29 @@ const HandleError = () => {
 };
 function App() {
   return (
-    <Provider store={store}>
-      <HandleError />
-      <SocketInit>
-        <BrowserRouter>
-          <Routes>
-            {routes.map((item) => (
-              <Route
-                path={item.path}
-                element={
-                  item?.requireAuth ? (
-                    <RequireAuth>{item}</RequireAuth>
-                  ) : (
-                    item.element
-                  )
-                }
-              />
-            ))}
-          </Routes>
-        </BrowserRouter>
-      </SocketInit>
-    </Provider>
+    <AppThemeProvider>
+      <Provider store={store}>
+        <HandleError />
+        <SocketInit>
+          <BrowserRouter>
+            <Routes>
+              {routes.map((item) => (
+                <Route
+                  path={item.path}
+                  element={
+                    item?.requireAuth ? (
+                      <RequireAuth>{item}</RequireAuth>
+                    ) : (
+                      item.element
+                    )
+                  }
+                />
+              ))}
+            </Routes>
+          </BrowserRouter>
+        </SocketInit>
+      </Provider>
+    </AppThemeProvider>
   );
 }
 
