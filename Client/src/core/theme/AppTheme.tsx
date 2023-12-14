@@ -1,14 +1,13 @@
-import { ReactNode, useEffect } from "react";
-import { ThemeProvider } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../redux";
+import { ReactNode, useEffect, useState } from "react";
+import { PaletteMode, Theme, ThemeProvider } from "@mui/material";
+import { useAppSelector } from "../redux";
 
 interface App {
   children: ReactNode;
 }
 
 const AppThemeProvider = (props: App) => {
-  const dispatch = useAppDispatch();
-  const theme = useAppSelector((state) => state.theme);
+  const theme: Theme = useAppSelector((state) => state.theme);
 
   useEffect(() => {}, [theme]);
 

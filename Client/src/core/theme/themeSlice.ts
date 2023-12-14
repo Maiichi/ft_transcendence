@@ -6,12 +6,12 @@ const appTheme = createSlice({
   name: "AppTheme",
   initialState: initialTheme as Theme,
   reducers: {
-    setMode: (state, action: PayloadAction<PaletteMode>) => {
-      state.palette.mode = action.payload;
+    swapMode: (state) => {
+      state.palette.mode = state.palette.mode != "dark" ? "dark" : "light";
     },
   },
 });
 
-export const { setMode } = appTheme.actions;
+export const { swapMode } = appTheme.actions;
 
 export default appTheme.reducer;
