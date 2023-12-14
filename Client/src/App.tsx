@@ -45,8 +45,8 @@ const HandleError = () => {
 };
 function App() {
   return (
-    <AppThemeProvider>
-      <Provider store={store}>
+    <Provider store={store}>
+      <AppThemeProvider>
         <HandleError />
         <SocketInit>
           <BrowserRouter>
@@ -66,8 +66,8 @@ function App() {
             </Routes>
           </BrowserRouter>
         </SocketInit>
-      </Provider>
-    </AppThemeProvider>
+      </AppThemeProvider>
+    </Provider>
   );
 }
 
