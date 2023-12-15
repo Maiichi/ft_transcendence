@@ -15,11 +15,30 @@ import {
     M_PADDLE_X,
     BALL_RADIUS,
 } from "../utils/constants";
+import styled from "styled-components";
 
 type CanvasProps = {
     frame: GameState;
     gameMode: GameMode;
 };
+
+const CanvasContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: ${WIDTH}px; // Maximum width
+    max-height: ${HEIGHT}px; // Maximum height
+    background: red;
+    margin: auto; // Center the container
+    box-sizing: border-box; // Include padding in the container's dimensions
+`;
+
+// Styled canvas with responsive width and height
+const StyledCanvas = styled.canvas`
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+`;
 
 export const GameCanvas: React.FC<CanvasProps> = ({ frame, gameMode }) => {
     const ref = useRef<HTMLCanvasElement>(null);
@@ -100,5 +119,9 @@ export const GameCanvas: React.FC<CanvasProps> = ({ frame, gameMode }) => {
         draw();
     }, [frame, gameMode]);
 
-    return <canvas width={WIDTH} height={HEIGHT} ref={ref}></canvas>;
+    return (
+        <CanvasContainer>
+            <StyledCanvas width={WIDTH} height={HEIGHT} ref={ref} />
+        </CanvasContainer>
+    );
 };

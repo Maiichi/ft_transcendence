@@ -1,9 +1,10 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { STEPS } from "../utils/constants";
 
 export interface GameState {
-    inviterId: number | null,
+    inviterId: number | null;
     invitedId: number | null;
-    inviteReceived : boolean;
+    inviteReceived: boolean;
     inviteSent: boolean;
     acceptOpponentInvite: boolean;
     declineOpponentInvite: boolean;
@@ -11,6 +12,9 @@ export interface GameState {
     inviteDeclined: boolean;
     chatInvite: boolean;
     isLoading: boolean;
+
+    currentStep: string;
+    gameMode: string;
 }
 const initialState: GameState = {
     inviterId: null,
@@ -23,58 +27,71 @@ const initialState: GameState = {
     inviteDeclined: false,
     chatInvite: false,
     isLoading: false,
+
+    currentStep: STEPS.SELECT_MAP,
+    gameMode: "dual",
 };
 
 export const GameSlice = createSlice({
-  name: "Game",
-  initialState,
-  reducers: {
-    inviteUserToGame :(state, action: PayloadAction<any>) => {
-      state.invitedId = action.payload.invitedId;
-      state.inviterId = action.payload.inviterId;
+    name: "Game",
+    initialState,
+    reducers: {
+        inviteUserToGame: (state, action: PayloadAction<any>) => {
+            state.invitedId = action.payload.invitedId;
+            state.inviterId = action.payload.inviterId;
+        },
+        inviteUserToGameFromChat: (state, action: PayloadAction<any>) => {
+            state.chatInvite = action.payload;
+        },
+        receiveGameInvitation: (state, action: PayloadAction<any>) => {
+            state.inviteReceived = action.payload;
+        },
+        clearGameInvitation: (state) => {
+            state.inviteReceived = false;
+        },
+        acceptUserGameInvite: (state, action: PayloadAction<any>) => {
+            state.isLoading = false;
+        },
+        declineUserGameInvite: (state, action: PayloadAction<any>) => {
+            state.isLoading = false;
+        },
+        // need to add DeclinGameInvite
+        // setAcceptOpponentInvite : (state , action: PayloadAction<any>) => {
+        //   state.acceptOpponentInvite = action.payload;
+        // },
+        // setDeclineOpponentInvite : (state , action: PayloadAction<any>) => {
+        //   state.declineOpponentInvite = action.payload;
+        // },
+        setInviteAccepted: (state, action: PayloadAction<any>) => {
+            state.inviteAccepted = action.payload;
+        },
+        setInviteDeclined: (state, action: PayloadAction<any>) => {
+            state.inviteDeclined = action.payload;
+        },
+        setInviterId: (state, action: PayloadAction<any>) => {
+            state.inviterId = action.payload;
+        },
+        setInvitedId: (state, action: PayloadAction<any>) => {
+            state.invitedId = action.payload;
+        },
+        opponentAcceptInvite: (state, action: PayloadAction<any>) => {
+            state.acceptOpponentInvite = action.payload;
+        },
+        opponentDeclineInvite: (state, action: PayloadAction<any>) => {
+            state.declineOpponentInvite = action.payload;
+        },
+
+        setGameStep: (state, action: PayloadAction<any>) => {
+            state.currentStep = action.payload;
+        },
+        setGameMode: (state, action: PayloadAction<any>) => {
+            state.gameMode = action.payload;
+        },
+        resetGame: (state) => {
+            state.gameMode = "dual";
+            state.currentStep = STEPS.SELECT_MAP;
+        },
     },
-    inviteUserToGameFromChat: (state, action:PayloadAction<any>)=> {
-      state.chatInvite = action.payload;
-    },
-    receiveGameInvitation : (state, action: PayloadAction<any>) => {
-      state.inviteReceived = action.payload;
-    },
-    clearGameInvitation: (state) => {
-      state.inviteReceived = false;
-    },
-    acceptUserGameInvite: (state, action:PayloadAction<any>)=> {
-      state.isLoading = false;
-    },
-    declineUserGameInvite: (state, action:PayloadAction<any>)=> {
-      state.isLoading = false;
-    },
-    // need to add DeclinGameInvite
-    // setAcceptOpponentInvite : (state , action: PayloadAction<any>) => {
-    //   state.acceptOpponentInvite = action.payload;
-    // },
-    // setDeclineOpponentInvite : (state , action: PayloadAction<any>) => {
-    //   state.declineOpponentInvite = action.payload;
-    // },
-    setInviteAccepted : (state, action: PayloadAction<any>) => {
-      state.inviteAccepted = action.payload;
-    },
-    setInviteDeclined : (state, action: PayloadAction<any>) => {
-      state.inviteDeclined = action.payload;
-    },
-    setInviterId: (state, action: PayloadAction<any>) => {
-      state.inviterId = action.payload;
-    },
-    setInvitedId: (state, action: PayloadAction<any>) => {
-      state.invitedId = action.payload;
-    },
-    opponentAcceptInvite: (state, action: PayloadAction<any>) => {
-      state.acceptOpponentInvite = action.payload;
-    },
-    opponentDeclineInvite: (state, action: PayloadAction<any>) => {
-      state.declineOpponentInvite = action.payload;
-    },
-    
-  },
 });
 
 export const {
@@ -92,6 +109,10 @@ export const {
     setInvitedId,
     opponentAcceptInvite,
     opponentDeclineInvite,
+
+    setGameStep,
+    resetGame,
+    setGameMode,
 } = GameSlice.actions;
 
 export default GameSlice.reducer;

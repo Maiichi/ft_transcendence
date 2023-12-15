@@ -24,3 +24,10 @@ export type GameState = {
 };
 
 export type GameMode = "Dual" | "Messy Jungle";
+
+import { Socket } from "socket.io-client";
+export type GameStepComponentProps = {
+    socket: Socket | null;
+    onNextStep?: () => void;
+    onReset?: () => void;
+};
