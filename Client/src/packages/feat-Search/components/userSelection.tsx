@@ -41,7 +41,7 @@ const UserSelection = ({ users }: Users) => {
           </StyledLink>
         ))
       ) : (
-        <NoMatchesFound>No matches found</NoMatchesFound>
+        <NoMatchesFound>No User found</NoMatchesFound>
       )}
     </>
   );

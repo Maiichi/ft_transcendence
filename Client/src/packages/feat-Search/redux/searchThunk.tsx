@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../../core";
 import { apiRequest } from "../../../core/utils/apiRequest";
+import { userType } from "../../feat-Account/components";
 
 export const getAllRooms = createAsyncThunk(
   "search/rooms",
@@ -14,7 +15,6 @@ export const getAllRooms = createAsyncThunk(
         },
       });
 
-      console.log("resp ==", JSON.stringify(res));
       return res;
     } catch (error) {
       console.log("error in getAllRooms");
@@ -22,3 +22,25 @@ export const getAllRooms = createAsyncThunk(
     }
   }
 );
+
+const getAllFriends = createAsyncThunk(
+  "search/users",
+  async (_, { getState }) => {
+    try {
+      const token = (getState() as RootState).auth.token;
+      const res:Array<userType> = [] /*await apiRequest(`/users/friends`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });*/
+
+      return res;
+    } catch (error) {
+      console.log("error in getAllFriends");
+      throw error;
+    }
+  }
+);
+
+export { getAllFriends };

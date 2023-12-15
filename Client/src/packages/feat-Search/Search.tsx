@@ -5,25 +5,26 @@ import {
   MenuItem,
   SelectChangeEvent,
   Select,
-  TextField,
 } from "@mui/material";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
-import { getAllRooms } from "./redux/searchThunk";
+import { getAllFriends, getAllRooms } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
 import { getMemberships } from "../feat-Chat/components/redux/roomThunk";
-import { Root } from "../feat-Account/styles";
 import {
   Holder,
   SearchBar,
   ListHolder,
   ChannelsSelection,
   UserSelection,
+  Root,
 } from "./components";
+import { userType } from "../feat-Account/components";
 
 export const Search = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const rooms: [] = useAppSelector((state) => state.search.rooms);
+  const { rooms, users }: { rooms: []; users: Array<userType> } =
+    useAppSelector((state) => state.search);
   const user = useAppSelector((state) => state.auth.user);
 
   const handleClickSearch = (str: string) => {
@@ -33,6 +34,7 @@ export const Search = () => {
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getAllRooms());
+    dispatch(getAllFriends());
   }, []);
 
   // Filter chat rooms based on the search query
@@ -48,8 +50,6 @@ export const Search = () => {
     const selectedValue = event.target.value as "users" | "channels" | "";
     setSelected(selectedValue === "" ? null : selectedValue);
   };
-
-  const users = [user, user, user, user];
 
   return (
     <Root>
