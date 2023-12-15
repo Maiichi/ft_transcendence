@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../core";
 import { I_Message } from "../components/types";
-import { getChatRoomMessages } from "./redux/roomThunk";
+import { getChatRoomMessages } from "../components/redux/roomThunk";
 import { MessageBox } from "../components/MessageBox";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
-import { sendMessageToRoom } from "./redux/roomSlice";
+import { sendMessageToRoom } from "../components/redux/roomSlice";
 import { isMuted } from "../components/utils";
 
 export const ChannelBoxContent = () => {
   const { roomId } = useAppSelector((state) => state.chat.currentConversation);
-
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const memberships = useAppSelector((state) => state.channels.memberships);
@@ -19,29 +18,32 @@ export const ChannelBoxContent = () => {
   const channelMessages: [] = useAppSelector(
     (state) => state.channels.messages
   );
-
   const handleCreateRoomMessage = (e: any) => {
     e.preventDefault();
     const messageData = {
       roomId: roomId,
       senderId: user.intraId,
-      content: messageContent
+      content: messageContent,
     };
-    if (messageContent.length)
-      dispatch(sendMessageToRoom(messageData));
-    setMessageContent('');
-  }
-  console.log('roomId =', roomId);
+    if (messageContent.length) dispatch(sendMessageToRoom(messageData));
+    setMessageContent("");
+  };
   useEffect(() => {
     if (roomId) dispatch(getChatRoomMessages(roomId));
   }, [roomId]);
 
   const isMute = isMuted(memberships[roomIndex], user.intraId);
-  console.log('isMute ==', isMute);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [channelMessages]);
   return (
     <>
       <Wrapper>
-        <ChatBoxTop>
+        <ChatBoxTop ref={chatContainerRef}>
           {channelMessages.length === 0 ? (
             <EmptyConversation>
               <h2>it's always better to start a conversation &#128516;</h2>
@@ -59,19 +61,16 @@ export const ChannelBoxContent = () => {
           )}
         </ChatBoxTop>
       </Wrapper>
-      {
-        !isMute &&
-        <ChatBoxBottom
-          onSubmit={handleCreateRoomMessage}
-        >
-          <ChatMessageInput 
-              placeholder="Write your message ..." 
-              value={messageContent}
-              onChange={(e) => setMessageContent(e.target.value)}
+      {!isMute && (
+        <ChatBoxBottom onSubmit={handleCreateRoomMessage}>
+          <ChatMessageInput
+            placeholder="Write your message ..."
+            value={messageContent}
+            onChange={(e) => setMessageContent(e.target.value)}
           />
           <ChatSubmitButtom type="submit">Send</ChatSubmitButtom>
         </ChatBoxBottom>
-      }
+      )}
     </>
   );
 };
@@ -122,8 +121,5 @@ const ChatSubmitButtom = styled.button`
 const EmptyConversation = styled.div`
   display: grid;
   place-items: center;
-  /* display: flex; */
-  /* justify-content: center; Horizontally center the content */
-  /* align-items: center; Vertically center the content */
   height: 100%;
 `;

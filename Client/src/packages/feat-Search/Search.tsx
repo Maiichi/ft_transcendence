@@ -19,10 +19,9 @@ import { useEffect, useState } from "react";
 import { getAllRooms } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
 import { joinRoom } from "./redux/searchSlice";
-import { getMemberships } from "../feat-Chat/channels/redux/roomThunk";
+import { getMemberships } from "../feat-Chat/components/redux/roomThunk";
 import { useNavigate } from "react-router-dom";
 import { JoinChannelModal } from "./modal/joinChannelModal";
-import { setCurrentConversation } from "../feat-Chat/components/chatSlice";
 
 export const Search = () => {
   const dispatch = useAppDispatch();
@@ -295,7 +294,6 @@ const ListHolder = styled.div`
   height: 90%;
 `;
 
-const UserList = styled.div``;
 
 const Channel = styled.div`
   display: flex;
@@ -323,16 +321,6 @@ const ButtonNameHolder = styled.div`
     flex-direction: column;
     align-items: inherit;
   }
-`;
-
-const ChannelMembersNumber = styled.div``;
-
-const ChannelMembers = styled.div``;
-
-const JoinButton = styled.button`
-  height: 30px;
-  width: 60px;
-  border-radius: 5px;
 `;
 
 const ChannelType = styled.div``;

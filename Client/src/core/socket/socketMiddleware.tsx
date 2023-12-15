@@ -12,7 +12,6 @@ import {
   createRoom,
   leaveRoom,
   removeMemberFromRoom,
-  createRoomError,
   removeMembership,
   updateRoom,
   updateRoomSucess,
@@ -31,7 +30,7 @@ import {
   unBanMemberFromRoom,
   kickMember,
   kickMemberFromRoom,
-} from "../../packages/feat-Chat/channels/redux/roomSlice";
+} from "../../packages/feat-Chat/components/redux/roomSlice";
 import { setOpenErrorSnackbar, setServerError } from "../CoreSlice";
 import {
   addRoom,
@@ -39,24 +38,31 @@ import {
   setRoomJoined,
   setRoomLeaved,
 } from "../../packages/feat-Search/redux/searchSlice";
-import { addMessageToConversation, createDirectConversation, removeConversation, sendMessageToUser } from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
-import { setCurrentConversation } from "../../packages/feat-Chat/components/chatSlice";
-import { MuteUserInRoom } from "../../packages/feat-Chat/channels/modals/MuteUserInRoom";
-import { I_ConversationMessages } from "../../packages/feat-Chat/components/types";
-import { blockUser, userBlockedByMe, userBlockedMe } from "../../packages/feat-Chat/components/blockSlice";
-import { useAppSelector } from "../redux";
+import {
+  addMessageToConversation,
+  createDirectConversation,
+  removeConversation,
+  sendMessageToUser,
+} from "../../packages/feat-Chat/components/redux/directMessageSlice";
+import { setCurrentConversation } from "../../packages/feat-Chat/components/redux/chatSlice";
+import {
+  blockUser,
+  unblockUser,
+  userBlockedByMe,
+  userBlockedMe,
+} from "../../packages/feat-Chat/components/redux/blockSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
-  
+
   return (next) => (action) => {
     switch (action.type) {
       case ConnectSocket.type:
         try {
           let serverUrl =
             process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
-            socket = initializeSocket(serverUrl, getState().auth.token);
-            dispatch(SocketConnected());
+          socket = initializeSocket(serverUrl, getState().auth.token);
+          dispatch(SocketConnected());
           socket.onAny((eventName, data) => {
             if (eventName.toLowerCase().includes("error")) {
               dispatch(setServerError(data.message));
@@ -76,14 +82,12 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(removeMembership(data));
           });
           socket.on("userLeftRoom", (data) => {
-            console.log("data (userLeftRoom)===", data);
             dispatch(removeMemberFromRoom(data));
           });
           socket.on("roomHasBeenLeft", (data) => {
             dispatch(setRoomLeaved(data));
           });
           socket.on("roomJoined", (data) => {
-            console.log("data in roomJOined ==", data);
             dispatch(addMembership(data));
           });
           socket.on("userJoinRoom", (data) => {
@@ -92,23 +96,24 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on("newRoomJoined", (data) => {
             dispatch(setRoomJoined(data));
           });
-          socket.on('messageSentToRoom', (data) => {
-            const {currentConversation} = getState().chat;
-            if (currentConversation.roomId 
-              && currentConversation.roomId === data.roomId)
-            {
+          socket.on("messageSentToRoom", (data) => {
+            const { currentConversation } = getState().chat;
+            if (
+              currentConversation.roomId &&
+              currentConversation.roomId === data.roomId
+            ) {
               const conversationMessage = {
                 id: data.id,
                 content: data.content,
                 createdAt: data.createdAt,
                 chatId: data.chatId,
                 sender: data.sender,
-              } 
+              };
               dispatch(addMessageToRoom(conversationMessage));
             }
           });
-          socket.on('conversationCreated', (data) => {
-              dispatch(sendMessageToUser(data));
+          socket.on("conversationCreated", (data) => {
+            dispatch(sendMessageToUser(data));
             // dispatch(
             //   setCurrentConversation({
             //     roomId: null,
@@ -117,31 +122,28 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             //   })
             // );
           });
-          socket.on('messageSentToUser', (data) => {
-            console.log('data coming from (messageSentToUser) =', JSON.stringify(data));
-            const {currentConversation} = getState().chat;
-            if (currentConversation.directConversationId 
-              && currentConversation.directConversationId === data.chatId)
+          socket.on("messageSentToUser", (data) => {
+            const { currentConversation } = getState().chat;
+            if (
+              currentConversation.directConversationId &&
+              currentConversation.directConversationId === data.chatId
+            )
               dispatch(addMessageToConversation(data));
           });
-          socket.on('AdminSettedToRoom', (data) => {
-            console.log('data coming from (AdminSettedToRoom) =', data);
+          socket.on("AdminSettedToRoom", (data) => {
             dispatch(addAdminToRoom(data));
           });
-          socket.on('AdminRemovedFromRoom', (data) => {
-            console.log('data coming from (AdminRemovedFromRoom) =', data);
+          socket.on("AdminRemovedFromRoom", (data) => {
             dispatch(RemoveAdminFromRoom(data));
           });
-          socket.on('userBannedFromRoom', (data) => {
-            console.log('data coming from (userBannedFromRoom) =', data);
+          socket.on("userBannedFromRoom", (data) => {
             dispatch(banMemberFromRoom(data));
           });
-          socket.on('userUnBannedFromRoom', (data) => {
-            console.log('data coming from (userUnBannedFromRoom) =', data);
+          socket.on("userUnBannedFromRoom", (data) => {
             dispatch(unBanMemberFromRoom(data));
           });
-          socket.on('IhaveBeenBanned', (data) => {
-            const {currentConversation} = getState().chat;
+          socket.on("IhaveBeenBanned", (data) => {
+            const { currentConversation } = getState().chat;
             if (currentConversation.roomId == data.roomId)
               dispatch(
                 setCurrentConversation({
@@ -152,10 +154,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
               );
             dispatch(removeMembership(data));
           });
-          socket.on('IhaveBeenUnBanned', (data) => {
-            console.log('i have been unbanned');
+          socket.on("IhaveBeenUnBanned", (data) => {
             dispatch(addMembership(data));
-            const {currentConversation} = getState().chat;
+            const { currentConversation } = getState().chat;
             if (currentConversation.roomId == data.roomId)
               dispatch(
                 setCurrentConversation({
@@ -165,18 +166,15 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                 })
               );
           });
-          socket.on('userMuted', (data) => {
-            console.log('data coming from (userMuted) =', data);
-            dispatch(muteMemberInRoom(data))
+          socket.on("userMuted", (data) => {
+            dispatch(muteMemberInRoom(data));
           });
-          socket.on('userKickedFromRoom', (data) => {
-            console.log('data coming from (userKickedFromRoom) =', data);
-            dispatch(kickMemberFromRoom(data)); 
+          socket.on("userKickedFromRoom", (data) => {
+            dispatch(kickMemberFromRoom(data));
           });
-          socket.on('IhaveBeenKicked', (data) => {
-            const {currentConversation} = getState().chat;
-            if (currentConversation.roomId == data.roomId)
-            {
+          socket.on("IhaveBeenKicked", (data) => {
+            const { currentConversation } = getState().chat;
+            if (currentConversation.roomId == data.roomId) {
               dispatch(
                 setCurrentConversation({
                   roomId: null,
@@ -187,32 +185,34 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             }
             dispatch(removeMembership(data.roomId));
           });
-          socket.on('UserHaveBeenKicked', (data) => {
+          socket.on("UserHaveBeenKicked", (data) => {
             dispatch(setRoomLeaved(data));
           });
-          socket.on('blockedByMe', (data) => {
-            console.log('data coming from (blockedByMe) =', data);
+          socket.on("blockedByMe", (data) => {
             dispatch(userBlockedByMe(data));
             dispatch(removeConversation(data.intraId));
-            const {selectedUser} = getState().chat;
+            const { selectedUser } = getState().chat;
             if (selectedUser.intraId == data.intraId)
-              dispatch(setCurrentConversation({
-                directConversationId: null,
-                roomId: null,
-                type: null
-              }));
+              dispatch(
+                setCurrentConversation({
+                  directConversationId: null,
+                  roomId: null,
+                  type: null,
+                })
+              );
           });
-          socket.on('blockedMe', (data) => {
+          socket.on("blockedMe", (data) => {
             dispatch(userBlockedMe(data));
             dispatch(removeConversation(data.intraId));
-            const {selectedUser} = getState().chat;
-            console.log('selectedUser ==', selectedUser);
+            const { selectedUser } = getState().chat;
             if (selectedUser && selectedUser.intraId == data.intraId)
-              dispatch(setCurrentConversation({
-                directConversationId: null,
-                roomId: null,
-                type: null
-              }));
+              dispatch(
+                setCurrentConversation({
+                  directConversationId: null,
+                  roomId: null,
+                  type: null,
+                })
+              );
           });
         } catch (error) {
           console.log(error);
@@ -237,32 +237,34 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         socket.emit("addUserToRoom", action.payload);
         break;
       case sendMessageToRoom.type:
-        socket.emit('sendMessageToRoom', action.payload);
+        socket.emit("sendMessageToRoom", action.payload);
         break;
       case createDirectConversation.type:
-        socket.emit('sendMessageToUser', action.payload);
+        socket.emit("sendMessageToUser", action.payload);
         break;
       case setAdminRoom.type:
-        socket.emit('setRoomAdmin', action.payload);
+        socket.emit("setRoomAdmin", action.payload);
         break;
       case unSetAdminRoom.type:
-        socket.emit('unSetRoomAdmin', action.payload);
+        socket.emit("unSetRoomAdmin", action.payload);
         break;
       case banMember.type:
-        socket.emit('banMember', action.payload);
-        console.log('action payload ==', action.payload);
+        socket.emit("banMember", action.payload);
         break;
       case unBanMember.type:
-        socket.emit('unBanMember', action.payload);
+        socket.emit("unBanMember", action.payload);
         break;
       case muteMember.type:
-        socket.emit('muteMember', action.payload);
+        socket.emit("muteMember", action.payload);
         break;
       case kickMember.type:
-        socket.emit('kickMember', action.payload);
+        socket.emit("kickMember", action.payload);
         break;
       case blockUser.type:
-        socket.emit('blockUser', action.payload);
+        socket.emit("blockUser", action.payload);
+        break;
+      case unblockUser.type:
+        socket.emit("unBlockUser", action.payload);
         break;
       default:
         break;
@@ -273,42 +275,3 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
 };
 
 export default SocketMiddleware;
-
-// export const listenerMiddleware = createListenerMiddleware();
-
-// Add one or more listener entries that look for specific actions.
-// They may contain any sync or async logic, similar to thunks.
-// listenerMiddleware.startListening({
-//   actionCreator: ConnectSocket,
-//   effect: async (action, listenerApi) => {
-//     // Run whatever additional side-effect-y logic you want here
-//     console.log("startConnecting Middleware");
-
-//     // Can cancel other running instances
-//     listenerApi.cancelActiveListeners();
-
-//     // Run async logic
-
-//     // Pause until action dispatched or state changed
-//     if (await listenerApi.condition(matchSomeAction)) {
-//       // Use the listener API methods to dispatch, get state,
-//       // unsubscribe the listener, start child tasks, and more
-//       listenerApi.dispatch(todoAdded('Buy pet food'))
-
-//       // Spawn "child tasks" that can do more work and return results
-//       const task = listenerApi.fork(async (forkApi) => {
-//         // Can pause execution
-//         await forkApi.delay(5)
-//         // Complete the child by returning a value
-//         return 42
-//       })
-
-//       const result = await task.result
-//       // Unwrap the child result in the listener
-//       if (result.status === 'ok') {
-//         // Logs the `42` result value that was returned
-//         console.log('Child succeeded: ', result.value)
-//       }
-//     }
-//   },
-// });

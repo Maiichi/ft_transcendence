@@ -1,5 +1,4 @@
 import {
-  Test,
   Home,
   Game,
   AccountSettings,
@@ -39,16 +38,7 @@ export const routes: Route[] = [
     errorElement: <NotFoundError />,
     requireAuth: true,
   },
-  {
-    path: "/test",
-    element: (
-      <Layout>
-        <Test />
-      </Layout>
-    ),
-    errorElement: <NotFoundError />,
-    requireAuth: true,
-  },
+
   {
     path: "/",
     element: (
