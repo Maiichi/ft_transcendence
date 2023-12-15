@@ -6,7 +6,7 @@
       "time": "xxxx-xx-xx",
       "gain": "23",
       "nogain": "10",
-      "result": -1
+      "result": true
     },
     "2": {
       "name": "ishaq2",
@@ -22,7 +22,7 @@
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99",
-      "result": -1
+      "result": false
     },
     "4": {
       "name": "isha3",
@@ -30,7 +30,7 @@
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99",
-      "result": -1
+      "result": false
     },
     "5": {
       "name": "isha3",
@@ -38,7 +38,7 @@
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99",
-      "result": -1
+      "result": false
     },
     "6": {
       "name": "women",
@@ -46,7 +46,7 @@
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99",
-      "result": -1
+      "result": false
     },
     "7": {
       "name": "isha3",
@@ -54,7 +54,7 @@
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99",
-      "result": -1
+      "result": false
     },
     "8": {
       "name": "isha3",
@@ -62,7 +62,7 @@
       "time": "xxxx-xx-xx",
       "gain": "99",
       "nogain": "99",
-      "result": -1
+      "result": false
     }
   }
 }

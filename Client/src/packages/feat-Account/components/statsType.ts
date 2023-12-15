@@ -59,7 +59,10 @@ export interface ProfileState {
   isLoading: boolean;
   gamer: gamerType;
   achievement: AchievementType[];
-  MatchHistory: MatchHistoryType[];
+  matchs: {
+    matchsHistory: GameslogType;
+    isLoading: boolean;
+  };
   lead: {
     leaderboard: leaderboardType;
     isLoading: boolean;

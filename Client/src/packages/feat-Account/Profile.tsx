@@ -51,7 +51,7 @@ const Profile = () => {
           <BoardCard />
           <MatchsHistoryCard
             uid={uid}
-            matchs={profileStates.MatchHistory}
+            matchs={profileStates.matchs.matchsHistory}
             userName={user.userName}
           />
           <AchievemetsCard
