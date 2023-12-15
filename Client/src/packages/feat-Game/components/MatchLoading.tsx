@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { GameState, GameStepComponentProps } from "../utils/types";
-import { useAppDispatch } from "../../../core";
+import { useAppDispatch, useAppSelector } from "../../../core";
 import { setGameStep } from "../redux/GameSlice";
 import { STEPS } from "../utils/constants";
 import { useEffect } from "react";
@@ -120,20 +120,17 @@ export const MatchLoading: React.FC<GameStepComponentProps> = ({
     socket,
     onReset,
 }) => {
-    const dispatch = useAppDispatch();
+    const countdown = useAppSelector((state) => state.gameState.countdown);
 
-    useEffect(() => {
-        if (socket) {
-            socket.on("frame", (data) => {
-                console.log("frame>>>>", data);
-                dispatch(setGameStep(STEPS.GAME_START));
-            });
-        }
-    }, [socket]);
+    console.log("red", countdown);
 
     return (
         <ContentContainer>
-            <Title>Loading your match...</Title>
+            <Title>
+                {countdown !== null
+                    ? `Game starts in ${countdown}`
+                    : "Loading your match..."}
+            </Title>
             <AvatarContainer>
                 <StyledAvatar src="https://via.placeholder.com/50x50" />
                 <XIcon

@@ -177,20 +177,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   private _startNewGame(socketsArr: Socket[], payload: any): void {
     console.log('----------------- start Game -----------------');
-    socketsArr.forEach((socket) => {
-      // console.log('socketId === ', socket.id);
-      this.gameService.updateUserStatusInGame(
-        this.getUserIdFromSocketId(socket.id), true);
-    });
-    this.games.push(
-      new Game(
-        new Player(socketsArr[0], false),
-        new Player(socketsArr[1], true),
-        this._removeOverGame.bind(this),
-        payload === 'triple',
-      ),
-    );
-    // console.log("game :" ,this.games.at(0));
+    let countdown = 5; // 5 seconds countdown
+
+      let interval = setInterval(() => {
+        socketsArr.forEach((socket) => {
+          console.log(socket.id)
+          this.server
+          .to(socket.id)
+          .emit('countdown', countdown);
+        });
+        
+        countdown--;
+
+        if (countdown < 0) {
+          clearInterval(interval);
+          socketsArr.forEach((socket) => {
+            // console.log('socketId === ', socket.id);
+            this.gameService.updateUserStatusInGame(
+              this.getUserIdFromSocketId(socket.id), true);
+          });
+          this.games.push(
+            new Game(
+              new Player(socketsArr[0], false),
+              new Player(socketsArr[1], true),
+              this._removeOverGame.bind(this),
+              payload === 'triple',
+            ),
+          );
+          // console.log("game :" ,this.games.at(0));
+        }
+      }, 1000);
+    
   }
 
   @SubscribeMessage('join_queue_match')

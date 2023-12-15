@@ -15,6 +15,7 @@ export interface GameState {
 
     currentStep: string;
     gameMode: string;
+    countdown: number | null;
 }
 const initialState: GameState = {
     inviterId: null,
@@ -30,6 +31,7 @@ const initialState: GameState = {
 
     currentStep: STEPS.SELECT_MAP,
     gameMode: "dual",
+    countdown: null,
 };
 
 export const GameSlice = createSlice({
@@ -91,6 +93,9 @@ export const GameSlice = createSlice({
             state.gameMode = "dual";
             state.currentStep = STEPS.SELECT_MAP;
         },
+        setCountdown: (state, action: PayloadAction<any>) => {
+            state.countdown = action.payload;
+        },
     },
 });
 
@@ -113,6 +118,7 @@ export const {
     setGameStep,
     resetGame,
     setGameMode,
+    setCountdown,
 } = GameSlice.actions;
 
 export default GameSlice.reducer;

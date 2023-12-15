@@ -6,6 +6,7 @@ import { MapSelection } from "./components/MapSelection";
 import {
     inviteUserToGameFromChat,
     resetGame,
+    setCountdown,
     setGameStep,
     setInviteAccepted,
 } from "./redux/GameSlice";
@@ -63,6 +64,11 @@ export const GameSteps: React.FC = () => {
             socket.on(event, handler);
         }
     };
+
+    onEvent("countdown", (count) => {
+        // Update state with countdown value
+        dispatch(setCountdown(count));
+    });
 
     onEvent("state", (newFrame: GameState) => {
         if (newFrame.state === "WAITING")
