@@ -67,6 +67,8 @@ export const GameSteps: React.FC = () => {
     onEvent("state", (newFrame: GameState) => {
         if (newFrame.state === "WAITING")
             dispatch(setGameStep(STEPS.WAITING_QUEUE));
+        else if (newFrame.state === "PLAYING")
+            dispatch(setGameStep(STEPS.GAME_START));
     });
 
     // invite Game modal
