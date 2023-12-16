@@ -81,6 +81,7 @@ function Row(props: { match: MatchHistoryType }) {
   const [open, setOpen] = useState(false);
   const isMobile = useSize().isMobile;
 
+  // TODO: you and the opponets , winer on the rigth , or match owner or player start the game 
   function GridContainerPlayer({ you = false }) {
     return (
       <Grid
@@ -100,7 +101,7 @@ function Row(props: { match: MatchHistoryType }) {
       </Grid>
     );
   }
-  function JsxResult() {
+  function JsxAlertResult() {
     const resultmsg = match.result
       ? match.result === -1
         ? `A valiant effort, but ${match.name} claimed victory over you on `
@@ -147,7 +148,7 @@ function Row(props: { match: MatchHistoryType }) {
         <TableCell sx={{ p: 0 }} colSpan={6}>
           <Collapse in={open} unmountOnExit sx={{}}>
             <Alert severity={getResultcolor()} color={getResultcolor()}>
-              <JsxResult />
+              <JsxAlertResult />
             </Alert>
           </Collapse>
         </TableCell>
