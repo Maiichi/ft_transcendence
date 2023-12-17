@@ -27,6 +27,7 @@ import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
 import { setToken } from "../../../../packages/feat-Auth/components/authSlice";
 import { useNavigate } from "react-router-dom";
 import { disconnectSocket } from "../../../socket/socketSlice";
+import { SwitchMode } from "../../../theme";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 interface MenuTabs {
@@ -268,6 +269,7 @@ export const Header = () => {
           </>
         )}
         <Right>
+          <SwitchMode />
           {RightMenu.map((item: MenuTabs) => item.render)}
           {isAuthenticated && (
             <LogoutIcon

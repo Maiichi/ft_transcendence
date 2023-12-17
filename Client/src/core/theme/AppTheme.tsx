@@ -1,5 +1,5 @@
-import { ReactNode, useEffect, useState } from "react";
-import { PaletteMode, Theme, ThemeProvider } from "@mui/material";
+import { ReactNode, useEffect } from "react";
+import { CssBaseline, Theme, ThemeProvider, createTheme } from "@mui/material";
 import { useAppSelector } from "../redux";
 
 interface App {
@@ -7,11 +7,24 @@ interface App {
 }
 
 const AppThemeProvider = (props: App) => {
-  const theme: Theme = useAppSelector((state) => state.theme);
+  const themeState: Theme = useAppSelector((state) => state.theme);
 
-  useEffect(() => {}, [theme]);
+  useEffect(() => {}, [themeState]);
 
-  return <ThemeProvider theme={theme}>{props.children}</ThemeProvider>;
+  return (
+    <ThemeProvider theme={themeState}>
+      {/* TODO: every thing changed on the theme store must be here like palette
+      mode */}
+      <ThemeProvider
+        theme={(theme) =>
+          createTheme({ ...theme, palette: { mode: themeState.palette.mode } })
+        }
+      >
+        <CssBaseline />
+        {props.children}
+      </ThemeProvider>
+    </ThemeProvider>
+  );
 };
 
 export default AppThemeProvider;
