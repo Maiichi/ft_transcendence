@@ -8,6 +8,7 @@ const appTheme = createSlice({
   reducers: {
     swapMode: (state) => {
       state.palette.mode = state.palette.mode != "dark" ? "dark" : "light";
+      localStorage.setItem("themeMode", state.palette.mode);
     },
   },
 });

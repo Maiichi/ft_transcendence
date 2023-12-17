@@ -9,9 +9,11 @@ import {
 } from "@mui/material";
 import { purple, teal } from "@mui/material/colors";
 import { swapMode } from "./themeSlice";
-import { useAppDispatch } from "../redux";
+import { useAppDispatch, useAppSelector } from "../redux";
 
-const defaultMode: PaletteMode = "light";
+const defaultMode: PaletteMode = localStorage.getItem("themeMode") as
+  | PaletteMode
+  | "dark";
 
 const initialTheme: Theme = responsiveFontSizes(
   createTheme({
@@ -73,6 +75,7 @@ const LabelSwitchLD = styled(Switch)(({ theme }) => ({
 const SwitchMode = () => {
   // const theme = useTheme();
   const dispatch = useAppDispatch();
+  const isdark = useAppSelector((state) => state.theme.palette.mode === "dark");
 
   return (
     <FormControlLabel
@@ -81,7 +84,7 @@ const SwitchMode = () => {
         <LabelSwitchLD
           // theme={theme}
           sx={{ m: 0 }}
-          
+          defaultChecked={isdark}
         />
       }
       onChange={() => dispatch(swapMode())}

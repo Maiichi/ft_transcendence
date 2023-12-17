@@ -1,6 +1,13 @@
 import { ReactNode, useEffect } from "react";
-import { CssBaseline, Theme, ThemeProvider, createTheme } from "@mui/material";
-import { useAppSelector } from "../redux";
+import {
+  CssBaseline,
+  PaletteMode,
+  Theme,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../redux";
+import { swapMode } from "./themeSlice";
 
 interface App {
   children: ReactNode;
@@ -8,8 +15,11 @@ interface App {
 
 const AppThemeProvider = (props: App) => {
   const themeState: Theme = useAppSelector((state) => state.theme);
+  const dispatch = useAppDispatch();
 
-  useEffect(() => {}, [themeState]);
+  useEffect(() => {
+    !themeState && dispatch(swapMode());
+  }, [themeState]);
 
   return (
     <ThemeProvider theme={themeState}>
