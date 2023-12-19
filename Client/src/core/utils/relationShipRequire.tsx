@@ -36,7 +36,11 @@ const Relationship: (props: Foo) => JSX.Element = ({
   useEffect(() => {
     relations.some(
       (relation) =>
-        (relation === "friend" && dispatch(getUserFriends())) ||
+        ((relation === "friend" || relation === "notfriend") &&
+          dispatch(getUserFriends())) ||
+        (relation === "requested" && null) ||
+        (relation === "requester" && null) ||
+        (relation === "blockedMe" && null) ||
         (relation === "blocked" && null)
     );
   }, []);
@@ -48,7 +52,12 @@ const Relationship: (props: Foo) => JSX.Element = ({
           (relation === "self" && isOwner) ||
           (relation === "friend" &&
             !!friends?.find((user) => user.intraId === opId)) ||
-          (relation === "blocked" && !!null)
+          (relation === "notfriend" &&
+            !!friends?.find((user) => user.intraId !== opId)) ||
+          (relation === "requested" && false) ||
+          (relation === "requester" && false) ||
+          (relation === "blockedMe" && false) ||
+          (relation === "blocked" && false)
       )
     );
   }, [friends]);
