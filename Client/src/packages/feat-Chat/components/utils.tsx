@@ -1,4 +1,4 @@
-import { I_Room, I_User, Action } from "./types";
+import { I_Room, I_User, Action, Members } from "./types";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {
   DoDisturbOffOutlined,
@@ -54,7 +54,6 @@ export const isOwner = (membership: I_Room, userId: number) => {
 };
 
 export const isAdmin = (memberships: I_Room, userId: number) => {
-
   const member = memberships.members.find(
     (member) => member.user.intraId === userId
   );
@@ -267,4 +266,8 @@ export const getDataForModal = (
     default:
       return null;
   }
+};
+export const isMember = (firstname: string, members: Members[]) => {
+  let x = members.find((member) => member.user.firstName == firstname);
+  return x ? true : false;
 };

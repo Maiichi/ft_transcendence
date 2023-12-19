@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useAuthentication } from "./packages/feat-Auth/authUtils";
 import { ConnectSocket } from "./packages";
 import { SnackBarComponent } from "./core/utils/components/SnackBar";
-import { setOpenErrorSnackbar } from "./core/CoreSlice";
+import { setOpenSnackbar } from "./core/CoreSlice";
 const SocketInit = (props: any) => {
   const socket = useAppSelector((state) => state.socket);
   const isAuthenticated = useAuthentication();
@@ -21,21 +21,20 @@ const SocketInit = (props: any) => {
   return props.children;
 };
 const HandleError = () => {
-  const error = useAppSelector((state) => state.core.serverError);
+  const serverMessage = useAppSelector((state) => state.core.serverMessage);
+  const severity = useAppSelector((state) => state.core.severity);
   const dispatch = useAppDispatch();
-  const openErrorSnackbar = useAppSelector(
-    (state) => state.core.openErrorSnackbar
-  );
+  const openSnackbar = useAppSelector((state) => state.core.openSnackbar);
   const handleClose = () => {
-    dispatch(setOpenErrorSnackbar(false));
+    dispatch(setOpenSnackbar(false));
   };
   return (
     <>
-      {error && (
+      {serverMessage && (
         <SnackBarComponent
-          msgError={error}
-          open={openErrorSnackbar}
-          severity="error"
+          msgError={serverMessage}
+          open={openSnackbar}
+          severity={severity}
           handleClose={handleClose}
         />
       )}
