@@ -44,7 +44,6 @@ class Game {
     this._player1 = player1;
     this._player2 = player2;
     this._ball = new Ball();
-    // console.log('ball ==', this._ball);
     this._interval = setInterval(() => this.play(), Constants.FPS);
     this._endCallback = endCallback;
     this._hasMiddlePaddle = hasMiddlePaddle;
@@ -200,6 +199,16 @@ class Game {
 
   public getSockets(): Socket[] {
     return [this._player1.getSocket(), this._player2.getSocket()];
+  }
+
+  public getGameType() : string {
+    return this._hasMiddlePaddle ? "triple" : "dual";
+  }
+
+  public getPlayer() {
+    // console.log('player 1 ==', this._player1);
+    // console.log('player 2 ==', this._player2);
+    return [this._player1, this._player2];
   }
 
   public handlePlayerDisconnect(socket: Socket): void {

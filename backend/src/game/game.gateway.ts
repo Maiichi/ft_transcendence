@@ -157,19 +157,50 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  private _removeOverGame(game: Game): void {
+  async _storeGame(game : Game)
+  {
+    console.log("store Game");
+    let winnerSocket;
+    const players = game.getPlayer();
+    let playersIds: number[] = [];
+    // console.log(' plyer 0 == ', players[0]);
+    // console.log(' plyer 1 == ', players[2]);
+    // console.log('type of ==', typeof(players[0].getScore()));
+    playersIds.push(this.getUserIdFromSocketId(players[0].getSocket().id));
+    playersIds.push(this.getUserIdFromSocketId(players[1].getSocket().id));
+    if (players[1].getScore() > players[0].getScore())
+      winnerSocket = players[1].getSocket();
+    else if (players[1].getScore() < players[0].getScore())
+      winnerSocket = players[0].getSocket();
+    const winnerId = this.getUserIdFromSocketId(winnerSocket.id);
+    // Call the saveGame method in your GameService
+    await this.gameService.saveGame({
+      gameMode: game.getGameType(),
+      score1: players[0].getScore(),
+      score2: players[1].getScore(),
+      winnerId: winnerId,
+      players: playersIds,
+    });
+  }
+
+  private async _removeOverGame(game: Game) {
     console.log('remove Over game');
     const sockets = game.getSockets();
-    // console.log('sockets == ', sockets[0].id);
+
+    // console.log('winner ===== ', this._getWinnerId(game));
+    // this._getWinnerId(game);
+    
     sockets.forEach((socket) => {
       // console.log('(gameOver) socketId === ', socket.id);
       if (this.getUserIdFromSocketId(socket.id))
         this.gameService.updateUserStatusInGame(
-          this.getUserIdFromSocketId(socket.id), false);
+          this.getUserIdFromSocketId(socket.id), 
+          false);
     });
     this.unique.delete(sockets[0]);
     this.unique.delete(sockets[1]);
     this.games.splice(this.games.indexOf(game), 1);
+    await this._storeGame(game);
     console.log('removeOverGame : ' + game.getId());
     // this.logger.log(`number of current games: ${this.games.length}`);
     console.log(`number of current games: ${this.games.length}`);

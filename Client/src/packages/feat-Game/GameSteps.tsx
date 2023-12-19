@@ -104,6 +104,7 @@ export const GameSteps: React.FC = () => {
             console.log(" == socket == ", socket);
             // socket?.emit('join_queue_match_invitaion', "dual");
             emitEvent("join_queue_match_invitaion", "dual");
+            dispatch(setGameStep(STEPS.GAME_START));
             dispatch(inviteUserToGameFromChat(false));
         }
     }, [isChatInvite, socketReady, isOpponentAcceptInvite]);
