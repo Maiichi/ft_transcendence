@@ -1,5 +1,6 @@
 import { Box, Modal } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import styled from "styled-components";
 export interface Props {
   open: boolean;
   ChildComponent: JSX.Element;
@@ -17,31 +18,32 @@ export const ModalComponent = (props: Props) => {
         if (closeType === "auto") {
           handleClose();
         }
-        // You can add additional logic here based on the 'reason' parameter if needed.
       }}
       aria-labelledby="modal-search-invite-users-to-room"
       aria-describedby="modal-description"
     >
-      <Box sx={style}>
+      <StyledBox>
         {closeType && closeType == "click" && (
           <CancelIcon onClick={handleClose} />
         )}
         {ChildComponent}
-      </Box>
+      </StyledBox>
     </Modal>
   );
 };
 
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 300,
-  bgcolor: "background.paper",
-  border: "1px solid #000",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: "20px",
-  overflow: "hidden",
-};
+const StyledBox = styled(Box)`
+  position: absolute;
+  width: 350px;
+  top: 20%;
+  left: 40%;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 10px;
+  @media (max-width: 426px) {
+    width: 80%;
+    left: 6%;
+  }
+`;

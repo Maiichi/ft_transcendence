@@ -10,13 +10,11 @@ export const JoinChannelModal = (props: {
 }) => {
   const { handleClose, roomId } = props;
 
-  console.log("JoinChannelModal");
   const dispatch = useAppDispatch();
   const closeModal = () => {
     handleClose();
   };
   const handleJoinPrivateChannel = (values: any) => {
-    console.log("handleJoinPrivateChannel");
     const roomInfo = {
       id: roomId,
       password: values.password,
@@ -41,40 +39,36 @@ export const JoinChannelModal = (props: {
           onClick={handleClose}
         />
       </ModalHeader>
-      <ModalBody>
-        <Form
-          onSubmit={handleJoinPrivateChannel}
-          validate={validate}
-          render={({ handleSubmit, form }) => (
-            <form onSubmit={handleSubmit}>
-              <Field name="password">
-                {({ input, meta }) => {
-                  return (
-                    <div>
-                      <label>Password</label>
-                      <input
-                        {...input}
-                        type="password"
-                        placeholder="Password"
-                      />
-                      {meta.touched && meta.error && <span>{meta.error}</span>}
-                    </div>
-                  );
-                }}
-              </Field>
+
+      <Form
+        onSubmit={handleJoinPrivateChannel}
+        validate={validate}
+        render={({ handleSubmit, form }) => (
+          <form onSubmit={handleSubmit}>
+            <Field name="password">
+              {({ input, meta }) => {
+                return (
+                  <ModalBody>
+                    Password
+                    <FieldInput
+                      {...input}
+                      type="password"
+                      placeholder="Password"
+                    />
+                    {meta.touched && meta.error && (
+                      <ErrorMessage>{meta.error}</ErrorMessage>
+                    )}
+                  </ModalBody>
+                );
+              }}
+            </Field>
+            <ModalFooter>
               <CancelButton onClick={closeModal}>Cancel</CancelButton>
-              <CreateButton
-                onClick={() => {
-                  console.log("clicked");
-                }}
-                type="submit"
-              >
-                Submit
-              </CreateButton>
-            </form>
-          )}
-        />
-      </ModalBody>
+              <CreateButton type="submit">Submit</CreateButton>
+            </ModalFooter>
+          </form>
+        )}
+      />
     </div>
   );
 };
@@ -85,7 +79,11 @@ const ModalHeader = styled.div`
   justify-content: space-between;
 `;
 
-const ModalBody = styled.div``;
+const ModalBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+`;
 
 const CreateButton = styled.button`
   height: 40px;
@@ -107,8 +105,16 @@ const CancelButton = styled.button`
 const FieldInput = styled.input`
   height: 100%;
   padding: 10px;
-  border: 1px solid #d5d0d0;
+  border: 1px solid rgb(213, 208, 208);
   border-radius: 5px;
   margin-top: 10px;
-  background-color: #f9f9f9;
+  background-color: rgb(249, 249, 249);
+`;
+const ModalFooter = styled.div`
+  margin: 25px 0px 0px 0px;
+  display: flex;
+  justify-content: space-evenly;
+`;
+const ErrorMessage = styled.div`
+  color: red;
 `;

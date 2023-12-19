@@ -4,10 +4,10 @@ import { Close } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../../core";
 import { I_User } from "../../feat-Chat/components/types";
-import { getUserFriends } from "../../feat-Chat/channels/redux/friendThunk";
 import { Socket } from "socket.io-client";
 import { inviteUserToGame } from "../redux/GameSlice";
 import { SocketInit } from "../../../App";
+import { getUserFriends } from "../../feat-Chat/components/redux/friendThunk";
 
 export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const {onUserSelect} = props;

@@ -7,14 +7,15 @@ import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
 import coreSlice from "../CoreSlice";
 import SocketMiddleware from "../socket/socketMiddleware";
 import socketSlice from "../socket/socketSlice";
-import roomSlice from "../../packages/feat-Chat/channels/redux/roomSlice";
-import DirectMessageSlice from "../../packages/feat-Chat/directMessages/redux/directMessageSlice";
+import roomSlice from "../../packages/feat-Chat/components/redux/roomSlice";
+import DirectMessageSlice from "../../packages/feat-Chat/components/redux/directMessageSlice";
 import searchSlice from "../../packages/feat-Search/redux/searchSlice";
-import chatSlice from "../../packages/feat-Chat/components/chatSlice";
-import friendSlice from "../../packages/feat-Chat/channels/redux/friendSlice";
+import chatSlice from "../../packages/feat-Chat/components/redux/chatSlice";
+import friendSlice from "../../packages/feat-Chat/components/redux/friendSlice";
 import ProfileSlice from "../../packages/feat-Account/components/ProfileSlice";
-import blockSlice from "../../packages/feat-Chat/components/blockSlice";
+// import blockSlice from "../../packages/feat-Chat/components/blockSlice";
 import GameSlice from "../../packages/feat-Game/redux/GameSlice";
+import blockSlice from "../../packages/feat-Chat/components/redux/blockSlice";
 
 // ...
 
@@ -29,7 +30,7 @@ const rootReducer = combineReducers({
   gameState: GameSlice,
   friends: friendSlice,
   profile: ProfileSlice,
-  block: blockSlice
+  block: blockSlice,
 });
 
 const persistConfig = {

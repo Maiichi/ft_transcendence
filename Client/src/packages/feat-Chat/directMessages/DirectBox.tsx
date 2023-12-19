@@ -1,18 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../core";
-import { I_DirectConversation, I_Message } from "../components/types";
-import { getDirectConversationMessages } from "./redux/directMessageThunk";
+import { I_Message } from "../components/types";
+import { getDirectConversationMessages } from "../components/redux/directMessageThunk";
 import { MessageBox } from "../components/MessageBox";
 import { DirectBoxHeader } from "./DirectBoxHeader";
 import styled from "styled-components";
 import { isConnectedUser } from "../../../core/utils/helperFunctions";
-import {
-  createDirectConversation,
-  sendMessageToUser,
-} from "./redux/directMessageSlice";
+import { createDirectConversation } from "../components/redux/directMessageSlice";
 
 export const DirectBox = () => {
-  // const { directConversation } = props;
   const dispatch = useAppDispatch();
   const direct = useAppSelector((state) => state.chat.currentConversation);
   const user = useAppSelector((state) => state.auth.user);
@@ -27,19 +23,28 @@ export const DirectBox = () => {
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-    const messageData = {
-      receiverId: conversations[index].receiver.intraId,
-      content: messageContent,
-    };
-    dispatch(createDirectConversation(messageData));
-    setMessageContent("");
+    if (messageContent) {
+      const messageData = {
+        receiverId: conversations[index].receiver.intraId,
+        content: messageContent,
+      };
+      dispatch(createDirectConversation(messageData));
+      setMessageContent("");
+    }
   };
 
   useEffect(() => {
     // check if directConversation.id is not exist in the state
     if (direct)
       dispatch(getDirectConversationMessages(direct.directConversationId));
-  }, [direct.directConversationId]);
+  }, []);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [conversationMessages]);
   return (
     <>
       <ChatBox>
@@ -47,8 +52,8 @@ export const DirectBox = () => {
           <DirectBoxHeader directConversation={conversations[index]} />
         </Header>
         <Wrapper>
-          <ChatBoxTop>
-            {conversationMessages.map((item: I_Message) => (
+          <ChatBoxTop ref={chatContainerRef}>
+            {conversationMessages?.map((item: I_Message) => (
               <MessageBox
                 own={isConnectedUser(item.sender.intraId, user.intraId)}
                 data={item}
@@ -66,7 +71,6 @@ export const DirectBox = () => {
           <ChatSubmitButtom>Send</ChatSubmitButtom>
         </ChatBoxBottom>
       </ChatBox>
-      {/* <RightSide /> */}
     </>
   );
 };
@@ -128,10 +132,3 @@ const ChatSubmitButtom = styled.button`
   border-radius: 5px;
   margin-right: 10px;
 `;
-
-// const RightSide = styled.div`
-//   flex: 2;
-//   height: 100%;
-//   /* border-radius: 20px; */
-//   border-left: 1px solid #d7d7d7;
-// `;
