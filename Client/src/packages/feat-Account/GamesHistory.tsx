@@ -79,23 +79,23 @@ const GamesHistory = () => {
 function Row(props: { match: MatchHistoryType }) {
   const { match } = props;
   const [open, setOpen] = useState(false);
-  const isMobile = useSize().isMobile;
+  const { isMobile, isTab } = useSize();
 
-  // TODO: you and the opponets , winer on the rigth , or match owner or player start the game 
-  function GridContainerPlayer({ you = false }) {
+  // TODO: you and the opponets , winer on the rigth , or match owner or player start the game
+  function GridContainerPlayer({ left = false }) {
     return (
       <Grid
-        container={!isMobile}
+        container={!isTab}
         spacing={3}
         sx={{ gap: "10%" }}
-        direction={you ? "row" : "row-reverse"}
+        direction={left ? "row" : "row-reverse"}
       >
-        <Grid item xs={3} md={2}>
+        <Grid item xs={3}>
           <Avatar alt="pop" src={match.pic} />
         </Grid>
-        <Grid item xs={3} md={4}>
-          <Typography textAlign={"center"}>
-            {you ? "yoou" : match.name.slice(0.8)}
+        <Grid item xs={3}>
+          <Typography textAlign={isTab ? "start" : "center"}>
+            {left ? "yoou" : match.name.slice(0.8)}
           </Typography>
         </Grid>
       </Grid>
@@ -107,7 +107,6 @@ function Row(props: { match: MatchHistoryType }) {
         ? `A valiant effort, but ${match.name} claimed victory over you on `
         : `Victory is yours! You conquered ${match.name} on `
       : `Neither victory nor defeat! The match with ${match.name} on `; // resulted in a tie`}
-
     return (
       <>
         {resultmsg} <Typography variant="h6">{match.time}</Typography>{" "}
@@ -126,7 +125,7 @@ function Row(props: { match: MatchHistoryType }) {
         sx={{ "& > *": { borderBottom: "unset" }, overflow: "scroll" }}
       >
         <TableCell component="th" scope="row">
-          <GridContainerPlayer you />
+          <GridContainerPlayer left />
         </TableCell>
         <TableCell align="right" padding={"none"}>
           {match.gain}
