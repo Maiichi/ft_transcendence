@@ -1,33 +1,71 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux";
-// import { getUserFriends } from "../../packages/feat-Chat/channels/redux/friendThunk";
-// import { getFriends } from "../../packages/feat-Chat/channels/redux/friendSlice";
+import { getUserFriends } from "../../packages/feat-Chat/components/redux/friendThunk";
+import { Loading } from "./components";
+import { Button } from "@mui/material";
+import { userType } from "../../packages/feat-Account/components";
 
-type RelationShip =  'friend' | 'blocked' | 'notfriend' | 'requested'| 'requester' | 'self'
+type RelationShip =
+  | "notfriend"
+  | "friend"
+  | "blocked"
+  | "blockedMe"
+  | "requested"
+  | "requester"
+  | "self";
 
-interface UsersId {
-  elseId: number;
+interface Foo {
+  opId: number;
+  relations: Array<RelationShip>;
   children: JSX.Element;
-  relation?: RelationShip;
-  user?: number;
+  notallow?: JSX.Element;
+  isOwner?: boolean;
 }
-// TODO: RelationShip 
-const Relationship: (props: UsersId) => JSX.Element = ({
-  elseId,
-  relation,
+// TODO: RelationShip
+const Relationship: (props: Foo) => JSX.Element = ({
+  opId,
+  relations,
   children,
-  user,
-}: UsersId) => {
+  notallow = <h1> not allowd </h1>,
+  isOwner = false,
+}: Foo) => {
   const dispatch = useAppDispatch();
-//   const oId = useAppSelector((state) => state.auth.user.intraId);
-//   const friends = useAppSelector((state) => state.friends);
+  const [matchedrelation, setMR] = useState<boolean | undefined>(undefined);
+  // const [Go, letGo] = useState(false);
+  const {
+    friends,
+    isLoading,
+  }: { friends: Array<userType>; isLoading: boolean } = useAppSelector(
+    (state) => state.friends
+  );
 
-//   useEffect(() => {
-//     dispatch(getUserFriends());
-//   }, []);
+  useEffect(() => {
+    relations.some(
+      (relation) =>
+        (relation === "friend" && dispatch(getUserFriends())) ||
+        (relation === "blocked" && null)
+    );
+  }, []);
+  useEffect(() => {
+    if (!friends) return;
+    setMR(
+      relations.some(
+        (relation) =>
+          (relation === "friend" &&
+            !!friends?.find((user) => user.intraId === opId)) ||
+          (relation === "blocked" && !!null)
+      )
+    );
+  }, [friends]);
 
-//   console.log(friends);
-  return children;
+  if (isOwner) return children;
+  return isLoading || !friends || matchedrelation === undefined ? (
+    <Loading />
+  ) : matchedrelation ? (
+    children
+  ) : (
+    notallow
+  );
 };
 
 //   export const isFriend = (props: UsersId) =>
