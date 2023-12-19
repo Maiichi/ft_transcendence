@@ -119,7 +119,11 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         return <KicKFromRoomModal data={data} handleClose={handleClose} />;
       case "blockFriend":
         return (
-          <BlockUserModal intraId={data.intraId} handleClose={handleClose} />
+          <BlockUserModal
+            intraId={selectedUser.intraId}
+            userName={selectedUser.firstName + " " + selectedUser.lastName}
+            handleClose={handleClose}
+          />
         );
       case "message":
         return (

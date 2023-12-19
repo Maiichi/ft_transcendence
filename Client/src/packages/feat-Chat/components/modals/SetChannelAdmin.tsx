@@ -17,9 +17,7 @@ export const SetChannelAdmin = (props: {
   return (
     <>
       <ModalConfirm
-        title={
-          " Do you want to set {`user x`} as admin for this {`channel x`} ?"
-        }
+        title={`Do you want to set ${data.userName} as admin for  #${data.roomName} ?`}
         handleClose={handleClose}
         handleClick={handleSetChannelAdmin}
       />

@@ -17,7 +17,7 @@ export const UnSetChannelAdmin = (props: {
   return (
     <>
       <ModalConfirm
-        title={"Do you want to remove the admin previleges for {`user x`} ?"}
+        title={`Do you want to remove the admin previleges for ${data.userName} in #${data.roomName}?`}
         handleClose={handleClose}
         handleClick={handleUnSetChannelAdmin}
       />

@@ -5,56 +5,64 @@
       "pic": "Pic.png",
       "time": "xxxx-xx-xx",
       "gain": "23",
-      "nogain": "10"
+      "nogain": "10",
+      "result": true
     },
     "2": {
       "name": "ishaq2",
       "pic": "thimoj.jpeg",
       "time": "xxxx-xx-xx",
       "gain": "0",
-      "nogain": "56"
+      "nogain": "56",
+      "result": -1
     },
     "3": {
       "name": "isha3",
       "pic": "Logo2.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
-      "nogain": "99"
+      "nogain": "99",
+      "result": false
     },
     "4": {
       "name": "isha3",
       "pic": "Picture.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
-      "nogain": "99"
+      "nogain": "99",
+      "result": false
     },
     "5": {
       "name": "isha3",
       "pic": "Pic.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
-      "nogain": "99"
+      "nogain": "99",
+      "result": false
     },
     "6": {
       "name": "women",
       "pic": "Women.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
-      "nogain": "99"
+      "nogain": "99",
+      "result": false
     },
     "7": {
       "name": "isha3",
       "pic": "Logo4.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
-      "nogain": "99"
+      "nogain": "99",
+      "result": false
     },
     "8": {
       "name": "isha3",
       "pic": "Logo4.png",
       "time": "xxxx-xx-xx",
       "gain": "99",
-      "nogain": "99"
+      "nogain": "99",
+      "result": false
     }
   }
 }

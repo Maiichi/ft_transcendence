@@ -1,23 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { AlertColor } from "@mui/material";
 // import type { RootState } from "../../app/store";
 
 // Define a type for the slice state
 export interface CoreState {
   displayNavbar: boolean;
   displayUserActions: boolean;
-  openErrorSnackbar: boolean;
   displayGameInvitation: boolean;
-  serverError: string | null;
+  openSnackbar: boolean;
+  serverMessage: string | null;
+  severity: AlertColor;
 }
 
 // Define the initial state using that type
 const initialState: CoreState = {
   displayNavbar: true,
   displayUserActions: false,
-  serverError: null,
   displayGameInvitation: false,
-  openErrorSnackbar: false,
+  serverMessage: null,
+  openSnackbar: false,
+  severity: "success",
 };
 
 export const coreSlice = createSlice({
@@ -31,11 +34,14 @@ export const coreSlice = createSlice({
     setDisplayUserActions: (state, action: PayloadAction<boolean>) => {
       state.displayUserActions = action.payload;
     },
-    setServerError: (state, action: PayloadAction<string>) => {
-      state.serverError = action.payload;
+    setServerMessage: (state, action: PayloadAction<string>) => {
+      state.serverMessage = action.payload;
     },
-    setOpenErrorSnackbar: (state, action: PayloadAction<boolean>) => {
-      state.openErrorSnackbar = action.payload;
+    setSeverity: (state, action: PayloadAction<AlertColor>) => {
+      state.severity = action.payload;
+    },
+    setOpenSnackbar: (state, action: PayloadAction<boolean>) => {
+      state.openSnackbar = action.payload;
     },
     setDisplayGameInvitation: (state, action: PayloadAction<boolean>) => {
       state.displayGameInvitation = action.payload;
@@ -45,10 +51,11 @@ export const coreSlice = createSlice({
 
 export const {
   setDisplayUserActions,
-  setOpenErrorSnackbar,
-  setServerError,
+  setOpenSnackbar,
+  setServerMessage,
   setDisplayNavbar,
   setDisplayGameInvitation,
+  setSeverity,
 } = coreSlice.actions;
 
 // // Other code such as selectors can use the imported `RootState` type

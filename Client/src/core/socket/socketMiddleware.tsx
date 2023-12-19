@@ -31,7 +31,8 @@ import {
   kickMember,
   kickMemberFromRoom,
 } from "../../packages/feat-Chat/components/redux/roomSlice";
-import { setDisplayGameInvitation, setOpenErrorSnackbar, setServerError } from "../CoreSlice";
+
+import {setDisplayGameInvitation, setOpenSnackbar, setServerMessage, setSeverity } from "../CoreSlice";
 import {
   addRoom,
   joinRoom,
@@ -53,10 +54,15 @@ import {
   userBlockedByMe,
   userBlockedMe,
 } from "../../packages/feat-Chat/components/redux/blockSlice";
+import { AlertColor } from "@mui/material";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
-
+  const OpenSnackbar = (message: string, severity: AlertColor) => {
+    dispatch(setServerMessage(message));
+    dispatch(setOpenSnackbar(true));
+    dispatch(setSeverity(severity));
+  };
   return (next) => (action) => {
     switch (action.type) {
       case ConnectSocket.type:
@@ -67,15 +73,16 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           dispatch(SocketConnected());
           socket.onAny((eventName, data) => {
             if (eventName.toLowerCase().includes("error")) {
-              dispatch(setServerError(data.message));
-              dispatch(setOpenErrorSnackbar(true));
+              OpenSnackbar(data.message, "error");
             }
           });
           socket.on("roomCreated", (data) => {
-            dispatch(addMembership(data));
+            OpenSnackbar(data.successMsg, "success");
+            dispatch(addMembership(data.data));
           });
           socket.on("roomUpdated", (data) => {
-            dispatch(updateRoomSucess(data));
+            OpenSnackbar(data.successMsg, "success");
+            dispatch(updateRoomSucess(data.data));
           });
           socket.on("newRoom", (data) => {
             dispatch(addRoom(data));

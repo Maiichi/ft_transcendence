@@ -38,6 +38,7 @@ export const UserActionInDirectConversation = ({
         handleClickModal(
           <BlockUserModal
             intraId={selectedUser.intraId}
+            userName={selectedUser.firstName + " " + selectedUser.lastName}
             handleClose={handleClose}
           />
         );
