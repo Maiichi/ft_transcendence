@@ -1,18 +1,16 @@
 import styled from "styled-components";
-import {
-  SearchComponent,
-  useAppDispatch,
-  useAppSelector,
-} from "../../../../core";
 import { useEffect, useState } from "react";
 import { Close } from "@mui/icons-material";
-import { getUserFriends } from "../redux/friendThunk";
 import { Avatar } from "@mui/material";
-import { createDirectConversation } from "../redux/directMessageSlice";
-import { I_User } from "../types";
+import { SearchComponent, useAppDispatch, useAppSelector } from "../../../core";
+import { I_User } from "../../feat-Chat/components/types";
+import { Socket } from "socket.io-client";
+import { inviteUserToGame } from "../redux/GameSlice";
+import { SocketInit } from "../../../App";
+import { getUserFriends } from "../../feat-Chat/components/redux/friendThunk";
 
-const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
-  const { onUserSelect } = props;
+export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
+  const {onUserSelect} = props;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const friends: [] = useAppSelector((state) => state.friends.friends);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -27,64 +25,72 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
         friend.firstName.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredUsers(filteredFriends);
-    } else setFilteredUsers([]);
+    } 
+    else 
+      setFilteredUsers([]);
   }, [searchQuery]);
-  return (
+  return  (
     <>
       <SearchComponent onInputUpdate={handleClickSearch} />
-      {filteredUsers.length > 0 && (
-        <UserListOverlay>
+        {filteredUsers.length > 0 && (
+          <UserListOverlay>
           {filteredUsers.map((item: I_User) => (
             <UserList 
               key={item.intraId} 
               onClick={() => onUserSelect(item)}
             >
-              <Avatar src={item.avatar_url} />
+              <Avatar src= {item.avatar_url} />
               {item.firstName} {item.lastName}
             </UserList>
           ))}
         </UserListOverlay>
-      )}
+        )}
     </>
   );
+
 };
 
-export const NewDirectMessage = (props: {
-  handleClose: () => void;
-  selectedUser: I_User | null;
-}) => {
-  const { handleClose, selectedUser } = props;
+export const InviteUserToGame = (props: { handleClose: () => void, selectedUser: I_User | null, socket: Socket}) => {
+  const { handleClose , selectedUser, socket} = props;
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const [selectUser, setSelectUser] = useState<I_User | null>(selectedUser);
-  const [messageContent, setMessageContent] = useState<string>("");
   const closeModal = () => {
     handleClose();
   };
+
+  console.log('socket from game component === ', socket);
 
   const handleSelectedUser = (user: I_User) => {
     setSelectUser(user);
   };
 
-  const handleSendMessage = (e: any) => {
-    e.preventDefault();
-    if (selectUser && messageContent) {
-      const messageData = {
-        receiverId: selectUser.intraId,
-        content: messageContent,
-      };
-      dispatch(createDirectConversation(messageData));
+  const handleChallengePlayer = () => {
+    if (selectUser)
+    {
+      if (socket)
+      { 
+        dispatch(inviteUserToGame({
+          invitedId : selectUser.intraId,
+          inviterId : user.intraId
+        }));
+        // dispatch(setInvited)
+        // socket.emit('join_queue_match_invitaion', "dual");
+      }
     }
     handleClose();
-  };
+  }
 
   useEffect(() => {
     dispatch(getUserFriends());
   }, []);
 
+  
+
   return (
-    <>
+    <SocketInit>
       <ModalHeader>
-        <h3>Start a new conversation</h3>
+        <h3>Invite a player to the game</h3>
         <Close
           sx={{
             "&:hover": {
@@ -102,30 +108,28 @@ export const NewDirectMessage = (props: {
           selectUser ? 
           (
             <div style={{display: 'flex', alignItems: 'center'}}>
-              To : 
+              Opponent : 
               <UserList>
-                <Avatar src={selectUser.avatar_url}/>
+                <Avatar src={selectUser.avatar_url} />
                   {selectUser.firstName} {selectUser.lastName}
               </UserList>
             </div>
           )
            : 
-          (<ReceiverComponent onUserSelect={handleSelectedUser}/>)
+          (<OponentComponent onUserSelect={handleSelectedUser}/>)
         }
         <form
-          onSubmit={handleSendMessage}
+          onSubmit={handleChallengePlayer}
         >
-          <MessageInput
-            value={messageContent}
-            onChange={(e) => setMessageContent(e.target.value)}
-          />
           <ModalFooter>
             <CancelButton onClick={closeModal}>Cancel</CancelButton>
-            <CreateButton type="submit">Send</CreateButton>
+            <CreateButton type="submit">
+              Challenge
+            </CreateButton>
           </ModalFooter>
         </form>
       </ModalBody>
-    </>
+    </SocketInit>
   );
 };
 
@@ -136,7 +140,7 @@ const ModalHeader = styled.div`
 `;
 
 const ModalBody = styled.div`
-  text-align: center;
+  align-items: center;
   height: 100%;
 `;
 
@@ -151,11 +155,9 @@ const SearchBar = styled.div`
 `;
 
 const MessageInput = styled.textarea`
-  width: 85%;
+  width: 300px;
   height: 100px;
   resize: none;
-  padding: 10px;
-  margin-top: 6px;
 `;
 
 const CreateButton = styled.button`

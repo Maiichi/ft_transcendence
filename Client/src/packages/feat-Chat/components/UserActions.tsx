@@ -25,12 +25,14 @@ export const Actions = ({
   children,
   handleCLose,
   username,
+  avatar_url,
   color,
   status,
 }: {
   children: React.ReactNode;
   handleCLose: any;
   username: any;
+  avatar_url: any;
   color: any;
   status: any;
 }) => {
@@ -44,7 +46,7 @@ export const Actions = ({
         <Avatar
           sx={{ width: "120px", height: "120px" }}
           alt="Remy Sharp"
-          src="/static/images/avatar/1.jpg"
+          src={avatar_url}
         />
         <StatusHolder>
           <CircleIcon sx={{ color: color }} />

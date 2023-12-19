@@ -7,6 +7,7 @@ import { AlertColor } from "@mui/material";
 export interface CoreState {
   displayNavbar: boolean;
   displayUserActions: boolean;
+  displayGameInvitation: boolean;
   openSnackbar: boolean;
   serverMessage: string | null;
   severity: AlertColor;
@@ -16,6 +17,7 @@ export interface CoreState {
 const initialState: CoreState = {
   displayNavbar: true,
   displayUserActions: false,
+  displayGameInvitation: false,
   serverMessage: null,
   openSnackbar: false,
   severity: "success",
@@ -41,6 +43,9 @@ export const coreSlice = createSlice({
     setOpenSnackbar: (state, action: PayloadAction<boolean>) => {
       state.openSnackbar = action.payload;
     },
+    setDisplayGameInvitation: (state, action: PayloadAction<boolean>) => {
+      state.displayGameInvitation = action.payload;
+    }
   },
 });
 
@@ -49,6 +54,7 @@ export const {
   setOpenSnackbar,
   setServerMessage,
   setDisplayNavbar,
+  setDisplayGameInvitation,
   setSeverity,
 } = coreSlice.actions;
 

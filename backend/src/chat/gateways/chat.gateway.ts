@@ -43,32 +43,24 @@ import {
 } from 'src/user/friend/dto/friend.dto';
 import { FriendService } from 'src/user/friend/friend.service';
 
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-    credentials: true,
-  },
-})
-export class ChatGateway
-  implements
-    OnGatewayConnection,
-    OnGatewayDisconnect
-{
-  @WebSocketServer()
-  server: Server;
+  @WebSocketGateway({
+    cors: {
+      origin: `${process.env.FRONTEND_URL}`,
+      credentials: true,
+    },
+  })
+  export class ChatGateway
+    implements
+      OnGatewayConnection,
+      OnGatewayDisconnect
+  {
+    @WebSocketServer()
+    server: Server;
 
-  private connectedClients = new Map<
-    string,
-    User
-  >();
-  private userSockets = new Map<
-    number,
-    string[]
-  >();
-  private BlackListedTokens = new Map<
-    string,
-    number
-  >();
+  private connectedClients = new Map<string,User>();
+  private userSockets = new Map<number,string[]>();
+  private BlackListedTokens = new Map<string,number>();
+  
 
   constructor(
     private chatService: ChatService,
@@ -112,8 +104,7 @@ export class ChatGateway
     const sockets = this.userSockets.get(intraId);
     if (sockets) {
       sockets.forEach((socketId) => {
-        const socket =
-          this.server.sockets.sockets[socketId];
+        const socket = this.server.sockets.sockets[socketId];
         if (socket) {
           socket.disconnect();
         }
@@ -158,22 +149,19 @@ export class ChatGateway
     this.connectedClients.forEach(
       (user, socketId) => {
         if (socketId == clientId) ret = user;
-      },
+      }
     );
     return ret;
   }
 
   async handleConnection(client: Socket) {
-    const token =
-      client.handshake.headers.authorization;
+    const token = client.handshake.headers.authorization;
     try {
       const decodedToken =
         await this.jwtService.verify(token, {
           secret: process.env.JWT_SECRET,
         });
-      const user = await this.userService.getUser(
-        decodedToken.sub,
-      );
+      const user = await this.userService.getUser(decodedToken.sub);
       if (!user) {
         throw new WsException('User not found.');
       }
@@ -189,24 +177,15 @@ export class ChatGateway
         this.userSockets.set(user.intraId, []);
       }
 
-      this.userSockets
-        .get(user.intraId)
-        .push(client.id);
-      this.userService.updateUserStatus(
-        user.intraId,
-        'ONLINE',
-      );
+      this.userSockets.get(user.intraId).push(client.id);
+      this.userService.updateUserStatus(user.intraId,'ONLINE',);
       this.server.emit('userConnected', {
         userId: client.id,
       });
       // this.printClients();
-      console.log(
-        user.userName +
-          ' is Connected ' +
-          client.id,
-      );
-      this.printClients();
-      this.printClientSockets();
+      console.log(user.userName + ' is Connected ' + client.id);
+      // this.printClients();
+      // this.printClientSockets();
     } catch (error) {
       client.disconnect();
       console.error(
@@ -220,6 +199,7 @@ export class ChatGateway
       return response;
     }
   }
+
 
   // TODO: need to be tested to check if the user is logged of from all the tabs
   // async handleDisconnect(client: Socket) {
@@ -1188,4 +1168,98 @@ export class ChatGateway
       );
     }
   }
+  
+  @SubscribeMessage('inviteToGame')
+  async inviteUserToGame( 
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: any)
+  {
+    try {
+      console.log('userInvitedToGame');
+      const currentUser =
+        this.findUserByClientSocketId(client.id);
+        // console.log('body  ==', body);
+        const invitedSockets : string[] = this.userSockets.get(body.invitedId);
+        console.log('invitedSockets ==', invitedSockets);
+      // if (blockedSockets)
+      // blockedSockets.forEach((socketId) =>{
+      //   this.server.to(socketId).emit('blockedMe', response.blocker);
+      // });
+      if (invitedSockets)
+        invitedSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('gameInvitationReceived', {
+            inviterId: body.inviterId,
+            invitedId: body.invitedId
+            })
+        });
+    } catch (error) {
+      client.emit('gameInvitationReceivedError', {
+        message: error.message,
+      });
+      console.log(
+        'send error = ' + error.message,
+      );
+    }
+  }
+
+  @SubscribeMessage('acceptGameInvite')
+  async acceptGameInvite( 
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: any)
+  {
+    try {
+        console.log('acceptGameInvite');
+        const currentUser =
+        this.findUserByClientSocketId(client.id);
+        console.log('body (acceptGameInvite)== ', body);
+        const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
+        const inviterSockets: string[] = this.userSockets.get(body.inviterId);
+        console.log('inviter == ', currentUser.intraId);
+        console.log('invited == ', body.invitedId);
+        if (invitedSockets)
+          invitedSockets.forEach((socketId) => {
+            this.server.to(socketId).emit('gameInvitationAccepted')
+          });
+        inviterSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('opponentAcceptGameInvite');
+        });
+    } catch (error) {
+      client.emit('gameInvitationAcceptedError', {
+        message: error.message,
+      });
+      console.log(
+        'send error = ' + error.message,
+      );
+    }
+  } 
+  @SubscribeMessage('declineGameInvite')
+  async declineGameInvite( 
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: any)
+  {
+    try {
+        console.log('declineGameInvite');
+        const currentUser =
+        this.findUserByClientSocketId(client.id);
+        console.log('body (declineGameInvite) == ', body);
+        const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
+        const inviterSockets: string[] = this.userSockets.get(body.inviterId);
+        if (invitedSockets)
+          invitedSockets.forEach((socketId) => {
+            this.server.to(socketId).emit('gameInvitationDeclined')
+          });
+        inviterSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('opponentDeclineGameInvite', {
+            inviterId: body.inviterId
+          });
+        });
+    } catch (error) {
+      client.emit('gameInvitationDeclinedError', {
+        message: error.message,
+      });
+      console.log(
+        'send error = ' + error.message,
+      );
+    }
+  } 
 }
