@@ -2,25 +2,20 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux";
 import { getUserFriends } from "../../packages/feat-Chat/components/redux/friendThunk";
 import { Loading } from "./components";
-import { Button } from "@mui/material";
-import { userType } from "../../packages/feat-Account/components";
-
-type RelationShip =
-  | "notfriend"
-  | "friend"
-  | "blocked"
-  | "blockedMe"
-  | "requested"
-  | "requester"
-  | "self";
+import {
+  AddLoading,
+  RelationShipType,
+  userType,
+} from "../../packages/feat-Account/components";
 
 interface Foo {
   opId: number;
-  relations: Array<RelationShip>;
+  relations: Array<RelationShipType>;
   children: JSX.Element;
   notallow?: JSX.Element;
-  isOwner?: boolean;
+  isOwner?: boolean; // require  of self relation or false as default
 }
+
 // TODO: RelationShip
 const Relationship: (props: Foo) => JSX.Element = ({
   opId,
@@ -31,11 +26,8 @@ const Relationship: (props: Foo) => JSX.Element = ({
 }: Foo) => {
   const dispatch = useAppDispatch();
   const [matchedrelation, setMR] = useState<boolean | undefined>(undefined);
-  // const [Go, letGo] = useState(false);
-  const {
-    friends,
-    isLoading,
-  }: { friends: Array<userType>; isLoading: boolean } = useAppSelector(
+
+  const { foo: friends, isLoading }: AddLoading<userType[]> = useAppSelector(
     (state) => state.friends
   );
 
@@ -51,6 +43,7 @@ const Relationship: (props: Foo) => JSX.Element = ({
     setMR(
       relations.some(
         (relation) =>
+          (relation === "self" && isOwner) ||
           (relation === "friend" &&
             !!friends?.find((user) => user.intraId === opId)) ||
           (relation === "blocked" && !!null)
@@ -68,18 +61,5 @@ const Relationship: (props: Foo) => JSX.Element = ({
   );
 };
 
-//   export const isFriend = (props: UsersId) =>
-//     userRelationship(props) === "friend";
-/**
- * This suggests that the user has sent a friend request to someone else.
- **/
-//   export const isRequested = (props: UsersId) =>
-//     userRelationship(props) === "requested";
-/**
- * This suggests that the user has received a friend request from someone else.
- **/
-//   export const isRequester = (props: UsersId) =>
-//     userRelationship(props) === "requester";
-
-export default RelationShip;
+export default Relationship;
 export { Relationship };

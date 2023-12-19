@@ -1,5 +1,10 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Loading, useAppDispatch, useAppSelector } from "../../core";
+import {
+  Loading,
+  Relationship,
+  useAppDispatch,
+  useAppSelector,
+} from "../../core";
 import { Fragment, useEffect, useState } from "react";
 import {
   Paper,
@@ -49,29 +54,31 @@ const GamesHistory = () => {
 
   return (
     <Container>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">palyer1</TableCell>
-                <TableCell />
-                <TableCell align="center">Score</TableCell>
-                <TableCell />
-                <TableCell align="center">player2</TableCell>
-                {isMobile || <TableCell />}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {matchs?.map((match) => (
-                <Row match={match} />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <Relationship relations={['friend' ]} opId={gid} isOwner={isOwner}>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">palyer1</TableCell>
+                  <TableCell />
+                  <TableCell align="center">Score</TableCell>
+                  <TableCell />
+                  <TableCell align="center">player2</TableCell>
+                  {isMobile || <TableCell />}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {matchs?.map((match) => (
+                  <Row match={match} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Relationship>
     </Container>
   );
 };

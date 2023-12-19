@@ -1,3 +1,8 @@
+type AddLoading<T> = {
+  foo: T;
+  isLoading: boolean;
+};
+
 type userType = {
   intraId: number;
   email: string;
@@ -69,7 +74,17 @@ export interface ProfileState {
   };
 }
 
+type RelationShipType =
+  | "notfriend"
+  | "friend"
+  | "blocked"
+  | "blockedMe"
+  | "requested"
+  | "requester"
+  | "self";
+
 export type {
+  AddLoading,
   gamerType,
   leaderboardType,
   AchievementType,
@@ -77,4 +92,5 @@ export type {
   GameslogType,
   userType,
   unformalData,
+  RelationShipType,
 };
