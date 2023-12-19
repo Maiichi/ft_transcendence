@@ -1,10 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getAllRooms } from "./searchThunk";
+import { getAllFriends, getAllRooms } from "./searchThunk";
 import { I_Room_Search } from "../types/types";
+import { userType } from "../../feat-Account/components";
 
 export interface S_Search {
   rooms: I_Room_Search[];
-  users: [];
+  users: Array<userType>;
   isLoading: boolean;
 }
 
@@ -27,24 +28,23 @@ export const searchSlice = createSlice({
       state.isLoading = true;
     },
     setRoomJoined: (state, action) => {
-      // console.log('action payload ===', action.payload)
       state.rooms.map((item: I_Room_Search) => {
         if (item.id == action.payload.id) item.members = action.payload.members;
       });
     },
     setRoomLeaved: (state, action) => {
       state.rooms.map((room: I_Room_Search) => {
-        if (room.id == action.payload.roomId)
-        {
-          const memberIndex = room.members.findIndex((member) => member.user.intraId == action.payload.userId)
-          if (memberIndex !== -1)
-            room.members.splice(memberIndex);
+        if (room.id == action.payload.roomId) {
+          const memberIndex = room.members.findIndex(
+            (member) => member.user.intraId == action.payload.userId
+          );
+          if (memberIndex !== -1) room.members.splice(memberIndex);
         }
-      })
+      });
     },
-    addRoom :(state, action: PayloadAction<I_Room_Search>) => {
+    addRoom: (state, action: PayloadAction<I_Room_Search>) => {
       state.rooms.unshift(action.payload);
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -57,10 +57,24 @@ export const searchSlice = createSlice({
       })
       .addCase(getAllRooms.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(getAllFriends.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(
+        getAllFriends.fulfilled,
+        (state, action: PayloadAction<userType[]>) => {
+          state.users = action.payload;
+          state.isLoading = false;
+        }
+      )
+      .addCase(getAllFriends.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });
 
-export const { joinRoom, setRoomJoined, setRoomLeaved,  addRoom } = searchSlice.actions;
+export const { joinRoom, setRoomJoined, setRoomLeaved, addRoom } =
+  searchSlice.actions;
 
 export default searchSlice.reducer;

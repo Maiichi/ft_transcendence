@@ -3,12 +3,12 @@ import { apiRequest } from "../../../../core/utils/apiRequest";
 import { RootState } from "../../../../core";
 import {
   AchievementType,
-  MatchHistoryType,
+  GameslogType,
   gamerType,
   unformalData,
   userType,
 } from "../statsType";
-import { getLeaderboard } from "./LeaderBoardThunk";
+import { getLeaderboard, getMatchHistory } from ".";
 
 const getAchievements = createAsyncThunk(
   "profile/achivs",
@@ -24,20 +24,6 @@ const getAchievements = createAsyncThunk(
       });
     } catch (error) {
       console.error("error achievements fetching", error);
-      throw error;
-    }
-  }
-);
-const getMatchHistory = createAsyncThunk(
-  "profile/matchHistory",
-  async (userID: number): Promise<MatchHistoryType[]> => {
-    try {
-      const matchs: MatchHistoryType[] = Object.values(
-        await require("../../static-data/MatchesHistory.json").matchs
-      );
-      return matchs;
-    } catch (error) {
-      console.error("error matchs history fetching", error);
       throw error;
     }
   }
@@ -78,7 +64,9 @@ const getuserasgamer = createAsyncThunk(
   "profile/gamer",
   async (uid: number, { dispatch }): Promise<unformalData> => {
     try {
-      const _matchHistory = await dispatch(getMatchHistory(uid));
+      const _matchHistory = await dispatch(
+        getMatchHistory({ userID: uid, primary: false })
+      );
       const _achievement = await dispatch(getAchievements(uid));
       const _gamer = await dispatch(getGamer(uid));
       const _user = await dispatch(getUser(uid));
@@ -87,7 +75,7 @@ const getuserasgamer = createAsyncThunk(
       const result: unformalData = {
         gamer: _gamer.payload as gamerType,
         user: _user.payload as userType,
-        matchHistory: _matchHistory.payload as MatchHistoryType[],
+        matchHistory: _matchHistory.payload as GameslogType,
         achievement: _achievement.payload as AchievementType[],
       };
       return result;

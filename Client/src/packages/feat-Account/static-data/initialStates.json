@@ -9,7 +9,10 @@
       "rank": 0
     },
     "achievement": null,
-    "MatchHistory": null,
+    "matchs": {
+      "MatchHistory": null,
+      "isLoading": false
+    },
     "lead": {
       "leaderboard": null,
       "isLoading": false

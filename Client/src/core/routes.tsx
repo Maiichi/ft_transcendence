@@ -5,6 +5,7 @@ import {
   Profile,
   Chat,
   Leaderboard,
+  GamesHistory,
 } from "../packages";
 import Login from "../packages/feat-Auth/Login";
 import FirstLogin from "../packages/feat-Auth/components/FirstLogin";
@@ -22,6 +23,16 @@ export interface Route {
 }
 
 export const routes: Route[] = [
+  {
+    path: "/gamesHistory",
+    element:  (
+      <Layout>
+        <GamesHistory />
+      </Layout>
+    ),
+    errorElement: <NotFoundError />,
+    requireAuth: true,
+  },
   {
     path: "/overView",
     element: <LandingPage />,

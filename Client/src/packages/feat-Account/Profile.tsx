@@ -50,7 +50,8 @@ const Profile = () => {
           <UserCard gamer={profileStates.gamer} isOwner={isOwner} />
           <BoardCard />
           <MatchsHistoryCard
-            matchs={profileStates.MatchHistory}
+            uid={uid}
+            matchs={profileStates.matchs.matchsHistory}
             userName={user.userName}
           />
           <AchievemetsCard
