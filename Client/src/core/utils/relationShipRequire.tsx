@@ -28,7 +28,9 @@ const Relationship: (props: Foo) => JSX.Element = ({
   const [matchedrelation, setMR] = useState<boolean | undefined>(undefined);
 
   const { foo: friends, isLoading }: AddLoading<userType[]> = useAppSelector(
-    (state) => state.friends
+    ({ friends }) => {
+      return { foo: friends.friends, isLoading: friends.isLoading };
+    }
   );
 
   useEffect(() => {
@@ -52,7 +54,7 @@ const Relationship: (props: Foo) => JSX.Element = ({
   }, [friends]);
 
   if (isOwner) return children;
-  return isLoading || !friends || matchedrelation === undefined ? (
+  return isLoading || matchedrelation === undefined ? (
     <Loading />
   ) : matchedrelation ? (
     children
