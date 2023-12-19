@@ -7,6 +7,7 @@ export const BanUserFromChannelModal = (props: {
   handleClose: () => void;
 }) => {
   const { handleClose, data } = props;
+  console.log("data : ", data);
   const dispatch = useAppDispatch();
   const handleBanUser = () => {
     dispatch(banMember(data));
@@ -16,7 +17,7 @@ export const BanUserFromChannelModal = (props: {
   return (
     <>
       <ModalConfirm
-        title={"Do you want to ban {`user x`} from {`channel x`} ?"}
+        title={`Do you want to ban ${data.userName} from #${data.roomName} ?`}
         handleClose={handleClose}
         handleClick={handleBanUser}
       />

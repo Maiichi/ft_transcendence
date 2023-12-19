@@ -89,3 +89,9 @@ export interface Action {
 }
 
 export type Role = "admin" | "owner" | "member";
+export interface DataForModal {
+  userId?: number;
+  userName?: string;
+  roomId?: number;
+  roomName?: string;
+}

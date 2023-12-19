@@ -221,6 +221,7 @@ export const DirectIcons: Array<Action> = [
     role: ["member", "admin", "owner"],
   },
 ];
+
 export const getDataForModal = (
   iconType: any,
   room: I_Room,
@@ -230,36 +231,49 @@ export const getDataForModal = (
     case "setAdminChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "unSetAdminChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "banFromChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "unBanFromChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "muteFromChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "kickFromChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "blockFriend":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
       };
     case "message":
       return selectedUser;

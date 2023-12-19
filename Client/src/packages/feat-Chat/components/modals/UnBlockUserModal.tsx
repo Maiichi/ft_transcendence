@@ -3,11 +3,12 @@ import { setDisplayUserActions } from "../../../../core/CoreSlice";
 import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
 import { unblockUser } from "../redux/blockSlice";
 
-export const BlockUserModal = (props: {
+export const UnBlockUserModal = (props: {
   intraId: number;
+  userName: string;
   handleClose: () => void;
 }) => {
-  const { handleClose, intraId } = props;
+  const { handleClose, intraId, userName } = props;
   const dispatch = useAppDispatch();
 
   const handleBlockUser = () => {
@@ -19,7 +20,7 @@ export const BlockUserModal = (props: {
   return (
     <>
       <ModalConfirm
-        title={"you want to unblock the user x ?"}
+        title={`You want to unblock ${userName} ?`}
         handleClose={handleClose}
         handleClick={handleBlockUser}
       />
