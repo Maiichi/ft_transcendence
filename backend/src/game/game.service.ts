@@ -92,27 +92,33 @@ export class GameService {
 
     async getLeaderBoard(response: Response)
     {
+        const games = await this.prisma.game.findMany();
+        console.log("games == ", games);
+        if (!games.length)
+            return response.send({message : "no game has been played at the moment."});
         const leaderboard = await this.prisma.user.findMany({
             select: {
-            intraId: true,
-            userName: true,
-            games: {
+                intraId: true,
+                userName: true,
+                games: {
                 select: {
-                winnerId: true,
-                score1: true,
-                score2: true,
+                    winnerId: true,
+                    score1: true,
+                    score2: true,
                 },
+                },
+                avatar_url: true,
             },
-            avatar_url: true,
-            },
-        });
+            });
         
-        const leaderboardWithStats = leaderboard.map((user) => {
+        const leaderboardWithStats = leaderboard
+        .filter((user) => user.games.length > 0) // Exclude users without any games
+        .map((user) => {
             const totalGames = user.games.length;
             const winCount = user.games.filter((game) => game.winnerId === user.intraId).length;
             const lossCount = totalGames - winCount;
-            const winRate = totalGames > 0 ? (winCount / totalGames) * 100 : 0;
-        
+            const winRate = (winCount / totalGames) * 100;
+    
             return {
             name: user.userName,
             winRate: `${winRate.toFixed(2)}%`,
@@ -123,9 +129,9 @@ export class GameService {
             };
         });
       
-      leaderboardWithStats.sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate));
+        leaderboardWithStats.sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate));
 
-      return response.send({data : leaderboardWithStats});
+        return response.send({data : leaderboardWithStats});
     }
       
 }
