@@ -45,6 +45,11 @@ const Relationship: (props: Foo) => JSX.Element = ({
     );
   }, []);
   useEffect(() => {
+    // for no relation require
+    if (!relations.length) {
+      setMR(true);
+      return;
+    }
     if (!friends) return;
     setMR(
       relations.some(

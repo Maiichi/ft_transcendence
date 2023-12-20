@@ -20,7 +20,7 @@ const getMatchHistory = createAsyncThunk(
     try {
       const token = (getState() as RootState).auth.token;
       const { data }: { data: GameslogType } = await apiRequest(
-        `/game/history`,
+        `/game/${userID}/history`,
         {
           method: "GET",
           headers: {

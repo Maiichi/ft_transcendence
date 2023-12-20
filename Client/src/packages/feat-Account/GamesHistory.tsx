@@ -54,7 +54,16 @@ const GamesHistory = () => {
 
   return (
     <Container>
-      <Relationship relations={["friend"]} opId={gid} isOwner={isOwner}>
+      <Relationship
+        relations={["friend"]}
+        opId={gid}
+        isOwner={isOwner}
+        notallow={
+          <Alert severity="error">
+            You are `NOT ALLOW` to see history for this user
+          </Alert>
+        }
+      >
         {isLoading ? (
           <Loading />
         ) : (
@@ -88,7 +97,6 @@ function Row(props: { match: MatchHistoryType }) {
   const [open, setOpen] = useState(false);
   const { isMobile, isTab } = useSize();
   if (match.Players.length !== 2) return null; /// never applied
-  // TODO: you and the opponets , winer on the rigth , or match owner or player start the game
   function GridContainerPlayer({ left = false }) {
     return (
       <Grid

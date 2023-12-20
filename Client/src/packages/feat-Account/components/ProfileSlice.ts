@@ -52,7 +52,7 @@ const profileSlice = createSlice({
           state.matchs.matchsHistory.forEach((match) => {
             if (match.Players.length !== 2) return; // never applied
             const winnerScore =
-              match.winnerId === match.Players[0].intraId ? 1 : 0;
+              match.winnerId === match.Players[0].intraId ? 0 : 1;
             const loserScore = winnerScore ? 0 : 1;
             match.Players[winnerScore].score = Math.max(
               match.score1,

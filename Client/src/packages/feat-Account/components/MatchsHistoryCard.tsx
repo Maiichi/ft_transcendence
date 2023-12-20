@@ -29,8 +29,8 @@ const MatchsHistoryCard = (props: {
       </Text>
       {matchs && matchs.length ? (
         matchs.map((item, index) => {
-          let op = item.Players[0].intraId === uid ? 1 : 0;
-          if (index > 4) return null;
+          if (index > 4 || item.Players.length !== 2) return null; // never applied
+          const op = item.Players[0].intraId === uid ? 1 : 0;
           return (
             <Match
               win={getresult(item.winnerId, item.score1 === item.score2, [
