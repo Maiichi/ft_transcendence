@@ -36,11 +36,11 @@ type gamerType = {
 type leaderboardType = Array<leaderboardplayerType>;
 type leaderboardplayerType = {
   name: string;
-  ladder: number;
+  winRate: number;
   wins: number;
-  loss: number;
-  uid: number;
-  picture: string;
+  losses: number;
+  userId: number;
+  avatar_url: string;
 };
 
 type AchievementType = {

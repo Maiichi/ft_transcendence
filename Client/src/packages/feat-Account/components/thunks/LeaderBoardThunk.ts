@@ -5,16 +5,20 @@ import { leaderboardType } from "../statsType";
 
 const getLeaderboard = createAsyncThunk(
   "profile/leaderboard",
-  async (): Promise<leaderboardType> => {
+  async (_, { getState }): Promise<leaderboardType> => {
     try {
-      const Players = require("../../static-data/Players.json").Players;
-      const TopPlayersArr: leaderboardType = Object.values(Players);
-      const response = new Promise<leaderboardType>((resolve, reject) => {
-        setTimeout(() => {
-          resolve(TopPlayersArr);
-        }, 1000);
-      });
-      return response;
+      const token = (getState() as RootState).auth.token;
+      const { data: players }: { data: leaderboardType } = await apiRequest(
+        `/game/leaderBoard`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(players);
+      return players;
     } catch (error) {
       console.log("error leaderboard fetching", error);
       throw error;
