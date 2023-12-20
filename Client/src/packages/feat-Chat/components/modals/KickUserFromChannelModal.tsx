@@ -20,7 +20,7 @@ export const KicKFromRoomModal = (props: {
   return (
     <>
       <ModalConfirm
-        title={"you want to kick the user x from channel x ?"}
+        title={`You want to kick ${data.userName} from #${data.roomName} ?`}
         handleClose={handleClose}
         handleClick={handleKickUser}
       />

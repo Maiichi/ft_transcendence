@@ -17,7 +17,7 @@ export const UnBanUserFromChannelModal = (props: {
   return (
     <>
       <ModalConfirm
-        title={"Do you want to un ban {`user x`}?"}
+        title={`Do you want to un ban ${data.userName} from #${data.roomName}?`}
         handleClose={handleClose}
         handleClick={handlUnBanUser}
       />

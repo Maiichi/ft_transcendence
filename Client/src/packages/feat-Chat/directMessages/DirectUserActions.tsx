@@ -38,6 +38,7 @@ export const UserActionInDirectConversation = ({
         handleClickModal(
           <BlockUserModal
             intraId={selectedUser.intraId}
+            userName={selectedUser.firstName + " " + selectedUser.lastName}
             handleClose={handleClose}
           />
         );
@@ -64,6 +65,7 @@ export const UserActionInDirectConversation = ({
         username={selectedUser.userName}
         color={"green"}
         status={"Available"}
+        avatar_url={selectedUser.avatar_url}
       >
         {DirectIcons.map((icon) => (
           <IconHolder onClick={() => handleClickIcon(icon.type, selectedUser)}>

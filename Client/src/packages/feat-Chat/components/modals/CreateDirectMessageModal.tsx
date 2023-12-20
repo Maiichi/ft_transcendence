@@ -35,8 +35,11 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
       {filteredUsers.length > 0 && (
         <UserListOverlay>
           {filteredUsers.map((item: I_User) => (
-            <UserList key={item.intraId} onClick={() => onUserSelect(item)}>
-              <Avatar />
+            <UserList 
+              key={item.intraId} 
+              onClick={() => onUserSelect(item)}
+            >
+              <Avatar src={item.avatar_url} />
               {item.firstName} {item.lastName}
             </UserList>
           ))}
@@ -95,18 +98,23 @@ export const NewDirectMessage = (props: {
         />
       </ModalHeader>
       <ModalBody>
-        {selectUser ? (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            To :
-            <UserList>
-              <Avatar />
-              {selectUser.firstName} {selectUser.lastName}
-            </UserList>
-          </div>
-        ) : (
-          <ReceiverComponent onUserSelect={handleSelectedUser} />
-        )}
-        <form onSubmit={handleSendMessage}>
+        {
+          selectUser ? 
+          (
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              To : 
+              <UserList>
+                <Avatar src={selectUser.avatar_url}/>
+                  {selectUser.firstName} {selectUser.lastName}
+              </UserList>
+            </div>
+          )
+           : 
+          (<ReceiverComponent onUserSelect={handleSelectedUser}/>)
+        }
+        <form
+          onSubmit={handleSendMessage}
+        >
           <MessageInput
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}

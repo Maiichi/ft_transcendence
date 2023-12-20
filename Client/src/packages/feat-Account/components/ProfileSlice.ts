@@ -1,6 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getLeaderboard, getuserasgamer } from "./thunks";
-import { ProfileState, leaderboardType, unformalData } from "./statsType";
+import { getLeaderboard, getMatchHistory, getuserasgamer } from "./thunks";
+import {
+  GameslogType,
+  ProfileState,
+  leaderboardType,
+  unformalData,
+} from "./statsType";
 
 const initialState: ProfileState =
   require("../static-data/initialStates.json").profile;
@@ -17,6 +22,9 @@ const profileSlice = createSlice({
       .addCase(getLeaderboard.pending, (state) => {
         state.lead.isLoading = true;
       })
+      .addCase(getMatchHistory.pending, (state) => {
+        state.matchs.isLoading = true;
+      })
       .addCase(
         getuserasgamer.fulfilled,
         (state, action: PayloadAction<unformalData>) => {
@@ -25,7 +33,7 @@ const profileSlice = createSlice({
             user: action.payload.user?.message,
           };
           state.achievement = action.payload.achievement;
-          state.MatchHistory = action.payload.matchHistory;
+          state.matchs.matchsHistory = action.payload.matchHistory;
           state.isLoading = false;
         }
       )
@@ -36,11 +44,21 @@ const profileSlice = createSlice({
           state.lead.isLoading = false;
         }
       )
+      .addCase(
+        getMatchHistory.fulfilled,
+        (state, action: PayloadAction<GameslogType>) => {
+          state.matchs.matchsHistory = action.payload;
+          state.matchs.isLoading = false;
+        }
+      )
       .addCase(getuserasgamer.rejected, (state) => {
         state.isLoading = false;
       })
       .addCase(getLeaderboard.rejected, (state) => {
         state.lead.isLoading = false;
+      })
+      .addCase(getMatchHistory.rejected, (state) => {
+        state.matchs.isLoading = false;
       });
   },
 });

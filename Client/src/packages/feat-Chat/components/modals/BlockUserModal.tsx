@@ -5,9 +5,10 @@ import { blockUser } from "../redux/blockSlice";
 
 export const BlockUserModal = (props: {
   intraId: number;
+  userName: string;
   handleClose: () => void;
 }) => {
-  const { handleClose, intraId } = props;
+  const { handleClose, intraId, userName } = props;
   const dispatch = useAppDispatch();
 
   const handleBlockUser = () => {
@@ -19,7 +20,7 @@ export const BlockUserModal = (props: {
   return (
     <>
       <ModalConfirm
-        title={"you want to block the user x ?"}
+        title={`You want to block ${userName} ?`}
         handleClose={handleClose}
         handleClick={handleBlockUser}
       />

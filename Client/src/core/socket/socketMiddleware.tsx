@@ -31,13 +31,16 @@ import {
   kickMember,
   kickMemberFromRoom,
 } from "../../packages/feat-Chat/components/redux/roomSlice";
-import { setOpenErrorSnackbar, setServerError } from "../CoreSlice";
+
+import {setDisplayGameInvitation, setOpenSnackbar, setServerMessage, setSeverity } from "../CoreSlice";
 import {
   addRoom,
   joinRoom,
   setRoomJoined,
   setRoomLeaved,
 } from "../../packages/feat-Search/redux/searchSlice";
+import { useAppSelector } from "../redux";
+import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, opponentDeclineInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
 import {
   addMessageToConversation,
   createDirectConversation,
@@ -51,10 +54,15 @@ import {
   userBlockedByMe,
   userBlockedMe,
 } from "../../packages/feat-Chat/components/redux/blockSlice";
+import { AlertColor } from "@mui/material";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
-
+  const OpenSnackbar = (message: string, severity: AlertColor) => {
+    dispatch(setServerMessage(message));
+    dispatch(setOpenSnackbar(true));
+    dispatch(setSeverity(severity));
+  };
   return (next) => (action) => {
     switch (action.type) {
       case ConnectSocket.type:
@@ -65,15 +73,16 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           dispatch(SocketConnected());
           socket.onAny((eventName, data) => {
             if (eventName.toLowerCase().includes("error")) {
-              dispatch(setServerError(data.message));
-              dispatch(setOpenErrorSnackbar(true));
+              OpenSnackbar(data.message, "error");
             }
           });
           socket.on("roomCreated", (data) => {
-            dispatch(addMembership(data));
+            OpenSnackbar(data.successMsg, "success");
+            dispatch(addMembership(data.data));
           });
           socket.on("roomUpdated", (data) => {
-            dispatch(updateRoomSucess(data));
+            OpenSnackbar(data.successMsg, "success");
+            dispatch(updateRoomSucess(data.data));
           });
           socket.on("newRoom", (data) => {
             dispatch(addRoom(data));
@@ -96,20 +105,22 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on("newRoomJoined", (data) => {
             dispatch(setRoomJoined(data));
           });
-          socket.on("messageSentToRoom", (data) => {
-            const { currentConversation } = getState().chat;
-            if (
-              currentConversation.roomId &&
-              currentConversation.roomId === data.roomId
-            ) {
-              const conversationMessage = {
-                id: data.id,
-                content: data.content,
-                createdAt: data.createdAt,
-                chatId: data.chatId,
-                sender: data.sender,
-              };
-              dispatch(addMessageToRoom(conversationMessage));
+          socket.on('messageSentToRoom', (data) => {
+            const {currentConversation} = getState().chat;
+            console.log("Current Conversation ==", currentConversation);
+            if (currentConversation)
+            {
+              if (currentConversation.roomId === data.roomId)
+              {
+                const conversationMessage = {
+                  id: data.id,
+                  content: data.content,
+                  createdAt: data.createdAt,
+                  chatId: data.chatId,
+                  sender: data.sender,
+                } 
+                dispatch(addMessageToRoom(conversationMessage));
+              }
             }
           });
           socket.on("conversationCreated", (data) => {
@@ -122,13 +133,14 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             //   })
             // );
           });
-          socket.on("messageSentToUser", (data) => {
-            const { currentConversation } = getState().chat;
-            if (
-              currentConversation.directConversationId &&
-              currentConversation.directConversationId === data.chatId
-            )
-              dispatch(addMessageToConversation(data));
+          socket.on('messageSentToUser', (data) => {
+            console.log('data coming from (messageSentToUser) =', JSON.stringify(data));
+            const {currentConversation} = getState().chat;
+            if (currentConversation)
+            {
+              if (currentConversation.directConversationId === data.chatId)
+                dispatch(addMessageToConversation(data));
+            }
           });
           socket.on("AdminSettedToRoom", (data) => {
             dispatch(addAdminToRoom(data));
@@ -142,9 +154,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on("userUnBannedFromRoom", (data) => {
             dispatch(unBanMemberFromRoom(data));
           });
-          socket.on("IhaveBeenBanned", (data) => {
-            const { currentConversation } = getState().chat;
-            if (currentConversation.roomId == data.roomId)
+          socket.on('IhaveBeenBanned', (data) => {
+            const {currentConversation} = getState().chat;
+            if (currentConversation && currentConversation.roomId == data.roomId)
               dispatch(
                 setCurrentConversation({
                   roomId: null,
@@ -156,15 +168,15 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           socket.on("IhaveBeenUnBanned", (data) => {
             dispatch(addMembership(data));
-            const { currentConversation } = getState().chat;
-            if (currentConversation.roomId == data.roomId)
-              dispatch(
-                setCurrentConversation({
-                  roomId: data.id,
-                  directConversationId: null,
-                  type: "channel",
-                })
-              );
+            // const {currentConversation} = getState().chat;
+            // if (currentConversation.roomId == data.roomId)
+            //   dispatch(
+            //     setCurrentConversation({
+            //       roomId: data.id,
+            //       directConversationId: null,
+            //       type: "channel",
+            //     })
+            //   );
           });
           socket.on("userMuted", (data) => {
             dispatch(muteMemberInRoom(data));
@@ -172,48 +184,82 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on("userKickedFromRoom", (data) => {
             dispatch(kickMemberFromRoom(data));
           });
-          socket.on("IhaveBeenKicked", (data) => {
-            const { currentConversation } = getState().chat;
-            if (currentConversation.roomId == data.roomId) {
-              dispatch(
-                setCurrentConversation({
-                  roomId: null,
-                  directConversationId: null,
-                  type: null,
-                })
-              );
+          socket.on('IhaveBeenKicked', (data) => {
+            const {currentConversation} = getState().chat;
+            if (currentConversation){
+              if (currentConversation.roomId == data.roomId)
+              {
+                dispatch(
+                  setCurrentConversation({
+                    roomId: null,
+                    directConversationId: null,
+                    type: null,
+                  })
+                );
+              }
             }
             dispatch(removeMembership(data.roomId));
           });
           socket.on("UserHaveBeenKicked", (data) => {
             dispatch(setRoomLeaved(data));
           });
-          socket.on("blockedByMe", (data) => {
+          socket.on('blockedByMe', (data) => {
+            console.log('data coming from (blockedByMe) =', data);
+            const {selectedUser} = getState().chat;
             dispatch(userBlockedByMe(data));
             dispatch(removeConversation(data.intraId));
-            const { selectedUser } = getState().chat;
-            if (selectedUser.intraId == data.intraId)
-              dispatch(
-                setCurrentConversation({
+            if (selectedUser)
+            {
+              if (selectedUser.intraId == data.intraId)
+                dispatch(setCurrentConversation({
                   directConversationId: null,
                   roomId: null,
-                  type: null,
-                })
-              );
+                  type: null
+                }));
+            }
           });
-          socket.on("blockedMe", (data) => {
+          socket.on('blockedMe', (data) => {
+            const {selectedUser} = getState().chat;
             dispatch(userBlockedMe(data));
             dispatch(removeConversation(data.intraId));
-            const { selectedUser } = getState().chat;
-            if (selectedUser && selectedUser.intraId == data.intraId)
-              dispatch(
-                setCurrentConversation({
+            console.log('selectedUser ==', selectedUser);
+            if (selectedUser)
+            {
+              if (selectedUser.intraId == data.intraId)
+                dispatch(setCurrentConversation({
                   directConversationId: null,
                   roomId: null,
-                  type: null,
-                })
-              );
+                  type: null
+                }));
+            }
           });
+          socket.on('gameInvitationReceived' , (data) => {
+            console.log('gameInvitationReceived');
+            console.log ('data (gameInvitationReceived) == ', data);
+            dispatch(setInviterId(data.inviterId));
+            dispatch(setDisplayGameInvitation(true));
+            dispatch(receiveGameInvitation(true));
+          });
+          socket.on('gameInvitationAccepted', () => {
+            console.log('listen for the event (gameInvitationAccepted) should be display in all accepterSocket')
+            dispatch(setDisplayGameInvitation(false));
+            dispatch(setInviteAccepted(true));
+          });
+          socket.on('opponentAcceptGameInvite', (data) => {
+            console.log ('data (opponentAcceptGameInvite) == ', data);
+            console.log('listen for the event (gameInvitationAccepted) should be display in all accepterSocket')
+            dispatch(opponentAcceptInvite(true));
+          });
+          socket.on('opponentDeclineGameInvite', (data) => {
+            dispatch(setServerMessage(`User ${data.inviterId} decline your game Invite`));
+              dispatch(setOpenSnackbar(true));
+            dispatch(opponentDeclineInvite(true));
+          });
+          socket.on('gameInvitationDeclined', () => {
+            console.log('listen for the event (gameInvitationDeclined) should be display in all declinerSocket')
+            dispatch(setDisplayGameInvitation(false));
+            dispatch(setInviteDeclined(true));
+          })
         } catch (error) {
           console.log(error);
         }
@@ -265,6 +311,15 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case unblockUser.type:
         socket.emit("unBlockUser", action.payload);
+        break;
+      case inviteUserToGame.type:
+        socket.emit('inviteToGame', action.payload);
+        break;
+      case acceptUserGameInvite.type:
+        socket.emit('acceptGameInvite', action.payload);
+        break;
+      case declineUserGameInvite.type:
+        socket.emit('declineGameInvite', action.payload);
         break;
       default:
         break;

@@ -8,6 +8,9 @@ import {
 import { useState } from "react";
 import { Avatar } from "@mui/material";
 import { addUserToRoom } from "../redux/roomSlice";
+import { I_User } from "../types";
+import { isMember } from "../utils";
+import { NotFound } from "../style";
 
 interface Props {
   handleClose: () => void;
@@ -34,10 +37,12 @@ export const AddUserToRoomModal = (props: Props) => {
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
   };
+
   const filteredFriends = friends.filter(
-    (friend: any) =>
-      !searchQuery ||
-      friend.firstName.toLowerCase().startsWith(searchQuery.toLowerCase())
+    (friend: I_User) =>
+      (!searchQuery ||
+        friend.firstName.toLowerCase().startsWith(searchQuery.toLowerCase())) &&
+      !isMember(friend.firstName, memberships[index].members)
   );
 
   return (
@@ -59,15 +64,29 @@ export const AddUserToRoomModal = (props: Props) => {
       <ModalBody>
         <SearchComponent onInputUpdate={handleClickSearch} />
         <UsersList length={filteredFriends.length}>
-          {filteredFriends.map((item: any) => (
-            <UserList
-              key={item.intraId}
-              onClick={() => handleClickOnUser(item)}
-            >
-              <Avatar />
-              {item.firstName} {item.lastName}
-            </UserList>
-          ))}
+          {friends.length == 0 ? (
+            <NotFound>
+              It looks like you haven't added any friends yet.
+            </NotFound>
+          ) : filteredFriends.length != 0 ? (
+            filteredFriends.map((item: any) => (
+              <UserList
+                key={item.intraId}
+                onClick={() => handleClickOnUser(item)}
+              >
+                <Avatar />
+                {item.firstName} {item.lastName}
+              </UserList>
+            ))
+          ) : searchQuery ? (
+            <NotFound>
+              Couldn't find any names starting with {searchQuery}
+            </NotFound>
+          ) : (
+            <NotFound>
+              Your friends have already joined #{memberships[index].name}
+            </NotFound>
+          )}
         </UsersList>
       </ModalBody>
     </>
@@ -81,7 +100,10 @@ const ModalHeader = styled.div`
 `;
 const UsersList = styled.div<{ length: number }>`
   overflow-y: scroll;
-  height: ${(props) => (props.length > 1 ? "100px" : "60px")};
+  height: ${(props) =>
+    props.length > 1 ? "100px" : props.length == 0 ? "30px" : "60px"};
+  padding: 10px;
+  width: 230px;
 `;
 const ModalBody = styled.div`
   align-items: center;

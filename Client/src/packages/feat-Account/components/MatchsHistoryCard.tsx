@@ -1,17 +1,20 @@
+import { useNavigate } from "react-router-dom";
 import { CheckCircle, DoNotDisturbOn, Dangerous } from "@mui/icons-material";
 import { Avatar, Match, Matchshistory, Text } from "../styles";
 import { MatchHistoryType } from "./statsType";
 
 const MatchsHistoryCard = (props: {
   userName: string;
+  uid: number;
   matchs: MatchHistoryType[];
 }) => {
-  const { userName, matchs } = props;
+  const { userName, matchs, uid } = props;
   const getresult = (one: number, two: number, results: Array<any>) =>
     one > two ? results[0] : one < two ? results[1] : results[2];
+  const navigate = useNavigate();
 
   return (
-    <Matchshistory>
+    <Matchshistory onClick={() => navigate(`/gamesHistory?uid=${uid}`)}>
       <Text
         variant="h5"
         sx={{

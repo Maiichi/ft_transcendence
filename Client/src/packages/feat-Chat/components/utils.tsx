@@ -1,4 +1,4 @@
-import { I_Room, I_User, Action } from "./types";
+import { I_Room, I_User, Action, Members } from "./types";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {
   DoDisturbOffOutlined,
@@ -54,7 +54,6 @@ export const isOwner = (membership: I_Room, userId: number) => {
 };
 
 export const isAdmin = (memberships: I_Room, userId: number) => {
-
   const member = memberships.members.find(
     (member) => member.user.intraId === userId
   );
@@ -222,6 +221,7 @@ export const DirectIcons: Array<Action> = [
     role: ["member", "admin", "owner"],
   },
 ];
+
 export const getDataForModal = (
   iconType: any,
   room: I_Room,
@@ -231,40 +231,57 @@ export const getDataForModal = (
     case "setAdminChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "unSetAdminChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "banFromChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "unBanFromChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "muteFromChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "kickFromChannel":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
         roomId: room.id,
+        roomName: room.name,
       };
     case "blockFriend":
       return {
         userId: selectedUser.intraId,
+        userName: selectedUser.firstName + " " + selectedUser.lastName,
       };
     case "message":
       return selectedUser;
     default:
       return null;
   }
+};
+export const isMember = (firstname: string, members: Members[]) => {
+  let x = members.find((member) => member.user.firstName == firstname);
+  return x ? true : false;
 };

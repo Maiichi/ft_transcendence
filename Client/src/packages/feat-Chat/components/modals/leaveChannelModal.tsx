@@ -12,7 +12,6 @@ export const LeaveRoomModal = (props: {
   const dispatch = useAppDispatch();
 
   const handleLeaveRoom = () => {
-    console.log("channelId || ", channelConversation.id);
     dispatch(leaveRoom(channelConversation.id));
     dispatch(
       setCurrentConversation({
@@ -27,7 +26,7 @@ export const LeaveRoomModal = (props: {
   return (
     <>
       <ModalConfirm
-        title={` Are you sure you want to leave #${channelConversation.name} ?`}
+        title={`Are you sure you want to leave #${channelConversation.name} ?`}
         subtitle={"This action is irreversible."}
         handleClose={handleClose}
         handleClick={handleLeaveRoom}

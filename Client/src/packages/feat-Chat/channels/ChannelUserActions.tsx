@@ -21,6 +21,8 @@ import { NewDirectMessage } from "../components/modals/CreateDirectMessageModal"
 import { IconHolder } from "../components/style";
 import { Actions } from "../components/UserActions";
 import { BlockUserModal } from "../components/modals/BlockUserModal";
+import { inviteUserToGame, inviteUserToGameFromChat } from "../../feat-Game/redux/GameSlice";
+import { useNavigate } from "react-router-dom";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -32,6 +34,9 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
   const friends: Array<I_User> = useAppSelector(
     (state) => state.friends.friends
   );
+
+  const navigate = useNavigate();
+
   const block = useAppSelector((state) => state.block);
   const roomIndex = memberships.findIndex((item: any) => item.id == roomId);
   const [open, setOpen] = useState(false);
@@ -114,7 +119,11 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         return <KicKFromRoomModal data={data} handleClose={handleClose} />;
       case "blockFriend":
         return (
-          <BlockUserModal intraId={data.intraId} handleClose={handleClose} />
+          <BlockUserModal
+            intraId={selectedUser.intraId}
+            userName={selectedUser.firstName + " " + selectedUser.lastName}
+            handleClose={handleClose}
+          />
         );
       case "message":
         return (
@@ -133,7 +142,13 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     const selectedUser = room.members.find(
       (member) => member.user.intraId === selectedUserId
     );
+    
     if (selectedUser) {
+      if (iconType === 'play')       {         
+          // dispatch(setSelectedUser(selectedUser.user));         
+          dispatch(inviteUserToGame({invitedId : selectedUserId, inviterId : user.intraId}));         
+          dispatch(inviteUserToGameFromChat(true));         
+          navigate('/game');       }
       const dataForModal = getDataForModal(iconType, room, selectedUser.user);
       const modalComponent: JSX.Element = getModalComponent(
         iconType,
@@ -168,6 +183,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
       <Actions
         handleCLose={handleClearIcon}
         username={selectedUser.userName}
+        avatar_url={selectedUser.avatar_url}
         color={color}
         status={status}
       >

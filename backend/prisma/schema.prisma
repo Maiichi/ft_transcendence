@@ -11,96 +11,109 @@ datasource db {
 }
 
 model User {
-     id                  Int                      @id @default(autoincrement())
-     intraId             Int                      @unique 
-     email               String                   @unique
-     firstName           String                   @db.VarChar(255)
-     lastName            String                   @db.VarChar(255)    
-     userName            String                   @unique @db.VarChar(255) 
-     avatar_url          String?                  @db.VarChar(255) @default("https://res.cloudinary.com/dt62qdmrg/image/upload/v1700783661/messi_hu50hp.jpg")
-     status              String                   @default("OFFLINE")
-     twoFactorActivate   Boolean?                 @default(false)
-     twoFactorSecret     String?                  @db.VarChar(255)  
-     memberships         Membership[]
-     conversations       Conversation[]                
-     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
-     updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
-     Messages            Message[]
-     blockedByMe         Blacklist[]              @relation("BlockedByMe")
-     blockedMe           Blacklist[]              @relation("BlockedMe")
+  id                Int            @id @default(autoincrement())
+  intraId           Int            @unique
+  email             String         @unique
+  firstName         String         @db.VarChar(255)
+  lastName          String         @db.VarChar(255)
+  userName          String         @unique @db.VarChar(255)
+  avatar_url        String?        @default("https://res.cloudinary.com/dt62qdmrg/image/upload/v1700783661/messi_hu50hp.jpg") @db.VarChar(255)
+  status            String         @default("OFFLINE")
+  inGame            Boolean        @default(false)
+  twoFactorActivate Boolean?       @default(false)
+  twoFactorSecret   String?        @db.VarChar(255)
+  memberships       Membership[]
+  conversations     Conversation[]
+  createdAt         DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime?      @updatedAt @db.Timestamp(6)
+  Messages          Message[]
+  blockedByMe       Blacklist[]    @relation("BlockedByMe")
+  blockedMe         Blacklist[]    @relation("BlockedMe")
 
-     sentRequests        FriendRequest[]          @relation("senderRequests")
-     receivedRequests    FriendRequest[]          @relation("receiverRequests")
-     friends             User[]                   @relation("friends")
-     friendsOf           User[]                   @relation("friends")
+  sentRequests     FriendRequest[] @relation("senderRequests")
+  receivedRequests FriendRequest[] @relation("receiverRequests")
+  friends          User[]          @relation("friends")
+  friendsOf        User[]          @relation("friends")
 
-     @@map("users")
+  games            Game[]          @relation("games")
+
+  @@map("users")
 }
 
 model Conversation {
-     id                  Int                      @id @default(autoincrement())
-     type                String // Either "direct" for direct messages, "channel" for public channels, or "private_channel" for private channels
-     participants        User[]                   
-     room                Room?                    @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-     roomId              Int?                     @unique
-     messages            Message[]
-     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
-     updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
-
+  id           Int       @id @default(autoincrement())
+  type         String // Either "direct" for direct messages, "channel" for public channels, or "private_channel" for private channels
+  participants User[]
+  room         Room?     @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  roomId       Int?      @unique
+  messages     Message[]
+  createdAt    DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime? @updatedAt @db.Timestamp(6)
 }
 
 model Message {
-     id                  Int                      @id @default(autoincrement())
-     content             String
-     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
-     sender              User                     @relation(fields: [senderId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
-     senderId            Int
-     chat                Conversation             @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-     chatId              Int
+  id        Int          @id @default(autoincrement())
+  content   String
+  createdAt DateTime     @default(now()) @db.Timestamp(6)
+  sender    User         @relation(fields: [senderId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
+  senderId  Int
+  chat      Conversation @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chatId    Int
 }
 
 model Room {
-     id                  Int                      @id @default(autoincrement())
-     name                String                   @db.VarChar()
-     description         String?                  @db.VarChar()
-     type                String
-     members             Membership[]             @relation("membership")
-     conversation        Conversation?             
-     password            String?                  @db.VarChar()
-     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
-     updatedAt           DateTime?                @updatedAt @db.Timestamp(6)
+  id           Int           @id @default(autoincrement())
+  name         String        @db.VarChar()
+  description  String?       @db.VarChar()
+  type         String
+  members      Membership[]  @relation("membership")
+  conversation Conversation?
+  password     String?       @db.VarChar()
+  createdAt    DateTime      @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime?     @updatedAt @db.Timestamp(6)
 }
 
 model Membership {
-     id                  Int                      @id @default(autoincrement())
-     isOwner             Boolean                  @default(false)
-     isAdmin             Boolean                  @default(false)
-     isBanned            Boolean                  @default(false)
-     isMute              Boolean                  @default(false)
-     timeMute            DateTime?                
-     room                Room                     @relation("membership", fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-     roomId              Int
-     user                User                     @relation(fields: [userId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
-     userId              Int
+  id       Int       @id @default(autoincrement())
+  isOwner  Boolean   @default(false)
+  isAdmin  Boolean   @default(false)
+  isBanned Boolean   @default(false)
+  isMute   Boolean   @default(false)
+  timeMute DateTime?
+  room     Room      @relation("membership", fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  roomId   Int
+  user     User      @relation(fields: [userId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
+  userId   Int
 }
 
 model Blacklist {
-     id                  Int                      @id @default(autoincrement())
-     blocker             User                     @relation("BlockedByMe", fields: [blockerById], references: [intraId])
-     blockerById         Int
-     blocked             User                     @relation("BlockedMe", fields: [blockedById], references: [intraId])
-     blockedById         Int
-     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+  id          Int      @id @default(autoincrement())
+  blocker     User     @relation("BlockedByMe", fields: [blockerById], references: [intraId])
+  blockerById Int
+  blocked     User     @relation("BlockedMe", fields: [blockedById], references: [intraId])
+  blockedById Int
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
 }
 
 model FriendRequest {
-     id                  Int                      @id @default(autoincrement())
-     sender              User                     @relation("senderRequests", fields: [senderId], references: [intraId])
-     senderId            Int
-     receiver            User                     @relation("receiverRequests", fields: [receiverId], references: [intraId])
-     receiverId          Int
-     accepted            Boolean
-     createdAt           DateTime                 @default(now()) @db.Timestamp(6)
+  id         Int      @id @default(autoincrement())
+  sender     User     @relation("senderRequests", fields: [senderId], references: [intraId])
+  senderId   Int
+  receiver   User     @relation("receiverRequests", fields: [receiverId], references: [intraId])
+  receiverId Int
+  accepted   Boolean
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
 
-     @@unique([senderId, receiverId])
+  @@unique([senderId, receiverId])
+}
+
+model Game {
+  id         Int         @id @default(autoincrement())
+  type       String
+  winnerId   Int
+  score1     Int
+  score2     Int
+  Players    User[]      @relation("games")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
