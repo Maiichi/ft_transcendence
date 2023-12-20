@@ -14,6 +14,7 @@ interface Foo {
   children: JSX.Element;
   notallow?: JSX.Element;
   isOwner?: boolean; // require  of self relation or false as default
+  ifNORelation?: boolean;
 }
 
 // TODO: RelationShip
@@ -23,6 +24,7 @@ const Relationship: (props: Foo) => JSX.Element = ({
   children,
   notallow = <h1> not allowd </h1>,
   isOwner = false,
+  ifNORelation = false, // other ways one relation at least
 }: Foo) => {
   const dispatch = useAppDispatch();
   const [matchedrelation, setMR] = useState<boolean | undefined>(undefined);
@@ -47,27 +49,27 @@ const Relationship: (props: Foo) => JSX.Element = ({
   useEffect(() => {
     // for no relation require
     if (!relations.length) {
-      setMR(true);
+      setMR(!ifNORelation);
       return;
     }
-    if (!friends) return;
     setMR(
-      relations.some(
-        (relation) =>
-          (relation === "self" && isOwner) ||
-          (relation === "friend" &&
-            !!friends?.find((user) => user.intraId === opId)) ||
-          (relation === "notfriend" &&
-            !!friends?.find((user) => user.intraId !== opId)) ||
-          (relation === "requested" && false) ||
-          (relation === "requester" && false) ||
-          (relation === "blockedMe" && false) ||
-          (relation === "blocked" && false)
-      )
+      ifNORelation &&
+        relations.some(
+          (relation) =>
+            (relation === "self" && isOwner) ||
+            (relation === "friend" &&
+              !!friends?.find((user) => user.intraId === opId)) ||
+            (relation === "notfriend" &&
+              !friends?.find((user) => user.intraId === opId)) ||
+            (relation === "requested" && false) ||
+            (relation === "requester" && false) ||
+            (relation === "blockedMe" && false) ||
+            (relation === "blocked" && false)
+        )
     );
   }, [friends]);
-
-  if (isOwner) return children;
+  // TODO: relation 
+  return children;
   return isLoading || matchedrelation === undefined ? (
     <Loading />
   ) : matchedrelation ? (

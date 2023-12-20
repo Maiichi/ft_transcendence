@@ -60,7 +60,7 @@ const GamesHistory = () => {
         isOwner={isOwner}
         notallow={
           <Alert severity="error">
-            You are `NOT ALLOW` to see history for this user
+            You are `NOT ALLOW` to see the history of this user
           </Alert>
         }
       >
@@ -80,8 +80,8 @@ const GamesHistory = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {matchs?.map((match) => (
-                  <>{<Row match={match} />}</>
+                {matchs?.map((match, index) => (
+                  <Row match={match} />
                 ))}
               </TableBody>
             </Table>

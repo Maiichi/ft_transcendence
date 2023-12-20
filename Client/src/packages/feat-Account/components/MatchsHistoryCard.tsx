@@ -14,7 +14,7 @@ const MatchsHistoryCard = (props: {
   const navigate = useNavigate();
 
   return (
-    <Matchshistory onClick={() => navigate(`/gamesHistory?uid=${uid}`)}>
+    <Matchshistory>
       <Text
         variant="h5"
         sx={{
@@ -33,6 +33,7 @@ const MatchsHistoryCard = (props: {
           const op = item.Players[0].intraId === uid ? 1 : 0;
           return (
             <Match
+              onClick={() => navigate(`/gamesHistory?uid=${uid}#${index + 1}`)}
               win={getresult(item.winnerId, item.score1 === item.score2, [
                 "#2fa025b8",
                 "#b0141495",
