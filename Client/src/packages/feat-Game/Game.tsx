@@ -9,19 +9,8 @@ import {
 } from "./utils/constants";
 import { useKeyboardControls } from "./hooks/useKeyboardControls";
 import { GameCanvas } from "./components/GameCanvas";
-import { Socket, io } from "socket.io-client";
+
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../core";
-import { setOpenErrorSnackbar, setServerError } from "../../core/CoreSlice";
-import { I_User } from "../feat-Chat/components/types";
-import styled from "styled-components";
-import { InviteUserToGame } from "./components/InviteGame";
-import { initializeSocket } from "./socketUtils";
-import {
-    inviteUserToGameFromChat,
-    setGameStep,
-    setInviteAccepted,
-    setInviteDeclined,
-} from "./redux/GameSlice";
 import { MatchLoading } from "./components/MatchLoading";
 
 export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {

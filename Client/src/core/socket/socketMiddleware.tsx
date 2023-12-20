@@ -251,8 +251,8 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(opponentAcceptInvite(true));
           });
           socket.on('opponentDeclineGameInvite', (data) => {
-            dispatch(setServerError(`User ${data.inviterId} decline your game Invite`));
-              dispatch(setOpenErrorSnackbar(true));
+            dispatch(setServerMessage(`User ${data.inviterId} decline your game Invite`));
+              dispatch(setOpenSnackbar(true));
             dispatch(opponentDeclineInvite(true));
           });
           socket.on('gameInvitationDeclined', () => {

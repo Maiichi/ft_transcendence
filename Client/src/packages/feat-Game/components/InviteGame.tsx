@@ -6,7 +6,7 @@ import { SearchComponent, useAppDispatch, useAppSelector } from "../../../core";
 import { I_User } from "../../feat-Chat/components/types";
 import { Socket } from "socket.io-client";
 import { inviteUserToGame } from "../redux/GameSlice";
-import { SocketInit } from "../../../App";
+
 import { getUserFriends } from "../../feat-Chat/components/redux/friendThunk";
 
 export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
@@ -88,7 +88,7 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
   
 
   return (
-    <SocketInit>
+    <>
       <ModalHeader>
         <h3>Invite a player to the game</h3>
         <Close
@@ -129,7 +129,7 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
           </ModalFooter>
         </form>
       </ModalBody>
-    </SocketInit>
+    </>
   );
 };
 
