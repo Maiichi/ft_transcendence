@@ -89,4 +89,43 @@ export class GameService {
         else
             return response.send({message : "This user has no game history yet"});
     }
+
+    async getLeaderBoard(response: Response)
+    {
+        const leaderboard = await this.prisma.user.findMany({
+            select: {
+            intraId: true,
+            userName: true,
+            games: {
+                select: {
+                winnerId: true,
+                score1: true,
+                score2: true,
+                },
+            },
+            avatar_url: true,
+            },
+        });
+        
+        const leaderboardWithStats = leaderboard.map((user) => {
+            const totalGames = user.games.length;
+            const winCount = user.games.filter((game) => game.winnerId === user.intraId).length;
+            const lossCount = totalGames - winCount;
+            const winRate = totalGames > 0 ? (winCount / totalGames) * 100 : 0;
+        
+            return {
+            name: user.userName,
+            winRate: `${winRate.toFixed(2)}%`,
+            wins: winCount,
+            losses: lossCount,
+            userId: user.intraId,
+            avatar_url: user.avatar_url,
+            };
+        });
+      
+      leaderboardWithStats.sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate));
+
+      return response.send({data : leaderboardWithStats});
+    }
+      
 }

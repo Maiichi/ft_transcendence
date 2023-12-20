@@ -35,4 +35,14 @@ export class GameController {
             response.send({error: error.message});
         }
     }
+
+    @Get('/leaderBoard')
+    async getLeaderBoard(@Res() response: Response)
+    {
+        try {
+            return await this.gameService.getLeaderBoard(response);
+        } catch (error) {
+            response.send({error: error.message});
+        }
+    }
 }
