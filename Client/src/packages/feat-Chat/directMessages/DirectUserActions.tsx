@@ -1,12 +1,16 @@
-import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
+import {
+  ModalComponent,
+  useAppDispatch,
+  useAppSelector,
+} from "../../../core";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
 import { useState } from "react";
 import { I_User } from "../components/types";
-
 import { BlockUserModal } from "../components/modals/BlockUserModal";
 import { Actions } from "../components/UserActions";
 import { IconHolder } from "../components/style";
 import { DirectIcons } from "../components/utils";
+import { useNavigate } from "react-router-dom";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -14,6 +18,7 @@ export const UserActionInDirectConversation = ({
   handleClosePopper,
 }: UserActionsProps) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { selectedUser } = useAppSelector((state) => state.chat);
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
@@ -43,7 +48,9 @@ export const UserActionInDirectConversation = ({
           />
         );
         break;
-
+      case "viewProfile":
+        navigate(`/user/${selectedUser.intraId}`);
+        break;
       default:
         break;
     }
