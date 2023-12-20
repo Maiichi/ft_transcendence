@@ -51,13 +51,20 @@ type AchievementType = {
 };
 
 type GameslogType = Array<MatchHistoryType>;
+type Players = {
+  intraId: number;
+  avatar_url: string;
+  userName: string;
+} & {
+  score?: number;
+};
 type MatchHistoryType = {
-  name: string;
-  pic: string;
-  time: string;
-  gain: number;
-  nogain: number;
-  result: boolean | -1;
+  Players: Players[];
+  createdAt: string;
+  score1: number;
+  score2: number;
+  type: "dual" | string;
+  winnerId: number;
 };
 
 export interface ProfileState {

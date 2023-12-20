@@ -48,6 +48,21 @@ const profileSlice = createSlice({
         getMatchHistory.fulfilled,
         (state, action: PayloadAction<GameslogType>) => {
           state.matchs.matchsHistory = action.payload;
+          // logic for winer and losser score
+          state.matchs.matchsHistory.forEach((match) => {
+            if (match.Players.length !== 2) return; // never applied
+            const winnerScore =
+              match.winnerId === match.Players[0].intraId ? 1 : 0;
+            const loserScore = winnerScore ? 0 : 1;
+            match.Players[winnerScore].score = Math.max(
+              match.score1,
+              match.score2
+            );
+            match.Players[loserScore].score = Math.min(
+              match.score1,
+              match.score2
+            );
+          });
           state.matchs.isLoading = false;
         }
       )

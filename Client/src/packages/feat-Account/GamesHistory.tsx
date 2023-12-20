@@ -54,7 +54,7 @@ const GamesHistory = () => {
 
   return (
     <Container>
-      <Relationship relations={['friend' ]} opId={gid} isOwner={isOwner}>
+      <Relationship relations={["friend"]} opId={gid} isOwner={isOwner}>
         {isLoading ? (
           <Loading />
         ) : (
@@ -72,7 +72,7 @@ const GamesHistory = () => {
               </TableHead>
               <TableBody>
                 {matchs?.map((match) => (
-                  <Row match={match} />
+                  <>{<Row match={match} />}</>
                 ))}
               </TableBody>
             </Table>
@@ -87,7 +87,7 @@ function Row(props: { match: MatchHistoryType }) {
   const { match } = props;
   const [open, setOpen] = useState(false);
   const { isMobile, isTab } = useSize();
-
+  if (match.Players.length !== 2) return null; /// never applied
   // TODO: you and the opponets , winer on the rigth , or match owner or player start the game
   function GridContainerPlayer({ left = false }) {
     return (
@@ -98,31 +98,15 @@ function Row(props: { match: MatchHistoryType }) {
         direction={left ? "row" : "row-reverse"}
       >
         <Grid item xs={3}>
-          <Avatar alt="pop" src={match.pic} />
+          <Avatar alt="pop" src={match.Players[left ? 1 : 0].avatar_url} />
         </Grid>
         <Grid item xs={3}>
           <Typography textAlign={isTab ? "start" : "center"}>
-            {left ? "yoou" : match.name.slice(0.8)}
+            {match.Players[left ? 1 : 0].userName.slice(0, 8)}
           </Typography>
         </Grid>
       </Grid>
     );
-  }
-  function JsxAlertResult() {
-    const resultmsg = match.result
-      ? match.result === -1
-        ? `A valiant effort, but ${match.name} claimed victory over you on `
-        : `Victory is yours! You conquered ${match.name} on `
-      : `Neither victory nor defeat! The match with ${match.name} on `; // resulted in a tie`}
-    return (
-      <>
-        {resultmsg} <Typography variant="h6">{match.time}</Typography>{" "}
-        {match.result ? null : "resulted in a tie"}
-      </>
-    );
-  }
-  function getResultcolor(): AlertColor {
-    return match.result ? (match.result === -1 ? "error" : "success") : "info";
   }
 
   return (
@@ -135,10 +119,10 @@ function Row(props: { match: MatchHistoryType }) {
           <GridContainerPlayer left />
         </TableCell>
         <TableCell align="right" padding={"none"}>
-          {match.gain}
+          {match.Players[1].score}
         </TableCell>
         <TableCell align="center">{":"}</TableCell>
-        <TableCell align="left">{match.nogain}</TableCell>
+        <TableCell align="left">{match.Players[0].score}</TableCell>
         <TableCell align="center">
           <GridContainerPlayer />
         </TableCell>
@@ -153,9 +137,12 @@ function Row(props: { match: MatchHistoryType }) {
       <TableRow>
         <TableCell sx={{ p: 0 }} colSpan={6}>
           <Collapse in={open} unmountOnExit sx={{}}>
-            <Alert severity={getResultcolor()} color={getResultcolor()}>
-              <JsxAlertResult />
-            </Alert>
+            <Typography variant="body1" sx={{ textAlign: "center" }}>
+              {`At ${match.createdAt}`}
+              <br />
+              {`${match.Players[0].userName} play with ${match.Players[1].userName}`}
+              <br /> {` on a ${match.type} match!`}
+            </Typography>
           </Collapse>
         </TableCell>
       </TableRow>

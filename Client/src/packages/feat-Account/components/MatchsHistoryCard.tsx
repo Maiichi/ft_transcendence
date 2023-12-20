@@ -9,8 +9,8 @@ const MatchsHistoryCard = (props: {
   matchs: MatchHistoryType[];
 }) => {
   const { userName, matchs, uid } = props;
-  const getresult = (one: number, two: number, results: Array<any>) =>
-    one > two ? results[0] : one < two ? results[1] : results[2];
+  const getresult = (winer: number, equal: boolean, results: Array<any>) =>
+    equal ? results[2] : winer === uid ? results[0] : results[1];
   const navigate = useNavigate();
 
   return (
@@ -28,31 +28,36 @@ const MatchsHistoryCard = (props: {
         {`${userName.slice(0, 8)}'s Last Matches`}
       </Text>
       {matchs && matchs.length ? (
-        matchs.map(
-          (item, index) =>
-            index < 5 && (
-              <Match
-                win={getresult(item.gain, item.nogain, [
-                  "#2fa025b8",
-                  "#b0141495",
-                  "#3b4243b7",
-                ])}
-              >
-                <Avatar
-                  sx={{ width: 60, height: 60, mb: 2 }}
-                  alt="we"
-                  src={`/images/${item.pic}`}
-                />
-                <Text> {item.name} </Text>
-                <p> {`${item.gain} : ${item.nogain}`} </p>
-                {getresult(item.gain, item.nogain, [
-                  <CheckCircle color="success" />,
-                  <DoNotDisturbOn color="error" />,
-                  <Dangerous color="disabled" />,
-                ])}
-              </Match>
-            )
-        )
+        matchs.map((item, index) => {
+          let op = item.Players[0].intraId === uid ? 1 : 0;
+          if (index > 4) return null;
+          return (
+            <Match
+              win={getresult(item.winnerId, item.score1 === item.score2, [
+                "#2fa025b8",
+                "#b0141495",
+                "#3b4243b7",
+              ])}
+            >
+              <Avatar
+                sx={{ width: 60, height: 60, mb: 2 }}
+                alt="we"
+                src={item.Players[op].avatar_url}
+              />
+              <Text> {item.Players[op].userName.slice(0, 8)} </Text>
+              <p>
+                {`${item.Players[op].score} : ${
+                  item.Players[op ? 0 : 1].score
+                }`}
+              </p>
+              {getresult(item.winnerId, item.score1 === item.score2, [
+                <CheckCircle color="success" />,
+                <DoNotDisturbOn color="error" />,
+                <Dangerous color="disabled" />,
+              ])}
+            </Match>
+          );
+        })
       ) : (
         <div
           style={{
