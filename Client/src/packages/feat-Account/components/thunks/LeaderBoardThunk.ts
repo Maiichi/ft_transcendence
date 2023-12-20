@@ -17,8 +17,7 @@ const getLeaderboard = createAsyncThunk(
           },
         }
       );
-      console.log(players);
-      return players;
+      return players ?? [];
     } catch (error) {
       console.log("error leaderboard fetching", error);
       throw error;
