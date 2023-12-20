@@ -13,7 +13,7 @@ import {
 import { STEPS } from "./utils/constants";
 import { Socket, io } from "socket.io-client";
 import { MatchLoading } from "./components/MatchLoading";
-import { setOpenErrorSnackbar, setServerError } from "../../core/CoreSlice";
+import { setOpenSnackbar, setServerMessage } from "../../core/CoreSlice";
 import { GameState } from "./utils/types";
 
 export const GameSteps: React.FC = () => {
@@ -47,8 +47,8 @@ export const GameSteps: React.FC = () => {
     }, [token]); //
 
     socket?.on("joinQueueError", (data) => {
-        dispatch(setServerError(data));
-        dispatch(setOpenErrorSnackbar(true));
+        dispatch(setServerMessage(data));
+        dispatch(setOpenSnackbar(true));
     });
 
     // Define emitEvent function
