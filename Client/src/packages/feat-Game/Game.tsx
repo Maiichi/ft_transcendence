@@ -11,7 +11,6 @@ import { useKeyboardControls } from "./hooks/useKeyboardControls";
 import { GameCanvas } from "./components/GameCanvas";
 
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../core";
-import { MatchLoading } from "./components/MatchLoading";
 
 export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
     const ref = useRef<HTMLCanvasElement>(null);
