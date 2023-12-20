@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateGameDTO } from './dto/game.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class GameService {
@@ -38,7 +39,7 @@ export class GameService {
                 },
             },
         });
-        console.log('players in service ==', players);
+
         // Assuming players array is an array of User instances
 
         const newGame = await this.prisma.game.create({
@@ -53,5 +54,39 @@ export class GameService {
             },
         });
         return 'game created Successfully';
+    }
+
+    async getUserGameHistory(userId: number, response: Response)
+    {
+        const gameHistory = await this.prisma.game.findMany({
+            where: {
+                Players : {
+                   some: {
+                        intraId : userId
+                   }
+                }
+            },
+            orderBy : {
+                createdAt : 'desc'
+            },
+            select : {
+                score1: true,
+                score2: true,
+                winnerId: true,
+                type: true,
+                createdAt: true,
+                Players: {
+                    select: {
+                        intraId : true,
+                        avatar_url: true,
+                        userName: true
+                    }
+                },
+            }
+        });
+        if (gameHistory.length)
+            return response.send({data: gameHistory});
+        else
+            return response.send({message : "This user has no game history yet"});
     }
 }
