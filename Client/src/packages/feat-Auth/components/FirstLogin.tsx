@@ -6,6 +6,7 @@ import {
   Backdrop,
   Box,
   Button,
+  ButtonGroup,
   Divider,
   Paper,
   Stack,
@@ -17,11 +18,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
 import { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { updateUserName, uploadAvatar } from "./authThunk";
 import { useSize } from "../../../core/utils/hooks";
 import { CardAvatar, Title } from "../../feat-Account/components";
-import { CheckCircle, CloudUpload } from "@mui/icons-material";
+import { CheckBox, CheckCircle, CloudUpload } from "@mui/icons-material";
 import {
   ALLOWED_FILE_TYPES,
   MAX_IMAGE_SIZE,
@@ -97,10 +99,8 @@ const FirstLogin = () => {
       ).then(() => {
         setSelectedImage(null);
       });
-      handleNext();
-    } else {
-      setImageError("Error uploading the file, please retry.");
     }
+    handleNext();
   };
 
   /*(((((((((())))))))))/ */
@@ -153,7 +153,12 @@ const FirstLogin = () => {
         user: null,
       })
     );
-    // navigate("/");
+    setTimeout(() => {
+      if (isfirstLogin) {
+        setActiveStep(0);
+        setOpen(false);
+      }
+    }, 100);
   };
   const steps = [
     {
@@ -191,7 +196,6 @@ const FirstLogin = () => {
               alt={auth.user.userName}
               src={selectedImage || `${auth.user.avatar_url}`}
             />
-            <Title style={{ fontSize: "1rem" }}>{auth.user.userName}</Title>
             <Divider />
             {imageError && (
               <Alert
@@ -203,30 +207,25 @@ const FirstLogin = () => {
                 {imageError}
               </Alert>
             )}
-            {selectedImage ? (
-              <Button
-                color="success"
-                component="label"
-                variant="contained"
-                startIcon={<CheckCircle />}
-                onClick={handleUpload}
-              >
-                Confirm upload
-              </Button>
-            ) : (
+            <ButtonGroup
+              variant="text"
+              aria-label="outlined primary button group"
+            >
               <Button
                 component="label"
-                variant="contained"
                 startIcon={selectedImage ? <CheckCircle /> : <CloudUpload />}
               >
-                Upload picture
                 <VisuallyHiddenInput
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
                 />
               </Button>
-            )}
+              <Button
+                startIcon={<AddTaskOutlinedIcon />}
+                onClick={handleUpload}
+              />
+            </ButtonGroup>
           </CardAvatar>
         </>
       ),
