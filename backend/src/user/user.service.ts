@@ -208,27 +208,6 @@ export class UserService {
         }
     }
 
-    //function to get the user Avatar 
-    // TODO: need to improve ------------
-    // async getUserAvatar(userId: number, res: Response)
-    // {
-    //     // find user by username if it exists
-    //     const userExist = await this.findUserById(userId);
-    //     // const usernameExist = await this.findUserByUsername(username);
-    //     if (userExist)
-    //     {
-    //         const user = await this.getUser(userId);
-    //         const filePath = path.join(__dirname, '../../images_uploads' ,  user.avatar_url);
-    //         console.log('filePath == ', filePath);
-    //         res.sendFile(filePath);
-    //     }
-    //     else
-    //         return res.status(400).json({
-    //             status: 400,
-    //             message: `User not found with the id = ${userId}`
-    //         })
-    // }
-
     // function to check if the user exist using it's ID
     async findUserById(userId: number)
     {
@@ -350,6 +329,7 @@ export class UserService {
         });
     }
 
+    // get blacklist of the user (either he's the blocked or the blocked)
     async getBlackList(userId: number, res: Response) {
         const blackList = await this.prisma.blacklist.findMany({
             where: {
@@ -424,6 +404,24 @@ export class UserService {
             BlockedByYou,
             BlockedYou,
         });
+    }
+
+
+    // a function to get all users execpt the blacklisted 
+    async getAllUser(userId: number, res: Response): Promise<any>
+    {
+        const users = await this.prisma.user.findMany({
+            select : {
+                userName : true,
+                avatar_url: true,
+                lastName: true,
+                firstName: true,
+                status: true,
+                intraId: true,
+            }
+        })
+        
+        return res.send({data : users});
     }
     
 }
