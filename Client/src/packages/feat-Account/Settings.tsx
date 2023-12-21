@@ -130,10 +130,7 @@ export const AccountSettings = () => {
           <Avatar
             sx={{ width: "80px", height: "80px" }}
             alt={auth.user.userName}
-            src={
-              selectedImage ||
-              `${auth.user.avatar_url}`
-            }
+            src={selectedImage || `${auth.user.avatar_url}`}
           />
           <Title style={{ fontSize: "1rem" }}>{auth.user.userName}</Title>
           <Divider />
