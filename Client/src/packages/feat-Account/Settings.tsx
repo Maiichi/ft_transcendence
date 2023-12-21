@@ -29,7 +29,7 @@ import {
   uploadAvatar,
 } from "../feat-Auth/components/authThunk";
 
-const VisuallyHiddenInput = muiStyled("input")({
+export const VisuallyHiddenInput = muiStyled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
   height: 1,
@@ -41,8 +41,8 @@ const VisuallyHiddenInput = muiStyled("input")({
   width: 1,
 });
 
-const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
+export const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+export const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
 export const AccountSettings = () => {
   const auth = useAppSelector((state) => state.auth);
@@ -66,7 +66,6 @@ export const AccountSettings = () => {
     if (isValid(textInput)) {
       dispatch(
         updateUserName({
-          isFirstTime: true,
           token: auth.token,
           id: auth.user.intraId,
           newUsername: textInput,

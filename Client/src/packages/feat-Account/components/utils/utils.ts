@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const Cards = styled.div`
   display: flex;
@@ -8,14 +8,17 @@ export const Cards = styled.div`
     flex-direction: column;
   }
 `;
-export const CardAvatar = styled.div`
+const BOxS = css`
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+`;
+export const CardAvatar = styled.div<{ firstLogin?: true }>`
   width: 35%;
   height: fit-content;
   margin-right: 5px;
   padding: 32px 24px 6px 32px;
   background-color: rgb(255, 255, 255);
   color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+  ${(props) => !props.firstLogin && BOxS};
   border-radius: 20px;
   align-items: center;
   display: flex;
