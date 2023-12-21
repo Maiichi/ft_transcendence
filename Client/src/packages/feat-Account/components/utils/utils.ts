@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import styled from "styled-components";
 
 export const Cards = styled.div`
@@ -87,7 +88,7 @@ export const ButtonAvatar = styled.button`
     background-color: rgba(99, 102, 241, 0.04);
   }
 `;
-export const ButtonForm = styled.button`
+export const ButtonForm = styled(Button)`
   border: 0px;
   margin: 0px;
   font-weight: 600;
@@ -95,17 +96,17 @@ export const ButtonForm = styled.button`
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 0.875rem;
   line-height: 1.75;
-  color: rgb(255, 255, 255);
-  background-color: rgb(99, 102, 241);
+  /* color: rgb(255, 255, 255); */
+  /* background-color: rgb(99, 102, 241); */
   border-radius: 12px;
   padding: 8px 20px;
   width: fit-content;
   margin-left: auto;
-  &:hover {
+  /* &:hover {
     text-decoration: none;
     background-color: rgb(67, 56, 202);
     box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 10px;
-  }
+  } */
 `;
 export const H5 = styled.h4`
   margin: 0px;
