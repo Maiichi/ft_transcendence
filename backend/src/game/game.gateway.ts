@@ -162,18 +162,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     console.log("store Game");
     let winnerSocket;
     const players = game.getPlayer();
-    let playersIds: number[] = [];
     // console.log(' plyer 0 == ', players[0]);
-    // console.log(' plyer 1 == ', players[2]);
+    // console.log(' plyer 1 == ', players[1]);
     // console.log('type of ==', typeof(players[0].getScore()));
-    playersIds.push(this.getUserIdFromSocketId(players[0].getSocket().id));
-    playersIds.push(this.getUserIdFromSocketId(players[1].getSocket().id));
+    console.log("socket for the user 0 ===========", (players[0].getSocket().id));
+    console.log("socket for the user 1 ===========",(players[1].getSocket().id));
+   
     if (players[1].getScore() > players[0].getScore())
       winnerSocket = players[1].getSocket();
     else if (players[1].getScore() < players[0].getScore())
       winnerSocket = players[0].getSocket();
     const winnerId = this.getUserIdFromSocketId(winnerSocket.id);
-    // Call the saveGame method in your GameService
+
+     // Filter out null values from playersIds array
+    const playersIds: number[] = [players[0], players[1]].map(player => this.getUserIdFromSocketId(player.getSocket().id)).filter(id => id !== null);
+    // Call the saveGame method in GameService
     await this.gameService.saveGame({
       gameMode: game.getGameType(),
       score1: players[0].getScore(),
@@ -199,7 +202,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     });
     this.unique.delete(sockets[0]);
     this.unique.delete(sockets[1]);
+    console.log('heeeere 1');
     this.games.splice(this.games.indexOf(game), 1);
+    console.log('heeeere 2');
     await this._storeGame(game);
     console.log('removeOverGame : ' + game.getId());
     // this.logger.log(`number of current games: ${this.games.length}`);
@@ -212,7 +217,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
       let interval = setInterval(() => {
         socketsArr.forEach((socket) => {
-          console.log(socket.id)
+          // console.log(socket.id)
           this.server
           .to(socket.id)
           .emit('countdown', countdown);

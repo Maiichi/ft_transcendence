@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateGameDTO } from './dto/game.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class GameService {
@@ -38,7 +39,7 @@ export class GameService {
                 },
             },
         });
-        console.log('players in service ==', players);
+
         // Assuming players array is an array of User instances
 
         const newGame = await this.prisma.game.create({
@@ -54,4 +55,83 @@ export class GameService {
         });
         return 'game created Successfully';
     }
+
+    async getUserGameHistory(userId: number, response: Response)
+    {
+        const gameHistory = await this.prisma.game.findMany({
+            where: {
+                Players : {
+                   some: {
+                        intraId : userId
+                   }
+                }
+            },
+            orderBy : {
+                createdAt : 'desc'
+            },
+            select : {
+                score1: true,
+                score2: true,
+                winnerId: true,
+                type: true,
+                createdAt: true,
+                Players: {
+                    select: {
+                        intraId : true,
+                        avatar_url: true,
+                        userName: true
+                    }
+                },
+            }
+        });
+        if (gameHistory.length)
+            return response.send({data: gameHistory});
+        else
+            return response.send({message : "This user has no game history yet"});
+    }
+
+    async getLeaderBoard(response: Response)
+    {
+        const games = await this.prisma.game.findMany();
+        console.log("games == ", games);
+        if (!games.length)
+            return response.send({message : "no game has been played at the moment."});
+        const leaderboard = await this.prisma.user.findMany({
+            select: {
+                intraId: true,
+                userName: true,
+                games: {
+                select: {
+                    winnerId: true,
+                    score1: true,
+                    score2: true,
+                },
+                },
+                avatar_url: true,
+            },
+            });
+        
+        const leaderboardWithStats = leaderboard
+        .filter((user) => user.games.length > 0) // Exclude users without any games
+        .map((user) => {
+            const totalGames = user.games.length;
+            const winCount = user.games.filter((game) => game.winnerId === user.intraId).length;
+            const lossCount = totalGames - winCount;
+            const winRate = (winCount / totalGames) * 100;
+    
+            return {
+            name: user.userName,
+            winRate: `${winRate.toFixed(2)}%`,
+            wins: winCount,
+            losses: lossCount,
+            userId: user.intraId,
+            avatar_url: user.avatar_url,
+            };
+        });
+      
+        leaderboardWithStats.sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate));
+
+        return response.send({data : leaderboardWithStats});
+    }
+      
 }
