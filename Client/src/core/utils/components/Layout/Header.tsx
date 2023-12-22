@@ -24,7 +24,7 @@ import { useSize } from "../../hooks";
 import { useAppDispatch } from "../../../redux";
 import { setDisplayNavbar } from "../../../CoreSlice";
 import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
-import { setToken } from "../../../../packages/feat-Auth/components/authSlice";
+import { setToken, userLogout } from "../../../../packages/feat-Auth/components/authSlice";
 import { useNavigate } from "react-router-dom";
 import { disconnectSocket } from "../../../socket/socketSlice";
 
@@ -274,9 +274,8 @@ export const Header = () => {
               id="logout"
               className={classes.iconBase}
               onClick={() => {
-                dispatch(setToken(null));
-                dispatch(disconnectSocket());
-                navigate("/login");
+                dispatch(userLogout());
+                // navigate("/login");
               }}
             />
           )}
