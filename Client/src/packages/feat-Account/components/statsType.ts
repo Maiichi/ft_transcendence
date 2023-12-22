@@ -5,16 +5,11 @@ type AddLoading<T> = {
 
 type userType = {
   intraId: number;
-  email: string;
   firstName: string;
   lastName: string;
   userName: string;
   avatar_url: string;
   status: "ONLINE" | "OFFLINE";
-  twoFactorActivate: boolean;
-  twoFactorSecret: string;
-  createdAt: string;
-  updatedAt: string;
 } & Record<string, any>;
 
 // TODO: should be formal
@@ -36,11 +31,11 @@ type gamerType = {
 type leaderboardType = Array<leaderboardplayerType>;
 type leaderboardplayerType = {
   name: string;
-  ladder: number;
+  winRate: number;
   wins: number;
-  loss: number;
-  uid: number;
-  picture: string;
+  losses: number;
+  userId: number;
+  avatar_url: string;
 };
 
 type AchievementType = {
@@ -51,13 +46,20 @@ type AchievementType = {
 };
 
 type GameslogType = Array<MatchHistoryType>;
+type Players = {
+  intraId: number;
+  avatar_url: string;
+  userName: string;
+} & {
+  score?: number;
+};
 type MatchHistoryType = {
-  name: string;
-  pic: string;
-  time: string;
-  gain: number;
-  nogain: number;
-  result: boolean | -1;
+  Players: Players[];
+  createdAt: string;
+  score1: number;
+  score2: number;
+  type: "dual" | string;
+  winnerId: number;
 };
 
 export interface ProfileState {

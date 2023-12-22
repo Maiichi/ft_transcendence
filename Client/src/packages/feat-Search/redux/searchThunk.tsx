@@ -22,25 +22,21 @@ export const getAllRooms = createAsyncThunk(
     }
   }
 );
-
-const getAllFriends = createAsyncThunk(
+export const getAllUsers = createAsyncThunk(
   "search/users",
   async (_, { getState }) => {
     try {
       const token = (getState() as RootState).auth.token;
-      const res:Array<userType> = [] /*await apiRequest(`/users/friends`, {
+      const res = await apiRequest(`/users/all`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });*/
-
-      return res;
+      });
+      return res.data;
     } catch (error) {
-      console.log("error in getAllFriends");
+      console.log("error in getAllUsers");
       throw error;
     }
   }
 );
-
-export { getAllFriends };

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useAsyncError, useNavigate } from "react-router-dom";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { Chat } from "@mui/icons-material";
 import { Loading, useAppDispatch, useAppSelector } from "../../core";
@@ -32,6 +32,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const Oid: number = useAppSelector((state) => state.auth.user.intraId);
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<any>(null);
+  const [firstEffect, effected] = useState(false);
 
   const handleClickOpen = (event: React.MouseEvent<any>) => {
     setAnchorEl(event.currentTarget);
@@ -39,12 +40,13 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   };
   useEffect(() => {
     primary && dispatch(getLeaderboard());
+    effected(true);
   }, []);
 
   return (
     <Root>
       {primary && <Title> Leaderboard </Title>}
-      {state.isLoading ? (
+      {state.isLoading || !firstEffect ? (
         <Loading />
       ) : leaderboard && leaderboard.length ? (
         <Players primary={primary}>
@@ -52,28 +54,34 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
             (player, index) =>
               (!primary && index >= 3) || (
                 <Player>
-                  <ListItemAvatar>
-                    <Avatar src={`/images/${player.picture}`}>
-                      {index + 1}
-                    </Avatar>
+                  <ListItemAvatar
+                    onClick={() => navigate(`/user/${player.userId}`)}
+                  >
+                    <Avatar src={player.avatar_url}>{index + 1}</Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={player.name}
+                    primary={player.name.slice(0, 8)}
                     secondary={`Rank: ${index + 1}`}
                   />
                   <ListItemText
-                    primary={player.loss + player.wins}
+                    primary={player.losses + player.wins}
                     secondary={`Matchs ${isTab ? "" : "played"}`}
                   />
-                  <ListItemText primary={player.ladder} secondary={`Ladder`} />
+                  <ListItemText
+                    primary={player.winRate}
+                    secondary={`WinRate`}
+                  />
                   {isMobile || (
                     <ListItemText primary={player.wins} secondary={`Wins`} />
                   )}
                   {primary && !isTab && (
-                    <ListItemText primary={player.loss} secondary={`Losses`} />
+                    <ListItemText
+                      primary={player.losses}
+                      secondary={`Losses`}
+                    />
                   )}
                   {primary &&
-                    (Oid !== player.uid ? (
+                    (Oid !== player.userId ? (
                       <ListButton
                         isTab={isTab || isMobile}
                         onCklick={handleClickOpen}

@@ -106,12 +106,11 @@ export const UsersRoom = ({
                     <ListItemAvatar>
                       <Avatar
                         alt="Remy Sharp"
-                        src="/static/images/avatar/1.jpg"
+                        src={user.user.avatar_url}
                       />
                     </ListItemAvatar>
                     <ListItemText
                       primary={`${user.user.firstName} ${user.user.lastName}`}
-                      secondary={"14 mutual Friend"}
                     />
                   </ListItemButton>
                 </ListItem>

@@ -59,7 +59,7 @@ import { FriendService } from 'src/user/friend/friend.service';
 
   private connectedClients = new Map<string,User>();
   private userSockets = new Map<number,string[]>();
-  private BlackListedTokens = new Map<string,number>();
+  // private BlackListedTokens = new Map<string,number>();
   
 
   constructor(
@@ -100,7 +100,7 @@ import { FriendService } from 'src/user/friend/friend.service';
     console.log('}');
   }
 
-  deleteUserSockets(intraId: number) {
+  private deleteUserSockets(intraId: number) {
     const sockets = this.userSockets.get(intraId);
     if (sockets) {
       sockets.forEach((socketId) => {
@@ -111,6 +111,7 @@ import { FriendService } from 'src/user/friend/friend.service';
       });
       this.userSockets.delete(intraId);
     }
+    console.log("userSockets == ", this.userSockets);
   }
 
   // deleteUserSingleSocket()
@@ -124,7 +125,7 @@ import { FriendService } from 'src/user/friend/friend.service';
   //     });
   // }
 
-  deleteUserDisconnected(intraId: number) {
+  private deleteUserDisconnected(intraId: number) {
     const disconnectedSockets = [];
     this.connectedClients.forEach(
       (mapUser, mapId) => {
@@ -144,7 +145,7 @@ import { FriendService } from 'src/user/friend/friend.service';
 
   // }
 
-  findUserByClientSocketId(clientId: string) {
+  private findUserByClientSocketId(clientId: string) {
     let ret = null;
     this.connectedClients.forEach(
       (user, socketId) => {
@@ -153,6 +154,8 @@ import { FriendService } from 'src/user/friend/friend.service';
     );
     return ret;
   }
+
+  
 
   async handleConnection(client: Socket) {
     const token = client.handshake.headers.authorization;
@@ -201,26 +204,6 @@ import { FriendService } from 'src/user/friend/friend.service';
   }
 
 
-  // TODO: need to be tested to check if the user is logged of from all the tabs
-  // async handleDisconnect(client: Socket) {
-  //     try {
-  //         const user = this.connectedClients.get(client.id);
-  //         if (user) {
-  //             const intraId = user.intraId;
-  //             // here
-  //             // this.deleteUserSockets(intraId);
-  //             this.connectedClients.delete(client.id);
-  //             this.userService.updateUserStatus(intraId, 'OFFLINE');
-  //             client.disconnect();
-  //             console.log(user.userName + ' is Disconnected ' + client.id);
-  //         } else {
-  //             throw new WsException(`cannot find the user`);
-  //         }
-  //     } catch (error) {
-  //         client.emit(error);
-  //     }
-  // }
-
   async handleDisconnect(client: Socket) {
     try {
       const user = this.connectedClients.get(
@@ -230,8 +213,7 @@ import { FriendService } from 'src/user/friend/friend.service';
         const intraId = user.intraId;
 
         // Remove the disconnected socket from userSockets
-        const userSockets =
-          this.userSockets.get(intraId) || [];
+        const userSockets = this.userSockets.get(intraId) || [];
         const updatedSockets = userSockets.filter(
           (socketId) => socketId !== client.id,
         );
@@ -239,26 +221,17 @@ import { FriendService } from 'src/user/friend/friend.service';
         if (updatedSockets.length === 0) {
           // If there are no more sockets for this user, remove the user entirely
           this.userSockets.delete(intraId);
+           // Update the user status to "OFFLINE" since all tabs are disconnected
+          this.userService.updateUserStatus(intraId, 'OFFLINE');
         } else {
           // Update the userSockets map
-          this.userSockets.set(
-            intraId,
-            updatedSockets,
-          );
+          this.userSockets.set(intraId, updatedSockets);
         }
 
         // Other cleanup tasks for disconnection
         this.connectedClients.delete(client.id);
-        this.userService.updateUserStatus(
-          intraId,
-          'OFFLINE',
-        );
         client.disconnect();
-        console.log(
-          user.userName +
-            ' is Disconnected ' +
-            client.id,
-        );
+        console.log(user.userName + ' is Disconnected ' + client.id);
       } else {
         throw new WsException(
           `cannot find the user`,
@@ -893,12 +866,44 @@ import { FriendService } from 'src/user/friend/friend.service';
     }
   }
 
+  private handleLogout(client: Socket) {
+    try {
+      const user = this.connectedClients.get(client.id);
+  
+      if (user) {
+        const intraId = user.intraId;
+  
+        // Disconnect all tabs of the same user
+        this.deleteUserSockets(intraId);
+  
+        // Update the user status to "OFFLINE"
+        this.userService.updateUserStatus(intraId, 'OFFLINE');
+  
+        // Remove the user from connectedClients
+        this.connectedClients.delete(client.id);
+  
+        console.log(user.userName + ' has logged out from all tabs');
+      } else {
+        throw new WsException(`Cannot find the user`);
+      }
+    } catch (error) {
+      client.emit(error);
+    }
+  }
+
   @SubscribeMessage('logout')
   async logout(
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      this.handleConnection(client);
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const currentUserSockets: string[] = this.userSockets.get(currentUser.intraId);
+      currentUserSockets.forEach((value) => {
+        this.server
+        .to(value)
+        .emit('userLoggedOut');
+      });
+      this.handleLogout(client);
     } catch (error) {
       const response = {
         success: false,
@@ -907,6 +912,7 @@ import { FriendService } from 'src/user/friend/friend.service';
       return response;
     }
   }
+
 
   // send private message
   @SubscribeMessage('sendMessageToUser')

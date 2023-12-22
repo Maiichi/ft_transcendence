@@ -1,6 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Loading, useAppDispatch, useAppSelector } from "../../core";
+import {
+  Loading,
+  Relationship,
+  useAppDispatch,
+  useAppSelector,
+} from "../../core";
 import {
   ProfileState,
   getuserasgamer,
@@ -11,11 +16,13 @@ import {
   UserCard,
 } from "./components";
 import { ProfileCards, Button } from "./styles";
+import { Alert } from "@mui/material";
 
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const _uid = useParams<{ uid: string }>();
+  const [start, setStart] = useState(false);
 
   const intraId = useAppSelector((state) => state.auth.user.intraId);
   const uid: number =
@@ -24,15 +31,18 @@ const Profile = () => {
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
   const Go: boolean = !useAppSelector(
-    (state) => state.profile.isLoading || state.profile.lead.isLoading
+    ({ profile }) =>
+      profile.isLoading || profile.lead.isLoading || profile.matchs.isLoading
   );
 
   const user = profileStates.gamer.user;
   useEffect(() => {
     dispatch(getuserasgamer(uid));
     dispatch(getLeaderboard());
-  }, [_uid]);
+    setStart(true);
+  }, []);
 
+  if (!start) return <Loading />;
   if ((Go && !user) || uid < 1)
     return (
       <>
@@ -41,11 +51,21 @@ const Profile = () => {
       </>
     );
 
-  switch (Go) {
-    case false:
-      return <Loading />;
-    default:
-      return (
+  return (
+    <Relationship
+      ifNORelation
+      relations={["blocked", "blockedMe"]}
+      opId={uid}
+      isOwner={isOwner}
+      notallow={
+        <Alert severity="error">
+          You are `NOT ALLOW` to see the history of this user
+        </Alert>
+      }
+    >
+      {!Go ? (
+        <Loading />
+      ) : (
         <ProfileCards>
           <UserCard gamer={profileStates.gamer} isOwner={isOwner} />
           <BoardCard />
@@ -59,8 +79,9 @@ const Profile = () => {
             userName={user.userName}
           />
         </ProfileCards>
-      );
-  }
+      )}
+    </Relationship>
+  );
 };
 
 /**

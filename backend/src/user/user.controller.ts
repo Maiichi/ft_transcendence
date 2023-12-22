@@ -153,6 +153,20 @@ export class UserController
         }
     }
 
+
+    // THIS API fetchs all the users from the database execpt the blacklisted for the current user
+    // GetUser() is a decorator that get the current connected User
+    @Get('all/')
+    async getAllUser(@GetUser() user: User, @Res() res: Response)
+    {
+        try {
+            return await this.userService.getAllUser(user.intraId, res);
+        } catch (error) {
+            return res.send({error: error})
+        }
+    }
+
+
     
 
 }

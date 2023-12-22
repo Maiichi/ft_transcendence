@@ -106,8 +106,9 @@ const StyledUserCard = styled.div`
   width: 100%;
   align-items: center;
   gap: 0.25rem;
+  cursor: pointer;
   border-radius: 9999px;
-  background-color: #8c8c8c; /* Replace with your tertiary color */
+  background-color: white; /* Replace with your tertiary color */
   padding-right: 0.5rem;
 
   &:hover {
@@ -131,13 +132,13 @@ const UserInfoContainer = styled.div`
 const UserName = styled.span`
   text-align: left;
   font-size: 0.75rem;
-  color: #fff;
+  color: #black;
 `;
 
 const UserLogin = styled.span`
   text-align: left;
   font-size: 0.75rem;
-  color: #fff;
+  color: #black;
 `;
 
 const RatingContainer = styled.div`
