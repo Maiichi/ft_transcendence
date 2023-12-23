@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import { Button } from "@mui/material";
+import styled, { css } from "styled-components";
 
 export const Cards = styled.div`
   display: flex;
@@ -7,14 +8,17 @@ export const Cards = styled.div`
     flex-direction: column;
   }
 `;
-export const CardAvatar = styled.div`
+const BOxS = css`
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+`;
+export const CardAvatar = styled.div<{ firstLogin?: true }>`
   width: 35%;
   height: fit-content;
   margin-right: 5px;
   padding: 32px 24px 6px 32px;
   background-color: rgb(255, 255, 255);
   color: rgb(17, 25, 39);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px;
+  ${(props) => !props.firstLogin && BOxS};
   border-radius: 20px;
   align-items: center;
   display: flex;
@@ -87,7 +91,7 @@ export const ButtonAvatar = styled.button`
     background-color: rgba(99, 102, 241, 0.04);
   }
 `;
-export const ButtonForm = styled.button`
+export const ButtonForm = styled(Button)`
   border: 0px;
   margin: 0px;
   font-weight: 600;
@@ -95,17 +99,17 @@ export const ButtonForm = styled.button`
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 0.875rem;
   line-height: 1.75;
-  color: rgb(255, 255, 255);
-  background-color: rgb(99, 102, 241);
+  /* color: rgb(255, 255, 255); */
+  /* background-color: rgb(99, 102, 241); */
   border-radius: 12px;
   padding: 8px 20px;
   width: fit-content;
   margin-left: auto;
-  &:hover {
+  /* &:hover {
     text-decoration: none;
     background-color: rgb(67, 56, 202);
     box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 10px;
-  }
+  } */
 `;
 export const H5 = styled.h4`
   margin: 0px;

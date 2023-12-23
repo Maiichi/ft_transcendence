@@ -24,9 +24,12 @@ import { styled as muiStyled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { CheckCircle } from "@mui/icons-material";
-import { uploadAvatar } from "../feat-Auth/components/authThunk";
+import {
+  updateUserName,
+  uploadAvatar,
+} from "../feat-Auth/components/authThunk";
 
-const VisuallyHiddenInput = muiStyled("input")({
+export const VisuallyHiddenInput = muiStyled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
   height: 1,
@@ -38,13 +41,41 @@ const VisuallyHiddenInput = muiStyled("input")({
   width: 1,
 });
 
-const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
+export const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+export const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
 export const AccountSettings = () => {
   const auth = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const [textInput, setTextInput] = useState(auth.user.userName);
+  const [inputError, setInputError] = useState("");
 
+  // Check if the input contains only alphanumeric characters
+  const isValid = (value: string) => /^[a-zA-Z0-9]*$/.test(value);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value;
+
+    setTextInput(inputValue);
+    !isValid(inputValue)
+      ? setInputError("Invalid characters in username.")
+      : setInputError("");
+  };
+
+  const handleSubmit = () => {
+    if (isValid(textInput)) {
+      dispatch(
+        updateUserName({
+          token: auth.token,
+          id: auth.user.intraId,
+          newUsername: textInput,
+          user: null,
+        })
+      );
+    } else {
+      setInputError("Invalid characters in username.");
+    }
+  };
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [fileInfos, setFileInfos] = useState<File | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
@@ -130,10 +161,7 @@ export const AccountSettings = () => {
           <Avatar
             sx={{ width: "80px", height: "80px" }}
             alt={auth.user.userName}
-            src={
-              selectedImage ||
-              `${auth.user.avatar_url}`
-            }
+            src={selectedImage || `${auth.user.avatar_url}`}
           />
           <Title style={{ fontSize: "1rem" }}>{auth.user.userName}</Title>
           <Divider />
@@ -175,22 +203,6 @@ export const AccountSettings = () => {
         <CardForm>
           <Title style={{ fontSize: "1rem" }}>Profile</Title>
           <H5>The informations can be edited</H5>
-          {/* <TextField
-          sx={{ margin: "10px 0px", width: "80%" }}
-          required
-          id="firstname"
-          label="Firstname"
-          variant="outlined"
-          defaultValue="Ismail"
-        />
-        <TextField
-          sx={{ margin: "10px 0px", width: "80%" }}
-          required
-          id="lastname"
-          label="Lastname"
-          variant="outlined"
-          defaultValue="Bouroummana"
-        /> */}
           <TextField
             sx={{ margin: "10px 0px", width: "80%" }}
             required
@@ -198,18 +210,24 @@ export const AccountSettings = () => {
             label="Username"
             variant="outlined"
             defaultValue={auth.user.userName}
+            error={!!inputError}
+            value={textInput}
+            // variant="standard"
+            placeholder="Username"
+            onChange={handleInputChange}
+            helperText={inputError}
           />
           <TwoFactorSetup twoFactorActivate={auth.user.twoFactorActivate} />
-          {/* <TextField
-          sx={{ margin: "10px 0px", width: "80%" }}
-          required
-          id="outlined-basic"
-          label="Phone"
-          variant="outlined"
-          defaultValue="+212689912489"
-        /> */}
           <Divider />
-          <ButtonForm>Save Details</ButtonForm>
+          <ButtonForm
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={!textInput || !!inputError}
+          >
+            Save Details
+          </ButtonForm>
         </CardForm>
       </Cards>
     </Root>
