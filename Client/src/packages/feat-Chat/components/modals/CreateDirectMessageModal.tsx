@@ -1,15 +1,15 @@
 import styled from "styled-components";
 import {
+  I_User,
   SearchComponent,
   useAppDispatch,
   useAppSelector,
 } from "../../../../core";
 import { useEffect, useState } from "react";
 import { Close } from "@mui/icons-material";
-import { getUserFriends } from "../redux/friendThunk";
+import { getUserFriends } from "../../../feat-Account/components/redux/friendThunk";
 import { Avatar } from "@mui/material";
 import { createDirectConversation } from "../redux/directMessageSlice";
-import { I_User } from "../types";
 
 const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const { onUserSelect } = props;

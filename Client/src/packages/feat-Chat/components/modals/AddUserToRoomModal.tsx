@@ -1,6 +1,7 @@
 import { Close } from "@mui/icons-material";
 import styled from "styled-components";
 import {
+  I_User,
   SearchComponent,
   useAppDispatch,
   useAppSelector,
@@ -8,7 +9,7 @@ import {
 import { useState } from "react";
 import { Avatar } from "@mui/material";
 import { addUserToRoom } from "../redux/roomSlice";
-import { I_User } from "../types";
+
 import { isMember } from "../utils";
 import { NotFound } from "../style";
 

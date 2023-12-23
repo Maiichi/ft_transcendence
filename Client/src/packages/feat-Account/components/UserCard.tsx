@@ -6,12 +6,28 @@ import CircularProgressBar from "./utils/CircularProgressBar";
 import LinearDeterminate from "./utils/linearProgressBar";
 import { Badge, Stack } from "@mui/material";
 import SendFriendRequist from "./utils/frindrequist";
+import { ModalComponent } from "../../../core";
+import { useState } from "react";
+import { NewDirectMessage } from "../../feat-Chat/components/modals/CreateDirectMessageModal";
 
 const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
   const { gamer, isOwner } = props;
+  const [open, setOpen] = useState(false);
+
   const navigate = useNavigate();
   return (
     <Usercard>
+      <ModalComponent
+        open={open}
+        ChildComponent={
+          <NewDirectMessage
+            handleClose={() => setOpen(false)}
+            selectedUser={gamer.user}
+          />
+        }
+        handleClose={() => setOpen(false)}
+        closeType={"auto"}
+      />
       <div
         style={{
           display: "flex",
@@ -82,7 +98,7 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
                     }}
                     size="small"
                     startIcon={<Message fontSize="small" />}
-                    onClick={() => navigate('/chat')}
+                    onClick={() => setOpen(true)}
                   >
                     message
                   </Button>

@@ -1245,18 +1245,23 @@ import { FriendService } from 'src/user/friend/friend.service';
   {
     try {
         console.log('declineGameInvite');
+        let inviter;
         const currentUser =
         this.findUserByClientSocketId(client.id);
+        console.log("ssssssssssss")
         console.log('body (declineGameInvite) == ', body);
         const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
         const inviterSockets: string[] = this.userSockets.get(body.inviterId);
+        if (inviterSockets.length)
+          inviter = this.findUserByClientSocketId(inviterSockets[0]);
         if (invitedSockets)
           invitedSockets.forEach((socketId) => {
             this.server.to(socketId).emit('gameInvitationDeclined')
           });
         inviterSockets.forEach((socketId) => {
           this.server.to(socketId).emit('opponentDeclineGameInvite', {
-            inviterId: body.inviterId
+            data : body.inviterId,
+            successMsg: `${inviter.userName} decline your game Invite`
           });
         });
     } catch (error) {

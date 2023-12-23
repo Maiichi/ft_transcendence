@@ -1,7 +1,7 @@
 import { useAppDispatch } from "../../../../core";
 import { setDisplayUserActions } from "../../../../core/CoreSlice";
-import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
-import { unblockUser } from "../redux/blockSlice";
+import { ModalConfirm } from "../../../../core/utils/components/modals/ModalConfirm";
+import { unblockUser } from "../../../feat-Account/components/redux/blockSlice";
 
 export const UnBlockUserModal = (props: {
   intraId: number;

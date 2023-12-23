@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { I_User } from "../types";
+
 import { getBlacklist } from "./blockThunk";
+import { I_User } from "../../../../core";
 
 export interface blockState {
   blockedByYou: I_User[];

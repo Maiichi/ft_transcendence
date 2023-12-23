@@ -9,8 +9,7 @@ import {
   NoMatchesFound,
 } from ".";
 import { useNavigate } from "react-router-dom";
-import { userType } from "../../feat-Account/components";
-import { I_User } from "../../feat-Chat/components/types";
+import { I_User } from "../../../core";
 
 interface Users {
   users: I_User[];

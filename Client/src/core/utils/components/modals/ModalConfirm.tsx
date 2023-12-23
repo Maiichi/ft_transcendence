@@ -4,10 +4,12 @@ import styled from "styled-components";
 export const ModalConfirm = (props: {
   title: string;
   subtitle?: string;
+  closeTitle?: string;
+  confirmTitle?: string;
   handleClose: () => void;
   handleClick: () => void;
 }) => {
-  const { title, subtitle, handleClose, handleClick } = props;
+  const { title, subtitle, handleClose, handleClick, closeTitle,confirmTitle  } = props;
   return (
     <>
       <ModalHeader>
@@ -24,10 +26,10 @@ export const ModalConfirm = (props: {
           }}
           onClick={handleClose}
         >
-          Cancel
+          {closeTitle ? closeTitle : 'Cancel'}
         </Button>
         <Button variant="contained" color="error" onClick={handleClick}>
-          Confirm
+            {confirmTitle ? confirmTitle : 'Confirm'}
         </Button>
       </ModalFooter>
     </>

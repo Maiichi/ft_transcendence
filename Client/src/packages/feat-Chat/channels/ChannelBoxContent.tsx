@@ -122,4 +122,5 @@ const EmptyConversation = styled.div`
   display: grid;
   place-items: center;
   height: 100%;
+  text-align: center;
 `;

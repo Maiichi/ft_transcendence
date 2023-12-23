@@ -6,7 +6,7 @@ import {
   SelectChangeEvent,
   Select,
 } from "@mui/material";
-import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
+import { I_User, SearchComponent, useAppDispatch, useAppSelector } from "../../core";
 import { getAllRooms, getAllUsers } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
 import { getMemberships } from "../feat-Chat/components/redux/roomThunk";
@@ -18,8 +18,6 @@ import {
   UserSelection,
   Root,
 } from "./components";
-import { userType } from "../feat-Account/components";
-import { I_User } from "../feat-Chat/components/types";
 
 export const Search = () => {
   const dispatch = useAppDispatch();

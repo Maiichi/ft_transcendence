@@ -7,7 +7,7 @@ import { useAuthentication } from "./packages/feat-Auth/authUtils";
 import { ConnectSocket } from "./packages";
 import { SnackBarComponent } from "./core/utils/components/SnackBar";
 
-import { InvitationGameModal } from "./core/utils/components/InvitationGameModal";
+import { InvitationGameModal } from "./packages/feat-Game/components/InvitationGameModal";
 import { Socket } from "socket.io-client";
 import { getSocketInstance, initializeSocket } from "./packages/feat-Game/socketUtils";
 import { setOpenSnackbar } from "./core/CoreSlice";

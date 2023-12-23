@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { I_User } from "../types";
 import { getUserFriends } from "./friendThunk";
+import { I_User } from "../../../../core";
 
 export interface friendState {
   friends: I_User | null;
@@ -16,9 +16,7 @@ export const friendSlice = createSlice({
   name: "firends",
   initialState,
   reducers: {
-    getFriends: (state, action: PayloadAction<any>) => {
-      state.friends = action.payload;
-    },
+  
   },
   extraReducers: (builder) => {
     builder
@@ -36,6 +34,6 @@ export const friendSlice = createSlice({
   },
 });
 
-export const { getFriends } = friendSlice.actions;
+export const {  } = friendSlice.actions;
 
 export default friendSlice.reducer;

@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { I_Discussion, I_User } from "../types";
+import { I_Discussion } from "../types";
+import { I_User } from "../../../../core";
 
 export interface roomState {
   currentConversation: I_Discussion | null;

@@ -1,7 +1,7 @@
 import { useAppDispatch } from "../../../../core";
 import { muteMember } from "../redux/roomSlice";
 import { useState } from "react";
-import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
+import { ModalConfirm } from "../../../../core/utils/components/modals/ModalConfirm";
 
 export const MuteUserInRoom = (props: {
   data: any;

@@ -1,6 +1,6 @@
 import { banMember } from "../redux/roomSlice";
 import { useAppDispatch } from "../../../../core";
-import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
+import { ModalConfirm } from "../../../../core/utils/components/modals/ModalConfirm";
 
 export const BanUserFromChannelModal = (props: {
   data: any;

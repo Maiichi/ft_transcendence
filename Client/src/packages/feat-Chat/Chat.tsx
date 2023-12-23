@@ -47,4 +47,5 @@ const BoxNoConversation = styled.div`
   place-content: center;
   flex: 5;
   border-left: 1px solid rgb(215, 215, 215);
+  text-align: center;
 `;

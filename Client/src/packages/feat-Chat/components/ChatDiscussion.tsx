@@ -21,9 +21,9 @@ import {
   setDiscussionsDisplay,
   setSelectedUser,
 } from "./redux/chatSlice";
-import { getUserFriends } from "./redux/friendThunk";
+import { getUserFriends } from "../../feat-Account/components/redux/friendThunk";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
-import { getBlacklist } from "./redux/blockThunk";
+import { getBlacklist } from "../../feat-Account/components/redux/blockThunk";
 import { NotFound } from "./style";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();

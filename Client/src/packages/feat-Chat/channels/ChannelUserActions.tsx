@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
-import { Action, I_Room, I_User } from "../components/types";
+import {
+  I_User,
+  ModalComponent,
+  useAppDispatch,
+  useAppSelector,
+} from "../../../core";
+import { Action, I_Room } from "../components/types";
 import {
   checkUserRole,
   getDataForModal,
@@ -21,7 +26,10 @@ import { NewDirectMessage } from "../components/modals/CreateDirectMessageModal"
 import { IconHolder } from "../components/style";
 import { Actions } from "../components/UserActions";
 import { BlockUserModal } from "../components/modals/BlockUserModal";
-import { inviteUserToGame, inviteUserToGameFromChat } from "../../feat-Game/redux/GameSlice";
+import {
+  inviteUserToGame,
+  inviteUserToGameFromChat,
+} from "../../feat-Game/redux/GameSlice";
 import { useNavigate } from "react-router-dom";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -142,13 +150,19 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     const selectedUser = room.members.find(
       (member) => member.user.intraId === selectedUserId
     );
-    
+
     if (selectedUser) {
-      if (iconType === 'play')       {         
-          // dispatch(setSelectedUser(selectedUser.user));         
-          dispatch(inviteUserToGame({invitedId : selectedUserId, inviterId : user.intraId}));         
-          dispatch(inviteUserToGameFromChat(true));         
-          navigate('/game');       }
+      if (iconType === "play") {
+        // dispatch(setSelectedUser(selectedUser.user));
+        dispatch(
+          inviteUserToGame({
+            invitedId: selectedUserId,
+            inviterId: user.intraId,
+          })
+        );
+        dispatch(inviteUserToGameFromChat(true));
+        navigate("/game");
+      } else if (iconType == "viewProfile") navigate(`/user/${selectedUserId}`);
       const dataForModal = getDataForModal(iconType, room, selectedUser.user);
       const modalComponent: JSX.Element = getModalComponent(
         iconType,
