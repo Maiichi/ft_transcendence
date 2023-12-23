@@ -1,20 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import { Message, PersonAddAlt } from "@mui/icons-material";
 import { Button, Grow, Text, Usercard, Avatar } from "../styles";
-import { gamerType } from "./statsType";
+import { gamerType, userType } from "./statsType";
 import CircularProgressBar from "./utils/CircularProgressBar";
 import LinearDeterminate from "./utils/linearProgressBar";
 import { Badge, Stack } from "@mui/material";
-import SendFriendRequist from "./utils/frindrequist";
-import { ModalComponent } from "../../../core";
+import { ModalComponent, useAppDispatch } from "../../../core";
 import { useState } from "react";
 import { NewDirectMessage } from "../../feat-Chat/components/modals/CreateDirectMessageModal";
-
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import { sendFriendRequest } from "./redux";
 const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
   const { gamer, isOwner } = props;
   const [open, setOpen] = useState(false);
-
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const handleClick = (user: userType) => {
+    dispatch(sendFriendRequest(user.intraId));
+  };
   return (
     <Usercard>
       <ModalComponent
@@ -82,15 +85,19 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
               <Text variant="h5">
                 {`${gamer.user.firstName} ${gamer.user.lastName}`}
               </Text>
-              {isOwner ? (
-                <span>
-                  ------------------
-                  <br />
-                  ------------------
-                </span>
-              ) : (
+              {!isOwner && (
                 <>
-                  <SendFriendRequist userName={gamer.user.userName} />
+                  <Button
+                    sx={{
+                      padding: 0,
+                      textTransform: "lowercase",
+                    }}
+                    size="small"
+                    startIcon={<PersonAddIcon fontSize="small" />}
+                    onClick={() => handleClick(gamer.user)}
+                  >
+                    Send friend request
+                  </Button>
                   <Button
                     sx={{
                       padding: 0,

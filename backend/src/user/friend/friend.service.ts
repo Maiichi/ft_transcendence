@@ -21,7 +21,9 @@ export class FriendService
     // TODO: need to check if both users are already friends
     async sendFriendRequest(body: SendFriendRequestDto, userId: number)
     {
+        console.log("body (service) : ", body);
         const sender = await this.userService.getUser(userId);
+
         if(!sender)
             throw new WsException(`(sender) userId = ${userId} does not exist !`);
         const receiver = await this.userService.getUser(body.receiverId);

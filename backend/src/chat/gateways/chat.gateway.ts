@@ -1135,12 +1135,25 @@ import { FriendService } from 'src/user/friend/friend.service';
     @MessageBody() body: SendFriendRequestDto,
   ) {
     try {
+     
       const currentUser =
         this.findUserByClientSocketId(client.id);
+      const receiverSockets: string[] = this.userSockets.get(body.receiverId);
+      let receiver;
+      if (receiverSockets.length)
+        receiver = this.findUserByClientSocketId(receiverSockets[0]);
       await this.friendService.sendFriendRequest(
         body,
         currentUser.intraId,
       );
+      this.server.to(client.id).emit('sendFriendRequestSuccess',{successMsg: `Friend request is sent successfully to ${receiver.userName}`});
+       if (receiverSockets.length)
+      receiverSockets.forEach((socketId) => {
+      this.server
+        .to(socketId)
+        .emit('friendRequestReceived', currentUser);
+      });
+
       this.server.emit('sendFriendRequest');
     } catch (error) {
       client.emit('sendFriendRequestError', {
@@ -1261,7 +1274,7 @@ import { FriendService } from 'src/user/friend/friend.service';
         inviterSockets.forEach((socketId) => {
           this.server.to(socketId).emit('opponentDeclineGameInvite', {
             data : body.inviterId,
-            successMsg: `${inviter.userName} decline your game Invite`
+            ç: `${inviter.userName} decline your game Invite`
           });
         });
     } catch (error) {
