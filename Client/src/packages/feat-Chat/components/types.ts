@@ -1,3 +1,5 @@
+import { I_User } from "../../../core";
+
 export interface I_Room {
   id: number;
   name: string;
@@ -26,15 +28,6 @@ export interface I_Discussion {
   type: "direct" | "channel" | null;
   directConversationId: number | null;
   roomId: number | null;
-}
-
-export interface I_User {
-  firstName: string;
-  lastName: string;
-  userName: string;
-  intraId: number;
-  status: string;
-  avatar_url?: string;
 }
 
 export interface I_DirectConversation {

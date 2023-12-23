@@ -2,7 +2,7 @@ import { kickMember } from "../redux/roomSlice";
 import { useAppDispatch } from "../../../../core";
 
 import { setDisplayUserActions } from "../../../../core/CoreSlice";
-import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
+import { ModalConfirm } from "../../../../core/utils/components/modals/ModalConfirm";
 
 export const KicKFromRoomModal = (props: {
   data: any;

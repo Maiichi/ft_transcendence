@@ -1,8 +1,9 @@
 import styled from "styled-components";
-import { useAppDispatch, useAppSelector } from "../../redux";
+import { useAppDispatch, useAppSelector } from "../../../core/redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { acceptUserGameInvite, declineUserGameInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../../../packages/feat-Game/redux/GameSlice";
-import { setDisplayGameInvitation } from "../../CoreSlice";
+import { acceptUserGameInvite, declineUserGameInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../redux/GameSlice";
+import { setDisplayGameInvitation } from "../../../core/CoreSlice";
+import { ModalConfirm } from "../../../core/utils/components/modals/ModalConfirm";
 
 
 
@@ -33,13 +34,20 @@ export const InvitationGameModal = (props :
 
     return (
         <>
-        <ModalHeader>
-            <h3>User {inviterId} challenge you to dual game Pong?</h3>
+        <ModalConfirm
+        title={`User ${inviterId} challenge you to dual game Pong?`}
+        handleClose={handleDeclineGameInvitation}
+        handleClick={handleAcceptGameInvitation}
+        closeTitle="Decline"
+        confirmTitle="Accept"
+      />
+        {/* <ModalHeader>
+            <h3></h3>
         </ModalHeader>
         <ModalFooter>
             <ButtonCancel onClick={handleDeclineGameInvitation}>Decline</ButtonCancel>
             <ButtonLeave onClick={handleAcceptGameInvitation}>Accept</ButtonLeave>
-        </ModalFooter>
+        </ModalFooter> */}
         </>
     );
 };

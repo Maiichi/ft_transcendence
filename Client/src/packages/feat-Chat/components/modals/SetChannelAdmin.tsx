@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../../../../core";
-import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
+import { ModalConfirm } from "../../../../core/utils/components/modals/ModalConfirm";
 import { setAdminRoom } from "../redux/roomSlice";
 
 export const SetChannelAdmin = (props: {

@@ -3,7 +3,7 @@ import { useAppDispatch } from "../../../../core";
 import { I_Room } from "../types";
 import { setCurrentConversation } from "../redux/chatSlice";
 
-import { ModalConfirm } from "../../../../core/utils/components/ModalConfirm";
+import { ModalConfirm } from "../../../../core/utils/components/modals/ModalConfirm";
 export const LeaveRoomModal = (props: {
   channelConversation: I_Room;
   handleClose: () => void;

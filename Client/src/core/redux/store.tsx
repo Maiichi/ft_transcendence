@@ -11,11 +11,11 @@ import roomSlice from "../../packages/feat-Chat/components/redux/roomSlice";
 import DirectMessageSlice from "../../packages/feat-Chat/components/redux/directMessageSlice";
 import searchSlice from "../../packages/feat-Search/redux/searchSlice";
 import chatSlice from "../../packages/feat-Chat/components/redux/chatSlice";
-import friendSlice from "../../packages/feat-Chat/components/redux/friendSlice";
-import ProfileSlice from "../../packages/feat-Account/components/ProfileSlice";
+import friendSlice from "../../packages/feat-Account/components/redux/friendSlice";
+import ProfileSlice from "../../packages/feat-Account/components/redux/ProfileSlice";
 // import blockSlice from "../../packages/feat-Chat/components/blockSlice";
 import GameSlice from "../../packages/feat-Game/redux/GameSlice";
-import blockSlice from "../../packages/feat-Chat/components/redux/blockSlice";
+import blockSlice from "../../packages/feat-Account/components/redux/blockSlice";
 
 // ...
 

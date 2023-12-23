@@ -1,14 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getLeaderboard, getMatchHistory, getuserasgamer } from "./thunks";
+import { getLeaderboard, getMatchHistory, getuserasgamer } from ".";
 import {
   GameslogType,
   ProfileState,
   leaderboardType,
   unformalData,
-} from "./statsType";
+} from "../statsType";
 
 const initialState: ProfileState =
-  require("../static-data/initialStates.json").profile;
+  require("../../static-data/initialStates.json").profile;
 
 const profileSlice = createSlice({
   name: "profile",

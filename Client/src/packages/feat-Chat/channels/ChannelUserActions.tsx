@@ -1,10 +1,11 @@
 import { useState } from "react";
 import {
+  I_User,
   ModalComponent,
   useAppDispatch,
   useAppSelector,
 } from "../../../core";
-import { Action, I_Room, I_User } from "../components/types";
+import { Action, I_Room } from "../components/types";
 import {
   checkUserRole,
   getDataForModal,

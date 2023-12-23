@@ -4,7 +4,7 @@ import {
   Relationship,
   useAppDispatch,
   useAppSelector,
-} from "../../core";
+} from "../../../core";
 import { Fragment, useEffect, useState } from "react";
 import {
   Paper,
@@ -22,10 +22,10 @@ import {
   Alert,
   AlertColor,
 } from "@mui/material";
-import { GameslogType, MatchHistoryType, getMatchHistory } from "./components";
+import { GameslogType, MatchHistoryType, getMatchHistory } from ".";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
-import { Container } from "./styles";
-import { useSize } from "../../core/utils/hooks";
+import { Container } from "../styles";
+import { useSize } from "../../../core/utils/hooks";
 
 // TODO: not all suppoerted to see the history of other
 // must be friend, other ways you are able to show last n=5 games

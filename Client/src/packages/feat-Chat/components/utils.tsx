@@ -1,4 +1,4 @@
-import { I_Room, I_User, Action, Members } from "./types";
+import { I_Room, Action, Members } from "./types";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {
   DoDisturbOffOutlined,
@@ -13,7 +13,8 @@ import GamesIcon from "@mui/icons-material/Games";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BlockIcon from "@mui/icons-material/Block";
 import HideSourceIcon from "@mui/icons-material/HideSource";
-import { blockState } from "./redux/blockSlice";
+import { blockState } from "../../feat-Account/components/redux/blockSlice";
+import { I_User } from "../../../core";
 export const changeMessageLength = (message: string) => {
   if (message.length > 60) {
     message = message.substring(0, 60);

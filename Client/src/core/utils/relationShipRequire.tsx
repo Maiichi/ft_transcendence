@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux";
-import { getUserFriends } from "../../packages/feat-Chat/components/redux/friendThunk";
+import { getUserFriends } from "../../packages/feat-Account/components/redux/friendThunk";
 import { Loading } from "./components";
 import {
   AddLoading,

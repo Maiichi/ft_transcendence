@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Leaderboard } from "../Leaderboard";
+import { Leaderboard } from "./Leaderboard";
 import { Board, Button, Text } from "../styles";
 
 const BoardCard = () => {

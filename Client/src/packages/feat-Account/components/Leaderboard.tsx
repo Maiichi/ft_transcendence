@@ -1,14 +1,14 @@
 import { useAsyncError, useNavigate } from "react-router-dom";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { Chat } from "@mui/icons-material";
-import { Loading, useAppDispatch, useAppSelector } from "../../core";
+import { Loading, useAppDispatch, useAppSelector } from "../../../core";
 import {
   ListButton,
   SendFriendRequist,
   SendGameRequist,
   getLeaderboard,
   leaderboardType,
-} from "./components";
+} from ".";
 import {
   Players,
   Player,
@@ -20,8 +20,8 @@ import {
   /***global**/
   Title,
   Root,
-} from "./styles";
-import { useSize } from "../../core/utils/hooks";
+} from "../styles";
+import { useSize } from "../../../core/utils/hooks";
 
 const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const navigate = useNavigate();

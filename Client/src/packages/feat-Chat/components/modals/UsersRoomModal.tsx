@@ -1,6 +1,6 @@
 import { Close } from "@mui/icons-material";
 import styled from "styled-components";
-import { I_Room, Members, I_User } from "../types";
+import { I_Room, Members } from "../types";
 import {  useState } from "react";
 import {
   Avatar,
@@ -11,6 +11,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import {
+  I_User,
   SearchComponent,
   useAppDispatch,
   useAppSelector,

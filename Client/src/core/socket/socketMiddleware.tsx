@@ -40,7 +40,7 @@ import {
   setRoomLeaved,
 } from "../../packages/feat-Search/redux/searchSlice";
 import { useAppSelector } from "../redux";
-import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, opponentDeclineInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
+import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
 import {
   addMessageToConversation,
   createDirectConversation,
@@ -53,13 +53,13 @@ import {
   unblockUser,
   userBlockedByMe,
   userBlockedMe,
-} from "../../packages/feat-Chat/components/redux/blockSlice";
+} from "../../packages/feat-Account/components/redux/blockSlice";
 import { AlertColor } from "@mui/material";
 import { setToken, userLogout } from "../../packages/feat-Auth/components/authSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
-  const OpenSnackbar = (message: string, severity: AlertColor) => {
+   const OpenSnackbar = (message: string, severity: AlertColor) => {
     dispatch(setServerMessage(message));
     dispatch(setOpenSnackbar(true));
     dispatch(setSeverity(severity));
@@ -253,9 +253,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(opponentAcceptInvite(true));
           });
           socket.on('opponentDeclineGameInvite', (data) => {
-            dispatch(setServerMessage(`User ${data.inviterId} decline your game Invite`));
-              dispatch(setOpenSnackbar(true));
-            dispatch(opponentDeclineInvite(true));
+            OpenSnackbar(data.successMsg, "error");
           });
           socket.on('gameInvitationDeclined', () => {
             console.log('listen for the event (gameInvitationDeclined) should be display in all declinerSocket')
