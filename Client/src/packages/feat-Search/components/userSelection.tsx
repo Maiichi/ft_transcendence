@@ -10,12 +10,13 @@ import {
 } from ".";
 import { useNavigate } from "react-router-dom";
 import { userType } from "../../feat-Account/components";
+import { I_User } from "../../feat-Chat/components/types";
 
 interface Users {
-  users: Array<userType>;
+  users: I_User[];
 }
 
-const UserSelection = ({ users }: Users) => {
+export const UserSelection = ({ users }: Users) => {
   const navigate = useNavigate();
 
   return (
@@ -35,7 +36,7 @@ const UserSelection = ({ users }: Users) => {
                 <UserLogin>@{user.userName.slice(0, 8)}</UserLogin>
               </UserInfoContainer>
               <RatingContainer>
-                <img src="/img/applogo.svg" alt="logo" height={20} width={20} />
+                {/* <img src="/img/applogo.svg" alt="logo" height={20} width={20} /> */}
               </RatingContainer>
             </StyledUserCard>
           </StyledLink>
@@ -47,5 +48,5 @@ const UserSelection = ({ users }: Users) => {
   );
 };
 
-export default UserSelection;
-export { UserSelection };
+// export default UserSelection;
+// export { UserSelection };

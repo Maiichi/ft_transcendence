@@ -5,16 +5,11 @@ type AddLoading<T> = {
 
 type userType = {
   intraId: number;
-  email: string;
   firstName: string;
   lastName: string;
   userName: string;
   avatar_url: string;
   status: "ONLINE" | "OFFLINE";
-  twoFactorActivate: boolean;
-  twoFactorSecret: string;
-  createdAt: string;
-  updatedAt: string;
 } & Record<string, any>;
 
 // TODO: should be formal

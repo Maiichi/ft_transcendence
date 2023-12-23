@@ -7,7 +7,7 @@ import {
   Select,
 } from "@mui/material";
 import { SearchComponent, useAppDispatch, useAppSelector } from "../../core";
-import { getAllFriends, getAllRooms } from "./redux/searchThunk";
+import { getAllRooms, getAllUsers } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
 import { getMemberships } from "../feat-Chat/components/redux/roomThunk";
 import {
@@ -19,11 +19,12 @@ import {
   Root,
 } from "./components";
 import { userType } from "../feat-Account/components";
+import { I_User } from "../feat-Chat/components/types";
 
 export const Search = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const { rooms, users }: { rooms: []; users: Array<userType> } =
+  const { rooms, users }: { rooms: []; users: [] } =
     useAppSelector((state) => state.search);
   const user = useAppSelector((state) => state.auth.user);
 
@@ -31,10 +32,12 @@ export const Search = () => {
     setSearchQuery(str);
   };
 
+  console.log("users == ", users);
+
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getAllRooms());
-    dispatch(getAllFriends());
+    dispatch(getAllUsers());
   }, []);
 
   // Filter chat rooms based on the search query
@@ -42,13 +45,17 @@ export const Search = () => {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filtredUsers: I_User[] = users.filter((user: I_User) => 
+    user.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   /** show list slected */
-  const [selectedList, setSelected] = useState<"users" | "channels" | null>(
-    null
+  const [selectedList, setSelected] = useState<"users" | "channels">(
+    "users"
   );
   const handleSelectChange = (event: SelectChangeEvent) => {
-    const selectedValue = event.target.value as "users" | "channels" | "";
-    setSelected(selectedValue === "" ? null : selectedValue);
+    const selectedValue = event.target.value as "users" | "channels";
+    setSelected(selectedValue);
   };
 
   return (
@@ -62,17 +69,14 @@ export const Search = () => {
             sx={{ display: `${selectedList ? "none" : "inline"}` }}
             id="demo-simple-select-standard-label"
           >
-            Select...
           </InputLabel>
           <Select
             labelId="demo-simple-select-standard-label"
             name="Channels"
             id="dropdown"
-            value={selectedList || ""}
+            value={selectedList}
             onChange={handleSelectChange}
-            label="Age"
           >
-            {selectedList ? <MenuItem value={""}>none</MenuItem> : null}
             <MenuItem value={"channels"}>channels</MenuItem>
             <MenuItem value={"users"}>users</MenuItem>
           </Select>
@@ -80,7 +84,7 @@ export const Search = () => {
       </Holder>
       <ListHolder>
         {selectedList === "users" ? (
-          <UserSelection users={users} />
+          <UserSelection users={filtredUsers} />
         ) : selectedList === "channels" ? (
           <ChannelsSelection
             filteredRooms={filteredRooms}

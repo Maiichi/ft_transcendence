@@ -1,11 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getAllFriends, getAllRooms } from "./searchThunk";
+import { getAllRooms, getAllUsers } from "./searchThunk";
 import { I_Room_Search } from "../types/types";
 import { userType } from "../../feat-Account/components";
 
 export interface S_Search {
   rooms: I_Room_Search[];
-  users: Array<userType>;
+  users: [];
   isLoading: boolean;
 }
 
@@ -58,17 +58,15 @@ export const searchSlice = createSlice({
       .addCase(getAllRooms.rejected, (state) => {
         state.isLoading = false;
       })
-      .addCase(getAllFriends.pending, (state) => {
+      .addCase(getAllUsers.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(
-        getAllFriends.fulfilled,
-        (state, action: PayloadAction<userType[]>) => {
+      .addCase(getAllUsers.fulfilled, (state, action) => {
           state.users = action.payload;
           state.isLoading = false;
         }
       )
-      .addCase(getAllFriends.rejected, (state) => {
+      .addCase(getAllUsers.rejected, (state) => {
         state.isLoading = false;
       });
   },

@@ -55,6 +55,7 @@ import {
   userBlockedMe,
 } from "../../packages/feat-Chat/components/redux/blockSlice";
 import { AlertColor } from "@mui/material";
+import { setToken, userLogout } from "../../packages/feat-Auth/components/authSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -63,6 +64,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
     dispatch(setOpenSnackbar(true));
     dispatch(setSeverity(severity));
   };
+
   return (next) => (action) => {
     switch (action.type) {
       case ConnectSocket.type:
@@ -259,6 +261,12 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             console.log('listen for the event (gameInvitationDeclined) should be display in all declinerSocket')
             dispatch(setDisplayGameInvitation(false));
             dispatch(setInviteDeclined(true));
+          });
+          socket.on('userLoggedOut' , () => {
+            console.log("logout");
+            dispatch(setToken(null));
+            dispatch(disconnectSocket());
+            // navigate('/login');
           })
         } catch (error) {
           console.log(error);
@@ -320,6 +328,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case declineUserGameInvite.type:
         socket.emit('declineGameInvite', action.payload);
+        break;
+      case userLogout.type:
+        socket.emit('logout');
         break;
       default:
         break;

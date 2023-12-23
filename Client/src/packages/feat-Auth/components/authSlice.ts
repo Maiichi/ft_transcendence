@@ -52,6 +52,9 @@ export const authSlice = createSlice({
         setShouldVerifyTwoFactor: (state, action) => {
             state.shouldVerifyTwoFactor = action.payload;
         },
+        userLogout : (state) => {
+            state.loading = false;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -115,7 +118,7 @@ export const authSlice = createSlice({
     },
 });
 
-export const { setToken, setFirstLogin, setShouldVerifyTwoFactor } =
+export const { setToken, setFirstLogin, setShouldVerifyTwoFactor, userLogout } =
     authSlice.actions;
 
 export default authSlice.reducer;
