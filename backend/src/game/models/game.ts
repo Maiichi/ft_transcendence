@@ -159,8 +159,6 @@ class Game {
   }
 
   public play(): void {
-    // console.log('starts playing !');
-    
     if (this._ball.handleHCollision(this._player1.getPaddle())) {
         this.awardAndPause(this._player2);
         this._middlePaddle?.reset();

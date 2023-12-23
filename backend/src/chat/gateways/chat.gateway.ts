@@ -42,6 +42,7 @@ import {
   SendFriendRequestDto,
 } from 'src/user/friend/dto/friend.dto';
 import { FriendService } from 'src/user/friend/friend.service';
+import { GameService } from 'src/game/game.service';
 
   @WebSocketGateway({
     cors: {
@@ -70,6 +71,7 @@ import { FriendService } from 'src/user/friend/friend.service';
     private roomService: RoomService,
     private messageService: MessageService,
     private friendService: FriendService,
+    private gameService: GameService
   ) {}
 
   printClients() {
@@ -1184,8 +1186,8 @@ import { FriendService } from 'src/user/friend/friend.service';
       console.log('userInvitedToGame');
       const currentUser =
         this.findUserByClientSocketId(client.id);
-        // console.log('body  ==', body);
-        const invitedSockets : string[] = this.userSockets.get(body.invitedId);
+      await this.gameService.handleInviteUserToGame(currentUser.intraId, body.invitedId);
+      const invitedSockets : string[] = this.userSockets.get(body.invitedId);
         console.log('invitedSockets ==', invitedSockets);
       // if (blockedSockets)
       // blockedSockets.forEach((socketId) =>{
@@ -1237,7 +1239,8 @@ import { FriendService } from 'src/user/friend/friend.service';
         'send error = ' + error.message,
       );
     }
-  } 
+  }
+  
   @SubscribeMessage('declineGameInvite')
   async declineGameInvite( 
     @ConnectedSocket() client: Socket,

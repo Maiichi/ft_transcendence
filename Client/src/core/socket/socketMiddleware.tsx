@@ -40,7 +40,8 @@ import {
   setRoomLeaved,
 } from "../../packages/feat-Search/redux/searchSlice";
 import { useAppSelector } from "../redux";
-import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
+// import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
+import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, opponentDeclineInvite, receiveGameInvitation, resetGame, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
 import {
   addMessageToConversation,
   createDirectConversation,
@@ -254,6 +255,10 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           socket.on('opponentDeclineGameInvite', (data) => {
             OpenSnackbar(data.successMsg, "error");
+            // dispatch(setServerMessage(`User ${data.inviterId} decline your game Invite`));
+            // dispatch(setOpenSnackbar(true));
+            dispatch(opponentDeclineInvite(true));
+            dispatch(resetGame());
           });
           socket.on('gameInvitationDeclined', () => {
             console.log('listen for the event (gameInvitationDeclined) should be display in all declinerSocket')

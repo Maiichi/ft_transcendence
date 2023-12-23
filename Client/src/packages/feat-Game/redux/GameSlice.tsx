@@ -7,6 +7,7 @@ export interface GameState {
     inviteReceived: boolean;
     inviteSent: boolean;
     acceptOpponentInvite: boolean;
+    declineOpponentInvite: boolean;
     inviteAccepted: boolean;
     inviteDeclined: boolean;
     chatInvite: boolean;
@@ -22,6 +23,7 @@ const initialState: GameState = {
     inviteReceived: false,
     inviteSent: false,
     acceptOpponentInvite: false,
+    declineOpponentInvite: false,
     inviteAccepted: false,
     inviteDeclined: false,
     chatInvite: false,
@@ -77,6 +79,9 @@ export const GameSlice = createSlice({
         opponentAcceptInvite: (state, action: PayloadAction<any>) => {
             state.acceptOpponentInvite = action.payload;
         },
+        opponentDeclineInvite: (state, action: PayloadAction<any>) => {
+            state.declineOpponentInvite = action.payload;
+        },
        
 
         setGameStep: (state, action: PayloadAction<any>) => {
@@ -109,6 +114,7 @@ export const {
     setInviterId,
     setInvitedId,
     opponentAcceptInvite,
+    opponentDeclineInvite,
     setGameStep,
     resetGame,
     setGameMode,

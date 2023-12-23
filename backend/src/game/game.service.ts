@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateGameDTO } from './dto/game.dto';
 import { Response } from 'express';
+import { TreeLevelColumn } from 'typeorm';
+import { WsException } from '@nestjs/websockets';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class GameService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService,
+                private userService: UserService
+        ) {}
 
     private createGameRoom(player1: string, player2: string): string {
         // Here you can implement logic to create a new game room and return its ID
@@ -28,6 +33,7 @@ export class GameService {
         return isPlaying;
     }
 
+    // stroe the game in the database
     async saveGame(body: any) 
     {
         console.log("body === ", body);
@@ -56,6 +62,7 @@ export class GameService {
         return 'game created Successfully';
     }
 
+    // get User game history
     async getUserGameHistory(userId: number, response: Response)
     {
         const gameHistory = await this.prisma.game.findMany({
@@ -90,6 +97,7 @@ export class GameService {
             return response.send({message : "This user has no game history yet"});
     }
 
+    // get LeaderBoard of the game (all the users are included)
     async getLeaderBoard(response: Response)
     {
         const games = await this.prisma.game.findMany();
@@ -133,5 +141,41 @@ export class GameService {
 
         return response.send({data : leaderboardWithStats});
     }
-      
+
+
+    /* this function it's used in  the chatGateway (global Gateway) 
+        it main goal is to check if the user is online and not in a game to receive a gameInvite otherwise it will not sent to him */
+    async handleInviteUserToGame(senderId: number, receiverId: number)
+    {
+        const sender = await this.userService.getUser(senderId);
+        if(!sender)
+            throw new WsException(`(sender) userId = ${senderId} does not exist !`);
+        const receiver = await this.userService.getUser(receiverId);
+        if (!receiver)
+            throw new WsException(`(receiver) userId = ${receiverId} does not exist !`);
+        const isReceiverOnline = await this.prisma.user.findUnique({
+            where: {
+                intraId : receiverId,
+            },
+            select : {
+                status: true
+            }
+        });
+
+        const isReceiverInGame = await this.prisma.user.findUnique({
+            where : {
+                intraId : receiverId,
+            },
+            select: {
+                inGame: true
+            }
+        });
+
+        if (isReceiverOnline.status !== "ONLINE")
+            throw new WsException(`${receiver.firstName} ${receiver.lastName} is Offline, you can't send a game invitation`);
+        if (isReceiverOnline.status === "ONLINE" && isReceiverInGame.inGame)
+            throw new WsException(`${receiver.firstName} ${receiver.lastName} is playing a game currently, wait until he finishs`);
+    }
+    
+    
 }

@@ -4,9 +4,10 @@ import { Close } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { I_User, SearchComponent, useAppDispatch, useAppSelector } from "../../../core";
 import { Socket } from "socket.io-client";
-import { inviteUserToGame } from "../redux/GameSlice";
+import { inviteUserToGame, setGameStep } from "../redux/GameSlice";
 
 import { getUserFriends } from "../../feat-Account/components/redux/friendThunk";
+import { STEPS } from "../utils/constants";
 
 export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const {onUserSelect} = props;
@@ -73,8 +74,8 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
           invitedId : selectUser.intraId,
           inviterId : user.intraId
         }));
+        dispatch(setGameStep(STEPS.WAITING_QUEUE));
         // dispatch(setInvited)
-        // socket.emit('join_queue_match_invitaion', "dual");
       }
     }
     handleClose();

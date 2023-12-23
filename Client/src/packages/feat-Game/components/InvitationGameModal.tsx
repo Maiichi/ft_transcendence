@@ -1,9 +1,12 @@
 import styled from "styled-components";
 import { useAppDispatch, useAppSelector } from "../../../core/redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { acceptUserGameInvite, declineUserGameInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../redux/GameSlice";
+// import { acceptUserGameInvite, declineUserGameInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../redux/GameSlice";
 import { setDisplayGameInvitation } from "../../../core/CoreSlice";
 import { ModalConfirm } from "../../../core/utils/components/modals/ModalConfirm";
+import { acceptUserGameInvite, declineUserGameInvite, receiveGameInvitation, setGameStep, setInviteAccepted, setInviteDeclined } from "../../../packages/feat-Game/redux/GameSlice";
+// import { setDisplayGameInvitation } from "../../CoreSlice";
+import { STEPS } from "../../../packages/feat-Game/utils/constants";
 
 
 
@@ -20,6 +23,7 @@ export const InvitationGameModal = (props :
     const handleAcceptGameInvitation = () => {
       dispatch(receiveGameInvitation(false));
       dispatch(acceptUserGameInvite({inviterId: inviterId}));
+      dispatch(setGameStep(STEPS.WAITING_QUEUE));
       if (location.pathname !== "/game")
         navigate('/game');
       handleClose();

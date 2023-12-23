@@ -146,6 +146,7 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
                     handleClose={handleClose}
                 />
             );
+        
     };
     const handleJoinQueue = () => {
         if (socket) {

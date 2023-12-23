@@ -15,6 +15,7 @@ import { Socket, io } from "socket.io-client";
 import { MatchLoading } from "./components/MatchLoading";
 import { setOpenSnackbar, setServerMessage } from "../../core/CoreSlice";
 import { GameState } from "./utils/types";
+import { ContactPageSharp } from "@mui/icons-material";
 
 export const GameSteps: React.FC = () => {
     const currentStep = useAppSelector((state) => state.gameState.currentStep);
@@ -67,6 +68,7 @@ export const GameSteps: React.FC = () => {
 
     onEvent("countdown", (count) => {
         // Update state with countdown value
+        console.log("countdown");
         dispatch(setCountdown(count));
     });
 
@@ -89,14 +91,17 @@ export const GameSteps: React.FC = () => {
             console.log(" == socket == ", socket);
             // socket?.emit('join_queue_match_invitaion', "dual");
             emitEvent("join_queue_match_invitaion", "dual");
+            dispatch(setGameStep(STEPS.WAITING_QUEUE));
             dispatch(setInviteAccepted(false));
         }
     }, [isInviteAccepted, socketReady]);
 
     const isChatInvite = useAppSelector((state) => state.gameState.chatInvite);
+    console.log("isChatInvite === ", isChatInvite);
     const isOpponentAcceptInvite = useAppSelector(
         (state) => state.gameState.acceptOpponentInvite
     );
+    console.log("isOpponentAcceptInvite === ", isOpponentAcceptInvite);
     useEffect(() => {
         console.log("is this is shown at the inviter (invite) ");
         if (isChatInvite && socketReady && isOpponentAcceptInvite) {
@@ -104,19 +109,20 @@ export const GameSteps: React.FC = () => {
             console.log(" == socket == ", socket);
             // socket?.emit('join_queue_match_invitaion', "dual");
             emitEvent("join_queue_match_invitaion", "dual");
-            dispatch(setGameStep(STEPS.GAME_START));
+            dispatch(setGameStep(STEPS.WAITING_QUEUE));
             dispatch(inviteUserToGameFromChat(false));
         }
     }, [isChatInvite, socketReady, isOpponentAcceptInvite]);
 
     useEffect(() => {
         console.log("is this is shown at the inviter (invite) ");
-        if (socketReady && isOpponentAcceptInvite) {
+        if (socketReady && isOpponentAcceptInvite && !isChatInvite) {
             console.log("inviter joins the queue !!!!");
             console.log(" == socket == ", socket);
             // socket?.emit('join_queue_match_invitaion', "dual");
             emitEvent("join_queue_match_invitaion", "dual");
-            dispatch(inviteUserToGameFromChat(false));
+            dispatch(setGameStep(STEPS.WAITING_QUEUE));
+            // dispatch(inviteUserToGameFromChat(false));
         }
     }, [socketReady, isOpponentAcceptInvite]);
 
