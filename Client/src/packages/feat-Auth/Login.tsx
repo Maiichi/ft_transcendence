@@ -50,29 +50,14 @@ const Login = () => {
       process.env.REACT_APP_BACKEND_CALLBACK_URL ||
       "http://localhost:5001/api/auth/callback";
   };
-
+  if (isAuthenticated) return <Backdrop color="#b8b0b0" open={true}></Backdrop>;
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        margin: 0,
-        backgroundColor: "#eee",
-        background: 'url("https://picsum.photos/1600/900/?blur")',
-        backgroundSize: "cover",
-      }}
-    >
       <div
         style={{
-          width: "250px",
-          height: "220px",
           textAlign: "center",
           padding: "20px",
           border: "1px solid #ccc",
-          borderRadius: "15px",
-          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
+          borderRadius: "5px",
           backgroundColor: "#ffffff",
         }}
       >
@@ -99,7 +84,6 @@ const Login = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       </div>
-    </div>
   );
 };
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Backdrop, Button } from "@mui/material";
+import { Backdrop, Box, Button, Modal } from "@mui/material";
 import {
   Diversity1,
   Filter1Rounded,
@@ -10,6 +10,8 @@ import {
 } from "@mui/icons-material";
 import { GlobalStyles, LHtml, Lbody } from "./components";
 import { useAuthentication } from "../feat-Auth/authUtils";
+import Login from "../feat-Auth/Login";
+
 
 const LandingPage = () => {
   const isAuthenticated = useAuthentication();
@@ -35,13 +37,18 @@ const LandingPage = () => {
         "Discover the secrets to a strong and deadly forehand shot that will leave your opponents in awe.",
     },
   ];
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-    setTimeout(() => {
-      navigate("/login");
-    }, 500);
+  const [loginModal, drawloginModal] = useState(false);
+  const modalStyle = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    borderRadius: "5px",
+    transform: 'translate(-50%, -50%)',
+    overflowY: 'auto',
+    maxHeight: '80vh',
+    backgroundColor: 'white',
+    padding: '20px',
+    outline: 'none',
   };
 
   useEffect(() => {
@@ -51,8 +58,17 @@ const LandingPage = () => {
   }, []);
   if (isAuthenticated) return <Backdrop color="#b8b0b0" open={true}></Backdrop>;
   return (
-    <LHtml>
-      <Lbody>
+     <LHtml>
+       <Lbody> 
+          <Modal
+            open={loginModal}
+            onClose={() => drawloginModal(false)}
+            disablePortal
+          >
+            <Box sx={modalStyle}>
+              {<Login/>}
+            </Box>
+          </Modal>
         <GlobalStyles />
         <header role="banner" className="ui-section-header">
           <div className="ui-layout-container">
@@ -60,7 +76,7 @@ const LandingPage = () => {
               <h1> {"PING PONG"} </h1>
               <Button
                 variant="contained"
-                onClick={() => handleOpen()}
+                onClick={() => drawloginModal( true)}
                 endIcon={<Diversity1 />}
               >
                 Join us
@@ -70,7 +86,7 @@ const LandingPage = () => {
                   color: "#fff",
                   zIndex: (theme) => theme.zIndex.drawer + 1,
                 }}
-                open={open}
+                open={false}
               ></Backdrop>
             </div>
           </div>
@@ -188,7 +204,7 @@ const LandingPage = () => {
           <div className="ui-component-cta ui-layout-flex">
             <Button
               variant="outlined"
-              onClick={handleOpen}
+              onClick={() => drawloginModal( true)}
               endIcon={<SportsTennis />}
               sx={{
                 width: "200px",
@@ -235,8 +251,8 @@ const LandingPage = () => {
             </div>
           </div>
         </footer>
-      </Lbody>
-    </LHtml>
+       </Lbody>
+     </LHtml>
   );
 };
 
