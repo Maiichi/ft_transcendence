@@ -1158,15 +1158,37 @@ import { FriendService } from 'src/user/friend/friend.service';
     @MessageBody() body: AcceptFriendRequestDto,
   ) {
     try {
+      /* request sender means the user who sent the request in the first time
+        request accepter means the user who accept this request
+      */
       const currentUser =
         this.findUserByClientSocketId(client.id);
-      await this.friendService.acceptFriendRequest(
-        body,
-        currentUser.intraId,
-      );
-      /* need to handle the event emitted to the accepted user 
-       to inform him that a user has accepted your friend request */ 
-      this.server.emit('acceptFriendRequest');
+      const senderSockets:    string[] = this.userSockets.get(body.senderId);
+      /* receiverSockets are for the user who perform the accept Action */
+      const receiverSockets:  string[] = this.userSockets.get(currentUser.intraId);
+      await this.friendService.acceptFriendRequest(body, currentUser.intraId);
+
+      /* this event is for the request sender */
+      /*
+        in this case the user who perform the accept action will also listen to an event that 
+        remove the friend request sent by the senderId from all his state in redux
+        and add him as friend in the state
+        example :
+        socket.on('friendRequestAccepted', (data) => {
+          dispatch(removeFriendRequest(userId));
+          // add user as friend in redux state
+        });
+      */
+      receiverSockets.forEach((socketId) => {
+        this.server.to(socketId).emit('friendRequestAccepted', currentUser.intraId);
+      });
+      /* this event is for the request accepter */
+      senderSockets.forEach((socketId) => {
+        this.server.to(socketId).emit('userAcceptYourFriendRequest',{
+          data : body.senderId,
+          successMsg: `${body.senderId} accept your friend request`
+        })
+      })
     } catch (error) {
       client.emit('acceptFriendRequestError', {
         message: error.message,
@@ -1183,15 +1205,32 @@ import { FriendService } from 'src/user/friend/friend.service';
     @MessageBody() body: AcceptFriendRequestDto,
   ) {
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      await this.friendService.declineFriendRequest(
-        body,
-        currentUser.intraId,
-      );
-      /* need to handle the event emitted to the declined user 
-       to inform him that a user has declined your friend request */ 
-      this.server.emit('declineFriendRequest');
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const senderSockets:    string[] = this.userSockets.get(body.senderId);
+      /* receiverSockets are for the user who perform the decline Action */
+      const receiverSockets:  string[] = this.userSockets.get(currentUser.intraId);
+      await this.friendService.declineFriendRequest(body,currentUser.intraId);
+      /* this event is for the request sender 
+        in this case the user who perform the decline action will also listen to an event that 
+        remove the friend request sent by the senderId from all his state in redux
+        example :
+        socket.on('friendRequestRemoved', (data) => {
+          dispatch(removeFriendRequest(userId));
+        });
+      */
+      if (receiverSockets.length)
+      {
+        receiverSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('friendRequestRemoved', currentUser.intraId);
+        });
+      }
+      /* this event is for the request decliner */
+      senderSockets.forEach((socketId) => {
+        this.server.to(socketId).emit('userDeclineYourFriendRequest',{
+          data : body.senderId,
+          successMsg: `${body.senderId} decline your friend request`
+        })
+      })
     } catch (error) {
       client.emit('acceptFriendRequestError', {
         message: error.message,
