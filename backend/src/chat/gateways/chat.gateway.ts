@@ -1227,10 +1227,9 @@ export class ChatGateway
       /* request sender means the user who sent the request in the first time
         request accepter means the user who accept this request
       */
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      const senderSockets: string[] =
-        this.userSockets.get(body.senderId);
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const sender = await this.userService.getUserInfos(body.senderId);
+      const senderSockets:    string[] = this.userSockets.get(body.senderId);
       /* receiverSockets are for the user who perform the accept Action */
       const receiverSockets: string[] =
         this.userSockets.get(currentUser.intraId);
@@ -1260,13 +1259,11 @@ export class ChatGateway
       });
       /* this event is for the request accepter */
       senderSockets.forEach((socketId) => {
-        this.server
-          .to(socketId)
-          .emit('userAcceptYourFriendRequest', {
-            data: body.senderId,
-            successMsg: `${body.senderId} accept your friend request`,
-          });
-      });
+        this.server.to(socketId).emit('userAcceptYourFriendRequest',{
+          data : body.senderId,
+          successMsg: `${sender.firstName} ${sender.lastName} accept your friend request`
+        })
+      })
     } catch (error) {
       client.emit('acceptFriendRequestError', {
         message: error.message,
@@ -1283,10 +1280,9 @@ export class ChatGateway
     @MessageBody() body: AcceptFriendRequestDto,
   ) {
     try {
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
-      const senderSockets: string[] =
-        this.userSockets.get(body.senderId);
+      const currentUser = this.findUserByClientSocketId(client.id);
+      const sender = await this.userService.getUserInfos(body.senderId);
+      const senderSockets:    string[] = this.userSockets.get(body.senderId);
       /* receiverSockets are for the user who perform the decline Action */
       const receiverSockets: string[] =
         this.userSockets.get(currentUser.intraId);
@@ -1314,13 +1310,11 @@ export class ChatGateway
       }
       /* this event is for the request decliner */
       senderSockets.forEach((socketId) => {
-        this.server
-          .to(socketId)
-          .emit('userDeclineYourFriendRequest', {
-            data: body.senderId,
-            successMsg: `${body.senderId} decline your friend request`,
-          });
-      });
+        this.server.to(socketId).emit('userDeclineYourFriendRequest',{
+          data : body.senderId,
+          successMsg: `${sender.firstName} ${sender.lastName} decline your friend request`
+        })
+      })
     } catch (error) {
       client.emit('acceptFriendRequestError', {
         message: error.message,
