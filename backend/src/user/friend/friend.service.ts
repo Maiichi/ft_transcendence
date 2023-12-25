@@ -141,39 +141,39 @@ export class FriendService
     // decline a friend Request 
     async declineFriendRequest(body: AcceptFriendRequestDto, userId: number)
     {
-        // userAccept is the user who accept the friend request
-        const userAccept = await this.userService.getUser(userId);
-        if(!userAccept)
-            throw new WsException(`(userAccept) userId = ${userAccept} does not exist !`);
+        // userDecline is the user who decline the friend request
+        const userDecline = await this.userService.getUser(userId);
+        if(!userDecline)
+            throw new WsException(`(userDecline) userId = ${userDecline} does not exist !`);
         const requestSender = await this.userService.getUser(body.senderId);
         if (!requestSender)
             throw new WsException(`(sender) userId = ${body.senderId} does not exist !`);
-        if (userAccept.intraId === requestSender.intraId)
+        if (userDecline.intraId === requestSender.intraId)
             throw new WsException(`you can't decline a friend request to ur self`);
         // check blacklist before sending a friend request
-        const isBlockedByYou = await this.blacklistService.isBlockedByYou(userAccept.intraId, userAccept.intraId);
-        const isBlockingYou  = await this.blacklistService.isBlockingYou(userAccept.intraId, userAccept.intraId);
+        const isBlockedByYou = await this.blacklistService.isBlockedByYou(userDecline.intraId, userDecline.intraId);
+        const isBlockingYou  = await this.blacklistService.isBlockingYou(userDecline.intraId, userDecline.intraId);
 
         if (isBlockingYou)
             throw new WsException(`${requestSender.userName} is Blocking you`);
         if (isBlockedByYou)
             throw new WsException(`${requestSender.userName} is blocked by you`);
         
-        // const isFriend = await this.isFriend(userAccept.intraId, requestSender.intraId);
+        // const isFriend = await this.isFriend(userDecline.intraId, requestSender.intraId);
         // if (!isFriend)
-        //     throw new WsException(`${userAccept.userName} and ${requestSender.userName} are already friends`);
+        //     throw new WsException(`${userDecline.userName} and ${requestSender.userName} are already friends`);
         
         // check if friend request is already sent
-        const isRequestSentByYou = await this.isFriendRequestSentByYou(userAccept.intraId, requestSender.intraId);
-        const isRequestSentByHim = await this.isFriendRequestSentByHim(userAccept.intraId, requestSender.intraId);
+        const isRequestSentByYou = await this.isFriendRequestSentByYou(userDecline.intraId, requestSender.intraId);
+        const isRequestSentByHim = await this.isFriendRequestSentByHim(userDecline.intraId, requestSender.intraId);
 
         if (isRequestSentByYou)
-            throw new WsException(`${userAccept.userName} already sent a friend request to ${requestSender.userName}`);
+            throw new WsException(`${userDecline.userName} already sent a friend request to ${requestSender.userName}`);
         // let updateFriendRequest;
         if (!isRequestSentByHim)
             throw new WsException(`${requestSender.userName} hasnt sent you a friend request`);
         // get the request ID;
-        const getFriendRequestId: number = await this.getFriendRequestId(requestSender.intraId, userAccept.intraId);
+        const getFriendRequestId: number = await this.getFriendRequestId(requestSender.intraId, userDecline.intraId);
         // update the friend request if the user accept it
         const deletedFriendRequest = await this.prisma.friendRequest.delete({
                 where : {
@@ -181,7 +181,7 @@ export class FriendService
                 }
             });
     
-        console.log(`${userAccept.userName} has declined ${requestSender} friend request`);
+        console.log(`${userDecline.userName} has declined ${requestSender} friend request`);
         return deletedFriendRequest;
     }
 
