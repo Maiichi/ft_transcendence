@@ -74,7 +74,10 @@ import {
   userLogout,
 } from "../../packages/feat-Auth/components/authSlice";
 import {
+  acceptFriendRequest,
   addFriendRequest,
+  declineFriendRequest,
+  removeFriendRequest,
   sendFriendRequest,
 } from "../../packages/feat-Account/components";
 
@@ -301,8 +304,16 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             OpenSnackbar(data.successMsg, "success");
           });
           socket.on("friendRequestReceived", (data) => {
-            console.log("friendRequestReceived : ", data);
             dispatch(addFriendRequest(data));
+          });
+          socket.on("removeFriendRequest", (data) => {
+            dispatch(removeFriendRequest(data));
+          });
+          socket.on("userDeclineYourFriendRequest", (data) => {
+            OpenSnackbar(data.successMsg, "error");
+          });
+          socket.on("userAcceptYourFriendRequest", (data) => {
+            OpenSnackbar(data.successMsg, "success");
           });
         } catch (error) {
           console.log(error);
@@ -370,6 +381,12 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
         break;
       case sendFriendRequest.type:
         socket.emit("sendFriendRequest", { receiverId: action.payload });
+        break;
+      case acceptFriendRequest.type:
+        socket.emit("acceptFriendRequest", { senderId: action.payload });
+        break;
+      case declineFriendRequest.type:
+        socket.emit("declineFriendRequest", { senderId: action.payload });
         break;
       default:
         break;

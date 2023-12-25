@@ -9,6 +9,10 @@ import "./List.css";
 import { I_User } from "..";
 import { Button } from "../../../packages/feat-Account/styles";
 import { useAppDispatch } from "../..";
+import {
+  acceptFriendRequest,
+  declineFriendRequest,
+} from "../../../packages/feat-Account/components";
 
 interface Props {
   friendRequests: I_User[];
@@ -17,11 +21,16 @@ interface Props {
 export const FriendRequestsNotifications = ({ friendRequests }: Props) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const handleClick = (type: "accept" | "decline" | "viewProfile") => {
+  const handleClick = (
+    id: number,
+    type: "accept" | "decline" | "viewProfile"
+  ) => {
     switch (type) {
       case "accept":
+        dispatch(acceptFriendRequest(id));
         break;
       case "decline":
+        dispatch(declineFriendRequest(id));
         break;
       case "viewProfile":
         break;
@@ -37,7 +46,7 @@ export const FriendRequestsNotifications = ({ friendRequests }: Props) => {
           <>
             <ListItemButton
               className="item"
-              onClick={() => handleClick("accept")}
+              onClick={() => handleClick(item.intraId, "accept")}
             >
               <ListItemIcon className="icon">
                 <CheckIcon />
@@ -45,7 +54,7 @@ export const FriendRequestsNotifications = ({ friendRequests }: Props) => {
             </ListItemButton>
             <ListItemButton
               className="item"
-              onClick={() => handleClick("decline")}
+              onClick={() => handleClick(item.intraId, "decline")}
             >
               <ListItemIcon className="icon">
                 <CloseIcon />
@@ -53,7 +62,7 @@ export const FriendRequestsNotifications = ({ friendRequests }: Props) => {
             </ListItemButton>
             <ListItemButton
               className="item"
-              onClick={() => handleClick("viewProfile")}
+              onClick={() => handleClick(item.intraId, "viewProfile")}
             >
               <h5 className="title">{item.userName}</h5>
             </ListItemButton>
