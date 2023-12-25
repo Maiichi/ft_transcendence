@@ -23,7 +23,7 @@ import { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { updateUserName, uploadAvatar } from "./authThunk";
 import { useSize } from "../../../core/utils/hooks";
 import { CardAvatar, Title } from "../../feat-Account/components";
-import { CheckBox, CheckCircle, CloudUpload } from "@mui/icons-material";
+import { CheckBox, CheckCircle, DoneOutline, CloudUpload } from "@mui/icons-material";
 import {
   ALLOWED_FILE_TYPES,
   MAX_IMAGE_SIZE,
@@ -155,6 +155,7 @@ const FirstLogin = () => {
     );
     setTimeout(() => {
       if (isfirstLogin) {
+        setInputError("userName reserved!")
         setActiveStep(0);
         setOpen(false);
       }
@@ -213,7 +214,7 @@ const FirstLogin = () => {
             >
               <Button
                 component="label"
-                startIcon={selectedImage ? <CheckCircle /> : <CloudUpload />}
+                startIcon={ <CloudUpload />}
               >
                 <VisuallyHiddenInput
                   type="file"
@@ -222,7 +223,7 @@ const FirstLogin = () => {
                 />
               </Button>
               <Button
-                startIcon={<AddTaskOutlinedIcon />}
+                startIcon={<DoneOutline />}
                 onClick={handleUpload}
               />
             </ButtonGroup>
