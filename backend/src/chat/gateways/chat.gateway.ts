@@ -1164,7 +1164,34 @@ import { FriendService } from 'src/user/friend/friend.service';
         body,
         currentUser.intraId,
       );
+      /* need to handle the event emitted to the accepted user 
+       to inform him that a user has accepted your friend request */ 
       this.server.emit('acceptFriendRequest');
+    } catch (error) {
+      client.emit('acceptFriendRequestError', {
+        message: error.message,
+      });
+      console.error(
+        'accept error = ' + error.message,
+      );
+    }
+  }
+
+  @SubscribeMessage('declineFriendRequest')
+  async declineFriendRequest(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: AcceptFriendRequestDto,
+  ) {
+    try {
+      const currentUser =
+        this.findUserByClientSocketId(client.id);
+      await this.friendService.declineFriendRequest(
+        body,
+        currentUser.intraId,
+      );
+      /* need to handle the event emitted to the declined user 
+       to inform him that a user has declined your friend request */ 
+      this.server.emit('declineFriendRequest');
     } catch (error) {
       client.emit('acceptFriendRequestError', {
         message: error.message,
