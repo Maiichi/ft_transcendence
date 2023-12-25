@@ -26,15 +26,23 @@ const Root = styled.div`
   display: flex;
   height: 90%;
   margin: 4px 5px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  scrollbar-color: transparent transparent;
 `;
 const Container = styled.div`
   height: 100%;
 `;
 const Footer = styled.div`
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   background: #eee7f7;
   height: 5%;
+  bottom: 0;
+  position: fixed;
 `;
 const Children = styled.div<{ displayNavbar: boolean }>`
   width: 100%;
