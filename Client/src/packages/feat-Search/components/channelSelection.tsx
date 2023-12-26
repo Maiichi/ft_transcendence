@@ -1,6 +1,6 @@
 import { AvatarGroup, Avatar, Button } from "@mui/material";
 import { I_Room_Search } from "../types/types";
-import { Channel, ButtonNameHolder, ChannelName, ChannelType } from ".";
+import { Channel, ButtonNameHolder, ChannelName, ChannelType, NoMatchesFound } from ".";
 import { useState } from "react";
 import {  ModalComponent, useAppDispatch } from "../../../core";
 import { JoinChannelModal } from "../modal/joinChannelModal";
@@ -107,7 +107,7 @@ const ChannelsSelection = ({ filteredRooms, userId }: Channels) => {
           </Channel>
         ))
       ) : (
-        <div>No Room available</div>
+        <NoMatchesFound>No Room available</NoMatchesFound>
       )}
     </>
   );

@@ -23,12 +23,21 @@ import {
   UserSelection,
   Root,
 } from "./components";
+import {
+  AddLoading,
+  getUserFriends,
+  userType,
+} from "../feat-Account/components";
 
 export const Search = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const { rooms, users }: { rooms: []; users: [] } = useAppSelector(
-    (state) => state.search
+  const { rooms, users }: { rooms: I_Room_Search[]; users: I_User[] } =
+    useAppSelector(({ search }) => search);
+  const { foo: friends, isLoading }: AddLoading<userType[]> = useAppSelector(
+    ({ friends }) => {
+      return { foo: friends.friends, isLoading: friends.isLoading };
+    }
   );
   const user = useAppSelector((state) => state.auth.user);
 
@@ -36,26 +45,22 @@ export const Search = () => {
     setSearchQuery(str);
   };
 
-  console.log("users == ", users);
-
   useEffect(() => {
     dispatch(getMemberships());
     dispatch(getAllRooms());
     dispatch(getAllUsers());
+    dispatch(getUserFriends());
   }, []);
 
   // Filter chat rooms based on the search query
-  const filteredRooms: I_Room_Search[] = searchQuery
-    ? rooms.filter((item: any) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
-
-  const filtredUsers: I_User[] = searchQuery
-    ? users.filter((user: I_User) =>
-        user.firstName.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  const filtre = (list: Array<I_Room_Search | I_User>, enableData?: true) =>
+    searchQuery || enableData
+      ? list.filter((item: any) =>
+          (item.name ?? item.firstName)
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        )
+      : [];
 
   /** show list slected */
   const [selectedList, setSelected] = useState<
@@ -73,18 +78,20 @@ export const Search = () => {
   const ListContenet = () => {
     switch (selectedList) {
       case "users":
-        return <UserSelection users={filtredUsers} />;
+        return <UserSelection users={filtre(users) as I_User[]} />;
       case "channels":
         return (
           <ChannelsSelection
-            filteredRooms={filteredRooms}
+            filteredRooms={filtre(rooms)}
             userId={user.intraId}
           />
         );
       case "blockeds":
         return <h1> blockeds </h1>;
       case "friends":
-        return <h1> friends </h1>;
+        return (
+          <UserSelection users={filtre(friends) as userType[]} forfriends />
+        );
     }
   };
 
@@ -100,6 +107,7 @@ export const Search = () => {
             id="demo-simple-select-standard-label"
           ></InputLabel>
           <Select
+            color="secondary"
             labelId="demo-simple-select-standard-label"
             name="Channels"
             id="dropdown"

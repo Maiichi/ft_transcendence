@@ -1,3 +1,4 @@
+import { deepPurple } from "@mui/material/colors";
 import styled from "styled-components";
 
 const Root = styled.div`
@@ -86,10 +87,11 @@ const ChannelType = styled.div``;
 const NoMatchesFound = styled.div`
   height: 500px;
   display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: #3498db; /* Replace with your primary color */
+  color: ${deepPurple[400]}; /* Replace with your primary color */
 `;
 
 const StyledLink = styled.button`

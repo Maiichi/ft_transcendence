@@ -11,11 +11,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { I_User } from "../../../core";
 
-interface Users {
+export const UserSelection = (props: {
   users: I_User[];
-}
-
-export const UserSelection = ({ users }: Users) => {
+  forfriends?: true;
+}) => {
+  const { users, forfriends } = props;
   const navigate = useNavigate();
 
   return (
@@ -34,14 +34,14 @@ export const UserSelection = ({ users }: Users) => {
                 <br />
                 <UserLogin>@{user.userName.slice(0, 8)}</UserLogin>
               </UserInfoContainer>
-              <RatingContainer>
-                {/* <img src="/img/applogo.svg" alt="logo" height={20} width={20} /> */}
-              </RatingContainer>
+              <RatingContainer>{forfriends && user.status}</RatingContainer>
             </StyledUserCard>
           </StyledLink>
         ))
       ) : (
-        <NoMatchesFound>No User found</NoMatchesFound>
+        <NoMatchesFound>
+          No {forfriends ? "friend" : "User"} found
+        </NoMatchesFound>
       )}
     </>
   );
