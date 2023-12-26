@@ -67,6 +67,14 @@ export const isFriend = (friends: Array<I_User>, userId: number) => {
   return isFriend ? true : false;
 };
 
+export const isSentFriendRequest = (
+  friendRequests: Array<I_User>,
+  userId: number
+) => {
+  const isFriend = friendRequests.find((member) => member.intraId === userId);
+  return isFriend ? true : false;
+};
+
 export const isMuted = (room: I_Room, userId: number) => {
   const member = room.members.find((member) => member.user.intraId === userId);
   const date = new Date();

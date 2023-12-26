@@ -75,6 +75,7 @@ import {
 } from "../../packages/feat-Auth/components/authSlice";
 import {
   acceptFriendRequest,
+  addFriend,
   addFriendRequest,
   declineFriendRequest,
   removeFriendRequest,
@@ -313,7 +314,12 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             OpenSnackbar(data.successMsg, "error");
           });
           socket.on("userAcceptYourFriendRequest", (data) => {
+            console.log(data);
+            dispatch(addFriend(data.data));
             OpenSnackbar(data.successMsg, "success");
+          });
+          socket.on("addFriendTemporally", (data) => {
+            dispatch(addFriend(data));
           });
         } catch (error) {
           console.log(error);

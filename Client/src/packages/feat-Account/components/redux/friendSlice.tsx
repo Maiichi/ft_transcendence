@@ -6,14 +6,14 @@ import { I_User } from "../../../../core";
 //   id: number;
 // }
 export interface friendState {
-  friends: I_User | null;
+  friends: I_User[];
   friendRequests: I_User[];
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: friendState = {
-  friends: null,
+  friends: [],
   friendRequests: [],
   isLoading: false,
   error: null,
@@ -31,6 +31,15 @@ export const friendSlice = createSlice({
     },
     declineFriendRequest: (state, action: PayloadAction<number>) => {
       state.isLoading = false;
+    },
+    addFriend: (state, action: PayloadAction<I_User>) => {
+      state.friends.push(action.payload);
+    },
+    removeFriend: (state, action: PayloadAction<number>) => {
+      console.log(action.payload);
+      state.friends = state.friends.filter(
+        (obj) => obj.intraId !== action.payload
+      );
     },
     addFriendRequest: (state, action: PayloadAction<I_User>) => {
       state.friendRequests.push(action.payload);
@@ -52,7 +61,6 @@ export const friendSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(getUserFriends.rejected, (state, action) => {
-        state.friends = null;
         state.isLoading = false;
       })
       .addCase(getFriendRequests.pending, (state) => {
@@ -75,6 +83,8 @@ export const {
   acceptFriendRequest,
   addFriendRequest,
   sendFriendRequest,
+  addFriend,
+  removeFriend,
 } = friendSlice.actions;
 
 export default friendSlice.reducer;
