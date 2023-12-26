@@ -58,10 +58,34 @@ export const Search = () => {
     : [];
 
   /** show list slected */
-  const [selectedList, setSelected] = useState<"users" | "channels">("users");
+  const [selectedList, setSelected] = useState<
+    "users" | "channels" | "friends" | "blockeds"
+  >("users");
   const handleSelectChange = (event: SelectChangeEvent) => {
-    const selectedValue = event.target.value as "users" | "channels";
+    const selectedValue = event.target.value as
+      | "users"
+      | "channels"
+      | "friends"
+      | "blockeds";
     setSelected(selectedValue);
+  };
+
+  const ListContenet = () => {
+    switch (selectedList) {
+      case "users":
+        return <UserSelection users={filtredUsers} />;
+      case "channels":
+        return (
+          <ChannelsSelection
+            filteredRooms={filteredRooms}
+            userId={user.intraId}
+          />
+        );
+      case "blockeds":
+        return <h1> blockeds </h1>;
+      case "friends":
+        return <h1> friends </h1>;
+    }
   };
 
   return (
@@ -84,18 +108,13 @@ export const Search = () => {
           >
             <MenuItem value={"channels"}>channels</MenuItem>
             <MenuItem value={"users"}>users</MenuItem>
+            <MenuItem value={"friends"}>friends</MenuItem>
+            <MenuItem value={"blockeds"}>blocked list</MenuItem>
           </Select>
         </FormControl>
       </Holder>
       <ListHolder>
-        {selectedList === "users" ? (
-          <UserSelection users={filtredUsers} />
-        ) : selectedList === "channels" ? (
-          <ChannelsSelection
-            filteredRooms={filteredRooms}
-            userId={user.intraId}
-          />
-        ) : null}
+        <ListContenet />
       </ListHolder>
     </Root>
   );
