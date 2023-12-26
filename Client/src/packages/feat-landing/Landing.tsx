@@ -11,6 +11,7 @@ import {
 import { GlobalStyles, LHtml, Lbody } from "./components";
 import { useAuthentication } from "../feat-Auth/authUtils";
 import Login from "../feat-Auth/Login";
+import { purple } from "@mui/material/colors";
 
 
 const LandingPage = () => {
@@ -46,7 +47,7 @@ const LandingPage = () => {
     transform: 'translate(-50%, -50%)',
     overflowY: 'auto',
     maxHeight: '80vh',
-    backgroundColor: 'white',
+    backgroundColor: purple[100],
     padding: '20px',
     outline: 'none',
   };
@@ -56,7 +57,7 @@ const LandingPage = () => {
       navigate("/");
     }
   }, []);
-  if (isAuthenticated) return <Backdrop color="#b8b0b0" open={true}></Backdrop>;
+  if (isAuthenticated) return <Backdrop color={purple[100]} open={true}></Backdrop>;
   return (
      <LHtml>
        <Lbody> 
@@ -76,6 +77,8 @@ const LandingPage = () => {
               <h1> {"PING PONG"} </h1>
               <Button
                 variant="contained"
+                color='secondary'
+
                 onClick={() => drawloginModal( true)}
                 endIcon={<Diversity1 />}
               >
@@ -204,6 +207,7 @@ const LandingPage = () => {
           <div className="ui-component-cta ui-layout-flex">
             <Button
               variant="outlined"
+              color='secondary'
               onClick={() => drawloginModal( true)}
               endIcon={<SportsTennis />}
               sx={{

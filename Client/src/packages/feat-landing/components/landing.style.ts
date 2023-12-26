@@ -5,7 +5,7 @@ const GlobalStyles = createGlobalStyle`
     --ui-color-brand: #353535;
 
     --ui-color-n-000: #fff;
-    --ui-color-n-100: #ebebeb;
+    --ui-color-n-100: #f3e5f5;
     --ui-color-n-300: #aeaeae;
     --ui-color-n-500: #353535;
     --ui-color-n-700: #282828;
@@ -116,6 +116,7 @@ const GlobalStyles = createGlobalStyle`
     img,
     svg {
     display: block;
+    border-radius: 10px;
     height: auto;
     margin: 0 auto;
     max-width: 100%;
