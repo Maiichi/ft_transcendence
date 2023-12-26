@@ -4,6 +4,8 @@ import { Header, ListNav } from ".";
 import { useAppSelector } from "../../..";
 import { CoreState } from "../../../CoreSlice";
 import { useSize } from "../../hooks";
+import { Typography } from "@mui/material";
+import { deepPurple } from "@mui/material/colors";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const { isMobile, isTab } = useSize();
@@ -16,7 +18,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <Children displayNavbar={state.displayNavbar}> {children}</Children>
       </Root>
       <Footer>
-        <Copyright /> By Ibouroum
+        <Typography variant="body2" minWidth="200px">
+          <Copyright /> By IOIMI team
+        </Typography>
       </Footer>
     </Container>
   );
@@ -36,10 +40,13 @@ const Container = styled.div`
 const Footer = styled.div`
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
   text-align: center;
-  background: #eee7f7;
+  background: ${deepPurple[300]};
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+
   height: 5%;
   bottom: 0;
   position: fixed;

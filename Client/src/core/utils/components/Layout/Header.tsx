@@ -1,32 +1,23 @@
 import { useState, useEffect } from "react";
 
 import styled from "styled-components";
-import { Typography, PopperPlacementType } from "@mui/material";
+import { Typography, PopperPlacementType, Avatar } from "@mui/material";
 import { makeStyles } from "@material-ui/styles";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import SearchIcon from "@mui/icons-material/Search";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import HomeIcon from "@mui/icons-material/Home";
-import DehazeIcon from "@mui/icons-material/Dehaze";
-import AppsIcon from "@mui/icons-material/Apps";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-
 import {
-  Drawer,
-  ListComponent,
-  ListNav,
-  PopperComponent,
-  SearchComponent,
-} from "..";
+  Apps as AppsIcon,
+  Logout,
+  History,
+  PermIdentity,
+  Settings,
+} from "@mui/icons-material";
+
+import { Drawer, ListComponent, ListNav, PopperComponent } from "..";
 import { useSize } from "../../hooks";
-import { useAppDispatch } from "../../../redux";
+import { useAppDispatch, useAppSelector } from "../../../redux";
 import { setDisplayNavbar } from "../../../CoreSlice";
-import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
-import { setToken, userLogout } from "../../../../packages/feat-Auth/components/authSlice";
-import { useNavigate } from "react-router-dom";
-import { disconnectSocket } from "../../../socket/socketSlice";
+import { userLogout } from "../../../../packages/feat-Auth/components/authSlice";
+import { deepPurple, purple } from "@mui/material/colors";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 interface MenuTabs {
@@ -34,10 +25,7 @@ interface MenuTabs {
   redirect?: string;
   render: JSX.Element;
 }
-interface TabProps {
-  isActive: boolean;
-  requireAuth?: boolean;
-}
+
 type ActiveTabs = "notif" | "profile" | "search";
 const useStyles = makeStyles({
   iconBase: {
@@ -71,19 +59,20 @@ const Menu = [
   {
     redirect: "/account/profile",
     render: "Profile",
-    icon: PermIdentityIcon,
+    icon: PermIdentity,
+    style: { color: purple[400] },
+  },
+  {
+    redirect: "/gamesHistory",
+    render: "matchs History",
+    icon: History,
+    style: { color: purple[500] },
   },
   {
     redirect: "/account/settings",
     render: "Account Settings",
-    icon: SettingsIcon,
-  },
-  {
-    redirect: "/logout",
-    render: "Logout",
-    icon: LogoutIcon,
-    style: { color: "#f23f3f" },
-    onclick: () => console.log("Logout"),
+    icon: Settings,
+    style: { color: purple[600] },
   },
 ];
 const ProfilePopper = () => {
@@ -123,10 +112,9 @@ export const Header = () => {
   const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
   const [popperStyle, setPopperStyle] = useState<React.CSSProperties>();
 
-  const navigate = useNavigate();
-
-  const isAuthenticated = useAuthentication();
-  useEffect(() => {}, [activeTab]);
+  const userAvatar = useAppSelector(
+    ({ auth }) => auth.user?.avatar_url ?? null
+  );
 
   const handleClose = (e: any) => {
     setOpen(false);
@@ -179,31 +167,20 @@ export const Header = () => {
     {
       id: "profile",
       render: (
-        <ImgProfile
+        <Avatar
           id="profile"
-          style={{ marginLeft: " 20px" }}
-          src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
+          sx={{ bgcolor: deepPurple[500], width: 40, height: 40, ml: 2, mr: 2 }}
+          src={userAvatar ?? ""}
           onClick={popperClick("bottom-start", <ProfilePopper />, "profile", {
             paddingTop: "10px",
           })}
-        />
+        >
+          User
+        </Avatar>
       ),
     },
   ];
-  // <SearchIcon
-  //   className={classes.iconBase}
-  //   style={{ marginLeft: "10px", marginRight: "auto" }}
-  //   onClick={popperClick(
-  //     "bottom",
-  //     <SearchComponent clear={true} setOpen={setOpen} />,
-  //     "search",
-  //     {
-  //       padding: "5px 10px",
-  //       marginTop: "-34px!important",
-  //       background: "#ffffff",
-  //       width: "100%",
-  //     }
-  //   )}
+
   return (
     <>
       {isMobile && (
@@ -235,25 +212,6 @@ export const Header = () => {
               className={classes.iconBase}
               onClick={toggleDrawer("top", true)}
             />
-
-            {/* <SearchIcon
-                            className={classes.iconBase}
-                            style={{ marginLeft: "10px", marginRight: "auto" }}
-                            onClick={popperClick(
-                                "bottom",
-                                <SearchComponent
-                                    clear={true}
-                                    setOpen={setOpen}
-                                />,
-                                "search",
-                                {
-                                    padding: "5px 10px",
-                                    marginTop: "-34px!important",
-                                    background: "#ffffff",
-                                    width: "-webkit-fill-available",
-                                }
-                            )}
-                        /> */}
           </>
         ) : (
           <>
@@ -262,23 +220,19 @@ export const Header = () => {
                 className={classes.iconBase}
                 onClick={() => dispatch(setDisplayNavbar(false))}
               />
-              <>LOGO</>
+              <>Ping PONG</>
             </Left>
-            {/* <SearchComponent /> */}
           </>
         )}
         <Right>
           {RightMenu.map((item: MenuTabs) => item.render)}
-          {isAuthenticated && (
-            <LogoutIcon
-              id="logout"
-              className={classes.iconBase}
-              onClick={() => {
-                dispatch(userLogout());
-                // navigate("/login");
-              }}
-            />
-          )}
+          <Logout
+            id="logout"
+            className={classes.iconBase}
+            onClick={() => {
+              dispatch(userLogout());
+            }}
+          />
         </Right>
       </Root>
     </>
@@ -300,12 +254,7 @@ const Right = styled.div`
   align-items: center;
 `;
 const Left = styled.div`
-  width: 100px;
+  width: 130px;
   display: flex;
   justify-content: space-between;
-`;
-
-const ImgProfile = styled.img`
-  width: 33px;
-  height: 34px;
 `;
