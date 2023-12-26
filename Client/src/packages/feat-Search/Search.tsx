@@ -6,7 +6,12 @@ import {
   SelectChangeEvent,
   Select,
 } from "@mui/material";
-import { I_User, SearchComponent, useAppDispatch, useAppSelector } from "../../core";
+import {
+  I_User,
+  SearchComponent,
+  useAppDispatch,
+  useAppSelector,
+} from "../../core";
 import { getAllRooms, getAllUsers } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
 import { getMemberships } from "../feat-Chat/components/redux/roomThunk";
@@ -22,8 +27,9 @@ import {
 export const Search = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const { rooms, users }: { rooms: []; users: [] } =
-    useAppSelector((state) => state.search);
+  const { rooms, users }: { rooms: []; users: [] } = useAppSelector(
+    (state) => state.search
+  );
   const user = useAppSelector((state) => state.auth.user);
 
   const handleClickSearch = (str: string) => {
@@ -39,18 +45,20 @@ export const Search = () => {
   }, []);
 
   // Filter chat rooms based on the search query
-  const filteredRooms: I_Room_Search[] = rooms.filter((item: any) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredRooms: I_Room_Search[] = searchQuery
+    ? rooms.filter((item: any) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
-  const filtredUsers: I_User[] = users.filter((user: I_User) => 
-    user.firstName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filtredUsers: I_User[] = searchQuery
+    ? users.filter((user: I_User) =>
+        user.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   /** show list slected */
-  const [selectedList, setSelected] = useState<"users" | "channels">(
-    "users"
-  );
+  const [selectedList, setSelected] = useState<"users" | "channels">("users");
   const handleSelectChange = (event: SelectChangeEvent) => {
     const selectedValue = event.target.value as "users" | "channels";
     setSelected(selectedValue);
@@ -66,8 +74,7 @@ export const Search = () => {
           <InputLabel
             sx={{ display: `${selectedList ? "none" : "inline"}` }}
             id="demo-simple-select-standard-label"
-          >
-          </InputLabel>
+          ></InputLabel>
           <Select
             labelId="demo-simple-select-standard-label"
             name="Channels"
