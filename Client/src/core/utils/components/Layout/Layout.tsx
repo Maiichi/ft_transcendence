@@ -37,7 +37,7 @@ const Root = styled.div`
 const Container = styled.div`
   height: 100%;
 `;
-const Footer = styled.div`
+const Footer = styled.footer`
   width: 100%;
   display: flex;
   justify-content: end;
@@ -46,8 +46,7 @@ const Footer = styled.div`
   background: ${deepPurple[300]};
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
-
-  height: 5%;
+  height: 40px;
   bottom: 0;
   position: fixed;
 `;
