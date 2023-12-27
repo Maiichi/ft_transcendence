@@ -1183,21 +1183,18 @@ import { GameService } from 'src/game/game.service';
     @MessageBody() body: any)
   {
     try {
-      console.log('userInvitedToGame');
-      const currentUser =
-        this.findUserByClientSocketId(client.id);
+      console.log('Invite To Game (gateway)');
+      const currentUser = this.findUserByClientSocketId(client.id);
       await this.gameService.handleInviteUserToGame(currentUser.intraId, body.invitedId);
       const invitedSockets : string[] = this.userSockets.get(body.invitedId);
-        console.log('invitedSockets ==', invitedSockets);
-      // if (blockedSockets)
-      // blockedSockets.forEach((socketId) =>{
-      //   this.server.to(socketId).emit('blockedMe', response.blocker);
-      // });
+      const receiver = await this.userService.getUserInfos(body.invitedId);
+      const sender = await this.userService.getUserInfos(currentUser.intraId);
+      console.log(invitedSockets);
       if (invitedSockets)
         invitedSockets.forEach((socketId) => {
           this.server.to(socketId).emit('gameInvitationReceived', {
-            inviterId: body.inviterId,
-            invitedId: body.invitedId
+            inviter: sender,
+            invited: receiver
             })
         });
     } catch (error) {
@@ -1217,19 +1214,22 @@ import { GameService } from 'src/game/game.service';
   {
     try {
         console.log('acceptGameInvite');
+        console.log("body -- ", body);
         const currentUser =
         this.findUserByClientSocketId(client.id);
-        console.log('body (acceptGameInvite)== ', body);
         const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
         const inviterSockets: string[] = this.userSockets.get(body.inviterId);
-        console.log('inviter == ', currentUser.intraId);
-        console.log('invited == ', body.invitedId);
         if (invitedSockets)
           invitedSockets.forEach((socketId) => {
-            this.server.to(socketId).emit('gameInvitationAccepted')
+            this.server.to(socketId).emit('gameInvitationAccepted', {
+              data : true
+            })
           });
+        // this.server.to(client.id).emit('gameInvitationAccepted');
         inviterSockets.forEach((socketId) => {
-          this.server.to(socketId).emit('opponentAcceptGameInvite');
+          this.server.to(socketId).emit('opponentAcceptGameInvite', {
+            data : currentUser
+          });
         });
     } catch (error) {
       client.emit('gameInvitationAcceptedError', {
@@ -1240,7 +1240,7 @@ import { GameService } from 'src/game/game.service';
       );
     }
   }
-  
+
   @SubscribeMessage('declineGameInvite')
   async declineGameInvite( 
     @ConnectedSocket() client: Socket,
@@ -1249,22 +1249,21 @@ import { GameService } from 'src/game/game.service';
     try {
         console.log('declineGameInvite');
         let inviter;
-        const currentUser =
-        this.findUserByClientSocketId(client.id);
-        console.log("ssssssssssss")
-        console.log('body (declineGameInvite) == ', body);
+        const currentUser = this.findUserByClientSocketId(client.id);
         const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
         const inviterSockets: string[] = this.userSockets.get(body.inviterId);
+        const invited = await this.userService.getUserInfos(currentUser.intraId);
         if (inviterSockets.length)
           inviter = this.findUserByClientSocketId(inviterSockets[0]);
         if (invitedSockets)
           invitedSockets.forEach((socketId) => {
             this.server.to(socketId).emit('gameInvitationDeclined')
           });
+          console.log(inviterSockets);
         inviterSockets.forEach((socketId) => {
           this.server.to(socketId).emit('opponentDeclineGameInvite', {
-            data : body.inviterId,
-            successMsg: `${inviter.userName} decline your game Invite`
+            data : invited.intraId,
+            successMsg: `${invited.firstName} ${invited.lastName} decline your game Invite`
           });
         });
     } catch (error) {

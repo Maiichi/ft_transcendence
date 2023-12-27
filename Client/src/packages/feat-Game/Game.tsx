@@ -11,6 +11,8 @@ import { useKeyboardControls } from "./hooks/useKeyboardControls";
 import { GameCanvas } from "./components/GameCanvas";
 
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../core";
+import { useNavigate } from "react-router-dom";
+import { resetGameState, setCountdown, setGameStep } from "./redux/GameSlice";
 
 export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
     const ref = useRef<HTMLCanvasElement>(null);
@@ -36,6 +38,7 @@ export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
 
     const [frame, setFrame] = useState<GameState>(initialState);
     const [gameMode, setGameMode] = useState<GameMode>("Dual");
+    const navigate = useNavigate();
     // const token = useAppSelector((state) => state.auth.token);
     // const [socket, setSocket] = useState<Socket | null>(null);
     // const [socketReady, setSocketReady] = useState<boolean>(false);
@@ -81,12 +84,37 @@ export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
         }
     };
 
+
     // // console.log('socket outside ==', socket);
     useKeyboardControls(emitEvent, socket);
 
     onEvent("state", (newFrame: GameState) => {
         setFrame(newFrame);
     });
+
+   
+
+    // onEvent("state", (newFrame: GameState) => {
+    //     if (newFrame.state === "WAITING")
+    //         dispatch(setGameStep(STEPS.WAITING_QUEUE));
+    //     else if (newFrame.state === "PLAYING")
+    //     {
+    //         console.log("here *****")
+    //         dispatch(setGameStep(STEPS.GAME_START));
+    //     }
+    // });
+
+
+    const handleResetGameState = () => {
+        dispatch(resetGameState());
+    };
+
+    onEvent("gameEnds", () => {
+        setTimeout(() => {
+            navigate('/gamesHistory');
+            handleResetGameState();
+        }, 1000);
+    })
 
     // // invite Game modal
     // const isInviteAccepted = useAppSelector(

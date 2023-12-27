@@ -176,6 +176,4 @@ export class GameService {
         if (isReceiverOnline.status === "ONLINE" && isReceiverInGame.inGame)
             throw new WsException(`${receiver.firstName} ${receiver.lastName} is playing a game currently, wait until he finishs`);
     }
-    
-    
 }

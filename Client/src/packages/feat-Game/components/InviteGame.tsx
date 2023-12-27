@@ -4,10 +4,10 @@ import { Close } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { I_User, SearchComponent, useAppDispatch, useAppSelector } from "../../../core";
 import { Socket } from "socket.io-client";
-import { inviteUserToGame, setGameStep } from "../redux/GameSlice";
 
 import { getUserFriends } from "../../feat-Account/components/redux/friendThunk";
 import { STEPS } from "../utils/constants";
+import { inviteToGame, setCurrentTab, setGameStep, setInviteSent, setInvited } from "../redux/GameSlice";
 
 export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const {onUserSelect} = props;
@@ -59,22 +59,24 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
     handleClose();
   };
 
-  console.log('socket from game component === ', socket);
-
   const handleSelectedUser = (user: I_User) => {
     setSelectUser(user);
   };
 
-  const handleChallengePlayer = () => {
+  const handleChallengePlayer = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (selectUser)
     {
       if (socket)
       { 
-        dispatch(inviteUserToGame({
+        dispatch(inviteToGame({
           invitedId : selectUser.intraId,
           inviterId : user.intraId
         }));
-        dispatch(setGameStep(STEPS.WAITING_QUEUE));
+        dispatch(setInviteSent(true));
+        dispatch(setInvited(selectUser));
+        dispatch(setCurrentTab(true));
+        // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         // dispatch(setInvited)
       }
     }

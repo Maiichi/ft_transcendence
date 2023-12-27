@@ -1,7 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { GameState, GameStepComponentProps } from "../utils/types";
 import { useAppDispatch, useAppSelector } from "../../../core";
-import { setGameStep } from "../redux/GameSlice";
 import { STEPS } from "../utils/constants";
 import { useEffect } from "react";
 
@@ -120,7 +119,7 @@ export const MatchLoading: React.FC<GameStepComponentProps> = ({
     socket,
     onReset,
 }) => {
-    const countdown = useAppSelector((state) => state.gameState.countdown);
+    const countdown = useAppSelector((state) => state.game.countdown);
 
     console.log("red", countdown);
 

@@ -41,7 +41,6 @@ import {
 } from "../../packages/feat-Search/redux/searchSlice";
 import { useAppSelector } from "../redux";
 // import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
-import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, opponentDeclineInvite, receiveGameInvitation, resetGame, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
 import {
   addMessageToConversation,
   createDirectConversation,
@@ -57,6 +56,7 @@ import {
 } from "../../packages/feat-Account/components/redux/blockSlice";
 import { AlertColor } from "@mui/material";
 import { setToken, userLogout } from "../../packages/feat-Auth/components/authSlice";
+import { acceptGameInvitation, declineGameInvitation, inviteToGame, resetGame, setInviteAccepted, setInvited, setInviter, setInviteReceived, setInviteSent } from "../../packages/feat-Game/redux/GameSlice";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -236,35 +236,85 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                 }));
             }
           });
-          socket.on('gameInvitationReceived' , (data) => {
-            console.log('gameInvitationReceived');
-            console.log ('data (gameInvitationReceived) == ', data);
-            dispatch(setInviterId(data.inviterId));
-            dispatch(setDisplayGameInvitation(true));
-            dispatch(receiveGameInvitation(true));
-          });
-          socket.on('gameInvitationAccepted', () => {
-            console.log('listen for the event (gameInvitationAccepted) should be display in all accepterSocket')
+          socket.on('gameInvitationReceived', (data) => {
+              console.log("data (gameInvitationReceived) = ", data);
+              dispatch(setInviter(data.inviter));
+              dispatch(setInviteReceived(true));
+              dispatch(setDisplayGameInvitation(true));
+          }); 
+          // this event for all the tabs to inform them that a an invite is declined
+          socket.on('gameInvitationDeclined', () => {
+            dispatch(setInviteReceived(false));
+            dispatch(setInviter(null)); // test
             dispatch(setDisplayGameInvitation(false));
-            dispatch(setInviteAccepted(true));
+          });
+          // this event will appears on the sender of the game invitation
+          socket.on('opponentDeclineGameInvite', (data) => {
+            console.log("data (opponentDeclineGameInvite) = ", data);
+            const {invited} = getState().game;
+            if (invited)
+            {
+              if (invited.intraId === data.data)
+                OpenSnackbar(data.successMsg, "error");
+                dispatch(setInviteSent(false));
+                dispatch(setInvited(null));
+            }
+            // dispatch(resetGame());
+          });
+          // this event for the user who 
+          socket.on('gameInvitationAccepted', (data) => {
+            console.log("------- gameInvitationAccepted   --------  ");
+            // dispatch(setInviteReceived(false));
+            dispatch(setDisplayGameInvitation(false));
+            const {currentTab} = getState().game;
+            console.log("currentTab == ", currentTab);
+            console.log("data === ", data.data);
+            if (currentTab !== data.data)
+            {
+              dispatch(setInviteReceived(false));
+              // setTimeout(() => {
+              //   dispatch(setInviter(null));
+              // }, 1000);
+            }
           });
           socket.on('opponentAcceptGameInvite', (data) => {
-            console.log ('data (opponentAcceptGameInvite) == ', data);
-            console.log('listen for the event (gameInvitationAccepted) should be display in all accepterSocket')
-            dispatch(opponentAcceptInvite(true));
-          });
-          socket.on('opponentDeclineGameInvite', (data) => {
-            OpenSnackbar(data.successMsg, "error");
-            // dispatch(setServerMessage(`User ${data.inviterId} decline your game Invite`));
-            // dispatch(setOpenSnackbar(true));
-            dispatch(opponentDeclineInvite(true));
-            dispatch(resetGame());
-          });
-          socket.on('gameInvitationDeclined', () => {
-            console.log('listen for the event (gameInvitationDeclined) should be display in all declinerSocket')
-            dispatch(setDisplayGameInvitation(false));
-            dispatch(setInviteDeclined(true));
-          });
+            console.log("------- opponentAcceptGameInvite   --------  ", data);
+            const {invited} = getState().game;
+            if (invited)
+            {
+              if (invited.intraId === data.data.intraId)
+              {
+                console.log("here 2");
+                dispatch(setInviteSent(false));
+                dispatch(setInviteAccepted(true));
+              }
+            }
+          })
+          // socket.on('gameInvitationReceived' , (data) => {
+          //   dispatch(setInviterId(data.inviterId));
+          //   dispatch(setDisplayGameInvitation(true));
+          //   dispatch(receiveGameInvitation(true));
+          // });
+          // // this event for all the tabs of the user who accept the game invite
+          // socket.on('gameInvitationAccepted', () => {
+          //   dispatch(setDisplayGameInvitation(false));
+          // });
+          // // this event is for all the tabs of the user who's invite is accepted (sender)
+          // socket.on('opponentAcceptGameInvite', (data) => {
+          //   dispatch(opponentAcceptInvite(true));
+          // });
+          //  // this event is for all the tabs of the user who's invite is declined (sender)
+          // socket.on('opponentDeclineGameInvite', (data) => {
+          //   OpenSnackbar(data.successMsg, "error");
+          //   dispatch(opponentDeclineInvite(true));
+          //   dispatch(resetGame());
+          // });
+          // // this event is for all the tabs of the user who decline the invite receieved (receiver)
+          // socket.on('gameInvitationDeclined', () => {
+          //   dispatch(setDisplayGameInvitation(false));
+          //   dispatch(receiveGameInvitation(false));
+          //   dispatch(setInviteDeclined(true));
+          // });
           socket.on('userLoggedOut' , () => {
             console.log("logout");
             dispatch(setToken(null));
@@ -323,14 +373,14 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
       case unblockUser.type:
         socket.emit("unBlockUser", action.payload);
         break;
-      case inviteUserToGame.type:
+      case inviteToGame.type:
         socket.emit('inviteToGame', action.payload);
         break;
-      case acceptUserGameInvite.type:
-        socket.emit('acceptGameInvite', action.payload);
-        break;
-      case declineUserGameInvite.type:
+      case declineGameInvitation.type:
         socket.emit('declineGameInvite', action.payload);
+        break;
+      case acceptGameInvitation.type:
+        socket.emit('acceptGameInvite', action.payload);
         break;
       case userLogout.type:
         socket.emit('logout');

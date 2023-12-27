@@ -190,7 +190,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     console.log("over Game");
     const sockets = game.getSockets();
     sockets.forEach((socket) => {
-      console.log("condition == ", this.getUserIdFromSocketId(socket.id))
+      this.server.to(socket.id).emit('gameEnds');
       if (this.getUserIdFromSocketId(socket.id))
       {
         this.gameService.updateUserStatusInGame(
@@ -213,10 +213,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   private async _startNewGame(socketsArr: Socket[], payload: any) {
     console.log('----------------- start Game -----------------');
     let countdown = 5; // 5 seconds countdown
-
+    // console.log(socketsArr);
       let interval = setInterval(() => {
         socketsArr.forEach((socket) => {
-          // console.log(socket.id)
+          console.log(socket.id)
           this.server
           .to(socket.id)
           .emit('countdown', countdown);
