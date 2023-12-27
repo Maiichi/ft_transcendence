@@ -29,6 +29,8 @@ import {
   userType,
 } from "../feat-Account/components";
 
+type SearchSelection = "users" | "channels" | "friends" | "blockeds";
+  
 export const Search = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -56,22 +58,16 @@ export const Search = () => {
   const filtre = (list: Array<I_Room_Search | I_User>, enableData?: true) =>
     searchQuery || enableData
       ? list.filter((item: any) =>
-          (item.name ?? item.firstName)
+          (item.name ?? item.firstName.concat(item.lastName))
             .toLowerCase()
             .includes(searchQuery.toLowerCase())
         )
       : [];
 
   /** show list slected */
-  const [selectedList, setSelected] = useState<
-    "users" | "channels" | "friends" | "blockeds"
-  >("users");
+  const [selectedList, setSelected] = useState<SearchSelection>("users");
   const handleSelectChange = (event: SelectChangeEvent) => {
-    const selectedValue = event.target.value as
-      | "users"
-      | "channels"
-      | "friends"
-      | "blockeds";
+    const selectedValue = event.target.value as SearchSelection;
     setSelected(selectedValue);
   };
 
@@ -90,7 +86,7 @@ export const Search = () => {
         return <h1> blockeds </h1>;
       case "friends":
         return (
-          <UserSelection users={filtre(friends) as userType[]} forfriends />
+          <UserSelection users={filtre(friends, true) as userType[]} forfriends />
         );
     }
   };
