@@ -47,6 +47,7 @@ export const UserSelection = (props: {
     }
     else navigate(`/user/${uid}`)
   }
+  console.log("friends -- ", users)
   return (
     <>
       <ModalComponent

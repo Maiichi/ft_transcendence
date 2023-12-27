@@ -25,9 +25,9 @@ import {
 } from "./components";
 import {
   AddLoading,
+  friendState,
   getBlacklist,
   getUserFriends,
-  userType,
 } from "../feat-Account/components";
 import { S_Search } from "./redux/searchSlice";
 
@@ -37,10 +37,10 @@ export const Search = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const search: S_Search = useAppSelector(({ search }) => search);
-  const friends: AddLoading<userType[]> = useAppSelector(
+  const friends:friendState = useAppSelector(
     ({ friends }) => friends
   );
-  const blocked: userType[] = useAppSelector(
+  const blocked: I_User[] = useAppSelector(
     ({ block }) => block.blockedByYou
   );
   const user = useAppSelector((state) => state.auth.user);
@@ -48,6 +48,7 @@ export const Search = () => {
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
   };
+  console.log("frinend", friends)
 
   useEffect(() => {
     dispatch(getUserFriends());
@@ -58,7 +59,7 @@ export const Search = () => {
   }, []);
   // Filter chat rooms based on the search query
   const filtre = (list: Array<I_Room_Search | I_User>) =>
-       (list??[]).filter((item: any) =>
+       (list).filter((item: any) =>
           (item.name ?? item.firstName.concat(item.lastName))
             .toLowerCase()
             .includes(searchQuery.toLowerCase())
@@ -102,7 +103,7 @@ export const Search = () => {
           <>
             {friends.isLoading || (
               <UserSelection
-                users={filtre(blocked ) as userType[]}
+                users={filtre(blocked ) as I_User[]}
                 forBlocked
                 onSearch={!!searchQuery}
               />
@@ -114,7 +115,7 @@ export const Search = () => {
           <>
             {friends.isLoading || (
               <UserSelection
-                users={filtre(friends.foo ) as userType[]}
+                users={filtre((friends.friends ?? []) as I_User[])as I_User[] }
                 forfriends
                 onSearch={!!searchQuery}
               />
