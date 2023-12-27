@@ -28,18 +28,16 @@ import {
   getUserFriends,
   userType,
 } from "../feat-Account/components";
+import { S_Search } from "./redux/searchSlice";
 
 type SearchSelection = "users" | "channels" | "friends" | "blockeds";
-  
+
 export const Search = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const { rooms, users }: { rooms: I_Room_Search[]; users: I_User[] } =
-    useAppSelector(({ search }) => search);
-  const { foo: friends, isLoading }: AddLoading<userType[]> = useAppSelector(
-    ({ friends }) => {
-      return { foo: friends.friends, isLoading: friends.isLoading };
-    }
+  const search: S_Search = useAppSelector(({ search }) => search);
+  const friends: AddLoading<userType[]> = useAppSelector(
+    ({ friends }) => friends
   );
   const user = useAppSelector((state) => state.auth.user);
 
@@ -53,7 +51,7 @@ export const Search = () => {
     dispatch(getAllUsers());
     dispatch(getUserFriends());
   }, []);
-
+  console.log(friends.foo);
   // Filter chat rooms based on the search query
   const filtre = (list: Array<I_Room_Search | I_User>, enableData?: true) =>
     searchQuery || enableData
@@ -65,7 +63,7 @@ export const Search = () => {
       : [];
 
   /** show list slected */
-  const [selectedList, setSelected] = useState<SearchSelection>("users");
+  const [selectedList, setSelected] = useState<SearchSelection>("friends");
   const handleSelectChange = (event: SelectChangeEvent) => {
     const selectedValue = event.target.value as SearchSelection;
     setSelected(selectedValue);
@@ -74,19 +72,41 @@ export const Search = () => {
   const ListContenet = () => {
     switch (selectedList) {
       case "users":
-        return <UserSelection users={filtre(users) as I_User[]} />;
+        return (
+          <>
+            {search.isLoading || (
+              <UserSelection
+                users={filtre(search.users) as I_User[]}
+                onSearch={!!searchQuery}
+              />
+            )}
+          </>
+        );
       case "channels":
         return (
-          <ChannelsSelection
-            filteredRooms={filtre(rooms)}
-            userId={user.intraId}
-          />
+          <>
+            {search.isLoading || (
+              <ChannelsSelection
+                filteredRooms={filtre(search.rooms)}
+                userId={user.intraId}
+                onSearch={!!searchQuery}
+              />
+            )}
+          </>
         );
       case "blockeds":
         return <h1> blockeds </h1>;
       case "friends":
         return (
-          <UserSelection users={filtre(friends, true) as userType[]} forfriends />
+          <>
+            {friends.isLoading || (
+              <UserSelection
+                users={filtre(friends.foo ?? [], true) as userType[]}
+                forfriends
+                onSearch={!!searchQuery}
+              />
+            )}
+          </>
         );
     }
   };
@@ -110,9 +130,9 @@ export const Search = () => {
             value={selectedList}
             onChange={handleSelectChange}
           >
-            <MenuItem value={"channels"}>channels</MenuItem>
-            <MenuItem value={"users"}>users</MenuItem>
             <MenuItem value={"friends"}>friends</MenuItem>
+            <MenuItem value={"users"}>users</MenuItem>
+            <MenuItem value={"channels"}>channels</MenuItem>
             <MenuItem value={"blockeds"}>blocked list</MenuItem>
           </Select>
         </FormControl>

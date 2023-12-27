@@ -1,11 +1,10 @@
-import { Avatar } from "@mui/material";
+import { Avatar, Badge } from "@mui/material";
 import {
   StyledLink,
   StyledUserCard,
   UserInfoContainer,
   UserName,
   UserLogin,
-  RatingContainer,
   NoMatchesFound,
 } from ".";
 import { useNavigate } from "react-router-dom";
@@ -14,8 +13,9 @@ import { I_User } from "../../../core";
 export const UserSelection = (props: {
   users: I_User[];
   forfriends?: true;
+  onSearch: boolean;
 }) => {
-  const { users, forfriends } = props;
+  const { users, forfriends, onSearch } = props;
   const navigate = useNavigate();
 
   return (
@@ -29,23 +29,38 @@ export const UserSelection = (props: {
                 src={user.avatar_url}
                 alt="avatar"
               />
+              {forfriends && (
+                <Badge
+                  sx={{
+                    width: 13,
+                    height: 13,
+                    animation: "ripple 1.2s infinite ease-in-out",
+                    borderRadius: "50%",
+                    top: "25px",
+                    right: "24px",
+                    backgroundColor: `${
+                      user.status == "ONLINE" ? "green" : "#880b0b"
+                    }`,
+                  }}
+                ></Badge>
+              )}
               <UserInfoContainer>
                 <UserName>{`${user.firstName} ${user.lastName}`}</UserName>
                 <br />
                 <UserLogin>@{user.userName.slice(0, 8)}</UserLogin>
               </UserInfoContainer>
-              <RatingContainer>{forfriends && user.status}</RatingContainer>
             </StyledUserCard>
           </StyledLink>
         ))
       ) : (
         <NoMatchesFound>
-          No {forfriends ? "friend" : "User"} found
+          {onSearch
+            ? ` No ${forfriends ? "friend" : "User"} found`
+            : forfriends
+            ? "No friend list yet"
+            : "Search for Users"}
         </NoMatchesFound>
       )}
     </>
   );
 };
-
-// export default UserSelection;
-// export { UserSelection };

@@ -134,34 +134,21 @@ const UserInfoContainer = styled.div`
 const UserName = styled.span`
   text-align: left;
   font-size: 0.75rem;
-  color: #black;
+  color: black;
 `;
 
 const UserLogin = styled.span`
   text-align: left;
   font-size: 0.75rem;
-  color: #black;
+  color: black;
 `;
 
-const RatingContainer = styled.div`
-  display: none;
-
-  @media (min-width: 640px) {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding-right: 2rem;
-    font-size: 0.75rem;
-    color: #fff;
-  }
-`;
 
 export {
   NoMatchesFound,
   ButtonNameHolder,
   RankContainer,
   Root,
-  RatingContainer,
   SearchBar,
   StyledLink,
   StyledUserCard,
