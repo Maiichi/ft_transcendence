@@ -8,21 +8,56 @@ import {
   NoMatchesFound,
 } from ".";
 import { useNavigate } from "react-router-dom";
-import { I_User } from "../../../core";
+import { I_User, ModalComponent, useAppDispatch } from "../../../core";
+import { useState } from "react";
+import { UnBlockUserModal } from "../../feat-Chat/components/modals/UnBlockUserModal";
 
 export const UserSelection = (props: {
   users: I_User[];
   forfriends?: true;
+  forBlocked?: true;
   onSearch: boolean;
 }) => {
-  const { users, forfriends, onSearch } = props;
+  const { users, forfriends,forBlocked, onSearch } = props;
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
+      undefined
+  );
+  const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+  const handleClickModal = (
+      childModal: JSX.Element,
+      closeType?: "auto" | "click"
+  ) => {
+      setCloseType(closeType);
+      setOpen(true);
+      setChildModal(childModal);
+  };
+  const handleClose = () => {
+      setOpen(false);
+  };
 
+  const handelCklick = (uid: number, uname: string) => {
+    if (forBlocked)
+    {
+      handleClickModal( 
+        <UnBlockUserModal
+          handleClose={handleClose} intraId={uid} userName={uname} />
+        );
+    }
+    else navigate(`/user/${uid}`)
+  }
   return (
     <>
+      <ModalComponent
+            open={open}
+            ChildComponent={ChildModal}
+            handleClose={handleClose}
+            closeType={closeType}
+        />
       {users.length ? (
         users.map((user) => (
-          <StyledLink onClick={() => navigate(`/user/${user.intraId}`)}>
+          <StyledLink onClick={() => handelCklick(user.intraId, user.userName)}>
             <StyledUserCard>
               <Avatar
                 sx={{ height: 60, width: 60 }}
@@ -54,8 +89,8 @@ export const UserSelection = (props: {
         ))
       ) : (
         <NoMatchesFound>
-          {onSearch
-            ? ` No ${forfriends ? "friend" : "User"} found`
+          {onSearch || forBlocked
+            ? ` No ${forfriends ? "friend" : forBlocked ? "boloked user": "User"} found`
             : forfriends
             ? "No friend list yet"
             : "Search for Users"}

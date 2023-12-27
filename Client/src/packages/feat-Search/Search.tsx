@@ -25,6 +25,7 @@ import {
 } from "./components";
 import {
   AddLoading,
+  getBlacklist,
   getUserFriends,
   userType,
 } from "../feat-Account/components";
@@ -39,6 +40,9 @@ export const Search = () => {
   const friends: AddLoading<userType[]> = useAppSelector(
     ({ friends }) => friends
   );
+  const blocked: userType[] = useAppSelector(
+    ({ block }) => block.blockedByYou
+  );
   const user = useAppSelector((state) => state.auth.user);
 
   const handleClickSearch = (str: string) => {
@@ -46,21 +50,20 @@ export const Search = () => {
   };
 
   useEffect(() => {
+    dispatch(getUserFriends());
+    dispatch(getBlacklist());
     dispatch(getMemberships());
     dispatch(getAllRooms());
     dispatch(getAllUsers());
-    dispatch(getUserFriends());
   }, []);
-  console.log(friends.foo);
   // Filter chat rooms based on the search query
-  const filtre = (list: Array<I_Room_Search | I_User>, enableData?: true) =>
-    searchQuery || enableData
-      ? list.filter((item: any) =>
+  const filtre = (list: Array<I_Room_Search | I_User>) =>
+       (list??[]).filter((item: any) =>
           (item.name ?? item.firstName.concat(item.lastName))
             .toLowerCase()
             .includes(searchQuery.toLowerCase())
         )
-      : [];
+      ;
 
   /** show list slected */
   const [selectedList, setSelected] = useState<SearchSelection>("friends");
@@ -95,13 +98,23 @@ export const Search = () => {
           </>
         );
       case "blockeds":
-        return <h1> blockeds </h1>;
+        return (
+          <>
+            {friends.isLoading || (
+              <UserSelection
+                users={filtre(blocked ) as userType[]}
+                forBlocked
+                onSearch={!!searchQuery}
+              />
+            )}
+          </>
+        );
       case "friends":
         return (
           <>
             {friends.isLoading || (
               <UserSelection
-                users={filtre(friends.foo ?? [], true) as userType[]}
+                users={filtre(friends.foo ) as userType[]}
                 forfriends
                 onSearch={!!searchQuery}
               />
