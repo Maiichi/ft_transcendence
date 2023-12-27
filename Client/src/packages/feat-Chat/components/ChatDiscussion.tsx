@@ -51,7 +51,7 @@ export const ChatDiscussion = () => {
     dispatch(getBlacklist());
     dispatch(getMemberships());
     dispatch(getDirectConversations());
-    dispatch(getUserFriends());
+    // dispatch(getUserFriends());
   }, []);
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
     item.name.toLowerCase().startsWith(searchQuery.toLowerCase())

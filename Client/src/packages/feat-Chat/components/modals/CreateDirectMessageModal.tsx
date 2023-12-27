@@ -77,9 +77,9 @@ export const NewDirectMessage = (props: {
     handleClose();
   };
 
-  useEffect(() => {
-    dispatch(getUserFriends());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getUserFriends());
+  // }, []);
 
   return (
     <>

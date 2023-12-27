@@ -1,10 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { Message, PersonAddAlt } from "@mui/icons-material";
+import { Message } from "@mui/icons-material";
 import { Button, Grow, Text, Usercard, Avatar } from "../styles";
 import { gamerType, userType } from "./statsType";
 import CircularProgressBar from "./utils/CircularProgressBar";
 import LinearDeterminate from "./utils/linearProgressBar";
 import { Badge, Stack } from "@mui/material";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelIcon from "@mui/icons-material/Cancel";
+import GamesIcon from "@mui/icons-material/Games";
+import BlockIcon from "@mui/icons-material/Block";
+
 import {
   I_User,
   ModalComponent,
@@ -25,159 +30,123 @@ import {
   isFriend,
   isSentFriendRequest,
 } from "../../feat-Chat/components/utils";
+import { IconHolder } from "../../feat-Chat/components/style";
+import { BlockUserModal } from "../../feat-Chat/components/modals/BlockUserModal";
+import { Action } from "../../feat-Chat/components/types";
 const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
   const { gamer, isOwner } = props;
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+  const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
+    undefined
+  );
   const dispatch = useAppDispatch();
-  const handleClick = (user: userType) => {
-    dispatch(sendFriendRequest(user.intraId));
-  };
   const friends: Array<I_User> = useAppSelector(
     (state) => state.friends.friends
   );
   const friendRequests: Array<I_User> = useAppSelector(
     (state) => state.friends.friendRequests
   );
-  console.log("frined : ", friends);
-  console.log("friendRequests : ", friendRequests);
+  const handleClickModal = (
+    childModal: JSX.Element,
+    closeType?: "auto" | "click"
+  ) => {
+    setCloseType(closeType);
+    setOpen(true);
+    setChildModal(childModal);
+  };
   const checkConstraints = (action: any, id: number) => {
     let checkFriend = true;
     let checkFriendRequests = true;
-    if (action.constraint) {
-      console.log(action);
-      if (typeof action.constraint.isFriend != "undefined") {
-        console.log("eed", action.constraint.isFriend == isFriend(friends, id));
-        checkFriend = action.constraint.isFriend == isFriend(friends, id);
-      }
 
-      if (typeof action.constraint.friendRequest != "undefined")
-        checkFriendRequests =
-          action.constraint.friendRequest ==
-          isSentFriendRequest(friendRequests, id);
+    if (typeof action.isFriend != "undefined") {
+      checkFriend = action.isFriend == isFriend(friends, id);
     }
+
+    if (typeof action.friendRequest != "undefined")
+      checkFriendRequests =
+        action.friendRequest == isSentFriendRequest(friendRequests, id);
+
     return checkFriendRequests && checkFriend;
   };
-  const Actions: Array<any> = [
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleClickAction = (iconType: any, selectedUser: I_User) => {
+    switch (iconType) {
+      case "blockFriend":
+        handleClickModal(
+          <BlockUserModal
+            intraId={selectedUser.intraId}
+            userName={selectedUser.firstName + " " + selectedUser.lastName}
+            handleClose={handleClose}
+          />
+        );
+        break;
+      case "message":
+        handleClickModal(
+          <NewDirectMessage
+            handleClose={handleClose}
+            selectedUser={selectedUser}
+          />
+        );
+        break;
+      case "play":
+        console.log("invite to game");
+        break;
+      case "sendFriendRequest":
+        dispatch(sendFriendRequest(selectedUser.intraId));
+        break;
+      case "acceptFriendRequest":
+        dispatch(acceptFriendRequest(selectedUser.intraId));
+        break;
+      case "declineFriendRequest":
+        dispatch(declineFriendRequest(selectedUser.intraId));
+        break;
+      default:
+        break;
+    }
+  };
+  const Actions: Array<Action> = [
     {
       name: "Send friend request",
       type: "sendFriendRequest",
-      component: (
-        <Button
-          sx={{
-            padding: 0,
-            textTransform: "lowercase",
-          }}
-          size="small"
-          startIcon={<PersonAddIcon fontSize="small" />}
-          onClick={() => dispatch(sendFriendRequest(gamer.user.intraId))}
-        >
-          Send friend request
-        </Button>
-      ),
-      constraint: {
-        isFriend: false,
-        friendRequest: false,
-      },
+      component: <PersonAddIcon fontSize="small" />,
+      isFriend: false,
+      friendRequest: false,
     },
     {
       name: "Accept friend request",
       type: "acceptFriendRequest",
-      component: (
-        <Button
-          sx={{
-            padding: 0,
-            textTransform: "lowercase",
-          }}
-          size="small"
-          startIcon={<PersonAddIcon fontSize="small" />}
-          onClick={() => dispatch(acceptFriendRequest(gamer.user.intraId))}
-        >
-          Accept friend request
-        </Button>
-      ),
-      constraint: {
-        friendRequest: true,
-      },
+      component: <CheckCircleOutlineIcon fontSize="small" color="success" />,
+      friendRequest: true,
     },
     {
       name: "Decline friend request",
       type: "declineFriendRequest",
-      component: (
-        <Button
-          sx={{
-            padding: 0,
-            textTransform: "lowercase",
-          }}
-          size="small"
-          startIcon={<PersonAddIcon fontSize="small" />}
-          onClick={() => dispatch(declineFriendRequest(gamer.user.intraId))}
-        >
-          Decline friend request
-        </Button>
-      ),
-      constraint: {
-        friendRequest: true,
-      },
+      component: <CancelIcon fontSize="small" color="error" />,
+      friendRequest: true,
     },
     {
       name: "Send message",
-      type: "sendMessage",
-      component: (
-        <Button
-          sx={{
-            padding: 0,
-            textTransform: "lowercase",
-          }}
-          size="small"
-          startIcon={<Message fontSize="small" />}
-          onClick={() => setOpen(true)}
-        >
-          message
-        </Button>
-      ),
+      type: "message",
+      component: <Message fontSize="small" />,
     },
+
     {
       name: "Invite to a game",
       type: "play",
-      component: (
-        <Button
-          sx={{
-            padding: 0,
-            textTransform: "lowercase",
-          }}
-          size="small"
-          startIcon={<PersonAddIcon fontSize="small" />}
-          onClick={() => console.log("invite to game")}
-        >
-          Invite to Game
-        </Button>
-      ),
-      constraint: {
-        isFriend: true,
-      },
+      component: <GamesIcon fontSize="small" />,
+      isFriend: true,
     },
     {
       name: "Block",
       type: "blockFriend",
-      component: (
-        <Button
-          sx={{
-            padding: 0,
-            textTransform: "lowercase",
-          }}
-          size="small"
-          startIcon={<PersonAddIcon fontSize="small" />}
-          onClick={() => dispatch(blockUser({ blockedId: gamer.user.intraId }))}
-        >
-          Block
-        </Button>
-      ),
-      constraint: {
-        isFriend: true,
-      },
+      component: <BlockIcon fontSize="small" color="error" />,
+      isFriend: true,
     },
   ];
+
   useEffect(() => {
     dispatch(getUserFriends());
   }, []);
@@ -185,14 +154,9 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
     <Usercard>
       <ModalComponent
         open={open}
-        ChildComponent={
-          <NewDirectMessage
-            handleClose={() => setOpen(false)}
-            selectedUser={gamer.user}
-          />
-        }
-        handleClose={() => setOpen(false)}
-        closeType={"auto"}
+        ChildComponent={ChildModal}
+        handleClose={handleClose}
+        closeType={closeType}
       />
       <div
         style={{
@@ -252,32 +216,18 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
                 <>
                   {Actions.map((action) => {
                     return (
-                      checkConstraints(action, gamer.user.intraId) &&
-                      action.component
+                      checkConstraints(action, gamer.user.intraId) && (
+                        <IconHolder
+                          onClick={() =>
+                            handleClickAction(action.type, gamer.user)
+                          }
+                        >
+                          {action.component}
+                          {action.name}
+                        </IconHolder>
+                      )
                     );
                   })}
-                  {/* <Button
-                    sx={{
-                      padding: 0,
-                      textTransform: "lowercase",
-                    }}
-                    size="small"
-                    startIcon={<PersonAddIcon fontSize="small" />}
-                    onClick={() => handleClick(gamer.user)}
-                  >
-                    Send friend request
-                  </Button>
-                  <Button
-                    sx={{
-                      padding: 0,
-                      textTransform: "lowercase",
-                    }}
-                    size="small"
-                    startIcon={<Message fontSize="small" />}
-                    onClick={() => setOpen(true)}
-                  >
-                    message
-                  </Button> */}
                 </>
               )}
             </div>

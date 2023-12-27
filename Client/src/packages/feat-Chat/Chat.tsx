@@ -2,9 +2,11 @@ import styled from "styled-components";
 import { ChatDiscussion } from "./components/ChatDiscussion";
 import { ChannelBox } from "./channels/ChannelBox";
 import { DirectBox } from "./directMessages/DirectBox";
-import { useAppSelector } from "../../core";
+import { useAppDispatch, useAppSelector } from "../../core";
 import { UserActions } from "./components/UserActions";
 import { useSize } from "../../core/utils/hooks";
+import { useEffect } from "react";
+import { getUserFriends } from "../feat-Account/components";
 
 const ChatBox = () => {
   const { chat } = useAppSelector((state) => state);
@@ -24,6 +26,10 @@ export const Chat = () => {
   const { displayUserActions } = useAppSelector((state) => state.core);
   const { discussionsDisplay } = useAppSelector((state) => state.chat);
   const { isMobile } = useSize();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(getUserFriends());
+  }, []);
   return (
     <Root>
       {((isMobile && discussionsDisplay) || !isMobile) && <ChatDiscussion />}

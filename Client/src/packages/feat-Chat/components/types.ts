@@ -71,14 +71,18 @@ export interface Action {
     | "addFriend"
     | "blockFriend"
     | "unblockFriend"
+    | "sendFriendRequest"
+    | "acceptFriendRequest"
+    | "declineFriendRequest"
     | "viewProfile";
   component: JSX.Element;
   isFriend?: boolean;
   isBanned?: boolean;
   isAdmin?: boolean;
+  friendRequest?: boolean;
   isBlockedByYou?: boolean;
   isBlockedYou?: boolean;
-  role: Role[];
+  role?: Role[];
 }
 
 export type Role = "admin" | "owner" | "member";
