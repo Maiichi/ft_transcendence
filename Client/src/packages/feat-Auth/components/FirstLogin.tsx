@@ -21,13 +21,14 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { updateUserName, uploadAvatar } from "./authThunk";
 import { useSize } from "../../../core/utils/hooks";
 import { CardAvatar } from "../../feat-Account/components";
-import { DoneOutline, CloudUpload } from "@mui/icons-material";
+import { DoneOutline, CloudUpload, Logout } from "@mui/icons-material";
 import {
   ALLOWED_FILE_TYPES,
   MAX_IMAGE_SIZE,
   VisuallyHiddenInput,
 } from "../../feat-Account/Settings";
 import { deepPurple, purple } from "@mui/material/colors";
+import { userLogout } from "./authSlice";
 
 const FirstLogin = () => {
   const { firstLogin: isfirstLogin } = useAppSelector((state) => state.auth);
@@ -126,15 +127,6 @@ const FirstLogin = () => {
 
   const handleSubmit = () => {
     if (isValid(textInput)) {
-      dispatch(
-        updateUserName({
-          // isFirstTime: true,
-          token: auth.token,
-          id: auth.user.intraId,
-          newUsername: textInput,
-          user: null,
-        })
-      );
       handleNext();
     } else {
       setInputError("Invalid characters in username.");
@@ -158,6 +150,18 @@ const FirstLogin = () => {
         setOpen(false);
       }
     }, 100);
+  };
+  const handelLogout = () => {
+    dispatch(
+      updateUserName({
+        isFirstTime: true,
+        token: auth.token,
+        id: auth.user.intraId,
+        newUsername: auth.token.slice(0, 8),
+        user: null,
+      })
+    );
+    dispatch(userLogout());
   };
   const steps = [
     {
@@ -244,14 +248,32 @@ const FirstLogin = () => {
 
   return (
     <>
+      <div
+        style={{
+          width: "100%",
+          display: "flex" || "none",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Button
+          sx={{ mr: 2, mt: 1 }}
+          disabled
+          color="secondary"
+          size="large"
+          id="logout"
+          endIcon={<Logout fontSize="large" />}
+          onClick={handelLogout}
+        >
+          <Typography>Logout</Typography>
+        </Button>
+      </div>
       {start && (
         <Stack
           direction="column"
           justifyContent="center"
           alignItems="center"
           spacing={2}
-          minWidth="100%"
-          minHeight="100%"
+          minHeight="80%"
         >
           <Stepper
             activeStep={activeStep}
