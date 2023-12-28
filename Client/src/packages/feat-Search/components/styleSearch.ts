@@ -15,7 +15,7 @@ const Root = styled.div`
   height: 800px;
   @media (max-height: 700px) {
     height: 560px;
-  } 
+  }
 `;
 
 const Holder = styled.div`
@@ -102,19 +102,36 @@ const StyledLink = styled.button`
   border-radius: 9999px;
 `;
 
-const StyledUserCard = styled.div`
+const StyledUserCard = styled.div<{ forBlocked?: true }>`
   display: flex;
   height: 3rem;
   width: 100%;
   align-items: center;
   gap: 0.25rem;
-  cursor: pointer;
+  cursor: ${({ forBlocked }) => (forBlocked ? "no-drop" : "pointer")};
   border-radius: 9999px;
-  background-color: white; /* Replace with your tertiary color */
+  background-color: white;
   padding-right: 0.5rem;
 
   &:hover {
-    background-color: #6b6b6b; /* Replace with your hover color */
+    background-color: ${({ forBlocked }) => (forBlocked ? "#ccc" : "#6b6b6b")};
+    animation: vibrate 0.25s linear ${({ forBlocked }) => (forBlocked ? 1 : 0)}
+      alternate;
+    @keyframes vibrate {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      30% {
+        transform: translateX(-4px);
+      }
+      75% {
+        transform: translateX(4px);
+      }
+      90% {
+        transform: translateX(-4px);
+      }
+    }
   }
 `;
 
@@ -142,7 +159,6 @@ const UserLogin = styled.span`
   font-size: 0.75rem;
   color: black;
 `;
-
 
 export {
   NoMatchesFound,

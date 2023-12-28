@@ -24,7 +24,6 @@ import {
   Root,
 } from "./components";
 import {
-  AddLoading,
   friendState,
   getBlacklist,
   getUserFriends,
@@ -37,13 +36,9 @@ export const Search = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const search: S_Search = useAppSelector(({ search }) => search);
-  const friends:friendState = useAppSelector(
-    ({ friends }) => friends
-  );
-  const blocked: I_User[] = useAppSelector(
-    ({ block }) => block.blockedByYou
-  );
-  const user = useAppSelector((state) => state.auth.user);
+  const friends: I_User[] = useAppSelector(({ friends }) => friends.friends);
+  const blocked: I_User[] = useAppSelector(({ block }) => block.blockedByYou);
+  const user: I_User = useAppSelector(({ auth }) => auth.user);
 
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
@@ -58,14 +53,12 @@ export const Search = () => {
     dispatch(getAllUsers());
   }, [selectedList]);
   // Filter chat rooms based on the search query
-  const filtre = (list: Array<I_Room_Search | I_User>) =>
-       (list).filter((item: any) =>
-          (item.name ?? item.firstName.concat(item.lastName))
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        )
-      ;
-
+  const filtre = (list: Array<I_Room_Search | I_User> | undefined) =>
+    (list ?? []).filter((item: any) =>
+      (item.name ?? item.firstName.concat(item.lastName))
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+    );
   /** show list slected */
   const handleSelectChange = (event: SelectChangeEvent) => {
     const selectedValue = event.target.value as SearchSelection;
@@ -76,50 +69,34 @@ export const Search = () => {
     switch (selectedList) {
       case "users":
         return (
-          <>
-            {search.isLoading || (
-              <UserSelection
-                users={filtre(search.users) as I_User[]}
-                onSearch={!!searchQuery}
-              />
-            )}
-          </>
+          <UserSelection
+            users={filtre(search.users) as I_User[]}
+            onSearch={!!searchQuery}
+          />
         );
       case "channels":
         return (
-          <>
-            {search.isLoading || (
-              <ChannelsSelection
-                filteredRooms={filtre(search.rooms)}
-                userId={user.intraId}
-                onSearch={!!searchQuery}
-              />
-            )}
-          </>
+          <ChannelsSelection
+            filteredRooms={filtre(search.rooms)}
+            userId={user.intraId}
+            onSearch={!!searchQuery}
+          />
         );
       case "blockeds":
         return (
-          <>
-            {friends.isLoading || (
-              <UserSelection
-                users={filtre(blocked ) as I_User[]}
-                forBlocked
-                onSearch={!!searchQuery}
-              />
-            )}
-          </>
+          <UserSelection
+            users={filtre(blocked) as I_User[]}
+            forBlocked
+            onSearch={!!searchQuery}
+          />
         );
       case "friends":
         return (
-          <>
-            {friends.isLoading || (
-              <UserSelection
-                users={filtre((friends.friends ?? []) as I_User[])as I_User[] }
-                forfriends
-                onSearch={!!searchQuery}
-              />
-            )}
-          </>
+          <UserSelection
+            users={filtre(friends) as I_User[]}
+            forfriends
+            onSearch={!!searchQuery}
+          />
         );
     }
   };
