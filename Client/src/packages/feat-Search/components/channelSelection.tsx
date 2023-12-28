@@ -12,6 +12,7 @@ import { ModalComponent, useAppDispatch } from "../../../core";
 import { JoinChannelModal } from "../modal/joinChannelModal";
 import { useNavigate } from "react-router-dom";
 import { joinRoom } from "../redux/searchSlice";
+import { getAllRooms } from "../redux/searchThunk";
 
 interface Channels {
   filteredRooms: Array<any>;
@@ -29,6 +30,7 @@ const ChannelsSelection = ({ filteredRooms, userId, onSearch }: Channels) => {
       password: rooms.password,
     };
     dispatch(joinRoom(roomInfo));
+    dispatch(getAllRooms());
   };
   // check if the user is a member or not to display the button based on the membership
   const isUserInRoom = (roomS: I_Room_Search, userID: number) => {
@@ -84,7 +86,7 @@ const ChannelsSelection = ({ filteredRooms, userId, onSearch }: Channels) => {
 
   return (
     <>
-      {filteredRooms.length !== 0 ? (
+      {filteredRooms.length? (
         filteredRooms.map((room: I_Room_Search) => (
           <Channel key={room.id}>
             <ButtonNameHolder>

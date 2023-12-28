@@ -40,14 +40,14 @@ export const UserSelection = (props: {
   const handelCklick = (uid: number, uname: string) => {
     if (forBlocked)
     {
-      handleClickModal( 
+      handleClickModal(
         <UnBlockUserModal
           handleClose={handleClose} intraId={uid} userName={uname} />
         );
     }
     else navigate(`/user/${uid}`)
   }
-  console.log("friends -- ", users)
+
   return (
     <>
       <ModalComponent

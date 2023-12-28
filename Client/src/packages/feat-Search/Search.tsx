@@ -48,15 +48,15 @@ export const Search = () => {
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
   };
-  console.log("frinend", friends)
+  const [selectedList, setSelected] = useState<SearchSelection>("friends");
 
   useEffect(() => {
     dispatch(getUserFriends());
     dispatch(getBlacklist());
-    dispatch(getMemberships());
     dispatch(getAllRooms());
+    dispatch(getMemberships());
     dispatch(getAllUsers());
-  }, []);
+  }, [selectedList]);
   // Filter chat rooms based on the search query
   const filtre = (list: Array<I_Room_Search | I_User>) =>
        (list).filter((item: any) =>
@@ -67,7 +67,6 @@ export const Search = () => {
       ;
 
   /** show list slected */
-  const [selectedList, setSelected] = useState<SearchSelection>("friends");
   const handleSelectChange = (event: SelectChangeEvent) => {
     const selectedValue = event.target.value as SearchSelection;
     setSelected(selectedValue);
