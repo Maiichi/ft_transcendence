@@ -171,6 +171,18 @@ export class GameService {
             }
         });
 
+        const isSenderInGame = await this.prisma.user.findUnique({
+            where : {
+                intraId :senderId
+            },
+            select : {
+                inGame: true
+            }
+        });
+
+        if (isSenderInGame.inGame)
+        throw new WsException(`You cant invite ${receiver.firstName} ${receiver.lastName}, you're playing a game currently`);
+
         if (isReceiverOnline.status !== "ONLINE")
             throw new WsException(`${receiver.firstName} ${receiver.lastName} is Offline, you can't send a game invitation`);
         if (isReceiverOnline.status === "ONLINE" && isReceiverInGame.inGame)

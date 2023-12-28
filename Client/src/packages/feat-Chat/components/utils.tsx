@@ -47,6 +47,7 @@ export const convertDateTime = (dateString: string): string => {
     return `${year}/${month}/${day}`;
   }
 };
+
 export const isOwner = (membership: I_Room, userId: number) => {
   const member = membership.members.find(
     (member) => member.user.intraId === userId

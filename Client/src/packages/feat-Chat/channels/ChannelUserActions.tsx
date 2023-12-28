@@ -32,6 +32,7 @@ import { BlockUserModal } from "../components/modals/BlockUserModal";
 // } from "../../feat-Game/redux/GameSlice";
 import { useNavigate } from "react-router-dom";
 import { STEPS } from "../../feat-Game/utils/constants";
+import { inviteToGame, setCurrentTab, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -153,20 +154,26 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     );
 
     if (selectedUser) {
-      // if (iconType === 'play')       {         
-      //     dispatch(inviteUserToGame({invitedId : selectedUserId, inviterId : user.intraId}));    
-      //     console.log("inviter == ", user.intraId);
-      //     console.log("invited == ", selectedUserId);
-      //     console.log("selectedUser.user.status == ", selectedUser.user.status);
-      //     if (selectedUser.user.status === "ONLINE")
-      //     {
-      //       dispatch(inviteUserToGameFromChat(true));         
-      //       navigate('/game');
-      //       dispatch(setGameStep(STEPS.WAITING_QUEUE));
-      //     }
-      //     else
-      //       return;
-      // }
+      if (iconType === 'play')       {         
+          dispatch(inviteToGame({
+            invitedId : selectedUser.user.intraId,
+            inviterId : user.intraId,
+            gameMode  : "dual",
+          }));
+          // TODO:  need a check (inGame)
+          if (selectedUser.user.status === "ONLINE")
+          {
+            // dispatch(inviteUserToGameFromChat(true));         
+            dispatch(setInviteSent(true));
+            dispatch(setInvited(selectedUser.user));
+            dispatch(setCurrentTab(true));
+            dispatch(setInviteFromChat(true));
+            navigate('/game');
+            // dispatch(setGameStep(STEPS.WAITING_QUEUE));
+          }
+          else
+            return;
+      }
       if (iconType == "viewProfile") navigate(`/user/${selectedUserId}`);
       const dataForModal = getDataForModal(iconType, room, selectedUser.user);
       const modalComponent: JSX.Element = getModalComponent(

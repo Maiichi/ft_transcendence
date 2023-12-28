@@ -13,6 +13,7 @@ import { Logger } from '@nestjs/common';
 import Game from './models/game';
 import Player from './models/player';
 import { UserService } from 'src/user/user.service';
+import { Console } from 'console';
 
 @WebSocketGateway({
   namespace: "game",
@@ -48,9 +49,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     return null;
   }
-
-
-  
   
   private printPlayerSockets() {
     console.log('player sockets {');
@@ -216,7 +214,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     // console.log(socketsArr);
       let interval = setInterval(() => {
         socketsArr.forEach((socket) => {
-          console.log(socket.id)
+          // console.log(socket.id)
           this.server
           .to(socket.id)
           .emit('countdown', countdown);
@@ -247,36 +245,49 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('join_queue_match')
   async joinQueue(client: Socket, payload: any) {
-    if (this.unique.has(client)) {
-      // console.log('unique ==', this.unique);
-      console.log('it goes here');
-      const message = `You cannot join again.`;
-      this.server.to(client.id).emit('joinQueueError', message);
-      // need to emit an event to tell the user that he's already in the queue.
+    console.log("paylaod === ", payload);
+    // get the user and check if he's already in game
+    const userId = this.getUserIdFromSocketId(client.id);
+    const user = await this.userService.getUserInfos(userId);
+    console.log("user in game -- ", user.inGame);
+    if (user && user.inGame)
+    {
+      this.server.to(client.id).emit('joinQueueError', `You cannot join. You're currently playing a game`);
       return;
     }
-    console.log(`Client ${client.id} joined queue`);
+    if (this.unique.has(client)) {
+      const message = `You cannot join again. You're already in the matchmaking queue`;
+      this.server.to(client.id).emit('joinQueueError', message);
+      return;
+    }
     this.unique.add(client);
-    const userId = this.getUserIdFromSocketId(client.id);
+   
+    // check if the user is another queue;
     const isInQueue = 
       this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
-      this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
+      this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
+      this.invitationGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
 
     if (isInQueue) {
-      const message = `User ${userId} is already in the queue. Cannot join again.`;
+      const message = `You're already in a queue. Cannot join again.`;
       console.log(message);
       this.server.to(client.id).emit('joinQueueError', message);
       return;
     }
+
+    console.log(`Client ${client.id} joined queue`);
     if (payload === 'dual') {
       console.log('normalGameQueue ==', this.normalGameQueue.length);
       if (this.normalGameQueue.push(client) > 1)
         await this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
     }
     else if (payload === 'triple') {
+      console.log('tripleGameQueue ==', this.normalGameQueue.length);
       if (this.tripleGameQueue.push(client) > 1)
-      this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
+      await this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
     }
+    
+
   }
   
 	@SubscribeMessage('join_queue_match_invitaion')
@@ -307,6 +318,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (payload === 'dual') {
         if (this.invitationGameQueue.push(client) > 1)
           this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'dual');
+      }
+      if (payload === 'triple') {
+        if (this.invitationGameQueue.push(client) > 1)
+          this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'triple');
       }
     } catch (error) {
       console.log('error join_queue_match_invitaion == ', error);

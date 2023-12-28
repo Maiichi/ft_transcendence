@@ -37,8 +37,10 @@ export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
     };
 
     const [frame, setFrame] = useState<GameState>(initialState);
-    const [gameMode, setGameMode] = useState<GameMode>("Dual");
+    // const [gameMode, setGameMode] = useState<GameMode>();
+    const gameMode = useAppSelector((state) => state.game.gameMode);
     const navigate = useNavigate();
+
     // const token = useAppSelector((state) => state.auth.token);
     // const [socket, setSocket] = useState<Socket | null>(null);
     // const [socketReady, setSocketReady] = useState<boolean>(false);

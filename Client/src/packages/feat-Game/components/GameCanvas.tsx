@@ -49,7 +49,7 @@ export const GameCanvas: React.FC<CanvasProps> = ({ frame, gameMode }) => {
         const ctx = canvas?.getContext("2d");
 
         function draw() {
-            if (gameMode === "Messy Jungle") {
+            if (gameMode === "triple") {
                 drawJungleBackground(ctx);
             } else {
                 clear_init(ctx, gameMode);
@@ -83,7 +83,7 @@ export const GameCanvas: React.FC<CanvasProps> = ({ frame, gameMode }) => {
             );
 
             draw_paddle(ctx, "#00D897", L_PADDLE_X, frame.paddles.ly, gameMode);
-            if (frame.hasMiddlePaddle && gameMode === "Messy Jungle") {
+            if (frame.hasMiddlePaddle && gameMode === "triple") {
                 draw_paddle(
                     ctx,
                     "#D6D6D6",

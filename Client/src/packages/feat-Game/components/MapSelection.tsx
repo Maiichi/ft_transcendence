@@ -3,22 +3,23 @@ import { GameStepComponentProps } from "../utils/types";
 import { useState } from "react";
 import { MODES, STEPS } from "../utils/constants";
 import { useAppDispatch } from "../../../core";
-import { setGameStep } from "../redux/GameSlice";
+import { setGameMode, setGameStep } from "../redux/GameSlice";
+import dualMapImage from "../images/DUAL_MAP.jpeg";
+import tripleMapImage from "../images/TRIPLE_MAP.jpeg"
 
 const MAPS = [
     {
         id: MODES.DUAL,
         title: "Dual game",
-        description: "This is a description for Dual game",
-        imageUrl: "https://via.placeholder.com/400x200",
+        description: "Dual Game describe the famous pong game (EASY)",
+        imageUrl: dualMapImage,
     },
     {
         id: MODES.TRIPLE,
         title: "Messy jungle",
-        description: "This is a description for Messy jungle",
-        imageUrl: "https://via.placeholder.com/400x200",
+        description: "Messy jungle it's a game that has a midlle paddle (HARD)",
+        imageUrl: tripleMapImage,
     },
-    // Add more maps as needed
 ];
 
 const MainContainer = styled.main`
@@ -126,17 +127,27 @@ const SubmitButton = styled.button`
     }
 `;
 
+const ButtonContainer = styled.div`
+    display: flex;
+    gap : 10px;
+`
+
 export const MapSelection: React.FC<GameStepComponentProps> = () => {
     const dispatch = useAppDispatch();
     const [selectedMapId, setSelectedMapId] = useState<string>(MODES.DUAL);
 
     const handleCardClick = (mapId: string) => {
-        console.log(mapId);
         setSelectedMapId(mapId);
+        dispatch(setGameMode(mapId));
+
     };
 
     const handleMapSelected = () => {
         dispatch(setGameStep(STEPS.INVITE_FRIEND));
+    };
+
+    const handleOpenManual = () => {
+        console.log("open game manual");
     };
 
     return (
@@ -155,7 +166,10 @@ export const MapSelection: React.FC<GameStepComponentProps> = () => {
                     </Card>
                 ))}
             </CardsContainer>
-            <SubmitButton onClick={handleMapSelected}>Submit</SubmitButton>
+            <ButtonContainer>
+                <SubmitButton onClick={handleMapSelected}>Submit</SubmitButton>
+                <SubmitButton onClick={handleOpenManual}>How to play</SubmitButton>
+            </ButtonContainer>
         </MainContainer>
     );
 };

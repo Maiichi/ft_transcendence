@@ -55,6 +55,9 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const [selectUser, setSelectUser] = useState<I_User | null>(selectedUser);
+  const gameMode = useAppSelector((state) => state.game.gameMode);
+
+  // console.log("gameMode (Invite user) == ", gameMode);
   const closeModal = () => {
     handleClose();
   };
@@ -71,7 +74,8 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
       { 
         dispatch(inviteToGame({
           invitedId : selectUser.intraId,
-          inviterId : user.intraId
+          inviterId : user.intraId,
+          gameMode  : gameMode,
         }));
         dispatch(setInviteSent(true));
         dispatch(setInvited(selectUser));

@@ -23,7 +23,7 @@ export type GameState = {
     hasWon: boolean;
 };
 
-export type GameMode = "Dual" | "Messy Jungle";
+export type GameMode = "dual" | "triple";
 
 import { Socket } from "socket.io-client";
 export type GameStepComponentProps = {

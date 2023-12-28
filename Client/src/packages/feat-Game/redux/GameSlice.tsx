@@ -63,7 +63,9 @@ export const GameSlice = createSlice({
         setInvited: (state, action: PayloadAction<I_User | null>) =>{
             state.invited = action.payload;
         },
-
+        setInviteFromChat : (state, action: PayloadAction<boolean>) => {
+            state.chatInvite = action.payload;
+        },
         declineGameInvitation: (state, action: PayloadAction<any>) => {
 
         },
@@ -117,7 +119,8 @@ export const {
     declineGameInvitation,
     acceptGameInvitation,
     setCurrentTab,
-    resetGameState
+    resetGameState,
+    setInviteFromChat
 } = GameSlice.actions;
 
 export default GameSlice.reducer;

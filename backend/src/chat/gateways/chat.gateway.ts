@@ -297,6 +297,7 @@ import { GameService } from 'src/game/game.service';
           body,
           currentUser.intraId,
         );
+        // this event for the one who update the room
       const userSockets: string[] =
         this.userSockets.get(currentUser.intraId);
       userSockets.forEach((value) => {
@@ -305,9 +306,34 @@ import { GameService } from 'src/game/game.service';
           .emit('roomUpdated', {
             data: roomUpdated,
             successMsg:
-              'Room is updated succeffuly',
+              'Room is updated successfully',
           });
       });
+
+      // this event for all users in room exluding the user who perform the update action
+      const roomUsers =
+        await this.roomService.getRoomUsersExcludingSender(
+          body.id,
+          currentUser.intraId,
+        );
+        const usersInRoom = roomUsers.map(
+                (user) => user.intraId,
+              );
+
+        usersInRoom.forEach((userId) => {
+                const userSockets =
+                  this.userSockets.get(userId);
+                if (userSockets) {
+                  userSockets.forEach((socketId) => {
+                    this.server
+                      .to(socketId)
+                      .emit('roomHasBeenUpdated', {
+                        data : roomUpdated,
+                      });
+                  });
+                }
+              });
+
     } catch (error) {
       client.emit('updateRoomError', {
         message: error.message,
@@ -1194,7 +1220,8 @@ import { GameService } from 'src/game/game.service';
         invitedSockets.forEach((socketId) => {
           this.server.to(socketId).emit('gameInvitationReceived', {
             inviter: sender,
-            invited: receiver
+            invited: receiver,
+            gameMode: body.gameMode,
             })
         });
     } catch (error) {

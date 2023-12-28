@@ -6,7 +6,7 @@ import { setDisplayGameInvitation } from "../../../core/CoreSlice";
 import { ModalConfirm } from "../../../core/utils/components/modals/ModalConfirm";
 // import { setDisplayGameInvitation } from "../../CoreSlice";
 import { STEPS } from "../../../packages/feat-Game/utils/constants";
-import { acceptGameInvitation, declineGameInvitation, setCurrentTab } from "../redux/GameSlice";
+import { acceptGameInvitation, declineGameInvitation, setCurrentTab, setInviter } from "../redux/GameSlice";
 
 
 
@@ -15,7 +15,7 @@ export const InvitationGameModal = (props :
 }) => {
     const { handleClose} = props;
     const dispatch = useAppDispatch();
-    const user = useAppSelector((state) => state.auth.user);
+    // const user = useAppSelector((state) => state.auth.user);
     const inviter = useAppSelector((state) => state.game.inviter);
     const navigate = useNavigate();
     const location = useLocation();
@@ -30,18 +30,22 @@ export const InvitationGameModal = (props :
 
     const handleDeclineGameInvitation = () => {
         dispatch(declineGameInvitation({inviterId: inviter.intraId}));
+        dispatch(setInviter(null));
         handleClose();
     };
-
+    // ` ${inviter.firstName} ${inviter.lastName} challenge you to dual game Pong?
     return (
         <>
+        {
+           inviter &&  
             <ModalConfirm
-                title={` ${inviter.firstName} ${inviter.lastName} challenge you to dual game Pong?`}
+                title={`${inviter.firstName} ${inviter.lastName} challenge you to dual game Pong?`}
                 handleClose={handleDeclineGameInvitation}
                 handleClick={handleAcceptGameInvitation}
                 closeTitle="Decline"
                 confirmTitle="Accept"
             />
+        }
         </>
     );
 };

@@ -7,10 +7,8 @@ export const handleKeyDown = (
     emitEvent: (event: string, data?: any) => void,
     socket: Socket | null
 ) => {
-    // console.log('socket (handleKeyDown) ==', socket);
     if (socket && e.code === "ArrowUp") {
         emitEvent("up_paddle", "down");
-        console.log('up_paddle (arrowUp)')
     } else if (socket && e.code === "ArrowDown") {
         emitEvent("down_paddle", "down");
     }
@@ -20,7 +18,6 @@ export const handleKeyUp = (
     emitEvent: (event: string, data?: any) => void,
     socket: Socket | null
 ) => {
-    // console.log('socket (handleKeyUp) ==', socket);
     if (socket && e.code === "ArrowUp") {
         emitEvent("up_paddle", "up");
     } else if (socket && e.code === "ArrowDown") {
@@ -45,7 +42,7 @@ export const clear_init = (
     if (ctx) {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
         ctx.beginPath();
-        ctx.fillStyle = gameMode === "Messy Jungle" ? "#0B3D0B" : "#1B1B1B";
+        ctx.fillStyle = gameMode === "triple" ? "#0B3D0B" : "#1B1B1B";
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
         draw_separator(ctx);
     }
@@ -63,7 +60,7 @@ export const draw_ball = (
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, 2 * Math.PI);
         // Change ball color for Jungle mode
-        ctx.fillStyle = gameMode === "Messy Jungle" ? "#FFD700" : color;
+        ctx.fillStyle = gameMode === "triple" ? "#FFD700" : color;
         ctx.fill();
     }
 };
@@ -77,7 +74,7 @@ export const draw_paddle = (
 ) => {
     if (ctx) {
         // Change paddle color for Jungle mode
-        ctx.fillStyle = gameMode === "Messy Jungle" ? "#964B00" : color; // Brown color for jungle mode
+        ctx.fillStyle = gameMode === "triple" ? "#964B00" : color; // Brown color for jungle mode
         ctx.fillRect(x, y, PADDLE_WIDTH, PADDLE_HEIGHT);
         draw_ball(
             ctx,
@@ -109,7 +106,7 @@ export const draw_text = (
 ) => {
     if (ctx) {
         // Change text color for Jungle mode
-        ctx.fillStyle = gameMode === "Messy Jungle" ? "#3CB371" : color; // Jungle green for text in jungle mode
+        ctx.fillStyle = gameMode === "triple" ? "#3CB371" : color; // Jungle green for text in jungle mode
         ctx.font = font;
         ctx.fillText(text, x, y);
     }
