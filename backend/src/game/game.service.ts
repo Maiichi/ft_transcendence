@@ -12,13 +12,6 @@ export class GameService {
                 private userService: UserService
         ) {}
 
-    private createGameRoom(player1: string, player2: string): string {
-        // Here you can implement logic to create a new game room and return its ID
-        const roomId = `room_${Math.random().toString(36).substring(7)}`;
-        // You might want to keep track of the players in the room or other details
-        // based on your game requirements.
-        return roomId;
-    }
 
     async updateUserStatusInGame(intraId: number, inGame: boolean)
     { 
@@ -48,7 +41,7 @@ export class GameService {
 
         // Assuming players array is an array of User instances
 
-        const newGame = await this.prisma.game.create({
+        await this.prisma.game.create({
             data: {
             type: body.gameMode,
             score1: body.score1,
