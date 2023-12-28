@@ -15,6 +15,7 @@ import {
   isFriend,
   isBlockedYou,
   isSentFriendRequest,
+  isBlockedByYou,
 } from "../components/utils";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
 import { SetChannelAdmin } from "../components/modals/SetChannelAdmin";
@@ -84,6 +85,8 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
       name: "View profile",
       type: "viewProfile",
       component: <AccountCircleIcon />,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Send friend request",
@@ -91,18 +94,24 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
       component: <PersonAddIcon fontSize="small" />,
       isFriend: false,
       friendRequest: false,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Accept friend request",
       type: "acceptFriendRequest",
       component: <CheckCircleOutlineIcon fontSize="small" color="success" />,
       friendRequest: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Decline friend request",
       type: "declineFriendRequest",
       component: <CancelIcon fontSize="small" color="error" />,
       friendRequest: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
 
     {
@@ -110,12 +119,16 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
       type: "play",
       component: <GamesIcon fontSize="small" />,
       isFriend: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Block",
       type: "blockFriend",
       component: <BlockIcon fontSize="small" color="error" />,
       isFriend: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
   ];
   const handleClickAction = (iconType: any, selectedUser: I_User) => {
@@ -160,8 +173,22 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     if (typeof action.friendRequest != "undefined")
       checkFriendRequests =
         action.friendRequest == isSentFriendRequest(friendRequests, id);
+    let checkIsBlockedYou = true;
+    if (typeof action.isBlockedYou != "undefined") {
+      checkIsBlockedYou = isBlockedYou(id, block) === action.isBlockedYou;
+    }
+    let checkIsBlockedByeYou = true;
+    if (typeof action.isBlockedByYou != "undefined") {
+      checkIsBlockedByeYou =
+        isBlockedByYou(id, block) === action.isBlockedByYou;
+    }
 
-    return checkFriendRequests && checkFriend;
+    return (
+      checkFriendRequests &&
+      checkFriend &&
+      checkIsBlockedByeYou &&
+      checkIsBlockedYou
+    );
   };
   const checkConstraints = (
     selectorId: number,

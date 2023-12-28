@@ -10,12 +10,14 @@ import { Close } from "@mui/icons-material";
 import { getUserFriends } from "../../../feat-Account/components/redux/friendThunk";
 import { Avatar } from "@mui/material";
 import { createDirectConversation } from "../redux/directMessageSlice";
+import { isBlockedByYou, isBlockedYou } from "../utils";
 
 const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const { onUserSelect } = props;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const friends: [] = useAppSelector((state) => state.friends.friends);
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const block = useAppSelector((state) => state.block);
 
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
@@ -23,8 +25,12 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
 
   useEffect(() => {
     if (searchQuery.length) {
-      const filteredFriends = friends.filter((friend: I_User) =>
-        friend.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+      // manageBlock
+      const filteredFriends = friends.filter(
+        (friend: I_User) =>
+          !isBlockedYou(friend.intraId, block) &&
+          !isBlockedByYou(friend.intraId, block) &&
+          friend.firstName.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredUsers(filteredFriends);
     } else setFilteredUsers([]);
@@ -35,10 +41,7 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
       {filteredUsers.length > 0 && (
         <UserListOverlay>
           {filteredUsers.map((item: I_User) => (
-            <UserList 
-              key={item.intraId} 
-              onClick={() => onUserSelect(item)}
-            >
+            <UserList key={item.intraId} onClick={() => onUserSelect(item)}>
               <Avatar src={item.avatar_url} />
               {item.firstName} {item.lastName}
             </UserList>
@@ -98,23 +101,18 @@ export const NewDirectMessage = (props: {
         />
       </ModalHeader>
       <ModalBody>
-        {
-          selectUser ? 
-          (
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              To : 
-              <UserList>
-                <Avatar src={selectUser.avatar_url}/>
-                  {selectUser.firstName} {selectUser.lastName}
-              </UserList>
-            </div>
-          )
-           : 
-          (<ReceiverComponent onUserSelect={handleSelectedUser}/>)
-        }
-        <form
-          onSubmit={handleSendMessage}
-        >
+        {selectUser ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            To :
+            <UserList>
+              <Avatar src={selectUser.avatar_url} />
+              {selectUser.firstName} {selectUser.lastName}
+            </UserList>
+          </div>
+        ) : (
+          <ReceiverComponent onUserSelect={handleSelectedUser} />
+        )}
+        <form onSubmit={handleSendMessage}>
           <MessageInput
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}

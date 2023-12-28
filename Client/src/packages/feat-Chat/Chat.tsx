@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../core";
 import { UserActions } from "./components/UserActions";
 import { useSize } from "../../core/utils/hooks";
 import { useEffect } from "react";
-import { getUserFriends } from "../feat-Account/components";
+import { getBlacklist, getUserFriends } from "../feat-Account/components";
 
 const ChatBox = () => {
   const { chat } = useAppSelector((state) => state);
@@ -29,6 +29,7 @@ export const Chat = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(getUserFriends());
+    dispatch(getBlacklist());
   }, []);
   return (
     <Root>

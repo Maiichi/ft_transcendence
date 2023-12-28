@@ -9,7 +9,12 @@ import { useState } from "react";
 import { BlockUserModal } from "../components/modals/BlockUserModal";
 import { Actions } from "../components/UserActions";
 import { IconHolder } from "../components/style";
-import { isFriend, isSentFriendRequest } from "../components/utils";
+import {
+  isBlockedByYou,
+  isBlockedYou,
+  isFriend,
+  isSentFriendRequest,
+} from "../components/utils";
 import { useNavigate } from "react-router-dom";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -38,6 +43,8 @@ export const UserActionInDirectConversation = ({
     undefined
   );
   const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+  const block = useAppSelector((state) => state.block);
+
   const friends: Array<I_User> = useAppSelector(
     (state) => state.friends.friends
   );
@@ -103,13 +110,30 @@ export const UserActionInDirectConversation = ({
       checkFriendRequests =
         action.friendRequest == isSentFriendRequest(friendRequests, id);
 
-    return checkFriendRequests && checkFriend;
+    let checkIsBlockedYou = true;
+    if (typeof action.isBlockedYou != "undefined") {
+      checkIsBlockedYou = isBlockedYou(id, block) === action.isBlockedYou;
+    }
+    let checkIsBlockedByeYou = true;
+    if (typeof action.isBlockedByYou != "undefined") {
+      checkIsBlockedByeYou =
+        isBlockedByYou(id, block) === action.isBlockedByYou;
+    }
+
+    return (
+      checkFriendRequests &&
+      checkFriend &&
+      checkIsBlockedYou &&
+      checkIsBlockedByeYou
+    );
   };
   const ActionsArr: Array<Action> = [
     {
       name: "View profile",
       type: "viewProfile",
       component: <AccountCircleIcon />,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Send friend request",
@@ -117,6 +141,8 @@ export const UserActionInDirectConversation = ({
       component: <PersonAddIcon fontSize="small" />,
       isFriend: false,
       friendRequest: false,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
 
     {
@@ -124,12 +150,16 @@ export const UserActionInDirectConversation = ({
       type: "acceptFriendRequest",
       component: <CheckCircleOutlineIcon fontSize="small" color="success" />,
       friendRequest: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Decline friend request",
       type: "declineFriendRequest",
       component: <CancelIcon fontSize="small" color="error" />,
       friendRequest: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
 
     {
@@ -137,12 +167,16 @@ export const UserActionInDirectConversation = ({
       type: "play",
       component: <GamesIcon fontSize="small" />,
       isFriend: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Block",
       type: "blockFriend",
       component: <BlockIcon fontSize="small" color="error" />,
       isFriend: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
   ];
 

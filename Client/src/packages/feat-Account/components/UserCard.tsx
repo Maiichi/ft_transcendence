@@ -27,6 +27,8 @@ import {
   sendFriendRequest,
 } from "./redux";
 import {
+  isBlockedByYou,
+  isBlockedYou,
   isFriend,
   isSentFriendRequest,
 } from "../../feat-Chat/components/utils";
@@ -40,6 +42,8 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
   );
+  const block = useAppSelector((state) => state.block);
+
   const dispatch = useAppDispatch();
   const friends: Array<I_User> = useAppSelector(
     (state) => state.friends.friends
@@ -66,8 +70,22 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
     if (typeof action.friendRequest != "undefined")
       checkFriendRequests =
         action.friendRequest == isSentFriendRequest(friendRequests, id);
+    let checkIsBlockedYou = true;
+    if (typeof action.isBlockedYou != "undefined") {
+      checkIsBlockedYou = isBlockedYou(id, block) === action.isBlockedYou;
+    }
+    let checkIsBlockedByeYou = true;
+    if (typeof action.isBlockedByYou != "undefined") {
+      checkIsBlockedByeYou =
+        isBlockedByYou(id, block) === action.isBlockedByYou;
+    }
 
-    return checkFriendRequests && checkFriend;
+    return (
+      checkFriendRequests &&
+      checkFriend &&
+      checkIsBlockedByeYou &&
+      checkIsBlockedYou
+    );
   };
   const handleClose = () => {
     setOpen(false);
@@ -114,23 +132,31 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
       component: <PersonAddIcon fontSize="small" />,
       isFriend: false,
       friendRequest: false,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Accept friend request",
       type: "acceptFriendRequest",
       component: <CheckCircleOutlineIcon fontSize="small" color="success" />,
       friendRequest: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Decline friend request",
       type: "declineFriendRequest",
       component: <CancelIcon fontSize="small" color="error" />,
       friendRequest: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Send message",
       type: "message",
       component: <Message fontSize="small" />,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
 
     {
@@ -138,12 +164,16 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
       type: "play",
       component: <GamesIcon fontSize="small" />,
       isFriend: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
     {
       name: "Block",
       type: "blockFriend",
       component: <BlockIcon fontSize="small" color="error" />,
       isFriend: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
     },
   ];
 
