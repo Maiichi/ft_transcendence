@@ -51,7 +51,7 @@ export const Search = () => {
     dispatch(getAllRooms());
     dispatch(getMemberships());
     dispatch(getAllUsers());
-  }, [selectedList]);
+  }, []);
   // Filter chat rooms based on the search query
   const filtre = (list: Array<I_Room_Search | I_User> | undefined) =>
     (list ?? []).filter((item: any) =>
@@ -65,7 +65,7 @@ export const Search = () => {
     setSelected(selectedValue);
   };
 
-  const ListContenet = () => {
+  const ListContent = () => {
     switch (selectedList) {
       case "users":
         return (
@@ -128,7 +128,7 @@ export const Search = () => {
         </FormControl>
       </Holder>
       <ListHolder>
-        <ListContenet />
+        <ListContent />
       </ListHolder>
     </Root>
   );

@@ -15,8 +15,6 @@ export const UnBlockUserModal = (props: {
   const handleBlockUser = () => {
     dispatch(unblockUser({ blockedId: intraId }));
     dispatch(setDisplayUserActions(false));
-
-    dispatch(getBlacklist());
     handleClose();
   };
 

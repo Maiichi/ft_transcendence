@@ -30,7 +30,6 @@ const ChannelsSelection = ({ filteredRooms, userId, onSearch }: Channels) => {
       password: rooms.password,
     };
     dispatch(joinRoom(roomInfo));
-    dispatch(getAllRooms());
   };
   // check if the user is a member or not to display the button based on the membership
   const isUserInRoom = (roomS: I_Room_Search, userID: number) => {
