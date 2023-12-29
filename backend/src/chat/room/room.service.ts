@@ -69,41 +69,57 @@ export class RoomService {
     return room;
   }
 
-  // get All Rooms
-  async getAllRooms() {
+  // get All Rooms excluding the channels where the currentUser 'userId' is banned from.
+  // currentUser is the user who perform the action.
+  async getAllRooms(userId: number) {
     try {
-      const rooms =
-        await this.prisma.room.findMany({
-          where: {
-            type: { not: 'private' },
-          },
-          include: {
-            members: {
-              select: {
-                user: {
-                  select: {
-                    avatar_url: true,
-                    intraId: true,
+
+        const rooms = await this.prisma.room.findMany({
+            where: {
+                type: { not: 'private' },
+                members: {
+                  none: {
+                    AND : [
+                      {
+                        userId: userId,
+                      },
+                      {
+                        isBanned : true
+                      }
+                    ]
                   },
                 },
-              },
             },
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
+            include: {
+                members: {
+                    select: {
+                        user: {
+                            select: {
+                                avatar_url: true,
+                                intraId: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
         });
-      if (!rooms.length) return [];
-      return rooms;
+
+        if (!rooms.length) return [];
+
+        return rooms;
     } catch (error) {
-      const response = {
-        success: false,
-        message: error.message,
-      };
-      console.log(response);
-      return response;
+        const response = {
+            success: false,
+            message: error.message,
+        };
+        console.log(response);
+        return response;
     }
-  }
+}
+
 
   // get the rooms where the current user is member in
   async getUserRooms(user: User, res: Response) {
@@ -425,7 +441,6 @@ export class RoomService {
           password: hashedPass,
         },
       });
-    console.log('room updated successfully');
     return roomUpdate;
   }
 

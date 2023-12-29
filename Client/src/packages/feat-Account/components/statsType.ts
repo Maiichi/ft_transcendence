@@ -10,6 +10,7 @@ type userType = {
   userName: string;
   avatar_url: string;
   status: "ONLINE" | "OFFLINE";
+  inGame: boolean;
 } & Record<string, any>;
 
 // TODO: should be formal

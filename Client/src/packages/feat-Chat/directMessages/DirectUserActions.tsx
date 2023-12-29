@@ -16,7 +16,7 @@ import {
   isSentFriendRequest,
 } from "../components/utils";
 import { useNavigate } from "react-router-dom";
-import { inviteToGame, setCurrentTab, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
+import { inviteToGame, setCurrentTab, setGameStep, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
 import GamesIcon from "@mui/icons-material/Games";
@@ -30,6 +30,7 @@ import {
 } from "../../feat-Account/components";
 
 import { Action } from "../components/types";
+import { STEPS } from "../../feat-Game/utils/constants";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -76,9 +77,6 @@ export const UserActionInDirectConversation = ({
           />
         );
         break;
-      case "play":
-        console.log("invite to game");
-        break;
       case "viewProfile":
         navigate(`/user/${selectedUser.intraId}`);
         break;
@@ -96,6 +94,7 @@ export const UserActionInDirectConversation = ({
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
           navigate('/game');
+          dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
       case "sendFriendRequest":

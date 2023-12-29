@@ -41,7 +41,7 @@ export const roomSlice = createSlice({
     },
     updateRoomSucess: (state, action: PayloadAction<I_Room>) => {
       const index = state.memberships.findIndex(
-        (item) => (item.id = action.payload.id)
+        (item: I_Room) => (item.id === action.payload.id)
       );
       state.memberships[index].name = action.payload.name;
       state.memberships[index].type = action.payload.type;

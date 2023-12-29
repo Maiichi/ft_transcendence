@@ -4,6 +4,7 @@ import { EditUserDto } from './dto';
 import * as path from 'path';
 import { Response } from 'express';
 import { v2 as cloudinary } from 'cloudinary';
+import { TreeLevelColumn } from 'typeorm';
 const streamifier = require('streamifier');
 
 
@@ -409,23 +410,94 @@ export class UserService {
 
 
     // a function to get all users execpt the blacklisted 
-    async getAllUser(userId: number, res: Response): Promise<any>
-    {
-        const users = await this.prisma.user.findMany({
+
+    async getUserBlacklist(userId: number): Promise<any>
+    {   
+        const blacklist = await this.prisma.blacklist.findMany({
+            where : {
+                OR : [
+                    {
+                        blockedById : userId
+                    },
+                    {
+                        blockerById : userId
+                    }
+                ]
+            },
             select : {
-                userName : true,
+                blocked : {
+                    select : {
+                        intraId : true,
+                    }
+                },
+                blocker : {
+                    select : {
+                        intraId : true,
+                    }
+                }
+            }
+        });
+        return blacklist;
+    };
+
+    // async getAllUser(userId: number, res: Response): Promise<any>
+    // {
+
+    //     const getBlacklist = await this.getUserBlacklist(userId);
+    //     const users = await this.prisma.user.findMany({
+    //         select : {
+    //             userName : true,
+    //             avatar_url: true,
+    //             lastName: true,
+    //             firstName: true,
+    //             status: true,
+    //             intraId: true,
+    //         }
+    //     });
+
+    //     // const filtredUser 
+    //     // Extract only the necessary information and return
+    //     const blacklist =  getBlacklist.map(entry => ({
+    //         blocked: entry.blocked,
+    //         blocker: entry.blocker,
+    //     }));
+        
+    //     return res.send({data : blacklist, users});
+    // }
+
+    // get friendsRequests sent the to the current user
+    
+    async getAllUser(userId: number, res: Response): Promise<any> {
+        // Get the blacklist for the current user
+        const getBlacklist = await this.getUserBlacklist(userId);
+    
+        // Extract intraId values for blocked and blocker users
+        const blockedUserIds = getBlacklist.map(entry => entry.blocked.intraId);
+        const blockerUserIds = getBlacklist.map(entry => entry.blocker.intraId);
+    
+        // Fetch all users excluding the current user and those in the blacklist
+        const users = await this.prisma.user.findMany({
+            where: {
+                NOT: {
+                    intraId: {
+                        in: [userId, ...blockedUserIds, ...blockerUserIds],
+                    },
+                },
+            },
+            select: {
+                userName: true,
                 avatar_url: true,
                 lastName: true,
                 firstName: true,
                 status: true,
                 intraId: true,
-            }
-        })
-        
-        return res.send({data : users});
+            },
+        });
+    
+        // Return the filtered users
+        return res.send({ data: users });
     }
 
-    // get friendsRequests sent the to the current user
     async getFriendRequests(userId: number, res: Response)
     {
         const friendRequests = await this.prisma.friendRequest.findMany({

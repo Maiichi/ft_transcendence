@@ -3,6 +3,7 @@ import { GameState, GameStepComponentProps } from "../utils/types";
 import { useAppDispatch, useAppSelector } from "../../../core";
 import { STEPS } from "../utils/constants";
 import { useEffect } from "react";
+import { resetGameState } from "../redux/GameSlice";
 
 interface SkeletonProps {
     width?: string;
@@ -117,11 +118,16 @@ const XIcon = styled.svg`
 
 export const MatchLoading: React.FC<GameStepComponentProps> = ({
     socket,
-    onReset,
 }) => {
     const countdown = useAppSelector((state) => state.game.countdown);
-
-    console.log("red", countdown);
+    // const user = useAppSelector((state) => state.auth.user);
+    const dispatch = useAppDispatch();
+    const handleCancel = () => {
+        console.log("client id == ", socket?.id);
+        socket?.emit('cancelGame');
+        // onReset();
+        dispatch(resetGameState());
+    }
 
     return (
         <ContentContainer>
@@ -142,7 +148,11 @@ export const MatchLoading: React.FC<GameStepComponentProps> = ({
                 </XIcon>
                 <StyledSkeleton rounded />
             </AvatarContainer>
-            <StyledButton onClick={onReset}>Cancel</StyledButton>
+            {
+                countdown === null
+                ? <StyledButton onClick={handleCancel}>Cancel</StyledButton>
+                : <></>
+            }
         </ContentContainer>
     );
 };

@@ -298,7 +298,7 @@ export class ChatGateway
           .emit('roomCreated', {
             data: roomData.dataMembership,
             successMsg:
-              'Room is create succeffuly',
+              `Room ${roomData.dataMembership.name} is created successfully`,
           });
       });
       if (roomData.dataRoom.type !== 'private')
@@ -366,7 +366,10 @@ export class ChatGateway
                   });
                 }
               });
-
+              // this event for the search component to update the channels in search.
+        this.userSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('userUpdateRoom',roomUpdated);
+        })
     } catch (error) {
       client.emit('updateRoomError', {
         message: error.message,
@@ -434,7 +437,10 @@ export class ChatGateway
           .to(socketId)
           .emit(
             'roomJoined',
-            joinedRoom.dataMembership,
+            {
+              data : joinedRoom.dataMembership,
+              successMsg : `You joined ${joinedRoom.dataMembership.name} successfully`
+            }
           );
       });
 
@@ -1302,7 +1308,7 @@ export class ChatGateway
           .to(socketId)
           .emit('userAcceptYourFriendRequest', {
             data: currentUser,
-            successMsg: `${sender.firstName} ${sender.lastName} accept your friend request`,
+            successMsg: `${currentUser.firstName} ${currentUser.lastName} accept your friend request`,
           });
       });
     } catch (error) {

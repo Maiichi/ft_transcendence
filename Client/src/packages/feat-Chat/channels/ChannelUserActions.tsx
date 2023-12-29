@@ -145,7 +145,22 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         break;
 
       case "play":
-        console.log("invite to game");
+        dispatch(inviteToGame({
+          invitedId : selectedUser.intraId,
+          inviterId : user.intraId,
+          gameMode  : "dual",
+        }));
+        // TODO:  need a check (inGame)
+        if (selectedUser.status === "ONLINE")
+        {
+          // dispatch(inviteUserToGameFromChat(true));         
+          dispatch(setInviteSent(true));
+          dispatch(setInvited(selectedUser));
+          dispatch(setCurrentTab(true));
+          dispatch(setInviteFromChat(true));
+          navigate('/game');
+          // dispatch(setGameStep(STEPS.WAITING_QUEUE));
+        }
         break;
       case "viewProfile":
         navigate(`/user/${selectedUser.intraId}`);
