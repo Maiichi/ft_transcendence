@@ -39,7 +39,7 @@ export class FriendService
         if (isBlockedByYou)
             throw new WsException(`${receiver.userName} is blocked by you, you can't send him a friend req`);
         // check if they are already friends
-        const isFriend = await this.isFriend(sender.intraId, receiver.intraId);
+        const isFriend = await this.userService.isFriend(sender.intraId, receiver.intraId);
         if (isFriend)
             throw new WsException(`${sender.userName} and ${receiver.userName} are already friends`);
         // check if friend request is already sent
@@ -91,7 +91,7 @@ export class FriendService
         if (isBlockedByYou)
             throw new WsException(`${requestSender.userName} is blocked by you`);
         
-        const isFriend = await this.isFriend(userAccept.intraId, requestSender.intraId);
+        const isFriend = await this.userService.isFriend(userAccept.intraId, requestSender.intraId);
         if (isFriend)
             throw new WsException(`${userAccept.userName} and ${requestSender.userName} are already friends`);
         
@@ -219,25 +219,4 @@ export class FriendService
         });
         return getId.id;
     }
-
-    async isFriend(senderId: number, receiverId: number) : Promise<boolean>{
-        const isFriend = await this.prisma.user.findUnique({
-            where: {
-                intraId: senderId,
-                friends: {
-                    some: {
-                        intraId: receiverId,
-                    },
-                },
-                friendsOf: {
-                    some: {
-                        intraId: receiverId,
-                    },
-                },
-            },
-        });
-        const res: boolean = !!isFriend; // Convert to boolean
-        return res;
-    }
 }
-

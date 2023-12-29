@@ -1,7 +1,7 @@
 import { Close } from "@mui/icons-material";
 import styled from "styled-components";
 import { I_Room, Members } from "../types";
-import {  useState } from "react";
+import { useState } from "react";
 import {
   Avatar,
   List,
@@ -20,7 +20,7 @@ import { setDisplayUserActions } from "../../../../core/CoreSlice";
 import { setSelectedUser } from "../redux/chatSlice";
 import { useSize } from "../../../../core/utils/hooks";
 import { NotFound } from "../style";
-import { isAdmin, isBlockedYou, isOwner } from "../utils";
+import { isAdmin, isBlockedByYou, isBlockedYou, isOwner } from "../utils";
 
 export const UsersRoom = ({
   channelConversation,
@@ -47,9 +47,14 @@ export const UsersRoom = ({
 
     return isBlockedByYou || isBlockedYou;
   };
-
+  // manageBlock
   const filtredMembers = channelConversation.members.filter(
     (member: Members) =>
+      !(
+        isBlockedByYou(member.user.intraId, block) &&
+        !isAdmin(channelConversation, currentUser.intraId) &&
+        !isOwner(channelConversation, currentUser.intraId)
+      ) &&
       !(
         isBlockedYou(member.user.intraId, block) &&
         !isAdmin(channelConversation, currentUser.intraId) &&
@@ -105,10 +110,7 @@ export const UsersRoom = ({
                     onClick={() => handleClick(user.user)}
                   >
                     <ListItemAvatar>
-                      <Avatar
-                        alt="Remy Sharp"
-                        src={user.user.avatar_url}
-                      />
+                      <Avatar alt="Remy Sharp" src={user.user.avatar_url} />
                     </ListItemAvatar>
                     <ListItemText
                       primary={`${user.user.firstName} ${user.user.lastName}`}

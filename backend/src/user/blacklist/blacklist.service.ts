@@ -4,13 +4,14 @@ import { Injectable } from "@nestjs/common";
 import { BlockUserDto, UnBlockUserDto } from "src/user/blacklist/dto/handle.block.dto";
 import { WsException } from "@nestjs/websockets";
 import { Response } from "express";
+import { FriendService } from "../friend/friend.service";
 
 @Injectable()
 export class BlacklistService
 {
     constructor(
         private prisma:         PrismaService,
-        private userService:    UserService
+        private userService:    UserService,
     ){}
 
     async blockUser(body: BlockUserDto, userId: number)
@@ -42,6 +43,30 @@ export class BlacklistService
                 }
             }
         });
+
+        // check friendShip to delete it if it exists;
+        const friendshipExists = await this.userService.isFriend(userId, body.blockedId);
+        console.log("friendshipExists == ", friendshipExists);
+        if (friendshipExists)
+        {
+            await this.prisma.user.update({
+                where: {
+                    intraId: userId,
+                },
+                data : {
+                    friends : {
+                        disconnect : {
+                            intraId : body.blockedId
+                        }
+                    },
+                    friendsOf : {
+                        disconnect : {
+                            intraId : body.blockedId
+                        }
+                    }
+                }
+            });
+        }
         console.log(`${blocker.userName} has blocked ${blocked.userName}`);
         return {
             blocker: blocker,
