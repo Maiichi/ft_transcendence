@@ -146,5 +146,3 @@ export const GameSteps: React.FC = () => {
 
     return <div>{renderStep()}</div>;
 };
-
-export default GameSteps
