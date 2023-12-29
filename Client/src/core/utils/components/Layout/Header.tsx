@@ -4,29 +4,35 @@ import styled from "styled-components";
 import { Typography, PopperPlacementType } from "@mui/material";
 import { makeStyles } from "@material-ui/styles";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import SearchIcon from "@mui/icons-material/Search";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import HomeIcon from "@mui/icons-material/Home";
-import DehazeIcon from "@mui/icons-material/Dehaze";
+
 import AppsIcon from "@mui/icons-material/Apps";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-
+import IconButton from "@mui/material/IconButton";
+import Badge from "@mui/material/Badge";
+import MailIcon from "@mui/icons-material/Mail";
 import {
   Drawer,
+  FriendRequestsNotifications,
   ListComponent,
   ListNav,
+  
   PopperComponent,
   SearchComponent,
 } from "..";
 import { useSize } from "../../hooks";
-import { useAppDispatch } from "../../../redux";
+import { useAppDispatch, useAppSelector } from "../../../redux";
 import { setDisplayNavbar } from "../../../CoreSlice";
 import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
-import { setToken, userLogout } from "../../../../packages/feat-Auth/components/authSlice";
+import {
+  setToken,
+  userLogout,
+} from "../../../../packages/feat-Auth/components/authSlice";
 import { useNavigate } from "react-router-dom";
 import { disconnectSocket } from "../../../socket/socketSlice";
+import { getFriendRequests } from "../../../../packages/feat-Account/components";
+import { I_User } from "../..";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 interface MenuTabs {
@@ -89,8 +95,24 @@ const Menu = [
 const ProfilePopper = () => {
   return <ListComponent menu={Menu} />;
 };
-const NotificationPopper = () => {
-  return <Typography sx={{ p: 2 }}>Notifications Popper.</Typography>;
+const NotificationPopper = ({
+  friendRequests,
+}: {
+  friendRequests: I_User[];
+}) => {
+  const dispatch = useAppDispatch();
+
+  console.log("friendRequests : ", friendRequests);
+
+  return (
+    <>
+      {friendRequests.length != 0 ? (
+        <FriendRequestsNotifications friendRequests={friendRequests} />
+      ) : (
+        <>You haven't any Friend requests</>
+      )}
+    </>
+  );
 };
 
 export const Header = () => {
@@ -122,7 +144,9 @@ export const Header = () => {
   const [placement, setPlacement] = useState<PopperPlacementType>();
   const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
   const [popperStyle, setPopperStyle] = useState<React.CSSProperties>();
-
+  const friendRequests: I_User[] = useAppSelector(
+    (state) => state.friends.friendRequests
+  );
   const navigate = useNavigate();
 
   const isAuthenticated = useAuthentication();
@@ -131,6 +155,9 @@ export const Header = () => {
   const handleClose = (e: any) => {
     setOpen(false);
   };
+  useEffect(() => {
+    dispatch(getFriendRequests());
+  }, []);
   useEffect(() => {
     setOpen(false);
   }, [isMobile]);
@@ -162,18 +189,20 @@ export const Header = () => {
     {
       id: "notif",
       render: (
-        <NotificationsNoneIcon
-          id="notif"
-          className={classes.iconBase}
+        <IconButton
           onClick={popperClick(
             "bottom-start",
-            <NotificationPopper />,
+            <NotificationPopper friendRequests={friendRequests} />,
             "notif",
             {
               paddingTop: "24px",
             }
           )}
-        />
+        >
+          <Badge badgeContent={friendRequests.length} color="secondary">
+            <NotificationsNoneIcon className={classes.iconBase} />
+          </Badge>
+        </IconButton>
       ),
     },
     {
@@ -190,20 +219,7 @@ export const Header = () => {
       ),
     },
   ];
-  // <SearchIcon
-  //   className={classes.iconBase}
-  //   style={{ marginLeft: "10px", marginRight: "auto" }}
-  //   onClick={popperClick(
-  //     "bottom",
-  //     <SearchComponent clear={true} setOpen={setOpen} />,
-  //     "search",
-  //     {
-  //       padding: "5px 10px",
-  //       marginTop: "-34px!important",
-  //       background: "#ffffff",
-  //       width: "100%",
-  //     }
-  //   )}
+
   return (
     <>
       {isMobile && (

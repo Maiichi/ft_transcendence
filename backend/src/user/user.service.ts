@@ -440,4 +440,25 @@ export class UserService {
         return res.send(requests);
     }
     
+
+    // a function that checks if two user are friends
+    async isFriend(senderId: number, receiverId: number) : Promise<boolean>{
+        const isFriend = await this.prisma.user.findUnique({
+            where: {
+                intraId: senderId,
+                friends: {
+                    some: {
+                        intraId: receiverId,
+                    },
+                },
+                friendsOf: {
+                    some: {
+                        intraId: receiverId,
+                    },
+                },
+            },
+        });
+        const res: boolean = !!isFriend; // Convert to boolean
+        return res;
+    }
 }

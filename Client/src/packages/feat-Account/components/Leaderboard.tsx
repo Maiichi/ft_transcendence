@@ -4,8 +4,7 @@ import { Chat } from "@mui/icons-material";
 import { Loading, useAppDispatch, useAppSelector } from "../../../core";
 import {
   ListButton,
-  SendFriendRequist,
-  SendGameRequist,
+   SendGameRequist,
   getLeaderboard,
   leaderboardType,
 } from ".";
@@ -93,7 +92,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                         <Button onClick={() => navigate("/chat")}>
                           <Chat />
                         </Button>
-                        <SendFriendRequist onlyIcon userName={player.name} />
+                        {/* <SendFriendRequist onlyIcon userName={player.name} /> */}
                       </ListButton>
                     ) : (
                       <Button onClick={() => navigate("/account/profile")}>

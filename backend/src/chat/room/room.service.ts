@@ -627,7 +627,7 @@ export class RoomService {
     );
     if (!isOwner)
       throw new WsException(
-        `User with intraId ${userId} is not the owner of the room, so he can't set an admin`,
+        `${user.firstName} ${user.lastName} is not the owner of the room, so he can't set an admin`,
       );
     // check if the user is already a member in this room
     // getMemberShip
@@ -640,6 +640,11 @@ export class RoomService {
       throw new WsException(
         `no membership between ${body.userId} and ${room.id}`,
       );
+
+      // check if the user is banned 
+      const isBanned = await this.isBanned(body.userId, room.id);
+      if (isBanned)
+        throw new WsException(`${user.firstName} ${user.lastName} is banned , he can't be setted as admin`);
     // set new Admin
 
       await this.prisma.membership.update({

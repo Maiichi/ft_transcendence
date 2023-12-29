@@ -43,24 +43,29 @@ import {
 } from 'src/user/friend/dto/friend.dto';
 import { FriendService } from 'src/user/friend/friend.service';
 
-  @WebSocketGateway({
-    cors: {
-      origin: `${process.env.FRONTEND_URL}`,
-      credentials: true,
-    },
-  })
-  export class ChatGateway
-    implements
-      OnGatewayConnection,
-      OnGatewayDisconnect
-  {
-    @WebSocketServer()
-    server: Server;
+@WebSocketGateway({
+  cors: {
+    origin: `${process.env.FRONTEND_URL}`,
+    credentials: true,
+  },
+})
+export class ChatGateway
+  implements
+    OnGatewayConnection,
+    OnGatewayDisconnect
+{
+  @WebSocketServer()
+  server: Server;
 
-  private connectedClients = new Map<string,User>();
-  private userSockets = new Map<number,string[]>();
+  private connectedClients = new Map<
+    string,
+    User
+  >();
+  private userSockets = new Map<
+    number,
+    string[]
+  >();
   // private BlackListedTokens = new Map<string,number>();
-  
 
   constructor(
     private chatService: ChatService,
@@ -104,14 +109,18 @@ import { FriendService } from 'src/user/friend/friend.service';
     const sockets = this.userSockets.get(intraId);
     if (sockets) {
       sockets.forEach((socketId) => {
-        const socket = this.server.sockets.sockets[socketId];
+        const socket =
+          this.server.sockets.sockets[socketId];
         if (socket) {
           socket.disconnect();
         }
       });
       this.userSockets.delete(intraId);
     }
-    console.log("userSockets == ", this.userSockets);
+    console.log(
+      'userSockets == ',
+      this.userSockets,
+    );
   }
 
   // deleteUserSingleSocket()
@@ -125,7 +134,9 @@ import { FriendService } from 'src/user/friend/friend.service';
   //     });
   // }
 
-  private deleteUserDisconnected(intraId: number) {
+  private deleteUserDisconnected(
+    intraId: number,
+  ) {
     const disconnectedSockets = [];
     this.connectedClients.forEach(
       (mapUser, mapId) => {
@@ -145,26 +156,29 @@ import { FriendService } from 'src/user/friend/friend.service';
 
   // }
 
-  private findUserByClientSocketId(clientId: string) {
+  private findUserByClientSocketId(
+    clientId: string,
+  ) {
     let ret = null;
     this.connectedClients.forEach(
       (user, socketId) => {
         if (socketId == clientId) ret = user;
-      }
+      },
     );
     return ret;
   }
 
-  
-
   async handleConnection(client: Socket) {
-    const token = client.handshake.headers.authorization;
+    const token =
+      client.handshake.headers.authorization;
     try {
       const decodedToken =
         await this.jwtService.verify(token, {
           secret: process.env.JWT_SECRET,
         });
-      const user = await this.userService.getUser(decodedToken.sub);
+      const user = await this.userService.getUser(
+        decodedToken.sub,
+      );
       if (!user) {
         throw new WsException('User not found.');
       }
@@ -180,13 +194,22 @@ import { FriendService } from 'src/user/friend/friend.service';
         this.userSockets.set(user.intraId, []);
       }
 
-      this.userSockets.get(user.intraId).push(client.id);
-      this.userService.updateUserStatus(user.intraId,'ONLINE',);
+      this.userSockets
+        .get(user.intraId)
+        .push(client.id);
+      this.userService.updateUserStatus(
+        user.intraId,
+        'ONLINE',
+      );
       this.server.emit('userConnected', {
         userId: client.id,
       });
       // this.printClients();
-      console.log(user.userName + ' is Connected ' + client.id);
+      console.log(
+        user.userName +
+          ' is Connected ' +
+          client.id,
+      );
       // this.printClients();
       // this.printClientSockets();
     } catch (error) {
@@ -203,7 +226,6 @@ import { FriendService } from 'src/user/friend/friend.service';
     }
   }
 
-
   async handleDisconnect(client: Socket) {
     try {
       const user = this.connectedClients.get(
@@ -213,7 +235,8 @@ import { FriendService } from 'src/user/friend/friend.service';
         const intraId = user.intraId;
 
         // Remove the disconnected socket from userSockets
-        const userSockets = this.userSockets.get(intraId) || [];
+        const userSockets =
+          this.userSockets.get(intraId) || [];
         const updatedSockets = userSockets.filter(
           (socketId) => socketId !== client.id,
         );
@@ -221,17 +244,27 @@ import { FriendService } from 'src/user/friend/friend.service';
         if (updatedSockets.length === 0) {
           // If there are no more sockets for this user, remove the user entirely
           this.userSockets.delete(intraId);
-           // Update the user status to "OFFLINE" since all tabs are disconnected
-          this.userService.updateUserStatus(intraId, 'OFFLINE');
+          // Update the user status to "OFFLINE" since all tabs are disconnected
+          this.userService.updateUserStatus(
+            intraId,
+            'OFFLINE',
+          );
         } else {
           // Update the userSockets map
-          this.userSockets.set(intraId, updatedSockets);
+          this.userSockets.set(
+            intraId,
+            updatedSockets,
+          );
         }
 
         // Other cleanup tasks for disconnection
         this.connectedClients.delete(client.id);
         client.disconnect();
-        console.log(user.userName + ' is Disconnected ' + client.id);
+        console.log(
+          user.userName +
+            ' is Disconnected ' +
+            client.id,
+        );
       } else {
         throw new WsException(
           `cannot find the user`,
@@ -868,23 +901,33 @@ import { FriendService } from 'src/user/friend/friend.service';
 
   private handleLogout(client: Socket) {
     try {
-      const user = this.connectedClients.get(client.id);
-  
+      const user = this.connectedClients.get(
+        client.id,
+      );
+
       if (user) {
         const intraId = user.intraId;
-  
+
         // Disconnect all tabs of the same user
         this.deleteUserSockets(intraId);
-  
+
         // Update the user status to "OFFLINE"
-        this.userService.updateUserStatus(intraId, 'OFFLINE');
-  
+        this.userService.updateUserStatus(
+          intraId,
+          'OFFLINE',
+        );
+
         // Remove the user from connectedClients
         this.connectedClients.delete(client.id);
-  
-        console.log(user.userName + ' has logged out from all tabs');
+
+        console.log(
+          user.userName +
+            ' has logged out from all tabs',
+        );
       } else {
-        throw new WsException(`Cannot find the user`);
+        throw new WsException(
+          `Cannot find the user`,
+        );
       }
     } catch (error) {
       client.emit(error);
@@ -896,12 +939,14 @@ import { FriendService } from 'src/user/friend/friend.service';
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      const currentUser = this.findUserByClientSocketId(client.id);
-      const currentUserSockets: string[] = this.userSockets.get(currentUser.intraId);
+      const currentUser =
+        this.findUserByClientSocketId(client.id);
+      const currentUserSockets: string[] =
+        this.userSockets.get(currentUser.intraId);
       currentUserSockets.forEach((value) => {
         this.server
-        .to(value)
-        .emit('userLoggedOut');
+          .to(value)
+          .emit('userLoggedOut');
       });
       this.handleLogout(client);
     } catch (error) {
@@ -912,7 +957,6 @@ import { FriendService } from 'src/user/friend/friend.service';
       return response;
     }
   }
-
 
   // send private message
   @SubscribeMessage('sendMessageToUser')
@@ -1137,10 +1181,32 @@ import { FriendService } from 'src/user/friend/friend.service';
     try {
       const currentUser =
         this.findUserByClientSocketId(client.id);
+      const receiverSockets: string[] =
+        this.userSockets.get(body.receiverId);
+      let receiver;
+      if (receiverSockets.length)
+        receiver = this.findUserByClientSocketId(
+          receiverSockets[0],
+        );
       await this.friendService.sendFriendRequest(
         body,
         currentUser.intraId,
       );
+      this.server
+        .to(client.id)
+        .emit('sendFriendRequestSuccess', {
+          successMsg: `Friend request is sent successfully to ${receiver.userName}`,
+        });
+      if (receiverSockets.length)
+        receiverSockets.forEach((socketId) => {
+          this.server
+            .to(socketId)
+            .emit(
+              'friendRequestReceived',
+              currentUser,
+            );
+        });
+
       this.server.emit('sendFriendRequest');
     } catch (error) {
       client.emit('sendFriendRequestError', {
@@ -1158,13 +1224,59 @@ import { FriendService } from 'src/user/friend/friend.service';
     @MessageBody() body: AcceptFriendRequestDto,
   ) {
     try {
+      /* request sender means the user who sent the request in the first time
+        request accepter means the user who accept this request
+      */
       const currentUser =
         this.findUserByClientSocketId(client.id);
+      const sender =
+        await this.userService.getUserInfos(
+          body.senderId,
+        );
+      const senderSockets: string[] =
+        this.userSockets.get(body.senderId);
+      /* receiverSockets are for the user who perform the accept Action */
+      const receiverSockets: string[] =
+        this.userSockets.get(currentUser.intraId);
       await this.friendService.acceptFriendRequest(
         body,
         currentUser.intraId,
       );
-      this.server.emit('acceptFriendRequest');
+
+      /* this event is for the request sender */
+      /*
+        in this case the user who perform the accept action will also listen to an event that 
+        remove the friend request sent by the senderId from all his state in redux
+        and add him as friend in the state
+        example :
+        socket.on('friendRequestAccepted', (data) => {
+          dispatch(removeFriendRequest(userId));
+          // add user as friend in redux state
+        });
+      */
+      receiverSockets.forEach((socketId) => {
+        this.server
+          .to(socketId)
+          .emit(
+            'removeFriendRequest',
+            body.senderId,
+          );
+      });
+      receiverSockets.forEach((socketId) => {
+        this.server
+          .to(socketId)
+          .emit('addFriendTemporally', sender);
+      });
+
+      /* this event is for the request accepter */
+      senderSockets.forEach((socketId) => {
+        this.server
+          .to(socketId)
+          .emit('userAcceptYourFriendRequest', {
+            data: currentUser,
+            successMsg: `${sender.firstName} ${sender.lastName} accept your friend request`,
+          });
+      });
     } catch (error) {
       client.emit('acceptFriendRequestError', {
         message: error.message,
@@ -1174,29 +1286,93 @@ import { FriendService } from 'src/user/friend/friend.service';
       );
     }
   }
-  
-  @SubscribeMessage('inviteToGame')
-  async inviteUserToGame( 
+
+  @SubscribeMessage('declineFriendRequest')
+  async declineFriendRequest(
     @ConnectedSocket() client: Socket,
-    @MessageBody() body: any)
-  {
+    @MessageBody() body: AcceptFriendRequestDto,
+  ) {
+    try {
+      const currentUser =
+        this.findUserByClientSocketId(client.id);
+      const sender =
+        await this.userService.getUserInfos(
+          body.senderId,
+        );
+      const senderSockets: string[] =
+        this.userSockets.get(body.senderId);
+      /* receiverSockets are for the user who perform the decline Action */
+      const receiverSockets: string[] =
+        this.userSockets.get(currentUser.intraId);
+      await this.friendService.declineFriendRequest(
+        body,
+        currentUser.intraId,
+      );
+      /* this event is for the request sender 
+        in this case the user who perform the decline action will also listen to an event that 
+        remove the friend request sent by the senderId from all his state in redux
+        example :
+        socket.on('friendRequestRemoved', (data) => {
+          dispatch(removeFriendRequest(userId));
+        });
+      */
+      if (receiverSockets.length) {
+        receiverSockets.forEach((socketId) => {
+          this.server
+            .to(socketId)
+            .emit(
+              'removeFriendRequest',
+              body.senderId,
+            );
+        });
+      }
+      /* this event is for the request decliner */
+      senderSockets.forEach((socketId) => {
+        this.server
+          .to(socketId)
+          .emit('userDeclineYourFriendRequest', {
+            data: body.senderId,
+            successMsg: `${sender.firstName} ${sender.lastName} decline your friend request`,
+          });
+      });
+    } catch (error) {
+      client.emit('acceptFriendRequestError', {
+        message: error.message,
+      });
+      console.error(
+        'accept error = ' + error.message,
+      );
+    }
+  }
+
+  @SubscribeMessage('inviteToGame')
+  async inviteUserToGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: any,
+  ) {
     try {
       console.log('userInvitedToGame');
       const currentUser =
         this.findUserByClientSocketId(client.id);
-        // console.log('body  ==', body);
-        const invitedSockets : string[] = this.userSockets.get(body.invitedId);
-        console.log('invitedSockets ==', invitedSockets);
+      // console.log('body  ==', body);
+      const invitedSockets: string[] =
+        this.userSockets.get(body.invitedId);
+      console.log(
+        'invitedSockets ==',
+        invitedSockets,
+      );
       // if (blockedSockets)
       // blockedSockets.forEach((socketId) =>{
       //   this.server.to(socketId).emit('blockedMe', response.blocker);
       // });
       if (invitedSockets)
         invitedSockets.forEach((socketId) => {
-          this.server.to(socketId).emit('gameInvitationReceived', {
-            inviterId: body.inviterId,
-            invitedId: body.invitedId
-            })
+          this.server
+            .to(socketId)
+            .emit('gameInvitationReceived', {
+              inviterId: body.inviterId,
+              invitedId: body.invitedId,
+            });
         });
     } catch (error) {
       client.emit('gameInvitationReceivedError', {
@@ -1209,26 +1385,38 @@ import { FriendService } from 'src/user/friend/friend.service';
   }
 
   @SubscribeMessage('acceptGameInvite')
-  async acceptGameInvite( 
+  async acceptGameInvite(
     @ConnectedSocket() client: Socket,
-    @MessageBody() body: any)
-  {
+    @MessageBody() body: any,
+  ) {
     try {
-        console.log('acceptGameInvite');
-        const currentUser =
+      console.log('acceptGameInvite');
+      const currentUser =
         this.findUserByClientSocketId(client.id);
-        console.log('body (acceptGameInvite)== ', body);
-        const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
-        const inviterSockets: string[] = this.userSockets.get(body.inviterId);
-        console.log('inviter == ', currentUser.intraId);
-        console.log('invited == ', body.invitedId);
-        if (invitedSockets)
-          invitedSockets.forEach((socketId) => {
-            this.server.to(socketId).emit('gameInvitationAccepted')
-          });
-        inviterSockets.forEach((socketId) => {
-          this.server.to(socketId).emit('opponentAcceptGameInvite');
+      console.log(
+        'body (acceptGameInvite)== ',
+        body,
+      );
+      const invitedSockets: string[] =
+        this.userSockets.get(currentUser.intraId);
+      const inviterSockets: string[] =
+        this.userSockets.get(body.inviterId);
+      console.log(
+        'inviter == ',
+        currentUser.intraId,
+      );
+      console.log('invited == ', body.invitedId);
+      if (invitedSockets)
+        invitedSockets.forEach((socketId) => {
+          this.server
+            .to(socketId)
+            .emit('gameInvitationAccepted');
         });
+      inviterSockets.forEach((socketId) => {
+        this.server
+          .to(socketId)
+          .emit('opponentAcceptGameInvite');
+      });
     } catch (error) {
       client.emit('gameInvitationAcceptedError', {
         message: error.message,
@@ -1237,33 +1425,44 @@ import { FriendService } from 'src/user/friend/friend.service';
         'send error = ' + error.message,
       );
     }
-  } 
+  }
   @SubscribeMessage('declineGameInvite')
-  async declineGameInvite( 
+  async declineGameInvite(
     @ConnectedSocket() client: Socket,
-    @MessageBody() body: any)
-  {
+    @MessageBody() body: any,
+  ) {
     try {
-        console.log('declineGameInvite');
-        let inviter;
-        const currentUser =
+      console.log('declineGameInvite');
+      let inviter;
+      const currentUser =
         this.findUserByClientSocketId(client.id);
-        console.log("ssssssssssss")
-        console.log('body (declineGameInvite) == ', body);
-        const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
-        const inviterSockets: string[] = this.userSockets.get(body.inviterId);
-        if (inviterSockets.length)
-          inviter = this.findUserByClientSocketId(inviterSockets[0]);
-        if (invitedSockets)
-          invitedSockets.forEach((socketId) => {
-            this.server.to(socketId).emit('gameInvitationDeclined')
-          });
-        inviterSockets.forEach((socketId) => {
-          this.server.to(socketId).emit('opponentDeclineGameInvite', {
-            data : body.inviterId,
-            successMsg: `${inviter.userName} decline your game Invite`
-          });
+      console.log('ssssssssssss');
+      console.log(
+        'body (declineGameInvite) == ',
+        body,
+      );
+      const invitedSockets: string[] =
+        this.userSockets.get(currentUser.intraId);
+      const inviterSockets: string[] =
+        this.userSockets.get(body.inviterId);
+      if (inviterSockets.length)
+        inviter = this.findUserByClientSocketId(
+          inviterSockets[0],
+        );
+      if (invitedSockets)
+        invitedSockets.forEach((socketId) => {
+          this.server
+            .to(socketId)
+            .emit('gameInvitationDeclined');
         });
+      inviterSockets.forEach((socketId) => {
+        this.server
+          .to(socketId)
+          .emit('opponentDeclineGameInvite', {
+            data: body.inviterId,
+            ç: `${inviter.userName} decline your game Invite`,
+          });
+      });
     } catch (error) {
       client.emit('gameInvitationDeclinedError', {
         message: error.message,
@@ -1272,5 +1471,5 @@ import { FriendService } from 'src/user/friend/friend.service';
         'send error = ' + error.message,
       );
     }
-  } 
+  }
 }
