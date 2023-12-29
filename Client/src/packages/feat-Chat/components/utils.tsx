@@ -5,8 +5,7 @@ import {
   PersonOffOutlined,
   RemoveModerator,
 } from "@mui/icons-material";
-import EmailIcon from "@mui/icons-material/Email";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
+
 import SpeakerNotesOffIcon from "@mui/icons-material/SpeakerNotesOff";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import GamesIcon from "@mui/icons-material/Games";
@@ -64,6 +63,14 @@ export const isAdmin = (memberships: I_Room, userId: number) => {
 
 export const isFriend = (friends: Array<I_User>, userId: number) => {
   const isFriend = friends.find((member) => member.intraId === userId);
+  return isFriend ? true : false;
+};
+
+export const isSentFriendRequest = (
+  friendRequests: Array<I_User>,
+  userId: number
+) => {
+  const isFriend = friendRequests.find((member) => member.intraId === userId);
   return isFriend ? true : false;
 };
 
@@ -144,56 +151,6 @@ export const ChannelIcons: Array<Action> = [
     role: ["owner"],
     isAdmin: true,
   },
-  {
-    name: "View profile",
-    type: "viewProfile",
-    component: <AccountCircleIcon />,
-    isBlockedYou: false,
-    isBlockedByYou: false,
-    role: ["member", "admin", "owner"],
-  },
-  {
-    name: "Send Message",
-    type: "message",
-    component: <EmailIcon />,
-    isFriend: true,
-    isBlockedYou: false,
-    isBlockedByYou: false,
-    role: ["member", "admin", "owner"],
-  },
-  {
-    name: "Invite to a game",
-    type: "play",
-    component: <GamesIcon />,
-    isBlockedYou: false,
-    isBlockedByYou: false,
-    role: ["member", "admin", "owner"],
-  },
-  {
-    name: "Add to friend list",
-    type: "addFriend",
-    component: <PersonAddIcon />,
-    isFriend: false,
-    isBlockedYou: false,
-    isBlockedByYou: false,
-    role: ["member", "admin", "owner"],
-  },
-  {
-    name: "Block",
-    type: "blockFriend",
-    component: <BlockIcon />,
-    isBlockedByYou: false,
-    isFriend: true,
-    role: ["member", "admin", "owner"],
-  },
-  {
-    name: "UnBlock",
-    type: "unblockFriend",
-    component: <HideSourceIcon />,
-    isBlockedByYou: true,
-
-    role: ["member", "admin", "owner"],
-  },
 ];
 export const DirectIcons: Array<Action> = [
   {
@@ -271,13 +228,13 @@ export const getDataForModal = (
         roomId: room.id,
         roomName: room.name,
       };
-    case "blockFriend":
-      return {
-        userId: selectedUser.intraId,
-        userName: selectedUser.firstName + " " + selectedUser.lastName,
-      };
-    case "message":
-      return selectedUser;
+    // case "blockFriend":
+    //   return {
+    //     userId: selectedUser.intraId,
+    //     userName: selectedUser.firstName + " " + selectedUser.lastName,
+    //   };
+    // case "message":
+    //   return selectedUser;
     default:
       return null;
   }

@@ -12,12 +12,20 @@ import {
   Settings,
 } from "@mui/icons-material";
 
-import { Drawer, ListComponent, ListNav, PopperComponent } from "..";
+import { Drawer, FriendRequestsNotifications, ListComponent, ListNav, PopperComponent } from "..";
 import { useSize } from "../../hooks";
 import { useAppDispatch, useAppSelector } from "../../../redux";
 import { setDisplayNavbar } from "../../../CoreSlice";
 import { userLogout } from "../../../../packages/feat-Auth/components/authSlice";
 import { deepPurple, purple } from "@mui/material/colors";
+
+import IconButton from "@mui/material/IconButton";
+import Badge from "@mui/material/Badge";
+import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
+
+import { useNavigate } from "react-router-dom";
+import { getFriendRequests } from "../../../../packages/feat-Account/components";
+import { I_User } from "../..";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 interface MenuTabs {
@@ -78,8 +86,24 @@ const Menu = [
 const ProfilePopper = () => {
   return <ListComponent menu={Menu} />;
 };
-const NotificationPopper = () => {
-  return <Typography sx={{ p: 2 }}>Notifications Popper.</Typography>;
+const NotificationPopper = ({
+  friendRequests,
+}: {
+  friendRequests: I_User[];
+}) => {
+  const dispatch = useAppDispatch();
+
+  console.log("friendRequests : ", friendRequests);
+
+  return (
+    <>
+      {friendRequests.length != 0 ? (
+        <FriendRequestsNotifications friendRequests={friendRequests} />
+      ) : (
+        <>You haven't any Friend requests</>
+      )}
+    </>
+  );
 };
 
 export const Header = () => {
@@ -115,10 +139,20 @@ export const Header = () => {
   const userAvatar = useAppSelector(
     ({ auth }) => auth.user?.avatar_url ?? null
   );
+  const friendRequests: I_User[] = useAppSelector(
+    (state) => state.friends.friendRequests
+  );
+  const navigate = useNavigate();
+
+  const isAuthenticated = useAuthentication();
+  useEffect(() => {}, [activeTab]);
 
   const handleClose = (e: any) => {
     setOpen(false);
   };
+  useEffect(() => {
+    dispatch(getFriendRequests());
+  }, []);
   useEffect(() => {
     setOpen(false);
   }, [isMobile]);
@@ -150,18 +184,20 @@ export const Header = () => {
     {
       id: "notif",
       render: (
-        <NotificationsNoneIcon
-          id="notif"
-          className={classes.iconBase}
+        <IconButton
           onClick={popperClick(
             "bottom-start",
-            <NotificationPopper />,
+            <NotificationPopper friendRequests={friendRequests} />,
             "notif",
             {
               paddingTop: "24px",
             }
           )}
-        />
+        >
+          <Badge badgeContent={friendRequests.length} color="secondary">
+            <NotificationsNoneIcon className={classes.iconBase} />
+          </Badge>
+        </IconButton>
       ),
     },
     {

@@ -20,3 +20,22 @@ export const getUserFriends = createAsyncThunk(
     }
   }
 );
+
+export const getFriendRequests = createAsyncThunk(
+  "friendRequests",
+  async (_, { getState }) => {
+    try {
+      const token = (getState() as RootState).auth.token;
+      const response = await apiRequest(`/users/friends/requests-received`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.log("error in friendsThunk", error);
+      throw error;
+    }
+  }
+);
