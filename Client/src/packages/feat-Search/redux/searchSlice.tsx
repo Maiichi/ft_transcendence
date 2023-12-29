@@ -5,7 +5,7 @@ import { userType } from "../../feat-Account/components";
 
 export interface S_Search {
   rooms: I_Room_Search[];
-  users: [];
+  users: userType[];
   isLoading: boolean;
 }
 

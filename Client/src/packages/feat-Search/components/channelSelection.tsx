@@ -1,18 +1,26 @@
 import { AvatarGroup, Avatar, Button } from "@mui/material";
 import { I_Room_Search } from "../types/types";
-import { Channel, ButtonNameHolder, ChannelName, ChannelType } from ".";
+import {
+  Channel,
+  ButtonNameHolder,
+  ChannelName,
+  ChannelType,
+  NoMatchesFound,
+} from ".";
 import { useState } from "react";
-import {  ModalComponent, useAppDispatch } from "../../../core";
+import { ModalComponent, useAppDispatch } from "../../../core";
 import { JoinChannelModal } from "../modal/joinChannelModal";
 import { useNavigate } from "react-router-dom";
 import { joinRoom } from "../redux/searchSlice";
+import { getAllRooms } from "../redux/searchThunk";
 
 interface Channels {
   filteredRooms: Array<any>;
   userId: number;
+  onSearch: boolean;
 }
 
-const ChannelsSelection = ({ filteredRooms, userId }: Channels) => {
+const ChannelsSelection = ({ filteredRooms, userId, onSearch }: Channels) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -77,7 +85,7 @@ const ChannelsSelection = ({ filteredRooms, userId }: Channels) => {
 
   return (
     <>
-      {filteredRooms.length !== 0 ? (
+      {filteredRooms.length? (
         filteredRooms.map((room: I_Room_Search) => (
           <Channel key={room.id}>
             <ButtonNameHolder>
@@ -107,7 +115,9 @@ const ChannelsSelection = ({ filteredRooms, userId }: Channels) => {
           </Channel>
         ))
       ) : (
-        <div>No Room available</div>
+        <NoMatchesFound>
+          {onSearch ? "No Room available" : "Search for Rooms"}
+        </NoMatchesFound>
       )}
     </>
   );
