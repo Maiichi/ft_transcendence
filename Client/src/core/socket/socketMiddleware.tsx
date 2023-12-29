@@ -41,6 +41,7 @@ import {
 import {
   addRoom,
   joinRoom,
+  removeRoom,
   setRoomJoined,
   setRoomLeaved,
 } from "../../packages/feat-Search/redux/searchSlice";
@@ -182,22 +183,25 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(unBanMemberFromRoom(data));
           });
           socket.on("IhaveBeenBanned", (data) => {
+            console.log("IhaveBeenBanned (data) == ", data);
             const { currentConversation } = getState().chat;
-            if (
-              currentConversation &&
-              currentConversation.roomId == data.roomId
-            )
-              dispatch(
-                setCurrentConversation({
-                  roomId: null,
-                  directConversationId: null,
-                  type: null,
-                })
-              );
-            dispatch(removeMembership(data));
+            if (currentConversation)
+            {
+              if (currentConversation.roomId == data.roomId)
+                dispatch(
+                  setCurrentConversation({
+                    roomId: null,
+                    directConversationId: null,
+                    type: null,
+                  })
+                );
+            }
+            dispatch(removeMembership(data.roomId));
+            dispatch(removeRoom(data.roomId));
           });
           socket.on("IhaveBeenUnBanned", (data) => {
             dispatch(addMembership(data));
+            dispatch(addRoom(data));
             // const {currentConversation} = getState().chat;
             // if (currentConversation.roomId == data.roomId)
             //   dispatch(
