@@ -38,7 +38,8 @@ export class UserService {
                 firstName: true,
                 lastName: true,
                 avatar_url: true,
-                status: true
+                status: true,
+                inGame: true,
             }
         });
         if (!user)

@@ -29,7 +29,6 @@ class Game {
   private _player2: Player;
   private _middlePaddle?: Paddle;
   private _hasMiddlePaddle: boolean;
-  private _watchers: Socket[] = [];
   private _ball: Ball;
   private _interval: NodeJS.Timer;
   private _endCallback: Function;
@@ -117,14 +116,6 @@ class Game {
     };
   }
 
-  public addWatcher(socket: Socket): boolean {
-    if (this._watchers.length < Constants.MAX_WATCHERS) {
-      this._watchers.push(socket);
-      return true;
-    }
-    return false;
-  }
-
   private broadcastState(): void {
     const currentState = this.buildGameStateObject();
     // console.log('currentState ==', currentState);
@@ -134,8 +125,6 @@ class Game {
     this._player2
       .getSocket()
       .emit('state', { ...currentState, hasWon: this._player2.hasWon() });
-    // TODO: send to watchers
-    // this._watchers.forEach((watcher) => watcher.emit('state', currentState));
   }
 
   private delay(ms: number) {
@@ -159,8 +148,6 @@ class Game {
   }
 
   public play(): void {
-    // console.log('starts playing !');
-    
     if (this._ball.handleHCollision(this._player1.getPaddle())) {
         this.awardAndPause(this._player2);
         this._middlePaddle?.reset();
@@ -206,8 +193,6 @@ class Game {
   }
 
   public getPlayer() {
-    // console.log('player 1 ==', this._player1);
-    // console.log('player 2 ==', this._player2);
     return [this._player1, this._player2];
   }
 

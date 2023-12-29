@@ -54,7 +54,7 @@ const GamesHistory = () => {
 
   return (
     <Container>
-      <Relationship
+      {/* <Relationship
         relations={["friend"]}
         opId={gid}
         isOwner={isOwner}
@@ -63,7 +63,7 @@ const GamesHistory = () => {
             You are `NOT ALLOW` to see the history of this user
           </Alert>
         }
-      >
+      > */}
         {isLoading ? (
           <Loading />
         ) : (
@@ -87,7 +87,7 @@ const GamesHistory = () => {
             </Table>
           </TableContainer>
         )}
-      </Relationship>
+      {/* </Relationship> */}
     </Container>
   );
 };

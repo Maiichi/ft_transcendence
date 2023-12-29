@@ -46,16 +46,7 @@ import {
   setRoomLeaved,
 } from "../../packages/feat-Search/redux/searchSlice";
 import { useAppSelector } from "../redux";
-import {
-  acceptUserGameInvite,
-  declineUserGameInvite,
-  inviteUserToGame,
-  opponentAcceptInvite,
-  receiveGameInvitation,
-  setInviteAccepted,
-  setInviteDeclined,
-  setInviterId,
-} from "../../packages/feat-Game/redux/GameSlice";
+// import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
 import {
   addMessageToConversation,
   createDirectConversation,
@@ -70,6 +61,7 @@ import {
   userBlockedMe,
 } from "../../packages/feat-Account/components/redux/blockSlice";
 import { AlertColor } from "@mui/material";
+import { acceptGameInvitation, declineGameInvitation, inviteToGame, resetGame, resetGameState, setCurrentTab, setGameMode, setInviteAccepted, setInvited, setInviter, setInviteReceived, setInviteSent } from "../../packages/feat-Game/redux/GameSlice";
 import {
   setToken,
   userLogout,
@@ -110,6 +102,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           socket.on("roomUpdated", (data) => {
             OpenSnackbar(data.successMsg, "success");
+            dispatch(updateRoomSucess(data.data));
+          });
+          socket.on('roomHasBeenUpdated', (data) => {
             dispatch(updateRoomSucess(data.data));
           });
           socket.on("newRoom", (data) => {
@@ -256,7 +251,6 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             const { selectedUser } = getState().chat;
             dispatch(userBlockedMe(data));
             dispatch(removeConversation(data.intraId));
-            console.log("selectedUser ==", selectedUser);
             if (selectedUser) {
               if (selectedUser.intraId == data.intraId)
                 dispatch(
@@ -268,38 +262,56 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                 );
             }
           });
-          socket.on("gameInvitationReceived", (data) => {
-            console.log("gameInvitationReceived");
-            console.log("data (gameInvitationReceived) == ", data);
-            dispatch(setInviterId(data.inviterId));
-            dispatch(setDisplayGameInvitation(true));
-            dispatch(receiveGameInvitation(true));
-          });
-          socket.on("gameInvitationAccepted", () => {
-            console.log(
-              "listen for the event (gameInvitationAccepted) should be display in all accepterSocket"
-            );
+          socket.on('gameInvitationReceived', (data) => {
+              dispatch(setInviter(data.inviter));
+              dispatch(setInviteReceived(true));
+              dispatch(setDisplayGameInvitation(true));
+              dispatch(setGameMode(data.gameMode));
+          }); 
+          // this event for all the tabs to inform them that a an invite is declined
+          socket.on('gameInvitationDeclined', () => {
             dispatch(setDisplayGameInvitation(false));
-            dispatch(setInviteAccepted(true));
+            dispatch(resetGameState());
           });
-          socket.on("opponentAcceptGameInvite", (data) => {
-            console.log("data (opponentAcceptGameInvite) == ", data);
-            console.log(
-              "listen for the event (gameInvitationAccepted) should be display in all accepterSocket"
-            );
-            dispatch(opponentAcceptInvite(true));
+          // this event will appears on the sender of the game invitation
+          socket.on('opponentDeclineGameInvite', (data) => {
+            console.log("data (opponentDeclineGameInvite) = ", data);
+            const {invited} = getState().game;
+            if (invited)
+            {
+              if (invited.intraId === data.data)
+                OpenSnackbar(data.successMsg, "error");
+                dispatch(setInviteSent(false));
+                dispatch(setInvited(null));
+                dispatch(setCurrentTab(false));
+            }
+            // dispatch(resetGame());
           });
-          socket.on("opponentDeclineGameInvite", (data) => {
-            OpenSnackbar(data.successMsg, "error");
-          });
-          socket.on("gameInvitationDeclined", () => {
-            console.log(
-              "listen for the event (gameInvitationDeclined) should be display in all declinerSocket"
-            );
+          // this event for the user who 
+          socket.on('gameInvitationAccepted', (data) => {
+            // dispatch(setInviteReceived(false));
             dispatch(setDisplayGameInvitation(false));
-            dispatch(setInviteDeclined(true));
+            const {currentTab} = getState().game;
+            if (currentTab !== data.data)
+            {
+              dispatch(setInviteReceived(false));
+              // setTimeout(() => {
+              //   dispatch(setInviter(null));
+              // }, 1000);
+            }
           });
-          socket.on("userLoggedOut", () => {
+          socket.on('opponentAcceptGameInvite', (data) => {
+            const {invited} = getState().game;
+            if (invited)
+            {
+              if (invited.intraId === data.data.intraId)
+              {
+                dispatch(setInviteSent(false));
+                dispatch(setInviteAccepted(true));
+              }
+            }
+          });
+          socket.on('userLoggedOut' , () => {
             console.log("logout");
             dispatch(setToken(null));
             dispatch(disconnectSocket());
@@ -377,14 +389,14 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
       case unblockUser.type:
         socket.emit("unBlockUser", action.payload);
         break;
-      case inviteUserToGame.type:
-        socket.emit("inviteToGame", action.payload);
+      case inviteToGame.type:
+        socket.emit('inviteToGame', action.payload);
         break;
-      case acceptUserGameInvite.type:
-        socket.emit("acceptGameInvite", action.payload);
+      case declineGameInvitation.type:
+        socket.emit('declineGameInvite', action.payload);
         break;
-      case declineUserGameInvite.type:
-        socket.emit("declineGameInvite", action.payload);
+      case acceptGameInvitation.type:
+        socket.emit('acceptGameInvite', action.payload);
         break;
       case userLogout.type:
         socket.emit("logout");

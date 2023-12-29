@@ -14,8 +14,9 @@ import chatSlice from "../../packages/feat-Chat/components/redux/chatSlice";
 import friendSlice from "../../packages/feat-Account/components/redux/friendSlice";
 import ProfileSlice from "../../packages/feat-Account/components/redux/ProfileSlice";
 // import blockSlice from "../../packages/feat-Chat/components/blockSlice";
-import GameSlice from "../../packages/feat-Game/redux/GameSlice";
+// import GameSlice from "../../packages/feat-Game/redux/GameSlice";
 import blockSlice from "../../packages/feat-Account/components/redux/blockSlice";
+import gameSlice2 from "../../packages/feat-Game/redux/GameSlice";
 
 // ...
 
@@ -27,7 +28,8 @@ const rootReducer = combineReducers({
   socket: socketSlice,
   search: searchSlice,
   chat: chatSlice,
-  gameState: GameSlice,
+  // gameState: GameSlice,
+  game: gameSlice2,
   friends: friendSlice,
   profile: ProfileSlice,
   block: blockSlice,

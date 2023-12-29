@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { GameStepComponentProps } from "../utils/types";
 import { ModalComponent, useAppDispatch, useAppSelector } from "../../../core";
-import { setGameStep } from "../redux/GameSlice";
 import { STEPS } from "../utils/constants";
 import { InviteUserToGame } from "./InviteGame";
 import { useState } from "react";
+import { setCurrentTab, setGameStep } from "../redux/GameSlice";
 
 const StyledCard = styled.div`
     width: 100%;
@@ -116,7 +116,7 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
     socket,
     onReset,
 }) => {
-    const gameMode = useAppSelector((state) => state.gameState.gameMode);
+    const gameMode = useAppSelector((state) => state.game.gameMode);
     const dispatch = useAppDispatch();
 
     // properties for modal
@@ -146,12 +146,14 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
                     handleClose={handleClose}
                 />
             );
+        
     };
     const handleJoinQueue = () => {
         if (socket) {
             socket.emit("join_queue_match", gameMode);
         }
         dispatch(setGameStep(STEPS.WAITING_QUEUE));
+        dispatch(setCurrentTab(true));
     };
     return (
         <>

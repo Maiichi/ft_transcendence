@@ -29,12 +29,13 @@ import { IconHolder } from "../components/style";
 import { Actions } from "../components/UserActions";
 import BlockIcon from "@mui/icons-material/Block";
 import { BlockUserModal } from "../components/modals/BlockUserModal";
+// import {
+//   inviteUserToGame,
+//   inviteUserToGameFromChat,
+// } from "../../feat-Game/redux/GameSlice";
+import { inviteToGame, setCurrentTab, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-import {
-  inviteUserToGame,
-  inviteUserToGameFromChat,
-} from "../../feat-Game/redux/GameSlice";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
 import GamesIcon from "@mui/icons-material/Games";
@@ -274,17 +275,27 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     );
 
     if (selectedUser) {
-      // if (iconType === "play") {
-      //   // dispatch(setSelectedUser(selectedUser.user));
-      //   dispatch(
-      //     inviteUserToGame({
-      //       invitedId: selectedUserId,
-      //       inviterId: user.intraId,
-      //     })
-      //   );
-      //   dispatch(inviteUserToGameFromChat(true));
-      //   navigate("/game");
-      // } else if (iconType == "viewProfile") navigate(`/user/${selectedUserId}`);
+      if (iconType === 'play')       {         
+          dispatch(inviteToGame({
+            invitedId : selectedUser.user.intraId,
+            inviterId : user.intraId,
+            gameMode  : "dual",
+          }));
+          // TODO:  need a check (inGame)
+          if (selectedUser.user.status === "ONLINE")
+          {
+            // dispatch(inviteUserToGameFromChat(true));         
+            dispatch(setInviteSent(true));
+            dispatch(setInvited(selectedUser.user));
+            dispatch(setCurrentTab(true));
+            dispatch(setInviteFromChat(true));
+            navigate('/game');
+            // dispatch(setGameStep(STEPS.WAITING_QUEUE));
+          }
+          else
+            return;
+      }
+      if (iconType == "viewProfile") navigate(`/user/${selectedUserId}`);
       const dataForModal = getDataForModal(iconType, room, selectedUser.user);
       const modalComponent: JSX.Element = getModalComponent(
         iconType,

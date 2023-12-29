@@ -6,7 +6,7 @@ static readonly MAP_HEIGHT = 600;
 
 // game config and score
 static readonly FPS = 1000 / 60;
-static readonly MAX_SCORE = 10;
+static readonly MAX_SCORE = 3;
 static readonly MAX_WATCHERS = 10;
 static readonly MAX_DISTANCE_FROM_MAP_EDGE = Constants.MAP_WIDTH / 4;
 

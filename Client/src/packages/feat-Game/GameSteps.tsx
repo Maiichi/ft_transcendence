@@ -3,26 +3,25 @@ import { useAppDispatch, useAppSelector } from "../../core";
 import { Game } from "./Game";
 import { InviteFriend } from "./components/InviteFriend";
 import { MapSelection } from "./components/MapSelection";
-import {
-    inviteUserToGameFromChat,
-    resetGame,
-    setCountdown,
-    setGameStep,
-    setInviteAccepted,
-} from "./redux/GameSlice";
 import { STEPS } from "./utils/constants";
 import { Socket, io } from "socket.io-client";
 import { MatchLoading } from "./components/MatchLoading";
-import { setOpenSnackbar, setServerMessage } from "../../core/CoreSlice";
+import { setOpenSnackbar, setServerMessage, setSeverity } from "../../core/CoreSlice";
 import { GameState } from "./utils/types";
+import { resetGame, resetGameState, setCountdown, setGameStep } from "./redux/GameSlice";
 
 export const GameSteps: React.FC = () => {
-    const currentStep = useAppSelector((state) => state.gameState.currentStep);
     const dispatch = useAppDispatch();
-
+    
     const token = useAppSelector((state) => state.auth.token);
     const [socket, setSocket] = useState<Socket | null>(null);
     const [socketReady, setSocketReady] = useState<boolean>(false);
+    
+    
+    const currentStep = useAppSelector((state) => state.game.currentStep);
+    const gameMode = useAppSelector((state) => state.game.gameMode);
+
+
 
     useEffect(() => {
         // Establish the socket connection when the component mounts
@@ -44,12 +43,16 @@ export const GameSteps: React.FC = () => {
         return () => {
             newSocket.disconnect();
         };
-    }, [token]); //
+    }, []); //
 
     socket?.on("joinQueueError", (data) => {
+        handleReset();
         dispatch(setServerMessage(data));
         dispatch(setOpenSnackbar(true));
+        dispatch(setSeverity('error'));
     });
+
+    const isCurrentTab = useAppSelector((state) => state.game.currentTab);
 
     // Define emitEvent function
     const emitEvent = (event: string, data?: any) => {
@@ -65,61 +68,60 @@ export const GameSteps: React.FC = () => {
         }
     };
 
+    
+
+    onEvent("state", (newFrame: GameState) => {
+        if (newFrame.state === "WAITING" && isCurrentTab)
+            dispatch(setGameStep(STEPS.WAITING_QUEUE));
+        else if (newFrame.state === "PLAYING" && isCurrentTab)
+            dispatch(setGameStep(STEPS.GAME_START));
+    });
+
     onEvent("countdown", (count) => {
         // Update state with countdown value
+        console.log("countdown");
         dispatch(setCountdown(count));
     });
 
-    onEvent("state", (newFrame: GameState) => {
-        if (newFrame.state === "WAITING")
+    
+    const isInviteAccepted = useAppSelector((state) => state.game.inviteAccepted);
+    const invited = useAppSelector((state) => state.game.invited);
+    const isChatInvite = useAppSelector((state) => state.game.chatInvite);
+
+    // those event for the inviter {from gameComponent}
+    useEffect(() => {
+        console.log("sender invite");
+        if (isCurrentTab && isInviteAccepted && invited && socketReady && !isChatInvite)
+        {
+            console.log("sender joins the queue invite  (came from chat)");
             dispatch(setGameStep(STEPS.WAITING_QUEUE));
-        else if (newFrame.state === "PLAYING")
-            dispatch(setGameStep(STEPS.GAME_START));
-    });
-
-    // invite Game modal
-    const isInviteAccepted = useAppSelector(
-        (state) => state.gameState.inviteAccepted
-    );
-    // const isInviteDeclined = useAppSelector((state) => state.gameState.inviteDeclined);
-    useEffect(() => {
-        console.log("is this is shown at the inviter (invite) ");
-        if (isInviteAccepted && socketReady) {
-            console.log("invited joins the queue !!!!");
-            console.log(" == socket == ", socket);
-            // socket?.emit('join_queue_match_invitaion', "dual");
-            emitEvent("join_queue_match_invitaion", "dual");
-            dispatch(setInviteAccepted(false));
+            emitEvent("join_queue_match_invitaion", gameMode);
         }
-    }, [isInviteAccepted, socketReady]);
+    }, [isCurrentTab, isInviteAccepted, invited, socketReady]);
 
-    const isChatInvite = useAppSelector((state) => state.gameState.chatInvite);
-    const isOpponentAcceptInvite = useAppSelector(
-        (state) => state.gameState.acceptOpponentInvite
-    );
+    const inviter = useAppSelector((state) => state.game.inviter);
+    const isInviteReceived = useAppSelector((state) => state.game.inviteReceived);
+    // those event for the invited
     useEffect(() => {
-        console.log("is this is shown at the inviter (invite) ");
-        if (isChatInvite && socketReady && isOpponentAcceptInvite) {
-            console.log("inviter joins the queue !!!!");
-            console.log(" == socket == ", socket);
-            // socket?.emit('join_queue_match_invitaion', "dual");
-            emitEvent("join_queue_match_invitaion", "dual");
-            dispatch(setGameStep(STEPS.GAME_START));
-            dispatch(inviteUserToGameFromChat(false));
+        if (isCurrentTab && isInviteReceived && inviter && socketReady)
+        {
+            console.log("receiver joins the queue invite");
+            dispatch(setGameStep(STEPS.WAITING_QUEUE));
+            emitEvent("join_queue_match_invitaion", gameMode);
         }
-    }, [isChatInvite, socketReady, isOpponentAcceptInvite]);
+    }, [isCurrentTab, isInviteReceived, inviter, socketReady]);
 
+
+    // this event is for the inviter {from ChatComponent}
+   
     useEffect(() => {
-        console.log("is this is shown at the inviter (invite) ");
-        if (socketReady && isOpponentAcceptInvite) {
-            console.log("inviter joins the queue !!!!");
-            console.log(" == socket == ", socket);
-            // socket?.emit('join_queue_match_invitaion', "dual");
-            emitEvent("join_queue_match_invitaion", "dual");
-            dispatch(inviteUserToGameFromChat(false));
+        if (isCurrentTab && isChatInvite && isInviteAccepted && invited && socketReady)
+        {
+            console.log("sender joins the queue invite");
+            dispatch(setGameStep(STEPS.WAITING_QUEUE));
+            emitEvent("join_queue_match_invitaion", gameMode);
         }
-    }, [socketReady, isOpponentAcceptInvite]);
-
+    }, [isCurrentTab, isInviteAccepted, invited, socketReady, isChatInvite]);
     // Conditional rendering based on the current step
     const renderStep = () => {
         switch (currentStep) {
@@ -139,6 +141,7 @@ export const GameSteps: React.FC = () => {
     const handleReset = () => {
         dispatch(resetGame());
     };
+
 
     if (!socketReady) {
         return <div>Loading...</div>;

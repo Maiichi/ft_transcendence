@@ -8,9 +8,10 @@ import { BlacklistService } from 'src/user/blacklist/blacklist.service';
 import { RoomService } from './room/room.service';
 import { FriendService } from 'src/user/friend/friend.service';
 import { MessageService } from "src/chat/message/message.service";
+import { GameService } from 'src/game/game.service';
 
 @Module({
   controllers: [ChatController],
-  providers: [ChatService, UserService, JwtService ,ChatGateway, BlacklistService, RoomService, FriendService, MessageService]
+  providers: [ChatService, UserService, JwtService ,ChatGateway, BlacklistService, RoomService, FriendService, MessageService, GameService]
 })
 export class ChatModule {}

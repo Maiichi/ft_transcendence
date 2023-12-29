@@ -13,6 +13,7 @@ import { Logger } from '@nestjs/common';
 import Game from './models/game';
 import Player from './models/player';
 import { UserService } from 'src/user/user.service';
+import { Console } from 'console';
 
 @WebSocketGateway({
   namespace: "game",
@@ -48,7 +49,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     return null;
   }
-  
   
   private printPlayerSockets() {
     console.log('player sockets {');
@@ -95,9 +95,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   handleDisconnect(client: Socket) {
     // this.logger.log(`Client disconnected: ${client.id}`);
+    console.log("handleDisconnect");
     const intraId = this.getUserIdFromSocketId(client.id);
     if (intraId)
     {
+      const game = this.games.find((_game) => _game.hasSocket(client));
+      if (game) {
+        this.gameService.updateUserStatusInGame(intraId, false);
+        game.handlePlayerDisconnect(client);
+        // game.stop();
+      }
       const socketsOfPlayer = this.playerSockets.get(intraId) || [];
       const updatedSockets = socketsOfPlayer.filter(
         (socketId) => socketId !== client.id
@@ -110,13 +117,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       else
         this.playerSockets.set(intraId, updatedSockets);
-      const game = this.games.find((gm) => gm.hasSocket(client));
-      if (game) {
-        console.log('-------------------- is in game');
-        this.gameService.updateUserStatusInGame(intraId, false);
-        game.handlePlayerDisconnect(client);
-        game.stop();
-      }
+     
       client.disconnect();
       console.log(`--------Gamer disconnected: ${client.id}`);
       this.printPlayerSockets();
@@ -159,23 +160,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   async _storeGame(game : Game)
   {
-    console.log("store Game");
     let winnerSocket;
     const players = game.getPlayer();
-    // console.log(' plyer 0 == ', players[0]);
-    // console.log(' plyer 1 == ', players[1]);
-    // console.log('type of ==', typeof(players[0].getScore()));
-    console.log("socket for the user 0 ===========", (players[0].getSocket().id));
-    console.log("socket for the user 1 ===========",(players[1].getSocket().id));
-   
+
     if (players[1].getScore() > players[0].getScore())
       winnerSocket = players[1].getSocket();
     else if (players[1].getScore() < players[0].getScore())
       winnerSocket = players[0].getSocket();
     const winnerId = this.getUserIdFromSocketId(winnerSocket.id);
 
-     // Filter out null values from playersIds array
-    const playersIds: number[] = [players[0], players[1]].map(player => this.getUserIdFromSocketId(player.getSocket().id)).filter(id => id !== null);
+    // Filter out null values from playersIds array
+    const playersIds: number[] = [players[0], players[1]].map(
+      player => this.getUserIdFromSocketId(player.getSocket().id)).filter(id => id !== null);
     // Call the saveGame method in GameService
     await this.gameService.saveGame({
       gameMode: game.getGameType(),
@@ -184,37 +180,38 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       winnerId: winnerId,
       players: playersIds,
     });
+
   }
 
   private async _removeOverGame(game: Game) {
-    console.log('remove Over game');
-    const sockets = game.getSockets();
-
-    // console.log('winner ===== ', this._getWinnerId(game));
-    // this._getWinnerId(game);
     
+    console.log("over Game");
+    const sockets = game.getSockets();
     sockets.forEach((socket) => {
-      // console.log('(gameOver) socketId === ', socket.id);
+      this.server.to(socket.id).emit('gameEnds');
       if (this.getUserIdFromSocketId(socket.id))
+      {
         this.gameService.updateUserStatusInGame(
           this.getUserIdFromSocketId(socket.id), 
           false);
+      }
     });
     this.unique.delete(sockets[0]);
     this.unique.delete(sockets[1]);
-    console.log('heeeere 1');
-    this.games.splice(this.games.indexOf(game), 1);
-    console.log('heeeere 2');
     await this._storeGame(game);
-    console.log('removeOverGame : ' + game.getId());
+    // console.log('heeeere 1');
+    this.games.splice(this.games.indexOf(game), 1);
+    // console.log('heeeere 2');
+    // console.log('removeOverGame : ' + game.getId());
     // this.logger.log(`number of current games: ${this.games.length}`);
-    console.log(`number of current games: ${this.games.length}`);
+    // console.log(`number of current games: ${this.games.length}`);
   }
 
-  private _startNewGame(socketsArr: Socket[], payload: any): void {
+  
+  private async _startNewGame(socketsArr: Socket[], payload: any) {
     console.log('----------------- start Game -----------------');
     let countdown = 5; // 5 seconds countdown
-
+    // console.log(socketsArr);
       let interval = setInterval(() => {
         socketsArr.forEach((socket) => {
           // console.log(socket.id)
@@ -247,37 +244,50 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   @SubscribeMessage('join_queue_match')
-  joinQueue(client: Socket, payload: any) {
-    if (this.unique.has(client)) {
-      // console.log('unique ==', this.unique);
-      console.log('it goes here');
-      const message = `You cannot join again.`;
-      this.server.to(client.id).emit('joinQueueError', message);
-      // need to emit an event to tell the user that he's already in the queue.
+  async joinQueue(client: Socket, payload: any) {
+    console.log("paylaod === ", payload);
+    // get the user and check if he's already in game
+    const userId = this.getUserIdFromSocketId(client.id);
+    const user = await this.userService.getUserInfos(userId);
+    console.log("user in game -- ", user.inGame);
+    if (user && user.inGame)
+    {
+      this.server.to(client.id).emit('joinQueueError', `You cannot join. You're currently playing a game`);
       return;
     }
-    console.log(`Client ${client.id} joined queue`);
+    if (this.unique.has(client)) {
+      const message = `You cannot join again. You're already in the matchmaking queue`;
+      this.server.to(client.id).emit('joinQueueError', message);
+      return;
+    }
     this.unique.add(client);
-    const userId = this.getUserIdFromSocketId(client.id);
+   
+    // check if the user is another queue;
     const isInQueue = 
       this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
-      this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
+      this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
+      this.invitationGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
 
     if (isInQueue) {
-      const message = `User ${userId} is already in the queue. Cannot join again.`;
+      const message = `You're already in a queue. Cannot join again.`;
       console.log(message);
       this.server.to(client.id).emit('joinQueueError', message);
       return;
     }
+
+    console.log(`Client ${client.id} joined queue`);
     if (payload === 'dual') {
       console.log('normalGameQueue ==', this.normalGameQueue.length);
       if (this.normalGameQueue.push(client) > 1)
-        this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
+        await this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
     }
     else if (payload === 'triple') {
+      console.log('tripleGameQueue ==', this.normalGameQueue.length);
       if (this.tripleGameQueue.push(client) > 1)
-      this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
+      await this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
     }
+    
+
   }
   
 	@SubscribeMessage('join_queue_match_invitaion')
@@ -291,6 +301,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         // need to emit an event to tell the user that he's already in the queue.
         return;
       }
+      
       this.unique.add(client);
       const userId = this.getUserIdFromSocketId(client.id);
       const isInQueue = 
@@ -308,38 +319,43 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         if (this.invitationGameQueue.push(client) > 1)
           this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'dual');
       }
+      if (payload === 'triple') {
+        if (this.invitationGameQueue.push(client) > 1)
+          this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'triple');
+      }
     } catch (error) {
       console.log('error join_queue_match_invitaion == ', error);
       return error; 
     }
     
   }
-  @SubscribeMessage('decline_invitaion')
-  declineInvitation(client: Socket, payload: any) {
-    console.log(` ----------- Client ${client.id} joined queue invitation`);
-    if (this.unique.has(client)) {
-      // console.log('unique ==', this.unique);
-      const message = `You cannot join again.`;
-      this.server.to(client.id).emit('joinQueueError', message);
-      // need to emit an event to tell the user that he's already in the queue.
-      return;
-    }
-    this.unique.add(client);
-    const userId = this.getUserIdFromSocketId(client.id);
-    const isInQueue = 
-      this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
-      this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
 
-    if (isInQueue) {
-      const message = `User ${userId} is already in an other queue. Cannot join again.`;
-      console.log(message);
-      this.server.to(client.id).emit('joinQueueError', message);
-      return;
-    }
-    if (payload === 'dual') {
-      console.log('invitationGameQueue ==', this.invitationGameQueue.length);
-      if (this.invitationGameQueue.push(client) > 1)
-        this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'dual');
-    }
-  }
+  // @SubscribeMessage('decline_invitaion')
+  // declineInvitation(client: Socket, payload: any) {
+  //   console.log(` ----------- Client ${client.id} joined queue invitation`);
+  //   if (this.unique.has(client)) {
+  //     // console.log('unique ==', this.unique);
+  //     const message = `You cannot join again.`;
+  //     this.server.to(client.id).emit('joinQueueError', message);
+  //     // need to emit an event to tell the user that he's already in the queue.
+  //     return;
+  //   }
+  //   this.unique.add(client);
+  //   const userId = this.getUserIdFromSocketId(client.id);
+  //   const isInQueue = 
+  //     this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
+  //     this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
+
+  //   if (isInQueue) {
+  //     const message = `User ${userId} is already in an other queue. Cannot join again.`;
+  //     console.log(message);
+  //     this.server.to(client.id).emit('joinQueueError', message);
+  //     return;
+  //   }
+  //   if (payload === 'dual') {
+  //     console.log('invitationGameQueue ==', this.invitationGameQueue.length);
+  //     if (this.invitationGameQueue.push(client) > 1)
+  //       this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'dual');
+  //   }
+  // }
 }

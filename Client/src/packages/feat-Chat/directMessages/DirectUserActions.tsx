@@ -16,6 +16,7 @@ import {
   isSentFriendRequest,
 } from "../components/utils";
 import { useNavigate } from "react-router-dom";
+import { inviteToGame, setCurrentTab, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
 import GamesIcon from "@mui/icons-material/Games";
@@ -38,6 +39,7 @@ export const UserActionInDirectConversation = ({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { selectedUser } = useAppSelector((state) => state.chat);
+  const currentUser = useAppSelector((state) => state.auth.user); 
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
@@ -79,6 +81,22 @@ export const UserActionInDirectConversation = ({
         break;
       case "viewProfile":
         navigate(`/user/${selectedUser.intraId}`);
+        break;
+      case "play":
+        dispatch(inviteToGame({
+          invitedId : selectedUser.intraId,
+          inviterId : currentUser.intraId,
+          gameMode: "dual"
+        }));
+         // TODO:  need a check (inGame)
+        if (selectedUser.status === "ONLINE")
+        {
+          dispatch(setInviteSent(true));
+          dispatch(setInvited(selectedUser));
+          dispatch(setCurrentTab(true));
+          dispatch(setInviteFromChat(true));
+          navigate('/game');
+        }
         break;
       case "sendFriendRequest":
         dispatch(sendFriendRequest(selectedUser.intraId));
