@@ -39,7 +39,7 @@ export class FriendService
         if (isBlockedByYou)
             throw new WsException(`${receiver.userName} is blocked by you, you can't send him a friend req`);
         // check if they are already friends
-        const isFriend = await this.isFriend(sender.intraId, receiver.intraId);
+        const isFriend = await this.userService.isFriend(sender.intraId, receiver.intraId);
         if (isFriend)
             throw new WsException(`${sender.userName} and ${receiver.userName} are already friends`);
         // check if friend request is already sent
@@ -91,7 +91,7 @@ export class FriendService
         if (isBlockedByYou)
             throw new WsException(`${requestSender.userName} is blocked by you`);
         
-        const isFriend = await this.isFriend(userAccept.intraId, requestSender.intraId);
+        const isFriend = await this.userService.isFriend(userAccept.intraId, requestSender.intraId);
         if (isFriend)
             throw new WsException(`${userAccept.userName} and ${requestSender.userName} are already friends`);
         
@@ -136,6 +136,53 @@ export class FriendService
         return updateUserFriends;
     }
 
+    // decline a friend Request 
+    async declineFriendRequest(body: AcceptFriendRequestDto, userId: number)
+    {
+        // userAccept is the user who accept the friend request
+        const userAccept = await this.userService.getUser(userId);
+        if(!userAccept)
+            throw new WsException(`(userAccept) userId = ${userAccept} does not exist !`);
+        const requestSender = await this.userService.getUser(body.senderId);
+        if (!requestSender)
+            throw new WsException(`(sender) userId = ${body.senderId} does not exist !`);
+        if (userAccept.intraId === requestSender.intraId)
+            throw new WsException(`you can't decline a friend request to ur self`);
+        // check blacklist before sending a friend request
+        const isBlockedByYou = await this.blacklistService.isBlockedByYou(userAccept.intraId, userAccept.intraId);
+        const isBlockingYou  = await this.blacklistService.isBlockingYou(userAccept.intraId, userAccept.intraId);
+
+        if (isBlockingYou)
+            throw new WsException(`${requestSender.userName} is Blocking you`);
+        if (isBlockedByYou)
+            throw new WsException(`${requestSender.userName} is blocked by you`);
+        
+        // const isFriend = await this.isFriend(userAccept.intraId, requestSender.intraId);
+        // if (!isFriend)
+        //     throw new WsException(`${userAccept.userName} and ${requestSender.userName} are already friends`);
+        
+        // check if friend request is already sent
+        const isRequestSentByYou = await this.isFriendRequestSentByYou(userAccept.intraId, requestSender.intraId);
+        const isRequestSentByHim = await this.isFriendRequestSentByHim(userAccept.intraId, requestSender.intraId);
+
+        if (isRequestSentByYou)
+            throw new WsException(`${userAccept.userName} already sent a friend request to ${requestSender.userName}`);
+        // let updateFriendRequest;
+        if (!isRequestSentByHim)
+            throw new WsException(`${requestSender.userName} hasnt sent you a friend request`);
+        // get the request ID;
+        const getFriendRequestId: number = await this.getFriendRequestId(requestSender.intraId, userAccept.intraId);
+        // update the friend request if the user accept it
+        const deletedFriendRequest = await this.prisma.friendRequest.delete({
+                where : {
+                    id: getFriendRequestId
+                }
+            });
+    
+        console.log(`${userAccept.userName} has declined ${requestSender} friend request`);
+        return deletedFriendRequest;
+    }
+
     async isFriendRequestSentByYou(senderId: number, receiverId: number)
     {
         const isSent = await this.prisma.friendRequest.findFirst({
@@ -172,25 +219,4 @@ export class FriendService
         });
         return getId.id;
     }
-
-    async isFriend(senderId: number, receiverId: number) : Promise<boolean>{
-        const isFriend = await this.prisma.user.findUnique({
-            where: {
-                intraId: senderId,
-                friends: {
-                    some: {
-                        intraId: receiverId,
-                    },
-                },
-                friendsOf: {
-                    some: {
-                        intraId: receiverId,
-                    },
-                },
-            },
-        });
-        const res: boolean = !!isFriend; // Convert to boolean
-        return res;
-    }
 }
-

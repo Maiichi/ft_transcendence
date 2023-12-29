@@ -167,6 +167,20 @@ export class UserController
     }
 
 
+
+    // API endpoint to get friendRequests sent to the current User
+    // GetUser() is a decorator that get the current connected User
+    @Get('/friends/requests-received')
+    async getFriendRequests(@GetUser() user:User, @Res() res: Response)
+    {
+        try {
+            return await this.userService.getFriendRequests(user.intraId, res);
+        } catch (error) {
+            return res.send({error: error})
+        }
+    }
+
+
     
 
 }

@@ -424,5 +424,42 @@ export class UserService {
         
         return res.send({data : users});
     }
+
+    // get friendsRequests sent the to the current user
+    async getFriendRequests(userId: number, res: Response)
+    {
+        const friendRequests = await this.prisma.friendRequest.findMany({
+            where : {
+                receiverId : userId,
+            },
+            select : {
+                sender: true,
+            }
+        });
+        let requests = [];
+        friendRequests.forEach((request) => requests.push(request.sender));
+        return res.send(requests);
+    }
     
+
+    // a function that checks if two user are friends
+    async isFriend(senderId: number, receiverId: number) : Promise<boolean>{
+        const isFriend = await this.prisma.user.findUnique({
+            where: {
+                intraId: senderId,
+                friends: {
+                    some: {
+                        intraId: receiverId,
+                    },
+                },
+                friendsOf: {
+                    some: {
+                        intraId: receiverId,
+                    },
+                },
+            },
+        });
+        const res: boolean = !!isFriend; // Convert to boolean
+        return res;
+    }
 }

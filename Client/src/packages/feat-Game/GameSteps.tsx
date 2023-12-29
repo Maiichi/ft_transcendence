@@ -6,7 +6,7 @@ import { MapSelection } from "./components/MapSelection";
 import { STEPS } from "./utils/constants";
 import { Socket, io } from "socket.io-client";
 import { MatchLoading } from "./components/MatchLoading";
-import { setOpenSnackbar, setServerMessage } from "../../core/CoreSlice";
+import { setOpenSnackbar, setServerMessage, setSeverity } from "../../core/CoreSlice";
 import { GameState } from "./utils/types";
 import { resetGame, resetGameState, setCountdown, setGameStep } from "./redux/GameSlice";
 
@@ -22,7 +22,6 @@ export const GameSteps: React.FC = () => {
     const gameMode = useAppSelector((state) => state.game.gameMode);
 
 
-    console.log("gameMode ==" , gameMode);
 
     useEffect(() => {
         // Establish the socket connection when the component mounts
@@ -44,12 +43,13 @@ export const GameSteps: React.FC = () => {
         return () => {
             newSocket.disconnect();
         };
-    }, [token]); //
+    }, []); //
 
     socket?.on("joinQueueError", (data) => {
         handleReset();
         dispatch(setServerMessage(data));
         dispatch(setOpenSnackbar(true));
+        dispatch(setSeverity('error'));
     });
 
     const isCurrentTab = useAppSelector((state) => state.game.currentTab);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   I_User,
   ModalComponent,
@@ -14,6 +14,8 @@ import {
   isBanned,
   isFriend,
   isBlockedYou,
+  isSentFriendRequest,
+  isBlockedByYou,
 } from "../components/utils";
 import { setDisplayUserActions } from "../../../core/CoreSlice";
 import { SetChannelAdmin } from "../components/modals/SetChannelAdmin";
@@ -25,14 +27,26 @@ import { KicKFromRoomModal } from "../components/modals/KickUserFromChannelModal
 import { NewDirectMessage } from "../components/modals/CreateDirectMessageModal";
 import { IconHolder } from "../components/style";
 import { Actions } from "../components/UserActions";
+import BlockIcon from "@mui/icons-material/Block";
 import { BlockUserModal } from "../components/modals/BlockUserModal";
 // import {
 //   inviteUserToGame,
 //   inviteUserToGameFromChat,
 // } from "../../feat-Game/redux/GameSlice";
-import { useNavigate } from "react-router-dom";
-import { STEPS } from "../../feat-Game/utils/constants";
 import { inviteToGame, setCurrentTab, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelIcon from "@mui/icons-material/Cancel";
+import GamesIcon from "@mui/icons-material/Games";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import { useNavigate } from "react-router-dom";
+import {
+  acceptFriendRequest,
+  declineFriendRequest,
+  sendFriendRequest,
+} from "../../feat-Account/components";
+import { Divider } from "@mui/material";
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -44,7 +58,9 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
   const friends: Array<I_User> = useAppSelector(
     (state) => state.friends.friends
   );
-
+  const friendRequests: Array<I_User> = useAppSelector(
+    (state) => state.friends.friendRequests
+  );
   const navigate = useNavigate();
 
   const block = useAppSelector((state) => state.block);
@@ -65,7 +81,116 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
   const handleClose = () => {
     setOpen(false);
   };
+  const ActionsArr: Array<Action> = [
+    {
+      name: "View profile",
+      type: "viewProfile",
+      component: <AccountCircleIcon />,
+      isBlockedYou: false,
+      isBlockedByYou: false,
+    },
+    {
+      name: "Send friend request",
+      type: "sendFriendRequest",
+      component: <PersonAddIcon fontSize="small" />,
+      isFriend: false,
+      friendRequest: false,
+      isBlockedYou: false,
+      isBlockedByYou: false,
+    },
+    {
+      name: "Accept friend request",
+      type: "acceptFriendRequest",
+      component: <CheckCircleOutlineIcon fontSize="small" color="success" />,
+      friendRequest: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
+    },
+    {
+      name: "Decline friend request",
+      type: "declineFriendRequest",
+      component: <CancelIcon fontSize="small" color="error" />,
+      friendRequest: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
+    },
 
+    {
+      name: "Invite to a game",
+      type: "play",
+      component: <GamesIcon fontSize="small" />,
+      isFriend: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
+    },
+    {
+      name: "Block",
+      type: "blockFriend",
+      component: <BlockIcon fontSize="small" color="error" />,
+      isFriend: true,
+      isBlockedYou: false,
+      isBlockedByYou: false,
+    },
+  ];
+  const handleClickAction = (iconType: any, selectedUser: I_User) => {
+    switch (iconType) {
+      case "blockFriend":
+        handleClickModal(
+          <BlockUserModal
+            intraId={selectedUser.intraId}
+            userName={selectedUser.firstName + " " + selectedUser.lastName}
+            handleClose={handleClose}
+          />
+        );
+        break;
+
+      case "play":
+        console.log("invite to game");
+        break;
+      case "viewProfile":
+        navigate(`/user/${selectedUser.intraId}`);
+        break;
+      case "sendFriendRequest":
+        dispatch(sendFriendRequest(selectedUser.intraId));
+        break;
+      case "acceptFriendRequest":
+        dispatch(acceptFriendRequest(selectedUser.intraId));
+        break;
+      case "declineFriendRequest":
+        dispatch(declineFriendRequest(selectedUser.intraId));
+        break;
+      default:
+        break;
+    }
+  };
+  const checkUserActionsConstraints = (action: any, id: number) => {
+    let checkFriend = true;
+    let checkFriendRequests = true;
+
+    if (typeof action.isFriend != "undefined") {
+      checkFriend = action.isFriend == isFriend(friends, id);
+    }
+
+    if (typeof action.friendRequest != "undefined")
+      checkFriendRequests =
+        action.friendRequest == isSentFriendRequest(friendRequests, id);
+    let checkIsBlockedYou = true;
+    if (typeof action.isBlockedYou != "undefined") {
+      checkIsBlockedYou = isBlockedYou(id, block) === action.isBlockedYou;
+    }
+    let checkIsBlockedByeYou = true;
+    if (typeof action.isBlockedByYou != "undefined") {
+      checkIsBlockedByeYou =
+        isBlockedByYou(id, block) === action.isBlockedByYou;
+    }
+
+    return (
+      checkFriendRequests &&
+      checkFriend &&
+      checkIsBlockedByeYou &&
+      checkIsBlockedYou
+    );
+  };
   const checkConstraints = (
     selectorId: number,
     selectedId: number,
@@ -74,9 +199,9 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     const role = checkUserRole(memberships[roomIndex], selectorId);
 
     let checkFriend = true;
-    if (typeof Icon.isFriend != "undefined") {
-      checkFriend = isFriend(friends, selectedId) == Icon.isFriend;
-    }
+    // if (typeof Icon.isFriend != "undefined") {
+    //   checkFriend = isFriend(friends, selectedId) == Icon.isFriend;
+    // }
     let checkIsBanned = true;
     if (typeof Icon.isBanned != "undefined")
       checkIsBanned =
@@ -86,26 +211,22 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     if (typeof Icon.isAdmin != "undefined")
       checkIsAdmin =
         isAdmin(memberships[roomIndex], selectedId) === Icon.isAdmin;
-    let checkIsBlockedYou = true;
-    if (typeof Icon.isBlockedYou != "undefined") {
-      checkIsBlockedYou = isBlockedYou(selectedId, block) === Icon.isBlockedYou;
-    }
-    let checkIsBlockedByeYou = true;
-    if (typeof Icon.isBlockedByYou != "undefined") {
-      checkIsBlockedByeYou =
-        isBlockedYou(selectedId, block) === Icon.isBlockedByYou;
-    }
+    // let checkIsBlockedYou = true;
+    // if (typeof Icon.isBlockedYou != "undefined") {
+    //   checkIsBlockedYou = isBlockedYou(selectedId, block) === Icon.isBlockedYou;
+    // }
+    // let checkIsBlockedByeYou = true;
+    // if (typeof Icon.isBlockedByYou != "undefined") {
+    //   checkIsBlockedByeYou =
+    //     isBlockedYou(selectedId, block) === Icon.isBlockedByYou;
+    // }
 
     // let checkIsMute = true;
     // if (typeof Icon.isMuted != 'undefined')
     //   checkIsMute = isMuted(memberships[roomIndex], selectedId) === Icon.isMuted;
     return (
-      Icon.role.includes(role) &&
-      checkFriend &&
-      checkIsBanned &&
-      checkIsAdmin &&
-      checkIsBlockedByeYou &&
-      checkIsBlockedYou
+      Icon.role?.includes(role) && checkFriend && checkIsBanned && checkIsAdmin
+      // && checkIsBlockedByeYou && checkIsBlockedYou
     );
   };
 
@@ -127,18 +248,18 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         return <MuteUserInRoom data={data} handleClose={handleClose} />;
       case "kickFromChannel":
         return <KicKFromRoomModal data={data} handleClose={handleClose} />;
-      case "blockFriend":
-        return (
-          <BlockUserModal
-            intraId={selectedUser.intraId}
-            userName={selectedUser.firstName + " " + selectedUser.lastName}
-            handleClose={handleClose}
-          />
-        );
-      case "message":
-        return (
-          <NewDirectMessage selectedUser={data} handleClose={handleClose} />
-        );
+      // case "blockFriend":
+      //   return (
+      //     <BlockUserModal
+      //       intraId={selectedUser.intraId}
+      //       userName={selectedUser.firstName + " " + selectedUser.lastName}
+      //       handleClose={handleClose}
+      //     />
+      //   );
+      // case "message":
+      //   return (
+      //     <NewDirectMessage selectedUser={data} handleClose={handleClose} />
+      //   );
       default:
         return <></>;
     }
@@ -224,6 +345,19 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
                     selectedUser.intraId
                   )
                 }
+              >
+                {icon.component}
+                {icon.name}
+              </IconHolder>
+            )}
+          </>
+        ))}
+        <Divider sx={{ width: "80%", margin: "6px auto" }} />
+        {ActionsArr.map((icon) => (
+          <>
+            {checkUserActionsConstraints(icon, selectedUser.intraId) && (
+              <IconHolder
+                onClick={() => handleClickAction(icon.type, selectedUser)}
               >
                 {icon.component}
                 {icon.name}

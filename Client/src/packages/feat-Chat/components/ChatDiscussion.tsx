@@ -8,7 +8,7 @@ import {
 import styled from "styled-components";
 
 import { Badge } from "@mui/material";
-import { convertDateTime, changeMessageLength } from "./utils";
+import { convertDateTime, changeMessageLength, isBlockedByYou } from "./utils";
 import { I_DirectConversation, I_Room } from "./types";
 
 import { CreateChannelModal } from "./modals/CreateChannelModal";
@@ -27,6 +27,7 @@ import { getBlacklist } from "../../feat-Account/components/redux/blockThunk";
 import { NotFound } from "./style";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
+
   const { channels, directMessage, filter, chat } = useAppSelector(
     (state) => state
   );
@@ -48,14 +49,16 @@ export const ChatDiscussion = () => {
     setOpen(false);
   };
   useEffect(() => {
-    dispatch(getBlacklist());
+    // dispatch(getBlacklist());
     dispatch(getMemberships());
     dispatch(getDirectConversations());
-    dispatch(getUserFriends());
+    // dispatch(getUserFriends());
   }, []);
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
     item.name.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
+  // manageBlock
+
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
       discussion.receiver.firstName

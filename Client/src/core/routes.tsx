@@ -1,5 +1,4 @@
 import {
-
   GameSteps as Game,
   Home,
   AccountSettings,
@@ -23,111 +22,10 @@ export interface Route {
   requireAuth: boolean;
 }
 
-// export const routes = [
-//     {
-//         path: "/search",
-//         element: (
-//             <Layout>
-//                 <Search />
-//             </Layout>
-//         ),
-//         errorElement: <NotFoundError />,
-//         requireAuth: true,
-//     },
-//     {
-//         path: "/test",
-//         element: (
-//             <Layout>
-//                 <Test />
-//             </Layout>
-//         ),
-//         errorElement: <NotFoundError />,
-//         requireAuth: true,
-//     },
-//     {
-//         path: "/",
-//         element: (
-//             <Layout>
-//                 <Home />
-//             </Layout>
-//         ),
-//         errorElement: <NotFoundError />,
-//         requireAuth: true,
-//     },
-//     {
-//         path: "/game",
-//         element: (
-//             <Layout>
-//                 <Game />
-//             </Layout>
-//         ),
-//         errorElement: <NotFoundError />,
-//         requireAuth: false,
-//     },
-//     {
-//         path: "/account/settings",
-//         element: (
-//             <Layout>
-//                 <AccountSettings />
-//             </Layout>
-//         ),
-//         errorElement: <NotFoundError />,
-//         requireAuth: true,
-//     },
-//     // {
-//     //   path: "/account/profile",
-//     //   element: (
-//     //     <Layout>
-//     //       <Profile />
-//     //     </Layout>
-//     //   ),
-//     //   errorElement: <NotFoundError />,
-//     //   requireAuth: true,
-//     // },
-//     {
-//         path: "/chat",
-//         element: (
-//             <Layout>
-//                 <Chat />
-//             </Layout>
-//         ),
-//         errorElement: <NotFoundError />,
-//         requireAuth: true,
-//     },
-//     // {
-//     //   path: "/leaderboard",
-//     //   element: (
-//     //     <Layout>
-//     //       <Leaderboard />
-//     //     </Layout>
-//     //   ),
-//     //   errorElement: <NotFoundError />,
-//     //   requireAuth: true,
-//     // },
-//     {
-//         path: "/firstlogin",
-//         element: <FirstLogin />,
-//         errorElement: <NotFoundError />,
-//         requireAuth: true,
-//     },
-//     {
-//         path: "/verifyOtp",
-//         element: <VerifyOtp />,
-//         errorElement: <NotFoundError />,
-//         requireAuth: true,
-//     },
-//     {
-//         path: "/login",
-//         element: <Login />,
-//         errorElement: <NotFoundError />,
-//         requireAuth: false,
-//     },
-
-
 export const routes: Route[] = [
   {
     path: "/gamesHistory",
-    element:  (
+    element: (
       <Layout>
         <GamesHistory />
       </Layout>

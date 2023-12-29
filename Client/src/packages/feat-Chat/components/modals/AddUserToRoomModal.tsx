@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Avatar } from "@mui/material";
 import { addUserToRoom } from "../redux/roomSlice";
 
-import { isMember } from "../utils";
+import { isBlockedByYou, isBlockedYou, isMember } from "../utils";
 import { NotFound } from "../style";
 
 interface Props {
@@ -25,7 +25,8 @@ export const AddUserToRoomModal = (props: Props) => {
   const index = memberships.findIndex((item: any) => item.id == roomId);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const friends: [] = useAppSelector((state) => state.friends.friends);
-
+  const block = useAppSelector((state) => state.block);
+  const currentUser = useAppSelector((state) => state.auth.user);
   const handleClickOnUser = (item: any) => {
     const data = {
       roomId: memberships[index].id,
@@ -38,9 +39,11 @@ export const AddUserToRoomModal = (props: Props) => {
   const handleClickSearch = (str: string) => {
     setSearchQuery(str);
   };
-
+  // manageBlock
   const filteredFriends = friends.filter(
     (friend: I_User) =>
+      !isBlockedYou(friend.intraId, block) &&
+      !isBlockedByYou(friend.intraId, block) &&
       (!searchQuery ||
         friend.firstName.toLowerCase().startsWith(searchQuery.toLowerCase())) &&
       !isMember(friend.firstName, memberships[index].members)
