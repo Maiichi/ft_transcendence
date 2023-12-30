@@ -5,7 +5,7 @@ import { MODES, STEPS } from "../utils/constants";
 import { useAppDispatch } from "../../../core";
 import { setGameMode, setGameStep } from "../redux/GameSlice";
 import dualMapImage from "../images/DUAL_MAP.jpeg";
-import tripleMapImage from "../images/TRIPLE_MAP.jpeg"
+import tripleMapImage from "../images/TRIPLE_MAP.jpeg";
 
 const MAPS = [
     {
@@ -44,6 +44,7 @@ const Title = styled.h1`
     font-size: 2rem; // Tailwind's text-4xl
     font-weight: bold; // Tailwind's font-bold
     text-align: center;
+    flex-grow: 1; // Title takes up maximum space
 `;
 
 const CardsContainer = styled.div`
@@ -129,8 +130,54 @@ const SubmitButton = styled.button`
 
 const ButtonContainer = styled.div`
     display: flex;
-    gap : 10px;
-`
+    gap: 10px;
+`;
+
+const TitleContainer = styled.div`
+    display: flex;
+    justify-content: center; // Center the contents
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem; // Space below the title container
+`;
+
+const QuestionMarkIcon = styled.div`
+    font-size: 20px; // Adjust size as needed
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    margin-left: 10px;
+    border: 2px solid; // Blue border color
+    border-radius: 50%; // Circular border
+    width: 30px; // Adjust width as needed
+    height: 30px; // Adjust height as needed
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const Tooltip = styled.div`
+    visibility: hidden;
+    width: 200px;
+    background-color: #3b82f6;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 20px;
+    position: absolute;
+    z-index: 1;
+    top: 125%; // Position below the icon
+    left: 50%;
+    //margin-left: -100px; // Center the tooltip
+    opacity: 0;
+    transition: opacity 0.3s;
+    text-align: left;
+
+    ${QuestionMarkIcon}:hover & {
+        visibility: visible;
+        opacity: 1;
+    }
+`;
 
 export const MapSelection: React.FC<GameStepComponentProps> = () => {
     const dispatch = useAppDispatch();
@@ -139,20 +186,28 @@ export const MapSelection: React.FC<GameStepComponentProps> = () => {
     const handleCardClick = (mapId: string) => {
         setSelectedMapId(mapId);
         dispatch(setGameMode(mapId));
-
     };
 
     const handleMapSelected = () => {
         dispatch(setGameStep(STEPS.INVITE_FRIEND));
     };
 
-    const handleOpenManual = () => {
-        console.log("open game manual");
-    };
-
     return (
         <MainContainer>
-            <Title>Select Your Map</Title>
+            <TitleContainer>
+                <QuestionMarkIcon>
+                    ?
+                    <Tooltip>
+                        Game Instructions:
+                        <br />
+                        <br />
+                        - Select a map <br />
+                        - Invite a friend or join the queue <br />- Enjoy the
+                        game!
+                    </Tooltip>
+                </QuestionMarkIcon>
+                <Title>Select Your Map</Title>
+            </TitleContainer>
             <CardsContainer>
                 {MAPS.map((element) => (
                     <Card
@@ -168,7 +223,6 @@ export const MapSelection: React.FC<GameStepComponentProps> = () => {
             </CardsContainer>
             <ButtonContainer>
                 <SubmitButton onClick={handleMapSelected}>Submit</SubmitButton>
-                <SubmitButton onClick={handleOpenManual}>How to play</SubmitButton>
             </ButtonContainer>
         </MainContainer>
     );
