@@ -165,7 +165,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
-          navigate("/game");
+          navigate("/");
           // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
@@ -312,7 +312,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
           dispatch(setInvited(selectedUser.user));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
-          navigate("/game");
+          navigate("/");
           // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         } else return;
       }

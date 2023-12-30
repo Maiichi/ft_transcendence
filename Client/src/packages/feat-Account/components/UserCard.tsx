@@ -124,7 +124,7 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
-          navigate('/game');
+          navigate('/');
           dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
