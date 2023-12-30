@@ -6,6 +6,7 @@ import {
   List as ListMui,
   ListItemIcon as ListItemIconMui,
 } from "@mui/material";
+import { deepPurple } from "@mui/material/colors";
 
 /**
  * `NoPlayer`
@@ -35,7 +36,7 @@ const Avatar = styled(AvatarMui)``;
 const Player = styled(ListItemMui)`
   box-shadow: rgba(0, 0, 0, 0.25) 0px 2.07377px 4.14754px 0px;
   border-radius: 8.295px;
-  background-color: antiquewhite;
+  background-color: ${deepPurple[50]};
 `;
 const ListItemIcon = styled(ListItemIconMui)`
   overflow-y: scroll;

@@ -13,6 +13,7 @@ import {
   acceptFriendRequest,
   declineFriendRequest,
 } from "../../../packages/feat-Account/components";
+import { Avatar } from "@mui/material";
 
 interface Props {
   friendRequests: I_User[];
@@ -33,8 +34,8 @@ export const FriendRequestsNotifications = ({ friendRequests }: Props) => {
         dispatch(declineFriendRequest(id));
         break;
       case "viewProfile":
+        navigate(`/account/profile/${id}`);
         break;
-
       default:
         break;
     }
@@ -46,26 +47,28 @@ export const FriendRequestsNotifications = ({ friendRequests }: Props) => {
           <>
             <ListItemButton
               className="item"
-              onClick={() => handleClick(item.intraId, "accept")}
-            >
-              <ListItemIcon className="icon">
-                <CheckIcon />
-              </ListItemIcon>
-            </ListItemButton>
-            <ListItemButton
-              className="item"
-              onClick={() => handleClick(item.intraId, "decline")}
-            >
-              <ListItemIcon className="icon">
-                <CloseIcon />
-              </ListItemIcon>
-            </ListItemButton>
-            <ListItemButton
-              className="item"
               onClick={() => handleClick(item.intraId, "viewProfile")}
             >
-              <h5 className="title">{item.userName}</h5>
+              <div style={{display: 'flex'}}>
+                <Avatar
+                  sx={{ width: "30px", height: "30px" }}
+                  src={item.avatar_url}
+                />
+                <h5 className="title">{item.userName}</h5>
+              </div>
             </ListItemButton>
+      
+              <ListItemIcon className="icon">
+                <CheckIcon
+                  onClick={() => handleClick(item.intraId, "accept")}
+                />
+              </ListItemIcon>
+              <ListItemIcon className="icon">
+                <CloseIcon
+                  onClick={() => handleClick(item.intraId, "decline")}
+                />
+              </ListItemIcon>
+  
           </>
         </ListItem>
       ))}
