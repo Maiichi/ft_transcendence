@@ -32,19 +32,19 @@ const AchievemetsCard = (props: {
                 }}
                 alt="logoAchiv"
                 src={
-                  achiv.progress >= 100
+                  achiv.geted
                     ? `/images/${achiv.logo}`
-                    : `/images/padlocki.png`
+                    : `/images/blocked.png`
                 }
               />
               <Tooltip
-                title={achiv.progress >= 100 ? achiv.name : "paly to get more"}
+                title={achiv.geted ? achiv.name : "paly to get more"}
                 enterDelay={500}
                 leaveDelay={200}
                 arrow
               >
                 <p>
-                  {achiv.progress >= 100 ? achiv.name.slice(0, 6) : "locked"}
+                  {achiv.geted ? achiv.name.slice(0, 6) : "locked"}
                 </p>
               </Tooltip>
             </Achiv>
