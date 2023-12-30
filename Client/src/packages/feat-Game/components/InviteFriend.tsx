@@ -5,6 +5,7 @@ import { STEPS } from "../utils/constants";
 import { InviteUserToGame } from "./InviteGame";
 import { useState } from "react";
 import { setCurrentTab, setGameStep } from "../redux/GameSlice";
+import { Instructions } from "./Instructions";
 
 const StyledCard = styled.div`
     width: 100%;
@@ -112,6 +113,12 @@ const OrText = styled.span`
     font-weight: bold;
 `;
 
+const TitleContainer = styled.div`
+    display: flex;
+    gap: 20px;
+    align-items: center;
+`;
+
 export const InviteFriend: React.FC<GameStepComponentProps> = ({
     socket,
     onReset,
@@ -146,7 +153,6 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
                     handleClose={handleClose}
                 />
             );
-        
     };
     const handleJoinQueue = () => {
         if (socket) {
@@ -165,7 +171,11 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
             />
             <StyledCard>
                 <StyledCardHeader>
-                    <StyledCardTitle>Game Invitation</StyledCardTitle>
+                    <TitleContainer>
+                        <Instructions currentStep="inviteFriend" />
+                        <StyledCardTitle>Game Invitation</StyledCardTitle>
+                    </TitleContainer>
+
                     <StyledCardDescription>
                         Choose your next action before the game starts.
                     </StyledCardDescription>

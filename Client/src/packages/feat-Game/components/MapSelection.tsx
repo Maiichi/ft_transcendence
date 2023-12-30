@@ -6,6 +6,7 @@ import { useAppDispatch } from "../../../core";
 import { setGameMode, setGameStep } from "../redux/GameSlice";
 import dualMapImage from "../images/DUAL_MAP.jpeg";
 import tripleMapImage from "../images/TRIPLE_MAP.jpeg";
+import { Instructions } from "./Instructions";
 
 const MAPS = [
     {
@@ -141,44 +142,6 @@ const TitleContainer = styled.div`
     margin-bottom: 1rem; // Space below the title container
 `;
 
-const QuestionMarkIcon = styled.div`
-    font-size: 20px; // Adjust size as needed
-    cursor: pointer;
-    position: relative;
-    display: inline-block;
-    margin-left: 10px;
-    border: 2px solid; // Blue border color
-    border-radius: 50%; // Circular border
-    width: 30px; // Adjust width as needed
-    height: 30px; // Adjust height as needed
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-const Tooltip = styled.div`
-    visibility: hidden;
-    width: 200px;
-    background-color: #3b82f6;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 20px;
-    position: absolute;
-    z-index: 1;
-    top: 125%; // Position below the icon
-    left: 50%;
-    //margin-left: -100px; // Center the tooltip
-    opacity: 0;
-    transition: opacity 0.3s;
-    text-align: left;
-
-    ${QuestionMarkIcon}:hover & {
-        visibility: visible;
-        opacity: 1;
-    }
-`;
-
 export const MapSelection: React.FC<GameStepComponentProps> = () => {
     const dispatch = useAppDispatch();
     const [selectedMapId, setSelectedMapId] = useState<string>(MODES.DUAL);
@@ -195,17 +158,7 @@ export const MapSelection: React.FC<GameStepComponentProps> = () => {
     return (
         <MainContainer>
             <TitleContainer>
-                <QuestionMarkIcon>
-                    ?
-                    <Tooltip>
-                        Game Instructions:
-                        <br />
-                        <br />
-                        - Select a map <br />
-                        - Invite a friend or join the queue <br />- Enjoy the
-                        game!
-                    </Tooltip>
-                </QuestionMarkIcon>
+                <Instructions currentStep="mapSelection" />
                 <Title>Select Your Map</Title>
             </TitleContainer>
             <CardsContainer>
