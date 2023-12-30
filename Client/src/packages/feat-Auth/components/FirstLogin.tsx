@@ -147,15 +147,6 @@ const FirstLogin = () => {
     }, 100);
   };
   const handelLogout = () => {
-    dispatch(
-      updateUserName({
-        isFirstTime: true,
-        token: auth.token,
-        id: auth.user.intraId,
-        newUsername: auth.token.slice(0, 8),
-        user: null,
-      })
-    );
     dispatch(userLogout());
   };
   const steps = [
@@ -247,7 +238,6 @@ const FirstLogin = () => {
       >
         <Button
           sx={{ mr: 2, mt: 1 }}
-          disabled
           color="secondary"
           size="large"
           id="logout"
