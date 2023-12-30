@@ -44,6 +44,7 @@ import {
   removeRoom,
   setRoomJoined,
   setRoomLeaved,
+  setRoomUpdated,
 } from "../../packages/feat-Search/redux/searchSlice";
 import { useAppSelector } from "../redux";
 // import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
@@ -107,6 +108,9 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           socket.on('roomHasBeenUpdated', (data) => {
             dispatch(updateRoomSucess(data.data));
           });
+          socket.on('userUpdateRoom', (data) => {
+            dispatch(setRoomUpdated(data));
+          });
           socket.on("newRoom", (data) => {
             dispatch(addRoom(data));
           });
@@ -120,7 +124,8 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(setRoomLeaved(data));
           });
           socket.on("roomJoined", (data) => {
-            dispatch(addMembership(data));
+            dispatch(addMembership(data.data));
+            OpenSnackbar(data.successMsg, 'success');
           });
           socket.on("userJoinRoom", (data) => {
             dispatch(addMemberToRoom(data));
@@ -275,7 +280,6 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           // this event will appears on the sender of the game invitation
           socket.on('opponentDeclineGameInvite', (data) => {
-            console.log("data (opponentDeclineGameInvite) = ", data);
             const {invited} = getState().game;
             if (invited)
             {
@@ -284,6 +288,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                 dispatch(setInviteSent(false));
                 dispatch(setInvited(null));
                 dispatch(setCurrentTab(false));
+                dispatch(resetGameState());
             }
             // dispatch(resetGame());
           });
@@ -311,6 +316,10 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
               }
             }
           });
+          // socket.on('gameCanceled', () => {
+          //   // dispatch(resetGameState());
+          //   console.log("gameCanceled middleware");
+          // });
           socket.on('userLoggedOut' , () => {
             console.log("logout");
             dispatch(setToken(null));

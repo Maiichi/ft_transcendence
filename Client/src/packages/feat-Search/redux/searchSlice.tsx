@@ -51,6 +51,12 @@ export const searchSlice = createSlice({
       if (roomIndex != -1)
         state.rooms.splice(roomIndex, 1);
     },
+    setRoomUpdated: (state, action: PayloadAction<any>) => {
+      const roomIndex = state.rooms.findIndex((room) => room.id === action.payload.id);
+      state.rooms[roomIndex].name = action.payload.name;
+      state.rooms[roomIndex].type = action.payload.type;
+      state.rooms[roomIndex].password = action.payload.password;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -78,7 +84,7 @@ export const searchSlice = createSlice({
   },
 });
 
-export const { joinRoom, setRoomJoined, setRoomLeaved, addRoom, removeRoom } =
+export const { joinRoom, setRoomJoined, setRoomLeaved, addRoom, removeRoom, setRoomUpdated } =
   searchSlice.actions;
 
 export default searchSlice.reducer;

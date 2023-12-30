@@ -130,7 +130,7 @@ export const GameSteps: React.FC = () => {
             case STEPS.INVITE_FRIEND:
                 return <InviteFriend socket={socket} onReset={handleReset} />;
             case STEPS.WAITING_QUEUE:
-                return <MatchLoading socket={socket} onReset={handleReset} />;
+                return <MatchLoading socket={socket} />;
             case STEPS.GAME_START:
                 return <Game socket={socket} />;
             default:

@@ -5,4 +5,5 @@ export interface I_User {
   intraId: number;
   status: string;
   avatar_url?: string;
+  inGame: boolean;
 }

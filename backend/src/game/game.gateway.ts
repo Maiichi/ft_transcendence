@@ -13,7 +13,6 @@ import { Logger } from '@nestjs/common';
 import Game from './models/game';
 import Player from './models/player';
 import { UserService } from 'src/user/user.service';
-import { Console } from 'console';
 
 @WebSocketGateway({
   namespace: "game",
@@ -245,11 +244,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('join_queue_match')
   async joinQueue(client: Socket, payload: any) {
-    console.log("paylaod === ", payload);
     // get the user and check if he's already in game
     const userId = this.getUserIdFromSocketId(client.id);
     const user = await this.userService.getUserInfos(userId);
-    console.log("user in game -- ", user.inGame);
     if (user && user.inGame)
     {
       this.server.to(client.id).emit('joinQueueError', `You cannot join. You're currently playing a game`);
@@ -301,7 +298,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         // need to emit an event to tell the user that he's already in the queue.
         return;
       }
-      
       this.unique.add(client);
       const userId = this.getUserIdFromSocketId(client.id);
       const isInQueue = 
@@ -330,32 +326,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     
   }
 
-  // @SubscribeMessage('decline_invitaion')
-  // declineInvitation(client: Socket, payload: any) {
-  //   console.log(` ----------- Client ${client.id} joined queue invitation`);
-  //   if (this.unique.has(client)) {
-  //     // console.log('unique ==', this.unique);
-  //     const message = `You cannot join again.`;
-  //     this.server.to(client.id).emit('joinQueueError', message);
-  //     // need to emit an event to tell the user that he's already in the queue.
-  //     return;
-  //   }
-  //   this.unique.add(client);
-  //   const userId = this.getUserIdFromSocketId(client.id);
-  //   const isInQueue = 
-  //     this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
-  //     this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
+  private removeFromQueue(client: Socket, queue: Socket[]): void {
+    const index = queue.indexOf(client);
+    if (index !== -1) {
+      queue.splice(index, 1);
+    }
+  }
 
-  //   if (isInQueue) {
-  //     const message = `User ${userId} is already in an other queue. Cannot join again.`;
-  //     console.log(message);
-  //     this.server.to(client.id).emit('joinQueueError', message);
-  //     return;
-  //   }
-  //   if (payload === 'dual') {
-  //     console.log('invitationGameQueue ==', this.invitationGameQueue.length);
-  //     if (this.invitationGameQueue.push(client) > 1)
-  //       this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'dual');
-  //   }
-  // }
+  @SubscribeMessage('cancelGame')
+  async cancelGame(client: Socket) {
+    // Remove the user from all queues
+    console.log("client id == ", client.id);
+    this.removeFromQueue(client, this.normalGameQueue);
+    this.removeFromQueue(client, this.tripleGameQueue);
+    this.removeFromQueue(client, this.invitationGameQueue);
+    // this.removeFromQueue(client, this.unique);
+    if (this.unique.has(client)) {
+      this.unique.delete(client);
+    }
+    console.log("player removed from queue");
+    console.log("matchmaking queue (remove) ", this.normalGameQueue.length);
+  }
 }

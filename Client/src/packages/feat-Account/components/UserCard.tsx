@@ -35,6 +35,8 @@ import {
 import { IconHolder } from "../../feat-Chat/components/style";
 import { BlockUserModal } from "../../feat-Chat/components/modals/BlockUserModal";
 import { Action } from "../../feat-Chat/components/types";
+import { inviteToGame, setCurrentTab, setGameStep, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
+import { STEPS } from "../../feat-Game/utils/constants";
 const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
   const { gamer, isOwner } = props;
   const [open, setOpen] = useState(false);
@@ -43,7 +45,7 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
     undefined
   );
   const block = useAppSelector((state) => state.block);
-
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const friends: Array<I_User> = useAppSelector(
     (state) => state.friends.friends
@@ -110,7 +112,21 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
         );
         break;
       case "play":
-        console.log("invite to game");
+        dispatch(inviteToGame({
+          invitedId : selectedUser.intraId,
+          inviterId : gamer.user.intraId,
+          gameMode: "dual"
+        }));
+         // TODO:  need a check (inGame)
+        if (selectedUser.status === "ONLINE")
+        {
+          dispatch(setInviteSent(true));
+          dispatch(setInvited(selectedUser));
+          dispatch(setCurrentTab(true));
+          dispatch(setInviteFromChat(true));
+          navigate('/game');
+          dispatch(setGameStep(STEPS.WAITING_QUEUE));
+        }
         break;
       case "sendFriendRequest":
         dispatch(sendFriendRequest(selectedUser.intraId));

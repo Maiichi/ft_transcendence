@@ -23,9 +23,9 @@ export class ChatController {
   ) {}
   // getRooms
   @Get('/rooms')
-  async getRooms() {
+  async getRooms( @GetUser() user: User) {
     try {
-      return this.roomService.getAllRooms();
+      return this.roomService.getAllRooms(user.intraId);
     } catch (error) {
       // res.send({error: error.message})
       const response = {
