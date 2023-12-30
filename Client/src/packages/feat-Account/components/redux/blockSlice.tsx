@@ -30,6 +30,14 @@ export const blockSlice = createSlice({
     userBlockedMe: (state, action: PayloadAction<I_User>) => {
       state.blockedYou.unshift(action.payload);
     },
+    userUnblockedByMe: (state, action: PayloadAction<I_User>) =>{
+      const userIndex = state.blockedByYou.findIndex((user) => user.intraId === action.payload.intraId);
+      state.blockedByYou.splice(userIndex, 1);
+    },
+    userUnblockedMe : (state, action: PayloadAction<I_User>) => {
+      const userIndex = state.blockedYou.findIndex((user) => user.intraId === action.payload.intraId);
+      state.blockedYou.splice(userIndex, 1);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -47,7 +55,14 @@ export const blockSlice = createSlice({
   },
 });
 
-export const { unblockUser, blockUser, userBlockedByMe, userBlockedMe } =
+export const { 
+  unblockUser, 
+  blockUser, 
+  userBlockedByMe, 
+  userBlockedMe, 
+  userUnblockedByMe, 
+  userUnblockedMe,
+} =
   blockSlice.actions;
 
 export default blockSlice.reducer;

@@ -45,6 +45,8 @@ import {
   setRoomJoined,
   setRoomLeaved,
   setRoomUpdated,
+  setUserBlocked,
+  setUserUnblocked,
 } from "../../packages/feat-Search/redux/searchSlice";
 import { useAppSelector } from "../redux";
 // import { acceptUserGameInvite, declineUserGameInvite, inviteUserToGame, opponentAcceptInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined, setInviterId } from "../../packages/feat-Game/redux/GameSlice";
@@ -60,9 +62,11 @@ import {
   unblockUser,
   userBlockedByMe,
   userBlockedMe,
+  userUnblockedByMe,
+  userUnblockedMe,
 } from "../../packages/feat-Account/components/redux/blockSlice";
 import { AlertColor } from "@mui/material";
-import { acceptGameInvitation, declineGameInvitation, inviteToGame, resetGame, resetGameState, setCurrentTab, setGameMode, setInviteAccepted, setInvited, setInviter, setInviteReceived, setInviteSent } from "../../packages/feat-Game/redux/GameSlice";
+import { acceptGameInvitation, declineGameInvitation, inviteToGame, resetGame, resetGameState, setCurrentTab, setGameMode, setGameStep, setInviteAccepted, setInvited, setInviter, setInviteReceived, setInviteSent } from "../../packages/feat-Game/redux/GameSlice";
 import {
   setToken,
   userLogout,
@@ -72,9 +76,11 @@ import {
   addFriend,
   addFriendRequest,
   declineFriendRequest,
+  removeFriend,
   removeFriendRequest,
   sendFriendRequest,
 } from "../../packages/feat-Account/components";
+import { STEPS } from "../../packages/feat-Game/utils/constants";
 
 const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
   let socket: Socket;
@@ -251,6 +257,8 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                   })
                 );
             }
+            dispatch(setUserBlocked(data));
+            dispatch(removeFriend(data.intraId));
           });
           socket.on("blockedMe", (data) => {
             const { selectedUser } = getState().chat;
@@ -266,6 +274,16 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
                   })
                 );
             }
+            dispatch(setUserBlocked(data));
+            dispatch(removeFriend(data.intraId));
+          });
+          socket.on('unBlockedByMe', (data) => {
+            dispatch(userUnblockedByMe(data));
+            dispatch(setUserUnblocked(data));
+          });
+          socket.on('unBlockedMe', (data) => {
+            dispatch(userUnblockedMe(data));
+            dispatch(setUserUnblocked(data));
           });
           socket.on('gameInvitationReceived', (data) => {
               dispatch(setInviter(data.inviter));
@@ -313,6 +331,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
               {
                 dispatch(setInviteSent(false));
                 dispatch(setInviteAccepted(true));
+                dispatch(setGameStep(STEPS.WAITING_QUEUE));
               }
             }
           });

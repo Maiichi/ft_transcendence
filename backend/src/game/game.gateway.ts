@@ -288,29 +288,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
   
 	@SubscribeMessage('join_queue_match_invitaion')
-  joinQueueInvitation(client: Socket, payload: any) {
+  async joinQueueInvitation(client: Socket, payload: any) {
     try {
-      console.log(` ----------- Client ${client.id} joined queue invitation`);
+      // get the user and check if he's already in game
+      const userId = this.getUserIdFromSocketId(client.id);
+      const user = await this.userService.getUserInfos(userId);
+      if (user && user.inGame)
+      {
+        this.server.to(client.id).emit('joinQueueError', `You cannot join. You're currently playing a game`);
+        return;
+      }
+     
       if (this.unique.has(client)) {
         // console.log('unique ==', this.unique);
         const message = `You cannot join again.`;
-        this.server.to(client.id).emit('joinQueueError', message);
         // need to emit an event to tell the user that he's already in the queue.
+        this.server.to(client.id).emit('joinQueueError', message);
         return;
       }
       this.unique.add(client);
-      const userId = this.getUserIdFromSocketId(client.id);
       const isInQueue = 
         this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
         this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) || 
         this.invitationGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
 
       if (isInQueue) {
-        const message = `User ${userId} is already in an other queue. Cannot join again.`;
-        console.log(message);
+        const message = `You're already in a queue. Cannot join again.`;
+        // console.log(message);
         this.server.to(client.id).emit('joinQueueError', message);
         return;
       }
+      console.log(` ----------- Client ${client.id} joined queue invitation`);
       if (payload === 'dual') {
         if (this.invitationGameQueue.push(client) > 1)
           this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'dual');
@@ -321,9 +329,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
     } catch (error) {
       console.log('error join_queue_match_invitaion == ', error);
-      return error; 
+      client.emit('joinQueueError' , error);
     }
-    
   }
 
   private removeFromQueue(client: Socket, queue: Socket[]): void {

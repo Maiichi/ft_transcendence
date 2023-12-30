@@ -46,7 +46,6 @@ export class BlacklistService
 
         // check friendShip to delete it if it exists;
         const friendshipExists = await this.userService.isFriend(userId, body.blockedId);
-        console.log("friendshipExists == ", friendshipExists);
         if (friendshipExists)
         {
             await this.prisma.user.update({
@@ -67,6 +66,28 @@ export class BlacklistService
                 }
             });
         }
+        // check if there is any conversation between them remove it 
+        // const conversation = await this.prisma.conversation.findFirst({
+        //     where : {
+        //         type: 'direct',
+        //         participants: {
+        //             every : {
+        //                 intraId : {
+        //                     in: [blocked.intraId, blocker.intraId]
+        //                 }
+        //             }
+        //         }
+        //     },
+        //     select : {
+        //         id: true,
+        //     }
+        // });
+        // console.log("conv == ", JSON.stringify(conversation));
+        // await this.prisma.conversation.delete({
+        //     where: {
+        //         id: conversation.id
+        //     }
+        // });
         console.log(`${blocker.userName} has blocked ${blocked.userName}`);
         return {
             blocker: blocker,
@@ -76,34 +97,38 @@ export class BlacklistService
 
     async unBlockUser(body: UnBlockUserDto, userId: number)
     {
-        const blocker = await this.userService.getUser(userId);
-        if (!blocker)
-            throw new WsException(`userId (blocker) = ${userId} does not exist !`);
-        const blocked = await this.userService.getUser(body.blockedId);
-        if (!blocked)
-            throw new WsException(`userId (blocked) = ${body.blockedId} does not exist !`);
-        if (blocker.intraId === blocked.intraId)
+        const unBlocker = await this.userService.getUser(userId);
+        if (!unBlocker)
+            throw new WsException(`userId (unBlocker) = ${userId} does not exist !`);
+        const unBlocked = await this.userService.getUser(body.blockedId);
+        if (!unBlocked)
+            throw new WsException(`userId (unBlocked) = ${body.blockedId} does not exist !`);
+        if (unBlocker.intraId === unBlocked.intraId)
             throw new WsException(`you cant unblock yourself`);
 
-        const isBlockedByYou = await this.isBlockedByYou(blocker.intraId, blocked.intraId);
-        const isBlockingYou  = await this.isBlockingYou(blocker.intraId, blocked.intraId);
+        const isBlockedByYou = await this.isBlockedByYou(unBlocker.intraId, unBlocked.intraId);
+        const isBlockingYou  = await this.isBlockingYou(unBlocker.intraId, unBlocked.intraId);
 
         // check block system
         if (isBlockingYou)
-            throw new WsException(`${blocked.userName} is Blocking you`);
+            throw new WsException(`${unBlocked.userName} is Blocking you`);
         if (isBlockedByYou)
         {
-            const blockId = await this.getBlockId(blocker.intraId, blocked.intraId);
-            const removedBlockEntry = await this.prisma.blacklist.delete({
+            const blockId = await this.getBlockId(unBlocker.intraId, unBlocked.intraId);
+            await this.prisma.blacklist.delete({
                 where : { 
                     id:  blockId,
                 }
             });
-            console.log(`${blocker.userName} has unblocked ${blocked.userName}`);
-            return removedBlockEntry;
+            console.log(`${unBlocker.userName} has unblocked ${unBlocked.userName}`);
+            // return removedBlockEntry;
+            return {
+                unBlocker: unBlocker,
+                unBlocked: unBlocked
+            };
         }
         if (!isBlockedByYou || !isBlockingYou)
-            throw new WsException(`This user ${blocked.userName} is not blocked by you, you can't unblock him`);
+            throw new WsException(`This user ${unBlocked.userName} is not blocked by you, you can't unblock him`);
     }
 
     async getBlockId(blockerId: number, blockedId: number)

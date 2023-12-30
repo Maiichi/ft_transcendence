@@ -1192,11 +1192,24 @@ export class ChatGateway
     try {
       const currentUser =
         this.findUserByClientSocketId(client.id);
-      await this.blacklistService.unBlockUser(
+      const response = await this.blacklistService.unBlockUser(
         body,
         currentUser.intraId,
       );
-      this.server.emit('unBlockUser');
+      const unBlockerSockets: string[] = this.userSockets.get(currentUser.intraId);
+      const unBlockedSockets: string[] = this.userSockets.get(body.blockedId);
+
+      // event to the unblocker
+      unBlockerSockets.forEach((socketId) => {
+        this.server.to(socketId).emit('unBlockedByMe', response.unBlocked);
+      });
+
+      // event to the unblocked
+      if (unBlockedSockets)
+        unBlockedSockets.forEach((socketId) => {
+          this.server.to(socketId).emit('unBlockedMe', response.unBlocker);
+        });
+      // this.server.emit('unBlockUser');
     } catch (error) {
       client.emit('unBlockUserError', {
         message: error.message,

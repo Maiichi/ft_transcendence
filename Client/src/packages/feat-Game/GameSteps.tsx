@@ -20,43 +20,48 @@ import {
 } from "./redux/GameSlice";
 
 export const GameSteps: React.FC = () => {
-  const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
+    
+    const token = useAppSelector((state) => state.auth.token);
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [socketReady, setSocketReady] = useState<boolean>(false);
+    
+    
+    const currentStep = useAppSelector((state) => state.game.currentStep);
+    const gameMode = useAppSelector((state) => state.game.gameMode);
 
-  const token = useAppSelector((state) => state.auth.token);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [socketReady, setSocketReady] = useState<boolean>(false);
 
-  const currentStep = useAppSelector((state) => state.game.currentStep);
-  const gameMode = useAppSelector((state) => state.game.gameMode);
+    useEffect(() => {
+        // Establish the socket connection when the component mounts
+        const SOCKET_URL = `${process.env.REACT_APP_BACKEND_URL}/game`;
 
-  useEffect(() => {
-    // Establish the socket connection when the component mounts
-    const SOCKET_URL = `${process.env.REACT_APP_BACKEND_URL}/game`;
+        const newSocket = io(SOCKET_URL, {
+            extraHeaders: {
+                authorization: `${token}`,
+            },
+        });
 
-    const newSocket = io(SOCKET_URL, {
-      extraHeaders: {
-        authorization: `${token}`,
-      },
+        newSocket.on("connect", () => {
+            setSocketReady(true);
+        });
+        // Set the socket in the state
+        setSocket(newSocket);
+
+        // Clean up the socket connection when the component unmounts
+        return () => {
+            newSocket.emit('cancelGame');
+            newSocket.disconnect();
+            dispatch(resetGameState());
+        };
+    }, []); //
+
+    socket?.on("joinQueueError", (data) => {
+        handleReset();
+        dispatch(setServerMessage(data));
+        dispatch(setOpenSnackbar(true));
+        dispatch(setSeverity('error'));
     });
 
-    newSocket.on("connect", () => {
-      setSocketReady(true);
-    });
-    // Set the socket in the state
-    setSocket(newSocket);
-
-    // Clean up the socket connection when the component unmounts
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []); //
-
-  socket?.on("joinQueueError", (data) => {
-    handleReset();
-    dispatch(setServerMessage(data));
-    dispatch(setOpenSnackbar(true));
-    dispatch(setSeverity("error"));
-  });
 
   const isCurrentTab = useAppSelector((state) => state.game.currentTab);
 
