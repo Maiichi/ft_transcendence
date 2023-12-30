@@ -114,7 +114,8 @@ export class UserService {
                 const user = await this.prisma.user.update({
                     where: {intraId: userId} ,
                     data : {
-                        userName : dto.userName
+                        userName : dto.userName,
+                        isFirstLogin: false
                     }
                 }).catch((err) =>{
                     return res.status(400).json({ status : 400, message : err })
