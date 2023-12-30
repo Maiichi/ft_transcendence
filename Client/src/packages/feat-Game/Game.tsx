@@ -10,7 +10,12 @@ import {
 import { useKeyboardControls } from "./hooks/useKeyboardControls";
 import { GameCanvas } from "./components/GameCanvas";
 
-import { ModalComponent, useAppDispatch, useAppSelector } from "../../core";
+import {
+  ButtonComponent,
+  ModalComponent,
+  useAppDispatch,
+  useAppSelector,
+} from "../../core";
 import { useNavigate } from "react-router-dom";
 import { resetGameState, setCountdown, setGameStep } from "./redux/GameSlice";
 
@@ -77,8 +82,11 @@ export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
       <GameCanvas frame={frame} gameMode={gameMode} />
       {isEnd && (
         <>
-          <button onClick={() => navigate("/gamesHistory")}>history</button>
-          <button onClick={handleResetGameState}>Reset</button>
+          <ButtonComponent
+            onClick={() => navigate("/gamesHistory")}
+            title="Match history"
+          />
+          <ButtonComponent onClick={handleResetGameState} title="Restart" />
         </>
       )}
     </div>

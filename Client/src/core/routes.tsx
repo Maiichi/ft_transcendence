@@ -1,6 +1,5 @@
 import {
   GameSteps as Game,
-  Home,
   AccountSettings,
   Profile,
   Chat,
@@ -49,19 +48,8 @@ export const routes: Route[] = [
     errorElement: <NotFoundError />,
     requireAuth: true,
   },
-
   {
     path: "/",
-    element: (
-      <Layout>
-        <Home />
-      </Layout>
-    ),
-    errorElement: <NotFoundError />,
-    requireAuth: true,
-  },
-  {
-    path: "/game",
     element: (
       <Layout>
         <Game />
@@ -80,16 +68,6 @@ export const routes: Route[] = [
     errorElement: <NotFoundError />,
     requireAuth: true,
   },
-  // {
-  //   path: "/account/profile/:uid",
-  //   element: (
-  //     <Layout>
-  //       <Profile />
-  //     </Layout>
-  //   ),
-  //   errorElement: <NotFoundError />,
-  //   requireAuth: true,
-  // },
   {
     path: "/account/profile/:uid?",
     element: (

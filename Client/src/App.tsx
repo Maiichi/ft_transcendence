@@ -91,45 +91,6 @@ const GameInvitationModal = () => {
             />
   );
 }
-
-// function App() {
-//   return (
-//     <Provider store={store}>
-//       <HandleError />
-//       <BrowserRouter>
-//         <GameInvitationModal />
-//         <Routes>
-//           {routes.map((item) => (
-//             <Route
-//               key={item.path}
-//               path={item.path}
-//               element={
-//                 item.path === '/game' ? (
-//                   // if the route is the 'game' route, don't wrap it with SocketInit
-//                   // this is because the route game has a specific gateway so it can't be wraped inside the socketInit
-//                     item?.requireAuth ? (
-//                       <RequireAuth>{item.element}</RequireAuth>
-//                     ) : (
-//                       item.element
-//                     )
-//                 ) : (
-//                   // Wrap all other routes with SocketInit
-//                   <SocketInit>
-//                     {item?.requireAuth ? (
-//                       <RequireAuth>{item.element}</RequireAuth>
-//                     ) : (
-//                       item.element
-//                     )}
-//                   </SocketInit>
-//                 )
-//               } 
-//             />
-//           ))}
-//         </Routes>
-//       </BrowserRouter>
-//     </Provider>
-//   );
-// }
 function App() {
   return (
     <Provider store={store}>
