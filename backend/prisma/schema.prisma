@@ -22,6 +22,7 @@ model User {
   inGame            Boolean        @default(false)
   twoFactorActivate Boolean?       @default(false)
   twoFactorSecret   String?        @db.VarChar(255)
+  isFirstLogin      Boolean        @default(true)
   memberships       Membership[]
   conversations     Conversation[]
   createdAt         DateTime       @default(now()) @db.Timestamp(6)

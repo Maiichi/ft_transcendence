@@ -73,7 +73,6 @@ export class AuthService
         let user = await this.prisma.user.findFirst({
             where: {intraId: intra_id}
         })
-        let isFirstLogin = false;
         // save the new user in the db
         if (!user)
         {
@@ -87,7 +86,6 @@ export class AuthService
                     
                 },
             });
-            isFirstLogin = true;
         }
         const tokenPromise = this.signToken(user.intraId , user.email);
         const token = await tokenPromise;
@@ -97,7 +95,7 @@ export class AuthService
         // })
         //
 
-        res.redirect(`${process.env.FRONTEND_URL}/login?secT7=${token}&first_login=${isFirstLogin}`);
+        res.redirect(`${process.env.FRONTEND_URL}/login?secT7=${token}&first_login=${user.isFirstLogin}`);
 
         /* need to be redirected to Home page after login */
         // return res.redirect('/api/auth/logged');
