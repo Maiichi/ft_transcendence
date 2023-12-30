@@ -80,18 +80,18 @@ export const routes: Route[] = [
     errorElement: <NotFoundError />,
     requireAuth: true,
   },
+  // {
+  //   path: "/account/profile/:uid",
+  //   element: (
+  //     <Layout>
+  //       <Profile />
+  //     </Layout>
+  //   ),
+  //   errorElement: <NotFoundError />,
+  //   requireAuth: true,
+  // },
   {
-    path: "/user/:uid",
-    element: (
-      <Layout>
-        <Profile />
-      </Layout>
-    ),
-    errorElement: <NotFoundError />,
-    requireAuth: true,
-  },
-  {
-    path: "/account/profile",
+    path: "/account/profile/:uid?",
     element: (
       <Layout>
         <Profile />

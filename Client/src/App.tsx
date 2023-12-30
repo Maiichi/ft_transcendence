@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { ModalComponent, routes, store, useAppDispatch, useAppSelector } from "./core";
-import RequireAuth from "./core/RequireAuth";
+import RequireAuth, { Public } from "./core/RequireAuth";
 import { useEffect, useState } from "react";
 import { useAuthentication } from "./packages/feat-Auth/authUtils";
 import { ConnectSocket } from "./packages";
@@ -145,7 +145,7 @@ function App() {
                   item?.requireAuth ? (
                     <RequireAuth>{item}</RequireAuth>
                   ) : (
-                    item.element
+                    <Public >{item}</Public>
                   )
                 }
               />

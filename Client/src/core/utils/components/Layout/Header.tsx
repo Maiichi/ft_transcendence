@@ -1,36 +1,29 @@
 import { useState, useEffect } from "react";
 
 import styled from "styled-components";
-import { Typography, PopperPlacementType } from "@mui/material";
+import { Typography, PopperPlacementType, Avatar } from "@mui/material";
 import { makeStyles } from "@material-ui/styles";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-
-import AppsIcon from "@mui/icons-material/Apps";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
-import MailIcon from "@mui/icons-material/Mail";
 import {
-  Drawer,
-  FriendRequestsNotifications,
-  ListComponent,
-  ListNav,
-  
-  PopperComponent,
-  SearchComponent,
-} from "..";
+  Apps as AppsIcon,
+  Logout,
+  History,
+  PermIdentity,
+  Settings,
+} from "@mui/icons-material";
+
+import { Drawer, FriendRequestsNotifications, ListComponent, ListNav, PopperComponent } from "..";
 import { useSize } from "../../hooks";
 import { useAppDispatch, useAppSelector } from "../../../redux";
 import { setDisplayNavbar } from "../../../CoreSlice";
+import { userLogout } from "../../../../packages/feat-Auth/components/authSlice";
+import { deepPurple, purple } from "@mui/material/colors";
+
+import IconButton from "@mui/material/IconButton";
+import Badge from "@mui/material/Badge";
 import { useAuthentication } from "../../../../packages/feat-Auth/authUtils";
-import {
-  setToken,
-  userLogout,
-} from "../../../../packages/feat-Auth/components/authSlice";
+
 import { useNavigate } from "react-router-dom";
-import { disconnectSocket } from "../../../socket/socketSlice";
 import { getFriendRequests } from "../../../../packages/feat-Account/components";
 import { I_User } from "../..";
 
@@ -40,10 +33,7 @@ interface MenuTabs {
   redirect?: string;
   render: JSX.Element;
 }
-interface TabProps {
-  isActive: boolean;
-  requireAuth?: boolean;
-}
+
 type ActiveTabs = "notif" | "profile" | "search";
 const useStyles = makeStyles({
   iconBase: {
@@ -77,19 +67,20 @@ const Menu = [
   {
     redirect: "/account/profile",
     render: "Profile",
-    icon: PermIdentityIcon,
+    icon: PermIdentity,
+    style: { color: purple[400] },
+  },
+  {
+    redirect: "/gamesHistory",
+    render: "matchs History",
+    icon: History,
+    style: { color: purple[500] },
   },
   {
     redirect: "/account/settings",
     render: "Account Settings",
-    icon: SettingsIcon,
-  },
-  {
-    redirect: "/logout",
-    render: "Logout",
-    icon: LogoutIcon,
-    style: { color: "#f23f3f" },
-    onclick: () => console.log("Logout"),
+    icon: Settings,
+    style: { color: purple[600] },
   },
 ];
 const ProfilePopper = () => {
@@ -144,6 +135,10 @@ export const Header = () => {
   const [placement, setPlacement] = useState<PopperPlacementType>();
   const [ChildPopper, setChildPopper] = useState<JSX.Element>(<></>);
   const [popperStyle, setPopperStyle] = useState<React.CSSProperties>();
+
+  const userAvatar = useAppSelector(
+    ({ auth }) => auth.user?.avatar_url ?? null
+  );
   const friendRequests: I_User[] = useAppSelector(
     (state) => state.friends.friendRequests
   );
@@ -208,14 +203,16 @@ export const Header = () => {
     {
       id: "profile",
       render: (
-        <ImgProfile
+        <Avatar
           id="profile"
-          style={{ marginLeft: " 20px" }}
-          src="https://cdn-icons-png.flaticon.com/512/4128/4128349.png"
+          sx={{ bgcolor: deepPurple[500], width: 40, height: 40, ml: 2, mr: 2 }}
+          src={userAvatar ?? ""}
           onClick={popperClick("bottom-start", <ProfilePopper />, "profile", {
             paddingTop: "10px",
           })}
-        />
+        >
+          User
+        </Avatar>
       ),
     },
   ];
@@ -251,25 +248,6 @@ export const Header = () => {
               className={classes.iconBase}
               onClick={toggleDrawer("top", true)}
             />
-
-            {/* <SearchIcon
-                            className={classes.iconBase}
-                            style={{ marginLeft: "10px", marginRight: "auto" }}
-                            onClick={popperClick(
-                                "bottom",
-                                <SearchComponent
-                                    clear={true}
-                                    setOpen={setOpen}
-                                />,
-                                "search",
-                                {
-                                    padding: "5px 10px",
-                                    marginTop: "-34px!important",
-                                    background: "#ffffff",
-                                    width: "-webkit-fill-available",
-                                }
-                            )}
-                        /> */}
           </>
         ) : (
           <>
@@ -278,23 +256,19 @@ export const Header = () => {
                 className={classes.iconBase}
                 onClick={() => dispatch(setDisplayNavbar(false))}
               />
-              <>LOGO</>
+              <>Ping PONG</>
             </Left>
-            {/* <SearchComponent /> */}
           </>
         )}
         <Right>
           {RightMenu.map((item: MenuTabs) => item.render)}
-          {isAuthenticated && (
-            <LogoutIcon
-              id="logout"
-              className={classes.iconBase}
-              onClick={() => {
-                dispatch(userLogout());
-                // navigate("/login");
-              }}
-            />
-          )}
+          <Logout
+            id="logout"
+            className={classes.iconBase}
+            onClick={() => {
+              dispatch(userLogout());
+            }}
+          />
         </Right>
       </Root>
     </>
@@ -316,12 +290,7 @@ const Right = styled.div`
   align-items: center;
 `;
 const Left = styled.div`
-  width: 100px;
+  width: 130px;
   display: flex;
   justify-content: space-between;
-`;
-
-const ImgProfile = styled.img`
-  width: 33px;
-  height: 34px;
 `;
