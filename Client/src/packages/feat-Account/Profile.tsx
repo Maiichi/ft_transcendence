@@ -9,22 +9,24 @@ import {
   AchievemetsCard,
   MatchsHistoryCard,
   UserCard,
+  getBlacklist,
 } from "./components";
 import { ProfileCards, Button } from "./styles";
-
+import { isBlockedByYou, isBlockedYou } from "../feat-Chat/components/utils";
 
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const _uid = useParams<{ uid: string }>();
+  const params = useParams();
 
   const intraId = useAppSelector((state) => state.auth.user.intraId);
-  const uid: number =
-    typeof _uid.uid === "string" ? parseInt(_uid.uid, 10) : intraId;
+  const block = useAppSelector((state) => state.block);
+  const uid: number = params.uid ? parseInt(params.uid) : intraId;
+  console.log(uid);
   const isOwner: boolean = intraId === uid;
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
-  const Go: boolean = !useAppSelector(
+  const isLoading: boolean = !useAppSelector(
     ({ profile }) =>
       profile.isLoading || profile.lead.isLoading || profile.matchs.isLoading
   );
@@ -33,20 +35,20 @@ const Profile = () => {
   useEffect(() => {
     dispatch(getuserasgamer(uid));
     dispatch(getLeaderboard());
-
-  }, []);
-
-  if ((Go && !user) || uid < 1)
-    return (
-      <>
-        user not found
-        <Button onClick={() => navigate("/")}>go to home Page</Button>
-      </>
-    );
+    dispatch(getBlacklist());
+  }, [uid]);
+  if (
+    (!user && isLoading) ||
+    isBlockedByYou(uid, block) ||
+    isBlockedByYou(uid, block)
+  ) {
+    navigate("/");
+    return null;
+  }
 
   return (
     <>
-      {!Go ? (
+      {!isLoading ? (
         <Loading />
       ) : (
         <ProfileCards>

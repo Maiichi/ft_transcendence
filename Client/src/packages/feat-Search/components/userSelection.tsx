@@ -47,7 +47,7 @@ export const UserSelection = (props: {
           userName={uname}
         />
       );
-    } else navigate(`/user/${uid}`);
+    } else navigate(`/account/profile/${uid}`);
   };
 
   return (
