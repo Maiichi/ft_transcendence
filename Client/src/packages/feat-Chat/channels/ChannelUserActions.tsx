@@ -33,7 +33,13 @@ import { BlockUserModal } from "../components/modals/BlockUserModal";
 //   inviteUserToGame,
 //   inviteUserToGameFromChat,
 // } from "../../feat-Game/redux/GameSlice";
-import { inviteToGame, setCurrentTab, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
+import {
+  inviteToGame,
+  setCurrentTab,
+  setInviteFromChat,
+  setInviteSent,
+  setInvited,
+} from "../../feat-Game/redux/GameSlice";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -145,25 +151,26 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         break;
 
       case "play":
-        dispatch(inviteToGame({
-          invitedId : selectedUser.intraId,
-          inviterId : user.intraId,
-          gameMode  : "dual",
-        }));
+        dispatch(
+          inviteToGame({
+            invitedId: selectedUser.intraId,
+            inviterId: user.intraId,
+            gameMode: "dual",
+          })
+        );
         // TODO:  need a check (inGame)
-        if (selectedUser.status === "ONLINE")
-        {
-          // dispatch(inviteUserToGameFromChat(true));         
+        if (selectedUser.status === "ONLINE") {
+          // dispatch(inviteUserToGameFromChat(true));
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
-          navigate('/game');
+          navigate("/game");
           // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
       case "viewProfile":
-        navigate(`/user/${selectedUser.intraId}`);
+        navigate(`/account/profile/${selectedUser.intraId}`);
         break;
       case "sendFriendRequest":
         dispatch(sendFriendRequest(selectedUser.intraId));
@@ -290,27 +297,27 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     );
 
     if (selectedUser) {
-      if (iconType === 'play')       {         
-          dispatch(inviteToGame({
-            invitedId : selectedUser.user.intraId,
-            inviterId : user.intraId,
-            gameMode  : "dual",
-          }));
-          // TODO:  need a check (inGame)
-          if (selectedUser.user.status === "ONLINE")
-          {
-            // dispatch(inviteUserToGameFromChat(true));         
-            dispatch(setInviteSent(true));
-            dispatch(setInvited(selectedUser.user));
-            dispatch(setCurrentTab(true));
-            dispatch(setInviteFromChat(true));
-            navigate('/game');
-            // dispatch(setGameStep(STEPS.WAITING_QUEUE));
-          }
-          else
-            return;
+      if (iconType === "play") {
+        dispatch(
+          inviteToGame({
+            invitedId: selectedUser.user.intraId,
+            inviterId: user.intraId,
+            gameMode: "dual",
+          })
+        );
+        // TODO:  need a check (inGame)
+        if (selectedUser.user.status === "ONLINE") {
+          // dispatch(inviteUserToGameFromChat(true));
+          dispatch(setInviteSent(true));
+          dispatch(setInvited(selectedUser.user));
+          dispatch(setCurrentTab(true));
+          dispatch(setInviteFromChat(true));
+          navigate("/game");
+          // dispatch(setGameStep(STEPS.WAITING_QUEUE));
+        } else return;
       }
-      if (iconType == "viewProfile") navigate(`/user/${selectedUserId}`);
+      if (iconType == "viewProfile")
+        navigate(`/account/profile/${selectedUserId}`);
       const dataForModal = getDataForModal(iconType, room, selectedUser.user);
       const modalComponent: JSX.Element = getModalComponent(
         iconType,

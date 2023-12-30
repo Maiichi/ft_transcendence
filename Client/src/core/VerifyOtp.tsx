@@ -28,7 +28,6 @@ const VerifyOtp: React.FC<any> = ({ open, setOpen, action }) => {
                 },
                 data: { code: otpCode },
             });
-
             if (response) {
                 dispatch(setShouldVerifyTwoFactor(false));
                 navigate("/");

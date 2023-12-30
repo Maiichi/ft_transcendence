@@ -16,7 +16,14 @@ import {
   isSentFriendRequest,
 } from "../components/utils";
 import { useNavigate } from "react-router-dom";
-import { inviteToGame, setCurrentTab, setGameStep, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
+import {
+  inviteToGame,
+  setCurrentTab,
+  setGameStep,
+  setInviteFromChat,
+  setInviteSent,
+  setInvited,
+} from "../../feat-Game/redux/GameSlice";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
 import GamesIcon from "@mui/icons-material/Games";
@@ -40,7 +47,7 @@ export const UserActionInDirectConversation = ({
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { selectedUser } = useAppSelector((state) => state.chat);
-  const currentUser = useAppSelector((state) => state.auth.user); 
+  const currentUser = useAppSelector((state) => state.auth.user);
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
@@ -78,23 +85,23 @@ export const UserActionInDirectConversation = ({
         );
         break;
       case "viewProfile":
-        navigate(`/user/${selectedUser.intraId}`);
+        navigate(`/account/profile/${selectedUser.intraId}`);
         break;
       case "play":
-        dispatch(inviteToGame({
-          invitedId : selectedUser.intraId,
-          inviterId : currentUser.intraId,
-          gameMode: "dual"
-        }));
-         // TODO:  need a check (inGame)
-        if (selectedUser.status === "ONLINE")
-        {
+        dispatch(
+          inviteToGame({
+            invitedId: selectedUser.intraId,
+            inviterId: currentUser.intraId,
+            gameMode: "dual",
+          })
+        );
+        // TODO:  need a check (inGame)
+        if (selectedUser.status === "ONLINE") {
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
           navigate('/game');
-          // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
       case "sendFriendRequest":

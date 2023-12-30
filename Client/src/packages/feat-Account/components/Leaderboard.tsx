@@ -4,10 +4,12 @@ import { Chat } from "@mui/icons-material";
 import { Loading, useAppDispatch, useAppSelector } from "../../../core";
 import {
   ListButton,
-   SendGameRequist,
+  SendGameRequist,
   getLeaderboard,
   leaderboardType,
 } from ".";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
 import {
   Players,
   Player,
@@ -54,7 +56,9 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
               (!primary && index >= 3) || (
                 <Player>
                   <ListItemAvatar
-                    onClick={() => navigate(`/user/${player.userId}`)}
+                    onClick={() =>
+                      navigate(`/account/profile/${player.userId}`)
+                    }
                   >
                     <Avatar src={player.avatar_url}>{index + 1}</Avatar>
                   </ListItemAvatar>
@@ -79,26 +83,14 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                       secondary={`Losses`}
                     />
                   )}
-                  {primary &&
-                    (Oid !== player.userId ? (
-                      <ListButton
-                        isTab={isTab || isMobile}
-                        onCklick={handleClickOpen}
-                        anchorEl={anchorEl}
-                        open={open}
-                        setOpen={setOpen}
-                      >
-                        <SendGameRequist userName={player.name} />
-                        <Button onClick={() => navigate("/chat")}>
-                          <Chat />
-                        </Button>
-                        {/* <SendFriendRequist onlyIcon userName={player.name} /> */}
-                      </ListButton>
-                    ) : (
-                      <Button onClick={() => navigate("/account/profile")}>
-                        {isTab || isMobile ? "You" : "Go to your Profile"}
-                      </Button>
-                    ))}
+                  {primary && (
+                    <Button
+                      onClick={() =>
+                        navigate(`/account/profile/${player.userId}`)
+                      }
+                      startIcon={<AccountCircleIcon />}
+                    />
+                  )}
                 </Player>
               )
           )}

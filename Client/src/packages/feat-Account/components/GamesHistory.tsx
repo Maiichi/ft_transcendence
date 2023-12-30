@@ -1,10 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  Loading,
-  Relationship,
-  useAppDispatch,
-  useAppSelector,
-} from "../../../core";
+import { Loading, useAppDispatch, useAppSelector } from "../../../core";
 import { Fragment, useEffect, useState } from "react";
 import {
   Paper,
@@ -54,40 +49,29 @@ const GamesHistory = () => {
 
   return (
     <Container>
-      {/* <Relationship
-        relations={["friend"]}
-        opId={gid}
-        isOwner={isOwner}
-        notallow={
-          <Alert severity="error">
-            You are `NOT ALLOW` to see the history of this user
-          </Alert>
-        }
-      > */}
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">palyer1</TableCell>
-                  <TableCell />
-                  <TableCell align="center">Score</TableCell>
-                  <TableCell />
-                  <TableCell align="center">player2</TableCell>
-                  {isMobile || <TableCell />}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {matchs?.map((match, index) => (
-                  <Row match={match} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      {/* </Relationship> */}
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">palyer1</TableCell>
+                <TableCell />
+                <TableCell align="center">Score</TableCell>
+                <TableCell />
+                <TableCell align="center">player2</TableCell>
+                {isMobile || <TableCell />}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {matchs?.map((match, index) => (
+                <Row match={match} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Container>
   );
 };
