@@ -77,7 +77,7 @@ export const authSlice = createSlice({
             .addCase(updateUserName.fulfilled, (state, action) => {
                 if (action.payload?.isFirstTime) state.firstLogin = false;
                 if (state.user) {
-                    console.log("jojo", action.payload.newUsername);
+                   
                     state.user.userName = action.payload.newUsername;
                 }
                 state.loading = false;

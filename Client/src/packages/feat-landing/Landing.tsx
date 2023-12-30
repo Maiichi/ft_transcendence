@@ -44,12 +44,12 @@ const LandingPage = () => {
     }, 500);
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/");
-    }
-  }, []);
-  if (isAuthenticated) return <Backdrop color="#b8b0b0" open={true}></Backdrop>;
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     navigate("/");
+  //   }
+  // }, []);
+  // if (isAuthenticated) return <Backdrop color="#b8b0b0" open={true}></Backdrop>;
   return (
     <LHtml>
       <Lbody>

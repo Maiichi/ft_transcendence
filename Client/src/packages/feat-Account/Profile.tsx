@@ -22,7 +22,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const _uid = useParams<{ uid: string }>();
-  const [start, setStart] = useState(false);
+  // const [start, setStart] = useState(false);
 
   const intraId = useAppSelector((state) => state.auth.user.intraId);
   const uid: number =
@@ -39,10 +39,10 @@ const Profile = () => {
   useEffect(() => {
     dispatch(getuserasgamer(uid));
     dispatch(getLeaderboard());
-    setStart(true);
+    // setStart(true);
   }, []);
 
-  if (!start) return <Loading />;
+  // if (!start) return <Loading />;
   if ((Go && !user) || uid < 1)
     return (
       <>

@@ -29,7 +29,6 @@ import {
   MAX_IMAGE_SIZE,
   VisuallyHiddenInput,
 } from "../../feat-Account/Settings";
-import { setFirstLogin } from "./authSlice";
 
 const FirstLogin = () => {
   const { firstLogin: isfirstLogin } = useAppSelector((state) => state.auth);
@@ -236,66 +235,66 @@ const FirstLogin = () => {
     },
   ];
   useEffect(() => {
-    !isfirstLogin && navigate("/");
-    letStart(true);
+    // !isfirstLogin && navigate("/");
+    // letStart(true);
     setOpen(false);
   }, [isfirstLogin]);
 
   return (
     <>
-      {start && (
-        <Stack
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          spacing={2}
-          minWidth="100%"
-          minHeight="100%"
+      (
+      <Stack
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        spacing={2}
+        minWidth="100%"
+        minHeight="100%"
+      >
+        <Stepper
+          activeStep={activeStep}
+          orientation="vertical"
+          sx={isMobile ? {} : { maxWidth: "70%", minWidth: "70%" }}
         >
-          <Stepper
-            activeStep={activeStep}
-            orientation="vertical"
-            sx={isMobile ? {} : { maxWidth: "70%", minWidth: "70%" }}
-          >
-            {steps.map((step, index) => (
-              <Step key={step.label}>
-                <StepLabel
-                  optional={
-                    index === 2 ? (
-                      <Typography variant="caption">Last step</Typography>
-                    ) : null
-                  }
-                >
-                  <Typography variant="h6" component="div">
-                    {step.label}
-                  </Typography>
-                </StepLabel>
-                <StepContent>
-                  {step.Content}
-                  <Box sx={{ mb: 2 }}>
-                    <div>
-                      {index === steps.length - 1 && (
-                        <Button
-                          variant="contained"
-                          onClick={handelFinish}
-                          sx={{ mt: 1, mr: 1 }}
-                        >
-                          {"Finish"}
-                        </Button>
-                      )}
-                      {index === 0 || (
-                        <Button onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
-                          Back
-                        </Button>
-                      )}
-                    </div>
-                  </Box>
-                </StepContent>
-              </Step>
-            ))}
-          </Stepper>
-        </Stack>
-      )}
+          {steps.map((step, index) => (
+            <Step key={step.label}>
+              <StepLabel
+                optional={
+                  index === 2 ? (
+                    <Typography variant="caption">Last step</Typography>
+                  ) : null
+                }
+              >
+                <Typography variant="h6" component="div">
+                  {step.label}
+                </Typography>
+              </StepLabel>
+              <StepContent>
+                {step.Content}
+                <Box sx={{ mb: 2 }}>
+                  <div>
+                    {index === steps.length - 1 && (
+                      <Button
+                        variant="contained"
+                        onClick={handelFinish}
+                        sx={{ mt: 1, mr: 1 }}
+                      >
+                        {"Finish"}
+                      </Button>
+                    )}
+                    {index === 0 || (
+                      <Button onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
+                        Back
+                      </Button>
+                    )}
+                  </div>
+                </Box>
+              </StepContent>
+            </Step>
+          ))}
+        </Stepper>
+      </Stack>
+      )
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}

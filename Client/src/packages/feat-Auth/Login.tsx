@@ -13,17 +13,17 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      console.log("authenticated");
-      // if (!state.socket.isConnected) {
-      //   let serverUrl =
-      //     process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
-      //   let socket = initializeSocket(serverUrl, state.auth.oken);
-      //   dispatch(connectionEstablished(socket));
-      // }
+    // if (isAuthenticated) {
+    //   console.log("authenticated");
+    //   // if (!state.socket.isConnected) {
+    //   //   let serverUrl =
+    //   //     process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
+    //   //   let socket = initializeSocket(serverUrl, state.auth.oken);
+    //   //   dispatch(connectionEstablished(socket));
+    //   // }
 
-      navigate("/");
-    }
+    //   navigate("/");
+    // }
     const queryParams = new URLSearchParams(window.location.search);
     const secT7Param = queryParams.get("secT7");
     const firstLoginParam = queryParams.get("first_login");
@@ -40,7 +40,7 @@ const Login = () => {
       );
       // navigate("/");
     }
-  }, [isAuthenticated]);
+  }, []);
 
   const [open, setOpen] = useState(false);
   const handleLogin = () => {
