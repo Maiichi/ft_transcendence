@@ -10,18 +10,23 @@ import {
 } from "../statsType";
 import { getLeaderboard, getMatchHistory } from ".";
 
+
 const getAchievements = createAsyncThunk(
   "profile/achivs",
-  async (userID: number): Promise<AchievementType[]> => {
+  async (uid: number, { getState }): Promise<AchievementType[]> => {
     try {
+      const token = (getState() as RootState).auth.token;
       const achivs: AchievementType[] = Object.values(
         await require("../../static-data/Achievements.json")
       );
-      return new Promise<AchievementType[]>((resolve) => {
-        setTimeout(() => {
-          resolve(achivs);
-        }, 500);
+      // 
+      const userresponse: [] = await apiRequest(`/game/achievements`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+      return userresponse;
     } catch (error) {
       console.error("error achievements fetching", error);
       throw error;
