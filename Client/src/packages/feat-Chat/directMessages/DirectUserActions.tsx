@@ -94,7 +94,7 @@ export const UserActionInDirectConversation = ({
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
           navigate('/game');
-          dispatch(setGameStep(STEPS.WAITING_QUEUE));
+          // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
       case "sendFriendRequest":

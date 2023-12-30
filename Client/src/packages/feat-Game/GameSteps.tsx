@@ -22,7 +22,6 @@ export const GameSteps: React.FC = () => {
     const gameMode = useAppSelector((state) => state.game.gameMode);
 
 
-
     useEffect(() => {
         // Establish the socket connection when the component mounts
         const SOCKET_URL = `${process.env.REACT_APP_BACKEND_URL}/game`;
@@ -41,7 +40,9 @@ export const GameSteps: React.FC = () => {
 
         // Clean up the socket connection when the component unmounts
         return () => {
+            newSocket.emit('cancelGame');
             newSocket.disconnect();
+            dispatch(resetGameState());
         };
     }, []); //
 

@@ -1,11 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { getAllRooms, getAllUsers } from "./searchThunk";
 import { I_Room_Search } from "../types/types";
-import { userType } from "../../feat-Account/components";
+import { I_User } from "../../../core";
 
 export interface S_Search {
   rooms: I_Room_Search[];
-  users: userType[];
+  users: I_User[];
   isLoading: boolean;
 }
 
@@ -57,6 +57,13 @@ export const searchSlice = createSlice({
       state.rooms[roomIndex].type = action.payload.type;
       state.rooms[roomIndex].password = action.payload.password;
     },
+    setUserBlocked: (state, action: PayloadAction<I_User>) => {
+      const userIndex = state.users.findIndex((user) => user.intraId === action.payload.intraId);
+      state.users.splice(userIndex, 1);
+    },
+    setUserUnblocked: (state, action: PayloadAction<I_User>) => {
+      state.users.unshift(action.payload);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -84,7 +91,16 @@ export const searchSlice = createSlice({
   },
 });
 
-export const { joinRoom, setRoomJoined, setRoomLeaved, addRoom, removeRoom, setRoomUpdated } =
+export const { 
+  joinRoom, 
+  setRoomJoined, 
+  setRoomLeaved, 
+  addRoom, 
+  removeRoom, 
+  setRoomUpdated,
+  setUserBlocked,
+  setUserUnblocked
+} =
   searchSlice.actions;
 
 export default searchSlice.reducer;

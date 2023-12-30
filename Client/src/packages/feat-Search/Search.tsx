@@ -49,7 +49,7 @@ export const Search = () => {
     dispatch(getUserFriends());
     dispatch(getBlacklist());
     dispatch(getAllRooms());
-    dispatch(getMemberships());
+    // dispatch(getMemberships());
     dispatch(getAllUsers());
   }, []);
   // Filter chat rooms based on the search query
