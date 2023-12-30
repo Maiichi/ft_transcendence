@@ -8,32 +8,31 @@ import {
   Button,
   ButtonGroup,
   Divider,
-  Paper,
   Stack,
   Step,
-  StepButton,
   StepContent,
+  StepIcon,
   StepLabel,
   Stepper,
   TextField,
   Typography,
 } from "@mui/material";
-import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
-import { ChangeEvent, Fragment, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { updateUserName, uploadAvatar } from "./authThunk";
 import { useSize } from "../../../core/utils/hooks";
-import { CardAvatar, Title } from "../../feat-Account/components";
-import { CheckBox, CheckCircle, CloudUpload } from "@mui/icons-material";
+import { CardAvatar } from "../../feat-Account/components";
+import { DoneOutline, CloudUpload, Logout } from "@mui/icons-material";
 import {
   ALLOWED_FILE_TYPES,
   MAX_IMAGE_SIZE,
   VisuallyHiddenInput,
 } from "../../feat-Account/Settings";
+import { deepPurple, purple } from "@mui/material/colors";
+import { userLogout } from "./authSlice";
 
 const FirstLogin = () => {
   const { firstLogin: isfirstLogin } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { isMobile } = useSize();
   const auth = useAppSelector((state) => state.auth);
   const [textInput, setTextInput] = useState(auth.user.userName);
@@ -41,8 +40,6 @@ const FirstLogin = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [fileInfos, setFileInfos] = useState<File | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
-  const [open, setOpen] = useState(true);
-  const [start, letStart] = useState(false);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setImageError(null);
@@ -127,22 +124,12 @@ const FirstLogin = () => {
 
   const handleSubmit = () => {
     if (isValid(textInput)) {
-      dispatch(
-        updateUserName({
-          // isFirstTime: true,
-          token: auth.token,
-          id: auth.user.intraId,
-          newUsername: textInput,
-          user: null,
-        })
-      );
       handleNext();
     } else {
       setInputError("Invalid characters in username.");
     }
   };
   const handelFinish = () => {
-    setOpen(true);
     dispatch(
       updateUserName({
         isFirstTime: true,
@@ -154,10 +141,22 @@ const FirstLogin = () => {
     );
     setTimeout(() => {
       if (isfirstLogin) {
+        setInputError("userName reserved!");
         setActiveStep(0);
-        setOpen(false);
       }
     }, 100);
+  };
+  const handelLogout = () => {
+    dispatch(
+      updateUserName({
+        isFirstTime: true,
+        token: auth.token,
+        id: auth.user.intraId,
+        newUsername: auth.token.slice(0, 8),
+        user: null,
+      })
+    );
+    dispatch(userLogout());
   };
   const steps = [
     {
@@ -167,6 +166,7 @@ const FirstLogin = () => {
           <TextField
             error={!!inputError}
             value={textInput}
+            color="secondary"
             variant="standard"
             placeholder="Username"
             onChange={handleInputChange}
@@ -176,7 +176,7 @@ const FirstLogin = () => {
             type="submit"
             variant="contained"
             sx={{ width: "30%" }}
-            color="primary"
+            color="secondary"
             onClick={handleSubmit}
             disabled={!textInput || !!inputError}
           >
@@ -191,10 +191,16 @@ const FirstLogin = () => {
         <>
           <CardAvatar firstLogin>
             <Avatar
-              sx={{ width: "80px", height: "80px" }}
+              sx={{
+                width: "80px",
+                height: "80px",
+                backgroundColor: purple[200],
+              }}
               alt={auth.user.userName}
               src={selectedImage || `${auth.user.avatar_url}`}
-            />
+            >
+              User
+            </Avatar>
             <Divider />
             {imageError && (
               <Alert
@@ -207,23 +213,18 @@ const FirstLogin = () => {
               </Alert>
             )}
             <ButtonGroup
+              color="secondary"
               variant="text"
               aria-label="outlined primary button group"
             >
-              <Button
-                component="label"
-                startIcon={selectedImage ? <CheckCircle /> : <CloudUpload />}
-              >
+              <Button component="label" startIcon={<CloudUpload />}>
                 <VisuallyHiddenInput
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
                 />
               </Button>
-              <Button
-                startIcon={<AddTaskOutlinedIcon />}
-                onClick={handleUpload}
-              />
+              <Button startIcon={<DoneOutline />} onClick={handleUpload} />
             </ButtonGroup>
           </CardAvatar>
         </>
@@ -234,22 +235,35 @@ const FirstLogin = () => {
       Content: <></>,
     },
   ];
-  useEffect(() => {
-    // !isfirstLogin && navigate("/");
-    // letStart(true);
-    setOpen(false);
-  }, [isfirstLogin]);
 
   return (
     <>
-      (
+      <div
+        style={{
+          width: "100%",
+          display: "flex" || "none",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Button
+          sx={{ mr: 2, mt: 1 }}
+          disabled
+          color="secondary"
+          size="large"
+          id="logout"
+          endIcon={<Logout fontSize="large" />}
+          onClick={handelLogout}
+        >
+          <Typography>Logout</Typography>
+        </Button>
+      </div>
+
       <Stack
         direction="column"
         justifyContent="center"
         alignItems="center"
         spacing={2}
-        minWidth="100%"
-        minHeight="100%"
+        minHeight="80%"
       >
         <Stepper
           activeStep={activeStep}
@@ -259,13 +273,18 @@ const FirstLogin = () => {
           {steps.map((step, index) => (
             <Step key={step.label}>
               <StepLabel
+                StepIconComponent={CustomStepIcon}
                 optional={
                   index === 2 ? (
                     <Typography variant="caption">Last step</Typography>
                   ) : null
                 }
               >
-                <Typography variant="h6" component="div">
+                <Typography
+                  color={deepPurple[400]}
+                  variant="h6"
+                  component="div"
+                >
                   {step.label}
                 </Typography>
               </StepLabel>
@@ -276,6 +295,7 @@ const FirstLogin = () => {
                     {index === steps.length - 1 && (
                       <Button
                         variant="contained"
+                        color="secondary"
                         onClick={handelFinish}
                         sx={{ mt: 1, mr: 1 }}
                       >
@@ -283,7 +303,11 @@ const FirstLogin = () => {
                       </Button>
                     )}
                     {index === 0 || (
-                      <Button onClick={handleBack} sx={{ mt: 1, mr: 1 }}>
+                      <Button
+                        color="secondary"
+                        sx={{ color: deepPurple[700], mt: 1, mr: 1 }}
+                        onClick={handleBack}
+                      >
                         Back
                       </Button>
                     )}
@@ -294,13 +318,21 @@ const FirstLogin = () => {
           ))}
         </Stepper>
       </Stack>
-      )
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-      ></Backdrop>
     </>
   );
 };
+
+function CustomStepIcon(props: { icon?: any; active?: any; completed?: any }) {
+  const { active, completed } = props;
+
+  return (
+    <StepIcon
+      style={{
+        color: active ? purple[500] : completed ? purple[900] : purple[200],
+      }}
+      icon={completed ? "✔" : props.icon}
+    />
+  );
+}
 
 export default FirstLogin;

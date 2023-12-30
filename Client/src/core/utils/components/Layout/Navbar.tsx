@@ -4,6 +4,8 @@ import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import HomeIcon from "@mui/icons-material/Home";
 import ChatIcon from "@mui/icons-material/Chat";
 import { ListComponent } from "../List";
+import { deepPurple } from "@mui/material/colors";
+import { Leaderboard as LeaderboardIcon } from "@mui/icons-material";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 const Menu = [
@@ -11,22 +13,31 @@ const Menu = [
     redirect: "/",
     render: "Home",
     icon: HomeIcon,
+    style: { color: deepPurple[400] },
   },
-
   {
     redirect: "/search",
     render: "Search",
     icon: SearchIcon,
+    style: { color: deepPurple[500] },
   },
   {
     redirect: "/game",
     render: "Game",
     icon: SportsEsportsIcon,
+    style: { color: deepPurple[600] },
   },
   {
     redirect: "/chat",
     render: "Chat",
     icon: ChatIcon,
+    style: { color: deepPurple[700] },
+  },
+  {
+    redirect: "/leaderboard",
+    render: "LeaderBoard",
+    icon: LeaderboardIcon,
+    style: { color: deepPurple[800] },
   },
 ];
 interface ListNavProps {

@@ -1,36 +1,20 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../core";
-import { useNavigate } from "react-router-dom";
-import { useAuthentication } from "./authUtils";
+import { useAppDispatch } from "../../core";
+
 import { login } from "./components/authThunk";
-import { initializeSocket } from "../../core/socket/socketManager";
 import { Backdrop, Button, CircularProgress } from "@mui/material";
+import { purple } from "@mui/material/colors";
 
 const Login = () => {
   const dispatch = useAppDispatch();
-  const isAuthenticated = useAuthentication();
-  console.log("login rendering", isAuthenticated);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // if (isAuthenticated) {
-    //   console.log("authenticated");
-    //   // if (!state.socket.isConnected) {
-    //   //   let serverUrl =
-    //   //     process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
-    //   //   let socket = initializeSocket(serverUrl, state.auth.oken);
-    //   //   dispatch(connectionEstablished(socket));
-    //   // }
-
-    //   navigate("/");
-    // }
     const queryParams = new URLSearchParams(window.location.search);
     const secT7Param = queryParams.get("secT7");
     const firstLoginParam = queryParams.get("first_login");
     const isFirstLogin = firstLoginParam === "true" ? true : false;
 
     if (secT7Param) {
-      console.log("firsst");
       dispatch(
         login({
           token: secT7Param,
@@ -38,7 +22,6 @@ const Login = () => {
           user: null,
         })
       );
-      // navigate("/");
     }
   }, []);
 
@@ -54,32 +37,29 @@ const Login = () => {
   return (
     <div
       style={{
+        width: "100%",
+        height: "100%",
+        maxWidth: "100%",
+        maxHeight: "100%",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
-        margin: 0,
-        backgroundColor: "#eee",
-        background: 'url("https://picsum.photos/1600/900/?blur")',
-        backgroundSize: "cover",
       }}
     >
       <div
         style={{
-          width: "250px",
-          height: "220px",
           textAlign: "center",
           padding: "20px",
-          border: "1px solid #ccc",
-          borderRadius: "15px",
-          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
-          backgroundColor: "#ffffff",
+          borderRadius: "5px",
+          boxShadow: `5px 20px 20px 10px ${purple[100]}`,
         }}
       >
         <h2>Login with 42 Intra</h2>
         <p>Click the button below to authenticate using 42 Intra.</p>
         <Button
           onClick={() => handleLogin()}
+          color="secondary"
           variant="contained"
           sx={{
             p: "10px 20px",

@@ -1,9 +1,8 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthentication } from "../packages/feat-Auth/authUtils";
 import { useAppSelector } from "./redux";
 import { Route } from "./routes";
-import { useLocation } from "react-router-dom";
 
 interface RequireAuthProps {
   children: Route;
@@ -27,10 +26,12 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   const isAuthenticated = useAuthentication();
   let { pathname } = useLocation();
   const navigate = useNavigate();
+
   const authState = useAppSelector((state) => state.auth);
   const [loading, setLoading] = React.useState(false);
 
   const isFirstLogin = authState.firstLogin;
+
   React.useEffect(() => {
     if (!isAuthenticated) {
       navigate("/overView");

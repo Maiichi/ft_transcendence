@@ -1,11 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Loading,
-  Relationship,
-  useAppDispatch,
-  useAppSelector,
-} from "../../core";
+import { Loading, useAppDispatch, useAppSelector } from "../../core";
 import {
   ProfileState,
   getuserasgamer,
@@ -16,13 +11,12 @@ import {
   UserCard,
 } from "./components";
 import { ProfileCards, Button } from "./styles";
-import { Alert } from "@mui/material";
+
 
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const _uid = useParams<{ uid: string }>();
-  // const [start, setStart] = useState(false);
 
   const intraId = useAppSelector((state) => state.auth.user.intraId);
   const uid: number =
@@ -39,10 +33,9 @@ const Profile = () => {
   useEffect(() => {
     dispatch(getuserasgamer(uid));
     dispatch(getLeaderboard());
-    // setStart(true);
+
   }, []);
 
-  // if (!start) return <Loading />;
   if ((Go && !user) || uid < 1)
     return (
       <>
@@ -52,17 +45,7 @@ const Profile = () => {
     );
 
   return (
-    <Relationship
-      ifNORelation
-      relations={["blocked", "blockedMe"]}
-      opId={uid}
-      isOwner={isOwner}
-      notallow={
-        <Alert severity="error">
-          You are `NOT ALLOW` to see the history of this user
-        </Alert>
-      }
-    >
+    <>
       {!Go ? (
         <Loading />
       ) : (
@@ -80,17 +63,8 @@ const Profile = () => {
           />
         </ProfileCards>
       )}
-    </Relationship>
+    </>
   );
 };
 
-/**
- *  Profile Component
- *
- * The Profile component is responsible for rendering and displaying user profile information.
- * It typically receives user data as props and presents it in a structured format.
- * This component can be used to show details such as the user's name, profile picture, bio,
- * and other relevant information.
- *
- **/
 export { Profile };
