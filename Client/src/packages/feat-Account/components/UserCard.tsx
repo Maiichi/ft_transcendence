@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Message } from "@mui/icons-material";
-import { Button, Grow, Text, Usercard, Avatar } from "../styles";
-import { gamerType, userType } from "./statsType";
+import {  Grow, Text, Usercard, Avatar } from "../styles";
+import { gamerType } from "./statsType";
 import CircularProgressBar from "./utils/CircularProgressBar";
 import LinearDeterminate from "./utils/linearProgressBar";
 import { Badge, Stack } from "@mui/material";
@@ -21,7 +21,6 @@ import { NewDirectMessage } from "../../feat-Chat/components/modals/CreateDirect
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import {
   acceptFriendRequest,
-  blockUser,
   declineFriendRequest,
   getUserFriends,
   sendFriendRequest,

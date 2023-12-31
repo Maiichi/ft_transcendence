@@ -1,12 +1,11 @@
 import styled from "styled-components";
-import React, { useEffect, useRef, useState } from "react";
-import { GameMode, GameState, GameStepComponentProps } from "./utils/types";
+import React, {  useState } from "react";
+import {  GameState, GameStepComponentProps } from "./utils/types";
 import {
   WIDTH,
   HEIGHT,
   PADDLE_INIT_Y,
   MIDDLE_PADDLE_INIT_Y,
-  STEPS,
 } from "./utils/constants";
 import { useKeyboardControls } from "./hooks/useKeyboardControls";
 import { GameCanvas } from "./components/GameCanvas";

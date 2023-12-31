@@ -229,13 +229,6 @@ export const getDataForModal = (
         roomId: room.id,
         roomName: room.name,
       };
-    // case "blockFriend":
-    //   return {
-    //     userId: selectedUser.intraId,
-    //     userName: selectedUser.firstName + " " + selectedUser.lastName,
-    //   };
-    // case "message":
-    //   return selectedUser;
     default:
       return null;
   }

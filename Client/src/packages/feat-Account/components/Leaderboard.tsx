@@ -1,10 +1,7 @@
-import { useAsyncError, useNavigate } from "react-router-dom";
-import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { Chat } from "@mui/icons-material";
+import {  useNavigate } from "react-router-dom";
+import {  useEffect, useState } from "react";
 import { Loading, useAppDispatch, useAppSelector } from "../../../core";
 import {
-  ListButton,
-  SendGameRequist,
   getLeaderboard,
   leaderboardType,
 } from ".";
@@ -18,7 +15,6 @@ import {
   Button,
   ListItemText,
   ListItemAvatar,
-  /***global**/
   Title,
   Root,
 } from "../styles";
@@ -31,15 +27,8 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.profile.lead);
   const leaderboard: leaderboardType = state.leaderboard;
-  const Oid: number = useAppSelector((state) => state.auth.user.intraId);
-  const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<any>(null);
   const [firstEffect, effected] = useState(false);
 
-  const handleClickOpen = (event: React.MouseEvent<any>) => {
-    setAnchorEl(event.currentTarget);
-    setOpen(!open);
-  };
   useEffect(() => {
     primary && dispatch(getLeaderboard());
     effected(true);

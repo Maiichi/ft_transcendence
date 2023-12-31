@@ -8,8 +8,6 @@ import { ConnectSocket } from "./packages";
 import { SnackBarComponent } from "./core/utils/components/SnackBar";
 
 import { InvitationGameModal } from "./packages/feat-Game/components/InvitationGameModal";
-import { Socket } from "socket.io-client";
-import { getSocketInstance, initializeSocket } from "./packages/feat-Game/socketUtils";
 import { setOpenSnackbar } from "./core/CoreSlice";
 const SocketInit = (props: any) => {
   const socket = useAppSelector((state) => state.socket);
@@ -51,7 +49,6 @@ const HandleError = () => {
 const GameInvitationModal = () => {
   const inviteReceived = useAppSelector((state) => state.game.inviteReceived);
   const displayGameInviteModal = useAppSelector((state) => state.core.displayGameInvitation);
-  // properties for modal
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined

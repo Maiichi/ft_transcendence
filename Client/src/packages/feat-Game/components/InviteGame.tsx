@@ -6,8 +6,7 @@ import { I_User, SearchComponent, useAppDispatch, useAppSelector } from "../../.
 import { Socket } from "socket.io-client";
 
 import { getUserFriends } from "../../feat-Account/components/redux/friendThunk";
-import { STEPS } from "../utils/constants";
-import { inviteToGame, setCurrentTab, setGameStep, setInviteSent, setInvited } from "../redux/GameSlice";
+import { inviteToGame, setCurrentTab, setInviteSent, setInvited } from "../redux/GameSlice";
 
 export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const {onUserSelect} = props;

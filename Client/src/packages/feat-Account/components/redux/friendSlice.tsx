@@ -1,10 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { getFriendRequests, getUserFriends } from "./friendThunk";
 import { I_User } from "../../../../core";
-// export interface FriendRequest {
-//   sender: I_User;
-//   id: number;
-// }
+
 export interface friendState {
   friends: I_User[];
   friendRequests: I_User[];

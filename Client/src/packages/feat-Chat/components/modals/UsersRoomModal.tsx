@@ -37,17 +37,7 @@ export const UsersRoom = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const block = useAppSelector((state) => state.block);
 
-  const isBlacklisted = (intraId: number): boolean => {
-    const isBlockedByYou = block.blockedByYou.some(
-      (blockedMember: any) => blockedMember.intraId === intraId
-    );
-    const isBlockedYou = block.blockedYou.some(
-      (blockedMember: any) => blockedMember.intraId === intraId
-    );
 
-    return isBlockedByYou || isBlockedYou;
-  };
-  // manageBlock
   const filtredMembers = channelConversation.members.filter(
     (member: Members) =>
       !(

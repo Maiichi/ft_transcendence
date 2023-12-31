@@ -11,8 +11,8 @@ import {
   UserCard,
   getBlacklist,
 } from "./components";
-import { ProfileCards, Button } from "./styles";
-import { isBlockedByYou, isBlockedYou } from "../feat-Chat/components/utils";
+import { ProfileCards } from "./styles";
+import { isBlockedByYou } from "../feat-Chat/components/utils";
 
 const Profile = () => {
   const navigate = useNavigate();

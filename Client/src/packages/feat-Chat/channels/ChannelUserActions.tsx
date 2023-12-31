@@ -24,15 +24,10 @@ import { MuteUserInRoom } from "../components/modals/MuteUserInRoom";
 import { UnSetChannelAdmin } from "../components/modals/unSetChannelAdmin";
 import { UnBanUserFromChannelModal } from "../components/modals/UnBanUserFromChannel";
 import { KicKFromRoomModal } from "../components/modals/KickUserFromChannelModal";
-import { NewDirectMessage } from "../components/modals/CreateDirectMessageModal";
 import { IconHolder } from "../components/style";
 import { Actions } from "../components/UserActions";
 import BlockIcon from "@mui/icons-material/Block";
 import { BlockUserModal } from "../components/modals/BlockUserModal";
-// import {
-//   inviteUserToGame,
-//   inviteUserToGameFromChat,
-// } from "../../feat-Game/redux/GameSlice";
 import {
   inviteToGame,
   setCurrentTab,
@@ -41,7 +36,6 @@ import {
   setInvited,
 } from "../../feat-Game/redux/GameSlice";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
 import GamesIcon from "@mui/icons-material/Games";
@@ -160,13 +154,11 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         );
         // TODO:  need a check (inGame)
         if (selectedUser.status === "ONLINE") {
-          // dispatch(inviteUserToGameFromChat(true));
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
           navigate("/");
-          // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
       case "viewProfile":
@@ -221,9 +213,6 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     const role = checkUserRole(memberships[roomIndex], selectorId);
 
     let checkFriend = true;
-    // if (typeof Icon.isFriend != "undefined") {
-    //   checkFriend = isFriend(friends, selectedId) == Icon.isFriend;
-    // }
     let checkIsBanned = true;
     if (typeof Icon.isBanned != "undefined")
       checkIsBanned =
@@ -233,22 +222,8 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
     if (typeof Icon.isAdmin != "undefined")
       checkIsAdmin =
         isAdmin(memberships[roomIndex], selectedId) === Icon.isAdmin;
-    // let checkIsBlockedYou = true;
-    // if (typeof Icon.isBlockedYou != "undefined") {
-    //   checkIsBlockedYou = isBlockedYou(selectedId, block) === Icon.isBlockedYou;
-    // }
-    // let checkIsBlockedByeYou = true;
-    // if (typeof Icon.isBlockedByYou != "undefined") {
-    //   checkIsBlockedByeYou =
-    //     isBlockedYou(selectedId, block) === Icon.isBlockedByYou;
-    // }
-
-    // let checkIsMute = true;
-    // if (typeof Icon.isMuted != 'undefined')
-    //   checkIsMute = isMuted(memberships[roomIndex], selectedId) === Icon.isMuted;
     return (
       Icon.role?.includes(role) && checkFriend && checkIsBanned && checkIsAdmin
-      // && checkIsBlockedByeYou && checkIsBlockedYou
     );
   };
 
@@ -270,18 +245,6 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         return <MuteUserInRoom data={data} handleClose={handleClose} />;
       case "kickFromChannel":
         return <KicKFromRoomModal data={data} handleClose={handleClose} />;
-      // case "blockFriend":
-      //   return (
-      //     <BlockUserModal
-      //       intraId={selectedUser.intraId}
-      //       userName={selectedUser.firstName + " " + selectedUser.lastName}
-      //       handleClose={handleClose}
-      //     />
-      //   );
-      // case "message":
-      //   return (
-      //     <NewDirectMessage selectedUser={data} handleClose={handleClose} />
-      //   );
       default:
         return <></>;
     }
@@ -305,15 +268,12 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
             gameMode: "dual",
           })
         );
-        // TODO:  need a check (inGame)
         if (selectedUser.user.status === "ONLINE") {
-          // dispatch(inviteUserToGameFromChat(true));
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser.user));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
           navigate("/");
-          // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         } else return;
       }
       if (iconType == "viewProfile")

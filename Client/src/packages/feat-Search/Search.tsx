@@ -14,7 +14,6 @@ import {
 } from "../../core";
 import { getAllRooms, getAllUsers } from "./redux/searchThunk";
 import { I_Room_Search } from "./types/types";
-import { getMemberships } from "../feat-Chat/components/redux/roomThunk";
 import {
   Holder,
   SearchBar,
@@ -24,7 +23,6 @@ import {
   Root,
 } from "./components";
 import {
-  friendState,
   getBlacklist,
   getUserFriends,
 } from "../feat-Account/components";
@@ -49,7 +47,6 @@ export const Search = () => {
     dispatch(getUserFriends());
     dispatch(getBlacklist());
     dispatch(getAllRooms());
-    // dispatch(getMemberships());
     dispatch(getAllUsers());
   }, []);
   // Filter chat rooms based on the search query

@@ -1,9 +1,5 @@
 import styled, { keyframes } from "styled-components";
 import { Typography } from "@mui/material";
-
-/**
- * `as Typography from mui`
- */
 const Text = styled(Typography)<{}>``;
 const rotate = keyframes`
   from {
@@ -20,9 +16,6 @@ const Rotate = styled.div`
   font-size: 1.2rem;
 `;
 const H5 = styled.h5``;
-/**
- * `Title` as Typography Mui element // now as section
- */
 const Title = styled.section`
   padding: 30px 0 10px 0;
   text-align: center;
@@ -33,9 +26,7 @@ const Title = styled.section`
   font-size: 2rem;
   border-top: 1px solid;
 `;
-/**
- *  `styled component Root`
- */
+
 const Root = styled.div<{ $primary?: boolean }>`
   background-color: "inherits";
   padding: 0;

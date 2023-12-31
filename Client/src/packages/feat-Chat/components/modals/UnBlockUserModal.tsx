@@ -1,7 +1,6 @@
 import { useAppDispatch } from "../../../../core";
 import { setDisplayUserActions } from "../../../../core/CoreSlice";
 import { ModalConfirm } from "../../../../core/utils/components/modals/ModalConfirm";
-import { getBlacklist } from "../../../feat-Account/components/redux";
 import { unblockUser } from "../../../feat-Account/components/redux/blockSlice";
 
 export const UnBlockUserModal = (props: {

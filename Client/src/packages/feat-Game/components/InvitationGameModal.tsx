@@ -1,11 +1,9 @@
-import styled from "styled-components";
+
 import { useAppDispatch, useAppSelector } from "../../../core/redux";
 import { useLocation, useNavigate } from "react-router-dom";
-// import { acceptUserGameInvite, declineUserGameInvite, receiveGameInvitation, setInviteAccepted, setInviteDeclined } from "../redux/GameSlice";
-import { setDisplayGameInvitation } from "../../../core/CoreSlice";
+
 import { ModalConfirm } from "../../../core/utils/components/modals/ModalConfirm";
-// import { setDisplayGameInvitation } from "../../CoreSlice";
-import { STEPS } from "../../../packages/feat-Game/utils/constants";
+
 import { acceptGameInvitation, declineGameInvitation, setCurrentTab, setInviter } from "../redux/GameSlice";
 
 

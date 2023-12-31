@@ -1,9 +1,6 @@
 import {
   Alert,
   Avatar,
-  FormControlLabel,
-  FormHelperText,
-  Switch,
   TextField,
 } from "@mui/material";
 import { useState } from "react";
@@ -14,7 +11,6 @@ import {
   CardAvatar,
   H5,
   Divider,
-  ButtonAvatar,
   CardForm,
   ButtonForm,
 } from "./components";

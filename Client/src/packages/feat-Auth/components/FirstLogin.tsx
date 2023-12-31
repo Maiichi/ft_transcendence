@@ -1,9 +1,7 @@
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../core";
 import {
   Alert,
   Avatar,
-  Backdrop,
   Box,
   Button,
   ButtonGroup,
@@ -17,7 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { updateUserName, uploadAvatar } from "./authThunk";
 import { useSize } from "../../../core/utils/hooks";
 import { CardAvatar } from "../../feat-Account/components";
@@ -99,7 +97,6 @@ const FirstLogin = () => {
     handleNext();
   };
 
-  /*(((((((((())))))))))/ */
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
@@ -110,7 +107,6 @@ const FirstLogin = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  /*(((((((((())))))))))/ */
   const isValid = (value: string) => /^[a-zA-Z0-9]*$/.test(value);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {

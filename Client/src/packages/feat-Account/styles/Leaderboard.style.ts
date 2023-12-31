@@ -1,4 +1,4 @@
-import styled, { StyledProps, ThemedStyledProps } from "styled-components";
+import styled from "styled-components";
 import {
   Avatar as AvatarMui,
   Button as ButtonMui,

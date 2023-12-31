@@ -12,7 +12,6 @@ import { ModalComponent, useAppDispatch } from "../../../core";
 import { JoinChannelModal } from "../modal/joinChannelModal";
 import { useNavigate } from "react-router-dom";
 import { joinRoom } from "../redux/searchSlice";
-import { getAllRooms } from "../redux/searchThunk";
 
 interface Channels {
   filteredRooms: Array<any>;

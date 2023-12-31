@@ -34,7 +34,6 @@ export const DirectBox = () => {
   };
 
   useEffect(() => {
-    // check if directConversation.id is not exist in the state
     if (direct)
       dispatch(getDirectConversationMessages(direct.directConversationId));
   }, []);

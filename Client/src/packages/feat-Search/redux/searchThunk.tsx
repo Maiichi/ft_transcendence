@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../../core";
 import { apiRequest } from "../../../core/utils/apiRequest";
-import { userType } from "../../feat-Account/components";
 
 export const getAllRooms = createAsyncThunk(
   "search/rooms",

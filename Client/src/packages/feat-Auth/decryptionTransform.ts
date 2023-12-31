@@ -1,7 +1,4 @@
 import { createTransform } from "redux-persist";
-// import CryptoJS from "crypto-js";
-
-const SECRET_KEY = "YourSecretKey"; // Replace with your secret key
 
 const decryptionTransform = createTransform(
   undefined, // No need for an "inbound" transform

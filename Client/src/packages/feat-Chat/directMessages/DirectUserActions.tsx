@@ -19,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 import {
   inviteToGame,
   setCurrentTab,
-  setGameStep,
   setInviteFromChat,
   setInviteSent,
   setInvited,
@@ -37,7 +36,7 @@ import {
 } from "../../feat-Account/components";
 
 import { Action } from "../components/types";
-import { STEPS } from "../../feat-Game/utils/constants";
+
 interface UserActionsProps {
   handleClosePopper?: React.Dispatch<React.SetStateAction<boolean>>;
 }

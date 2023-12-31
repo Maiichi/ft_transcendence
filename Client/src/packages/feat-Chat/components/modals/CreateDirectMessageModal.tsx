@@ -7,7 +7,6 @@ import {
 } from "../../../../core";
 import { useEffect, useState } from "react";
 import { Close } from "@mui/icons-material";
-import { getUserFriends } from "../../../feat-Account/components/redux/friendThunk";
 import { Avatar } from "@mui/material";
 import { createDirectConversation } from "../redux/directMessageSlice";
 import { isBlockedByYou, isBlockedYou } from "../utils";
@@ -25,7 +24,6 @@ const ReceiverComponent = (props: { onUserSelect: (user: I_User) => void }) => {
 
   useEffect(() => {
     if (searchQuery.length) {
-      // manageBlock
       const filteredFriends = friends.filter(
         (friend: I_User) =>
           !isBlockedYou(friend.intraId, block) &&
