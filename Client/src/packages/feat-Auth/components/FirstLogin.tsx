@@ -130,7 +130,7 @@ const FirstLogin = () => {
       updateUserName({
         isFirstTime: true,
         token: auth.token,
-        id: auth.user.intraId,
+        // id: auth.user.intraId,
         newUsername: textInput,
         user: null,
       })
