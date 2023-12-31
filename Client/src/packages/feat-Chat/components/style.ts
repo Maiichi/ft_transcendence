@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/styles";
+import { deepPurple, purple } from "@mui/material/colors";
 import styled from "styled-components";
 
 export const useStyles = makeStyles({
@@ -33,11 +34,12 @@ export const useStyles = makeStyles({
 
 export const IconHolder = styled.div`
   display: flex;
-  margin: 10px 0px 10px 0px;
+  color: ${purple[700]};
+  margin: 5px 0px 5px 0px;
   gap: 5px;
   cursor: pointer;
   &:hover {
-    background-color: rgb(245, 246, 247);
+    background-color: ${deepPurple[50]};
   }
 `;
 export const RightSide = styled.div`

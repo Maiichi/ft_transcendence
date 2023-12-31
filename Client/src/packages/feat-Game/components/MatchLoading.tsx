@@ -1,9 +1,9 @@
 import styled, { keyframes } from "styled-components";
-import { GameState, GameStepComponentProps } from "../utils/types";
+import { GameStepComponentProps } from "../utils/types";
 import { useAppDispatch, useAppSelector } from "../../../core";
-import { STEPS } from "../utils/constants";
-import { useEffect } from "react";
 import { resetGameState } from "../redux/GameSlice";
+import { Instructions } from "./Instructions";
+import { deepPurple } from "@mui/material/colors";
 
 interface SkeletonProps {
     width?: string;
@@ -58,7 +58,6 @@ const ContentContainer = styled.div`
 `;
 
 const Title = styled.h1`
-    margin-top: 2.5rem;
     font-size: 1.875rem;
     font-weight: bold;
     text-align: center;
@@ -98,12 +97,12 @@ const StyledButton = styled.button`
     border-radius: 9999px;
     border: 2px solid #d1d5db;
     background-color: transparent;
-    color: #007bff;
+    color: ${deepPurple[900]};
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
     &:hover {
-        background-color: #007bff;
+        background-color: ${deepPurple[300]};
         color: white;
     }
 `;
@@ -115,29 +114,38 @@ const XIcon = styled.svg`
     transition: transform 0.3s ease-in-out;
     animation: ${rotateAndPause} 3s ease-in-out infinite;
 `;
+const TitleContainer = styled.div`
+    display: flex;
+    justify-content: center; // Center the contents
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 1rem; // Space below the title container
+`;
 
-export const MatchLoading: React.FC<GameStepComponentProps> = ({
-    socket,
-}) => {
+export const MatchLoading: React.FC<GameStepComponentProps> = ({ socket }) => {
     const countdown = useAppSelector((state) => state.game.countdown);
-    // const user = useAppSelector((state) => state.auth.user);
+    const avatar_url = useAppSelector((state) => state.auth.user.avatar_url);
     const dispatch = useAppDispatch();
     const handleCancel = () => {
         console.log("client id == ", socket?.id);
-        socket?.emit('cancelGame');
+        socket?.emit("cancelGame");
         // onReset();
         dispatch(resetGameState());
-    }
+    };
 
     return (
         <ContentContainer>
-            <Title>
-                {countdown !== null
-                    ? `Game starts in ${countdown}`
-                    : "Loading your match..."}
-            </Title>
+            <TitleContainer>
+                <Instructions currentStep="matchLoading" />
+                <Title>
+                    {countdown !== null
+                        ? `Game starts in ${countdown}`
+                        : "Loading your match..."}
+                </Title>
+            </TitleContainer>
+
             <AvatarContainer>
-                <StyledAvatar src="https://via.placeholder.com/50x50" />
+                <StyledAvatar src={avatar_url} />
                 <XIcon
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -148,11 +156,11 @@ export const MatchLoading: React.FC<GameStepComponentProps> = ({
                 </XIcon>
                 <StyledSkeleton rounded />
             </AvatarContainer>
-            {
-                countdown === null
-                ? <StyledButton onClick={handleCancel}>Cancel</StyledButton>
-                : <></>
-            }
+            {countdown === null ? (
+                <StyledButton onClick={handleCancel}>Cancel</StyledButton>
+            ) : (
+                <></>
+            )}
         </ContentContainer>
     );
 };
