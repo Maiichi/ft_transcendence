@@ -4,7 +4,6 @@ import { UserService } from "../user.service";
 import { BlacklistService } from "../blacklist/blacklist.service";
 import { AcceptFriendRequestDto, SendFriendRequestDto } from "./dto/friend.dto";
 import { WsException } from "@nestjs/websockets";
-import { Response } from "express";
 
 
 
@@ -65,7 +64,6 @@ export class FriendService
         });
         if (!FriendRequest)
             throw new WsException(`Error while creating new friend Request`);
-        console.log(`${sender.userName} has sent a friend request to ${receiver.userName}`);
         return FriendRequest;
         
     }
@@ -132,7 +130,6 @@ export class FriendService
         })
         if (!updateUserFriends)
             throw new WsException(`Error while updating the user friends list`);
-        console.log(`${userAccept.userName} has accepted ${requestSender}`)
         return updateUserFriends;
     }
 
@@ -178,8 +175,6 @@ export class FriendService
                     id: getFriendRequestId
                 }
             });
-    
-        console.log(`${userAccept.userName} has declined ${requestSender} friend request`);
         return deletedFriendRequest;
     }
 

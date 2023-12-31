@@ -48,9 +48,6 @@ export class ChatController {
         res,
       );
     } catch (error) {
-      console.log(
-        'controller level == ' + error.message,
-      );
       res.send({ error: error.message });
     }
   }
@@ -66,9 +63,6 @@ export class ChatController {
         res,
       );
     } catch (error) {
-      console.log(
-        'controller level == ' + error.message,
-      );
       res.send({ error: error.message });
     }
   }
@@ -87,7 +81,6 @@ export class ChatController {
         res,
       );
     } catch (error) {
-      // console.log("controller level == " + error.message)
       res.send({ error: error.message });
     }
   }
@@ -123,16 +116,8 @@ export class ChatController {
         res,
       );
     } catch (error) {
-      console.log(
-        'controller level == ' + error.message,
-      );
       res.send({ error: error.message });
     }
   }
 
-  // updateRoom
-
-  // deleteRoom
-
-  //
 }

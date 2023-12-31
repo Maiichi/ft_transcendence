@@ -25,7 +25,6 @@ export class GameController {
     
 
     // API te get USER game history based on the ID in the URL
-    // localhost:5001/api/game/id_user/history
     @Get('/:id_user/history')
     async getGamesHistory(@Param('id_user') targetUser: number, @Res() response: Response)
     {   

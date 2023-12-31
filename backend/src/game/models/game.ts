@@ -85,18 +85,14 @@ class Game {
       this._player1.getScore() === Constants.MAX_SCORE ||
       this._player2.getScore() === Constants.MAX_SCORE
     ) {
-      // console.log('GAME OVER')
       return GameStateEnum.OVER;
     } else if (this._ball.isPaused()) {
-      // console.log('GAME PAUSED')
       return GameStateEnum.PAUSED;
     }
-    // console.log('GAME PLAYING')
     return GameStateEnum.PLAYING;
   }
 
   public buildGameStateObject(): BroadcastObject {
-    // console.log('gameSTate ==', this.getGameState());
     return {
       ball: {
         x: this._ball.getX(),
@@ -118,7 +114,6 @@ class Game {
 
   private broadcastState(): void {
     const currentState = this.buildGameStateObject();
-    // console.log('currentState ==', currentState);
     this._player1
       .getSocket()
       .emit('state', { ...currentState, hasWon: this._player1.hasWon() });

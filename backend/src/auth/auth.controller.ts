@@ -82,8 +82,7 @@ export class AuthController
         try {
             return await this.authService.generateTwoFactor(res, user.intraId);
         } catch (error) {
-            console.log("error in Controller level")
-            throw error
+            throw error;
         }
     }
     
@@ -109,7 +108,6 @@ export class AuthController
             const result = await this.authService.verifyTwoFactor(dto.code, user.twoFactorSecret);
             res.status(200).json(result)
         } catch (error) {
-            console.log(error)
             res.status(400).json(error)
         }
     }

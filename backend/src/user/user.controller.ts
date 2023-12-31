@@ -134,7 +134,6 @@ export class UserController
     @Get('friends/')
     async getFriend(@GetUser() user: User ,  @Res() res: Response)
     {
-        console.log('here ')
         try {
             return await this.userService.getFriends(user.intraId, res);
         } catch (error) {
@@ -145,7 +144,6 @@ export class UserController
     @Get('blacklist/')
     async getBlackList(@GetUser() user: User ,  @Res() res: Response)
     {
-        console.log('here ')
         try {
             return await this.userService.getBlackList(user.intraId, res);
         } catch (error) {

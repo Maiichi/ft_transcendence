@@ -3,8 +3,6 @@ import { UserService } from "../user.service";
 import { Injectable } from "@nestjs/common";
 import { BlockUserDto, UnBlockUserDto } from "src/user/blacklist/dto/handle.block.dto";
 import { WsException } from "@nestjs/websockets";
-import { Response } from "express";
-import { FriendService } from "../friend/friend.service";
 
 @Injectable()
 export class BlacklistService
@@ -66,29 +64,6 @@ export class BlacklistService
                 }
             });
         }
-        // check if there is any conversation between them remove it 
-        // const conversation = await this.prisma.conversation.findFirst({
-        //     where : {
-        //         type: 'direct',
-        //         participants: {
-        //             every : {
-        //                 intraId : {
-        //                     in: [blocked.intraId, blocker.intraId]
-        //                 }
-        //             }
-        //         }
-        //     },
-        //     select : {
-        //         id: true,
-        //     }
-        // });
-        // console.log("conv == ", JSON.stringify(conversation));
-        // await this.prisma.conversation.delete({
-        //     where: {
-        //         id: conversation.id
-        //     }
-        // });
-        console.log(`${blocker.userName} has blocked ${blocked.userName}`);
         return {
             blocker: blocker,
             blocked: blocked
@@ -120,7 +95,6 @@ export class BlacklistService
                     id:  blockId,
                 }
             });
-            console.log(`${unBlocker.userName} has unblocked ${unBlocked.userName}`);
             // return removedBlockEntry;
             return {
                 unBlocker: unBlocker,
