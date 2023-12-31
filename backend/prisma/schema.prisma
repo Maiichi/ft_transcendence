@@ -22,6 +22,7 @@ model User {
   inGame            Boolean        @default(false)
   twoFactorActivate Boolean?       @default(false)
   twoFactorSecret   String?        @db.VarChar(255)
+  isFirstLogin      Boolean        @default(true)
   memberships       Membership[]
   conversations     Conversation[]
   createdAt         DateTime       @default(now()) @db.Timestamp(6)
@@ -34,7 +35,7 @@ model User {
   receivedRequests FriendRequest[] @relation("receiverRequests")
   friends          User[]          @relation("friends")
   friendsOf        User[]          @relation("friends")
-
+  achievement      Achievement[]
   games            Game[]          @relation("games")
 
   @@map("users")
@@ -116,4 +117,13 @@ model Game {
   Players    User[]      @relation("games")
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+}
+
+model Achievement {
+  id           Int     @id @default(autoincrement())
+  name         String
+  userId       Int     
+  user         User    @relation(fields: [userId], references: [intraId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("achievements")
 }

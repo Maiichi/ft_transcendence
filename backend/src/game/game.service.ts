@@ -5,6 +5,7 @@ import { Response } from 'express';
 import { TreeLevelColumn } from 'typeorm';
 import { WsException } from '@nestjs/websockets';
 import { UserService } from 'src/user/user.service';
+import { count } from 'console';
 
 @Injectable()
 export class GameService {
@@ -55,6 +56,90 @@ export class GameService {
         return 'game created Successfully';
     }
 
+    async saveAchievement(userId: number, type: string)
+    {
+        const gamesDual = await this.prisma.game.findMany({
+            where: {
+                type : 'dual',
+                Players:{
+                    some : {
+                        intraId: userId
+                    }
+                }
+            },
+            select : {
+                type: true
+            }
+        });
+
+        const gamesTriple = await this.prisma.game.findMany({
+            where: {
+                type : 'triple',
+                Players:{
+                    some : {
+                        intraId: userId
+                    }
+                }
+            },
+            select : {
+                type: true
+            }
+        });
+
+        const gamesDualPlayed = gamesDual.length;
+        const gamesTriplePlayed = gamesTriple.length;
+
+         if (gamesDualPlayed === 1 && type === 'dual') {
+             await this.prisma.achievement.create({
+                 data: {
+                     name: 'first_dual_game',
+                     userId: userId,
+                 },
+             });
+         }
+
+         if (gamesTriplePlayed === 1 && type === 'triple') {
+            await this.prisma.achievement.create({
+                data: {
+                    name: 'first_messy-jungle_game',
+                    userId: userId,
+                },
+            });
+        }
+
+        const games = await this.prisma.game.findMany({
+            where: {
+                Players:{
+                    some : {
+                        intraId: userId
+                    }
+                }
+            },
+            select : {
+                type: true
+            }
+        });
+ 
+        const gamesPlayed = games.length;
+        if (gamesPlayed === 10) {
+            await this.prisma.achievement.create({
+                data: {
+                    name: 'ten_games',
+                    userId: userId,
+                },
+            });
+        }
+
+        if (gamesPlayed === 20) {
+        await this.prisma.achievement.create({
+            data: {
+                name: 'hundred_games',
+                userId: userId,
+            },
+        });
+        }
+
+    }
     // get User game history
     async getUserGameHistory(userId: number, response: Response)
     {
@@ -94,7 +179,6 @@ export class GameService {
     async getLeaderBoard(response: Response)
     {
         const games = await this.prisma.game.findMany();
-        console.log("games == ", games);
         if (!games.length)
             return response.send({message : "no game has been played at the moment."});
         const leaderboard = await this.prisma.user.findMany({
@@ -181,4 +265,67 @@ export class GameService {
         if (isReceiverOnline.status === "ONLINE" && isReceiverInGame.inGame)
             throw new WsException(`${receiver.firstName} ${receiver.lastName} is playing a game currently, wait until he finishs`);
     }
+
+    async getUserAchievement(response: Response, userId: number)
+    {
+        await this.getMaxWin(userId);
+        await this.getFiveGameWins(userId);
+        const achievement = await this.prisma.achievement.findMany({
+            where : {
+                userId: userId
+            },
+            select : {
+                name: true
+            }
+        });
+        response.send(achievement);
+    }
+
+    async storeAchievement(userId: number, achievementName: string) {
+        const existingAchievement = await this.prisma.achievement.findFirst({
+            where: {
+                userId: userId,
+                name: achievementName,
+            },
+        });
+
+        if (!existingAchievement) {
+            await this.prisma.achievement.create({
+                data: {
+                    userId: userId,
+                    name: achievementName,
+                }
+            });
+        }
+    }
+
+    // function to get five wins of games
+    async getFiveGameWins(userId: number)
+    {
+        const wins = await this.prisma.game.findMany({
+            where: {
+                winnerId: userId
+            },
+            take: 5
+        });
+        if (wins.length >= 5) {
+            await this.storeAchievement(userId, 'five_wins');
+        }
+    }
+
+    // function to get a win with 3 - 0
+    async getMaxWin(userId: number) {
+        const maxWin = await this.prisma.game.findFirst({
+            where: {
+                winnerId: userId,
+                OR: [
+                    { score1: 3, score2: 0 },
+                    { score1: 0, score2: 3 },
+                ],
+            },
+        });
+        if (maxWin.id)
+            await this.storeAchievement(userId, 'max_win');
+    } 
+    
 }
