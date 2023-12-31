@@ -57,7 +57,6 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
   const [selectUser, setSelectUser] = useState<I_User | null>(selectedUser);
   const gameMode = useAppSelector((state) => state.game.gameMode);
 
-  // console.log("gameMode (Invite user) == ", gameMode);
   const closeModal = () => {
     handleClose();
   };

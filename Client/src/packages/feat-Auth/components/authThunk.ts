@@ -29,9 +29,6 @@ export const login = createAsyncThunk(
                     Authorization: `Bearer ${payload.token}`,
                 },
             });
-
-            // console.log("RESP", resp);
-            // payload.user = user;
             payload.user = resp?.message || {};
             // Return the decrypted token as the result of the thunk
             return payload;

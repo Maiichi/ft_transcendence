@@ -9,13 +9,10 @@ export const useKeyboardControls = (
     socket: Socket | null
 ) => {
     useEffect(() => {
-        // console.log('emitEvent (useKey) ==', emitEvent);
-        // console.log('socket (useKeyboardControls) ==', socket);
+   
         const onKeyDown = (e: KeyboardEvent) => handleKeyDown(e, emitEvent, socket);
         const onKeyUp = (e: KeyboardEvent) => handleKeyUp(e, emitEvent, socket);
 
-        // console.log('onKeyDown ==', onKeyDown);
-        // console.log('onKeyUp ==', onKeyUp);
         document.addEventListener("keydown", onKeyDown);
         document.addEventListener("keyup", onKeyUp);
 

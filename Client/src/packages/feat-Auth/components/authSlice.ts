@@ -89,7 +89,6 @@ export const authSlice = createSlice({
                 state.loading = true;
             })
             .addCase(uploadAvatar.fulfilled, (state, action) => {
-                console.log("pp", action.payload);
                 if (state.user) state.user.avatar_url = action.payload;
             })
             .addCase(uploadAvatar.rejected, (state) => {

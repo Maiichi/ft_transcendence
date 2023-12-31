@@ -37,12 +37,10 @@ export const DirectMessageSlice = createSlice({
     },
     removeConversation: (state, action: PayloadAction<number>) => {
       const intraId = action.payload;
-      console.log("intraId || ", intraId);
       const conversationIndex = state.conversations.findIndex(
         (conversation: I_DirectConversation) =>
           conversation.receiver.intraId === intraId
       );
-      console.log("Conv Index ==", conversationIndex);
       state.conversations.splice(conversationIndex, 1);
     },
     sendMessageToUser: (state, action: PayloadAction<I_DirectConversation>) => {

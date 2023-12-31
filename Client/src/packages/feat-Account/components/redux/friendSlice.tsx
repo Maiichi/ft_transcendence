@@ -36,7 +36,6 @@ export const friendSlice = createSlice({
       state.friends.push(action.payload);
     },
     removeFriend: (state, action: PayloadAction<number>) => {
-      console.log(action.payload);
       state.friends = state.friends.filter(
         (obj) => obj.intraId !== action.payload
       );
@@ -45,7 +44,6 @@ export const friendSlice = createSlice({
       state.friendRequests.push(action.payload);
     },
     removeFriendRequest: (state, action: PayloadAction<number>) => {
-      console.log(action.payload);
       state.friendRequests = state.friendRequests.filter(
         (obj) => obj.intraId !== action.payload
       );

@@ -13,7 +13,6 @@ export const getBlacklist = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("response data (blacklist) ==", response);
       return response;
     } catch (error) {
       console.log("error in blockThunk", error);

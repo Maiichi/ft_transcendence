@@ -56,7 +56,6 @@ const FullScreenDialog: React.FC<any> = ({ open, setOpen, action }) => {
         },
         data: { code: otpCode },
       });
-      console.log(response);
       if (response) {
         setOpen(false);
         if (action === "ENABLE")

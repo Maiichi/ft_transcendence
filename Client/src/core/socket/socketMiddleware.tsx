@@ -141,7 +141,6 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
           });
           socket.on("messageSentToRoom", (data) => {
             const { currentConversation } = getState().chat;
-            console.log("Current Conversation ==", currentConversation);
             if (currentConversation) {
               if (currentConversation.roomId === data.roomId) {
                 const conversationMessage = {
@@ -166,10 +165,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             // );
           });
           socket.on("messageSentToUser", (data) => {
-            console.log(
-              "data coming from (messageSentToUser) =",
-              JSON.stringify(data)
-            );
+          
             const { currentConversation } = getState().chat;
             if (currentConversation) {
               if (currentConversation.directConversationId === data.chatId)
@@ -189,7 +185,6 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(unBanMemberFromRoom(data));
           });
           socket.on("IhaveBeenBanned", (data) => {
-            console.log("IhaveBeenBanned (data) == ", data);
             const { currentConversation } = getState().chat;
             if (currentConversation)
             {
@@ -243,7 +238,6 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(setRoomLeaved(data));
           });
           socket.on("blockedByMe", (data) => {
-            console.log("data coming from (blockedByMe) =", data);
             const { selectedUser } = getState().chat;
             dispatch(userBlockedByMe(data));
             dispatch(removeConversation(data.intraId));
@@ -335,15 +329,11 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
               }
             }
           });
-          // socket.on('gameCanceled', () => {
-          //   // dispatch(resetGameState());
-          //   console.log("gameCanceled middleware");
-          // });
+ 
           socket.on('userLoggedOut' , () => {
-            console.log("logout");
+        
             dispatch(setToken(null));
             dispatch(disconnectSocket());
-            // navigate('/login');
           });
           socket.on("sendFriendRequestSuccess", (data) => {
             OpenSnackbar(data.successMsg, "success");
@@ -358,7 +348,6 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             OpenSnackbar(data.successMsg, "error");
           });
           socket.on("userAcceptYourFriendRequest", (data) => {
-            console.log(data);
             dispatch(addFriend(data.data));
             OpenSnackbar(data.successMsg, "success");
           });

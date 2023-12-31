@@ -32,7 +32,6 @@ export const getChatRoomMessages = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log("room Data thunk ", resp.data);
       return resp.data.messages;
     } catch (error) {
       console.log("error in getChatRoomMessages", error);

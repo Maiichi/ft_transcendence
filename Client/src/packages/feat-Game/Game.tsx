@@ -86,9 +86,7 @@ export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
   const handleResetGameState = () => {
     dispatch(resetGameState());
   };
-  console.log("isGqme");
   onEvent("gameEnds", () => {
-    console.log("isEnd");
     setIsEnd(true);
   });
 

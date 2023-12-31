@@ -88,7 +88,6 @@ export const GameSteps: React.FC = () => {
 
   onEvent("countdown", (count) => {
     // Update state with countdown value
-    console.log("countdown");
     dispatch(setCountdown(count));
   });
 
@@ -98,7 +97,6 @@ export const GameSteps: React.FC = () => {
 
   // those event for the inviter {from gameComponent}
   useEffect(() => {
-    console.log("sender invite");
     if (
       isCurrentTab &&
       isInviteAccepted &&
@@ -106,7 +104,6 @@ export const GameSteps: React.FC = () => {
       socketReady &&
       !isChatInvite
     ) {
-      console.log("sender joins the queue invite  (came from chat)");
       dispatch(setGameStep(STEPS.WAITING_QUEUE));
       emitEvent("join_queue_match_invitaion", gameMode);
     }
@@ -117,7 +114,6 @@ export const GameSteps: React.FC = () => {
   // those event for the invited
   useEffect(() => {
     if (isCurrentTab && isInviteReceived && inviter && socketReady) {
-      console.log("receiver joins the queue invite");
       dispatch(setGameStep(STEPS.WAITING_QUEUE));
       emitEvent("join_queue_match_invitaion", gameMode);
     }
@@ -133,7 +129,6 @@ export const GameSteps: React.FC = () => {
       invited &&
       socketReady
     ) {
-      console.log("sender joins the queue invite");
       dispatch(setGameStep(STEPS.WAITING_QUEUE));
       emitEvent("join_queue_match_invitaion", gameMode);
     }

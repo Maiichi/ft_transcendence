@@ -47,7 +47,6 @@ export const searchSlice = createSlice({
     },
     removeRoom: (state, action: PayloadAction<number>) => {
       const roomIndex = state.rooms.findIndex((room) => room.id === action.payload);
-      console.log("roomIndex (removeRoom) == ", roomIndex);
       if (roomIndex != -1)
         state.rooms.splice(roomIndex, 1);
     },

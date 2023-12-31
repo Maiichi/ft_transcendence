@@ -22,7 +22,6 @@ const Profile = () => {
   const intraId = useAppSelector((state) => state.auth.user.intraId);
   const block = useAppSelector((state) => state.block);
   const uid: number = params.uid ? parseInt(params.uid) : intraId;
-  console.log(uid);
   const isOwner: boolean = intraId === uid;
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);

@@ -7,7 +7,6 @@ export const BanUserFromChannelModal = (props: {
   handleClose: () => void;
 }) => {
   const { handleClose, data } = props;
-  console.log("data : ", data);
   const dispatch = useAppDispatch();
   const handleBanUser = () => {
     dispatch(banMember(data));

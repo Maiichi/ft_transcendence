@@ -45,7 +45,6 @@ const getUser = createAsyncThunk(
   async (uid: number, { getState }): Promise<userType> => {
     try {
       const token = (getState() as RootState).auth.token;
-      console.log(token);
       const userresponse: userType = await apiRequest(`/users/byid/${uid}`, {
         method: "GET",
         headers: {
