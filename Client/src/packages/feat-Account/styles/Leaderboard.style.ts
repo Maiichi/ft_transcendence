@@ -48,7 +48,7 @@ const ListItemIcon = styled(ListItemIconMui)`
 /**
  * `Players` as  List Mui element
  */
-const Players = styled(ListMui)<{ primary: boolean }>`
+const Players = styled(ListMui)<{ primary?: 'primary' }>`
   padding: 24px 12px !important;
   display: flex;
   max-height: ${(props) => (props.primary ? "90%" : "100%")};

@@ -92,7 +92,7 @@ export const routes: Route[] = [
     path: "/leaderboard",
     element: (
       <Layout>
-        <Leaderboard />
+        <Leaderboard primary={'primary'} />
       </Layout>
     ),
     errorElement: <NotFoundError />,

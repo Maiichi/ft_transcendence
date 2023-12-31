@@ -20,7 +20,7 @@ const BoardCard = () => {
       >
         Top 3 player
       </Text>
-      <Leaderboard primary={false} />
+      <Leaderboard primary={undefined} />
       <Button color="secondary" onClick={() => navigate("/Leaderboard")}>See more...</Button>
     </Board>
   );
