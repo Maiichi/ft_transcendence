@@ -13,7 +13,7 @@ type LoginPayload = {
 type UserNameUpdatePayload = {
     isFirstTime?: boolean;
     token: string;
-    id: number;
+    // id: number;
     user: User | null;
     newUsername: string;
 };
@@ -43,7 +43,7 @@ export const updateUserName = createAsyncThunk(
     "auth/updateUserName",
     async (payload: UserNameUpdatePayload) => {
         try {
-            const resp = await apiRequest(`/users/${payload.id}/update`, {
+            const resp = await apiRequest(`/users/update`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${payload.token}`,
@@ -55,7 +55,6 @@ export const updateUserName = createAsyncThunk(
 
             return payload;
         } catch (error) {
-            console.error("User update failed:", error);
             throw error; // Propagate the error to be handled by .rejected case
         }
     }

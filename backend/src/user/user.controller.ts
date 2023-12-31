@@ -49,7 +49,7 @@ export class UserController
     }
     
     // PATCH /api/users/:id/update
-    @Patch(':id/update')
+    @Patch('/update')
     @ApiOperation({ summary : 'Update user by ID'})
     @ApiBody({
         schema: { properties: { userName: { type: 'string' } } },
@@ -59,15 +59,14 @@ export class UserController
     @ApiNotFoundResponse({description : 'ID in not a number'})
     @ApiUnauthorizedResponse({description : 'Unauthorized'})
     @ApiParam({name : 'id'})
-    editUsername(@Param('id') id: number, @Body() dto: EditUserDto, @Res() res: Response)
+    editUsername(@GetUser() currentUser: User, @Body() dto: EditUserDto, @Res() res: Response)
     {
         try {
-            return this.userService.editUsername(Number(id), dto, res);    
+            return this.userService.editUsername(currentUser, dto, res);    
         } catch (error) {
             return res.send({error : error})
         }
     }
-
     // PATCH /api/users/:username/upload-avatar
     @Patch(':id/upload-avatar')
     @ApiConsumes('multipart/form-data')

@@ -5,6 +5,7 @@ import * as path from 'path';
 import { Response } from 'express';
 import { v2 as cloudinary } from 'cloudinary';
 import { TreeLevelColumn } from 'typeorm';
+import { User } from '@prisma/client';
 const streamifier = require('streamifier');
 
 
@@ -92,16 +93,13 @@ export class UserService {
     }
 
     // function to update the username of the user
-    async editUsername(userId: number, dto: EditUserDto, res: Response)
+    async editUsername(currentUser: User, dto: EditUserDto, res: Response)
     {
         // check if the {id} provided in the URL belongs to an existing user
-        const userExist = await this.findUserById(userId);
-        if (userExist)
-        {
             // check if the username provided is the defalut one for the current user
             // && check the username provided is already exist or not
             const usernameExist = await this.findUserByUsername(dto.userName);
-            if (usernameExist && usernameExist.userName !== dto.userName)
+            if (usernameExist && usernameExist.intraId !== currentUser.intraId)
             {
                 return res.status(400).json({
                     status : 400,
@@ -110,9 +108,10 @@ export class UserService {
             }
             else
             {
+
                 // perform the update
                 const user = await this.prisma.user.update({
-                    where: {intraId: userId} ,
+                    where: {intraId: currentUser.intraId} ,
                     data : {
                         userName : dto.userName,
                         isFirstLogin: false
@@ -120,20 +119,13 @@ export class UserService {
                 }).catch((err) =>{
                     return res.status(400).json({ status : 400, message : err })
                 });
+
                 return  res.status(200).json({
                             status: 200,
                             message : 'Username updated successfully',
                             data: user
                         });
             }
-        }
-        else
-        {
-            return res.status(400).json({
-                status : 400,
-                message : `User not found with the ID = ${userId}`
-            });
-        }
     }
 
     // function to upload avatar for the user
