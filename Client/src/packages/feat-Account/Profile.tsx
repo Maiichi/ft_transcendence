@@ -37,14 +37,19 @@ const Profile = () => {
     dispatch(getLeaderboard());
   }, [uid]);
 
-  if (isBlockedByYou(uid, block) || isBlockedYou(uid, block)) {
+  if (
+    isBlockedByYou(uid, block) ||
+    isBlockedYou(uid, block) ||
+    (isLoading &&
+    !user)
+  ) {
     navigate("/");
     return null;
   }
 
   return (
     <>
-      {isLoading || !user ? (
+      {!isLoading || !user ? (
         <Loading />
       ) : (
         <ProfileCards>
