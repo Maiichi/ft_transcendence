@@ -14,12 +14,14 @@ const BoardCard = () => {
           fontSize: "19px",
           fontFamily: "monospace",
           fontWeight: "bolder",
+          mb: 0,
+          pb:0
         }}
       >
         Top 3 player
       </Text>
       <Leaderboard primary={false} />
-      <Button onClick={() => navigate("/Leaderboard")}>See more...</Button>
+      <Button color="secondary" onClick={() => navigate("/Leaderboard")}>See more...</Button>
     </Board>
   );
 };
