@@ -1,13 +1,9 @@
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
+
 import { useNavigate } from "react-router-dom";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import "./List.css";
 import { I_User } from "..";
-import { Button } from "../../../packages/feat-Account/styles";
 import { useAppDispatch } from "../..";
 import {
   acceptFriendRequest,
@@ -15,6 +11,7 @@ import {
 } from "../../../packages/feat-Account/components";
 import { Avatar } from "@mui/material";
 import { purple } from "@mui/material/colors";
+import { IconHolder } from "../../../packages/feat-Chat/components/style";
 
 interface Props {
   friendRequests: I_User[];
@@ -42,35 +39,43 @@ export const FriendRequestsNotifications = ({ friendRequests }: Props) => {
     }
   };
   return (
-    <List>
-      {friendRequests.map((item, index) => (
-        <ListItem key={index} disablePadding sx={{ pl: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-            <Avatar
-              onClick={() => handleClick(item.intraId, "viewProfile")}
-              sx={{ width: "30px", height: "30px" }}
-              src={item.avatar_url}
-            />
-            <h5 style={{ color: purple[400] }} className="title">
-              {item.userName.slice(0.8)}
-            </h5>
-          </div>
-          <ListItemButton
-            className="item"
-            onClick={() => handleClick(item.intraId, "viewProfile")}
-          ></ListItemButton>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
 
-          <ListItemIcon className="icon">
+        padding: "10px",
+      }}
+    >
+      {friendRequests.map((item, index) => (
+        <div
+          style={{ display: "flex", alignItems: "center", gap: "15px" }}
+          key={index}
+        >
+          <Avatar
+            onClick={() => handleClick(item.intraId, "viewProfile")}
+            sx={{ width: "30px", height: "30px" }}
+            src={item.avatar_url}
+          />
+
+          <h5 style={{ color: purple[400] }} className="title">
+            {item.userName.slice(0.8)}
+          </h5>
+
+          <IconHolder>
             <CheckIcon
-              color="secondary"
+              color="success"
               onClick={() => handleClick(item.intraId, "accept")}
             />
-          </ListItemIcon>
-          <ListItemIcon className="icon">
-            <CloseIcon onClick={() => handleClick(item.intraId, "decline")} />
-          </ListItemIcon>
-        </ListItem>
+          </IconHolder>
+          <IconHolder>
+            <CloseIcon
+              color="error"
+              onClick={() => handleClick(item.intraId, "decline")}
+            />
+          </IconHolder>
+        </div>
       ))}
-    </List>
+    </div>
   );
 };

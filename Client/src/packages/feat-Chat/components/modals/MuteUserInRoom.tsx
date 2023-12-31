@@ -26,7 +26,7 @@ export const MuteUserInRoom = (props: {
   return (
     <>
       <ModalConfirm
-        title={`You want to mute ${data.userName} ?`}
+        title={`You want to mute ${data.userName} for 1 Hour?`}
         handleClose={handleClose}
         handleClick={handleMuteMember}
       />

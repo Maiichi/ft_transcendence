@@ -63,12 +63,15 @@ const MatchsHistoryCard = (props: {
       ) : (
         <div
           style={{
+            paddingBottom: "20px",
+            marginBottom: "10px",
+            minWidth: "70%",
             textAlign: "center",
-            lineHeight: "35px",
-            fontFamily: "Roboto, sans-serif",
           }}
         >
-          No match palyed yet <br /> Play to see your history
+          <h3>
+            No match palyed yet <br /> Play to see your history
+          </h3>
         </div>
       )}
     </Matchshistory>

@@ -92,8 +92,6 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
               paddingBottom: "20px",
               marginBottom: "10px",
               minWidth: "70%",
-              boxShadow: "1px 1px 0 4px #ccc",
-              backgroundColor: "#eee",
               textAlign: "center",
             }}
           >

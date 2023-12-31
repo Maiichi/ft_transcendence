@@ -32,7 +32,7 @@ const ProfileCards = styled.main`
   gap: 2% 1%;
   align-content: flex-start;
   max-width: 100%;
-  overflow-x: scroll;
+  overflow-y: scroll;
 `;
 /**
  * `Usercard` global information of the user as <data />

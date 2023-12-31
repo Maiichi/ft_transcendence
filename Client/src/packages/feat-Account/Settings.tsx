@@ -225,14 +225,7 @@ export const AccountSettings = () => {
     </Root>
   );
 };
-const Score = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: ${(p) => p.color} 0px 0px 8px 0px;
-  margin: 10px;
-  border-radius: 8px;
-`;
+
 const Root = styled.div`
   padding: 10px;
 `;

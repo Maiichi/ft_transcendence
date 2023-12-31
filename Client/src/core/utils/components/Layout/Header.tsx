@@ -188,11 +188,11 @@ export const Header = () => {
       render: (
         <IconButton
           onClick={popperClick(
-            "bottom-start",
+            "bottom-end",
             <NotificationPopper friendRequests={friendRequests} />,
             "notif",
             {
-              paddingTop: "24px",
+              paddingTop: "5px",
             }
           )}
         >

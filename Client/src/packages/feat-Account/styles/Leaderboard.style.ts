@@ -52,7 +52,7 @@ const Players = styled(ListMui)<{ primary: boolean }>`
   padding: 24px 12px !important;
   display: flex;
   max-height: ${(props) => (props.primary ? "90%" : "100%")};
-  overflow-y: scroll;
+  overflow-y: ${(props) => (props.primary ? "scroll" : "none")};
   flex-direction: column;
   gap: 10px;
   margin: 0;
