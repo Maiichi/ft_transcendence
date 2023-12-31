@@ -36,16 +36,16 @@ export const InvitationGameModal = (props :
     // ` ${inviter.firstName} ${inviter.lastName} challenge you to dual game Pong?
     return (
         <>
-        {
-           inviter &&  
-            <ModalConfirm
-                title={`${inviter.firstName} ${inviter.lastName} challenge you to dual game Pong?`}
-                handleClose={handleDeclineGameInvitation}
-                handleClick={handleAcceptGameInvitation}
-                closeTitle="Decline"
-                confirmTitle="Accept"
-            />
-        }
+            {
+            inviter &&  
+                <ModalConfirm
+                    title={`${inviter.firstName} ${inviter.lastName} challenge you to dual game Pong?`}
+                    handleClose={handleDeclineGameInvitation}
+                    handleClick={handleAcceptGameInvitation}
+                    closeTitle="Decline"
+                    confirmTitle="Accept"
+                />
+            }
         </>
     );
 };

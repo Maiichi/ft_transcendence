@@ -127,9 +127,7 @@ export const MatchLoading: React.FC<GameStepComponentProps> = ({ socket }) => {
     const avatar_url = useAppSelector((state) => state.auth.user.avatar_url);
     const dispatch = useAppDispatch();
     const handleCancel = () => {
-        console.log("client id == ", socket?.id);
-        socket?.emit("cancelGame");
-        // onReset();
+        socket?.emit('cancelGame');
         dispatch(resetGameState());
     };
 

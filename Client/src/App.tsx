@@ -51,6 +51,7 @@ const HandleError = () => {
 const GameInvitationModal = () => {
   const inviteReceived = useAppSelector((state) => state.game.inviteReceived);
   const displayGameInviteModal = useAppSelector((state) => state.core.displayGameInvitation);
+
   // properties for modal
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
