@@ -172,55 +172,50 @@ export const CreateChannelModal = (props: Props) => {
             <form onSubmit={handleSubmit}>
               <>
                 {fields.map((item: Field, index: number) => (
-                  <>
-                    <Field
-                      key={index}
-                      name={item.name}
-                      defaultValue={item.value}
-                    >
-                      {({ input, meta }: any) => (
-                        <>
-                          {checkHiddenDependencies(
-                            values,
-                            item.dependencies
-                          ) && (
-                            <>
-                              <ChannelFieldHolder>
-                                {item.label}
-                                {item.type == "select" && item.options ? (
-                                  <FormControl fullWidth>
-                                    <Select
-                                      sx={{
-                                        height: "40px !important",
-                                        marginTop: "5px",
-                                      }}
-                                      {...input}
-                                      placeholder={item.holder}
-                                    >
-                                      {item.options?.map((option) => (
-                                        <MenuItem value={option}>
-                                          {option}
-                                        </MenuItem>
-                                      ))}
-                                    </Select>
-                                  </FormControl>
-                                ) : (
-                                  <FieldInput
+                  <Field
+                    key={item.name}
+                    name={item.name}
+                    defaultValue={item.value}
+                  >
+                    {({ input, meta }: any) => (
+                      <>
+                        {checkHiddenDependencies(values, item.dependencies) && (
+                          <>
+                            <ChannelFieldHolder>
+                              {item.label}
+                              {item.type == "select" && item.options ? (
+                                <FormControl fullWidth>
+                                  <Select
+                                    sx={{
+                                      height: "40px !important",
+                                      marginTop: "5px",
+                                    }}
                                     {...input}
-                                    type={item.type}
                                     placeholder={item.holder}
-                                  />
-                                )}
-                              </ChannelFieldHolder>
-                              {meta.error && meta.touched && (
-                                <ErrorMessage>{meta.error}</ErrorMessage>
+                                  >
+                                    {item.options?.map((option) => (
+                                      <MenuItem value={option} key={option}>
+                                        {option}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              ) : (
+                                <FieldInput
+                                  {...input}
+                                  type={item.type}
+                                  placeholder={item.holder}
+                                />
                               )}
-                            </>
-                          )}
-                        </>
-                      )}
-                    </Field>
-                  </>
+                            </ChannelFieldHolder>
+                            {meta.error && meta.touched && (
+                              <ErrorMessage>{meta.error}</ErrorMessage>
+                            )}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </Field>
                 ))}
               </>
               <ModalFooter>

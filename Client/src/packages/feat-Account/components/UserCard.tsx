@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Message } from "@mui/icons-material";
-import {  Grow, Text, Usercard, Avatar } from "../styles";
+import { Grow, Text, Usercard, Avatar } from "../styles";
 import { gamerType } from "./statsType";
 import CircularProgressBar from "./utils/CircularProgressBar";
 import LinearDeterminate from "./utils/linearProgressBar";
@@ -34,7 +34,14 @@ import {
 import { IconHolder } from "../../feat-Chat/components/style";
 import { BlockUserModal } from "../../feat-Chat/components/modals/BlockUserModal";
 import { Action } from "../../feat-Chat/components/types";
-import { inviteToGame, setCurrentTab, setGameStep, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
+import {
+  inviteToGame,
+  setCurrentTab,
+  setGameStep,
+  setInviteFromChat,
+  setInviteSent,
+  setInvited,
+} from "../../feat-Game/redux/GameSlice";
 import { STEPS } from "../../feat-Game/utils/constants";
 const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
   const { gamer, isOwner } = props;
@@ -111,19 +118,20 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
         );
         break;
       case "play":
-        dispatch(inviteToGame({
-          invitedId : selectedUser.intraId,
-          inviterId : gamer.user.intraId,
-          gameMode: "dual"
-        }));
-         // TODO:  need a check (inGame)
-        if (selectedUser.status === "ONLINE")
-        {
+        dispatch(
+          inviteToGame({
+            invitedId: selectedUser.intraId,
+            inviterId: gamer.user.intraId,
+            gameMode: "dual",
+          })
+        );
+        // TODO:  need a check (inGame)
+        if (selectedUser.status === "ONLINE") {
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
-          navigate('/');
+          navigate("/");
           dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
@@ -263,6 +271,7 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
                     return (
                       checkConstraints(action, gamer.user.intraId) && (
                         <IconHolder
+                          key={action.name}
                           onClick={() =>
                             handleClickAction(action.type, gamer.user)
                           }

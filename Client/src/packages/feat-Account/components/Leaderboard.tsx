@@ -1,10 +1,7 @@
-import {  useNavigate } from "react-router-dom";
-import {  useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Loading, useAppDispatch, useAppSelector } from "../../../core";
-import {
-  getLeaderboard,
-  leaderboardType,
-} from ".";
+import { getLeaderboard, leaderboardType } from ".";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import {
@@ -44,7 +41,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
           {leaderboard.map(
             (player, index) =>
               (!primary && index >= 3) || (
-                <Player>
+                <Player key={player.userId}>
                   <ListItemAvatar
                     onClick={() =>
                       navigate(`/account/profile/${player.userId}`)
@@ -75,12 +72,14 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                   )}
                   {primary && (
                     <IconButton
-                    size="large"
-                    color="secondary"
+                      size="large"
+                      color="secondary"
                       onClick={() =>
                         navigate(`/account/profile/${player.userId}`)
                       }
-                    ><AccountCircleIcon/></IconButton>
+                    >
+                      <AccountCircleIcon />
+                    </IconButton>
                   )}
                 </Player>
               )

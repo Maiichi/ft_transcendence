@@ -26,9 +26,9 @@ import { NotFound } from "./style";
 export const ChatDiscussion = () => {
   const dispatch = useAppDispatch();
 
-  const { channels, directMessage, chat } = useAppSelector(
-    (state) => state
-  );
+  const channels = useAppSelector((state) => state.channels);
+  const directMessage = useAppSelector((state) => state.directMessage);
+  const chat = useAppSelector((state) => state.chat);
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(

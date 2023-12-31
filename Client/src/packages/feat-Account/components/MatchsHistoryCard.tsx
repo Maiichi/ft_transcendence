@@ -33,6 +33,7 @@ const MatchsHistoryCard = (props: {
           const op = item.Players[0].intraId === uid ? 1 : 0;
           return (
             <Match
+              key={item.createdAt}
               onClick={() => navigate(`/gamesHistory?uid=${uid}#${index + 1}`)}
               win={getresult(item.winnerId, item.score1 === item.score2, [
                 "#2fa025b8",

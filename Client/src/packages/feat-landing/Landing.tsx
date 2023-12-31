@@ -105,7 +105,7 @@ const LandingPage = () => {
               <p className="ui-text-intro">Master Your Skills</p>
               <div className="ui-section-skills__layout ui-layout-grid ui-layout-grid-3">
                 {cards.map((item) => (
-                  <div className="ui-component-card">
+                  <div className="ui-component-card" key={item.title}>
                     <img
                       src={item.image}
                       loading="lazy"

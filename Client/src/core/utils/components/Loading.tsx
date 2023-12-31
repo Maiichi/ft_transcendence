@@ -2,8 +2,8 @@ import { Skeleton, Typography } from "@mui/material";
 
 const Loading = () => (
   <>
-    {[1, 2, 3, 4].map(() => (
-      <>
+    {[1, 2, 3, 4].map((index) => (
+      <div key={index}>
         <Typography variant="h1">
           <Skeleton />
         </Typography>
@@ -11,7 +11,7 @@ const Loading = () => (
         <Skeleton />
         <Skeleton animation="wave" />
         <Skeleton animation="wave" />
-      </>
+      </div>
     ))}
   </>
 );

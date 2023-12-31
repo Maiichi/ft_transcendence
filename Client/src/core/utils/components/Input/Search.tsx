@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from "react";
-import Paper from "@mui/material/Paper";
+import React from "react";
 import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import DirectionsIcon from "@mui/icons-material/Directions";
 import TuneIcon from "@mui/icons-material/Tune";
 import ClearIcon from "@mui/icons-material/Clear";
 import { makeStyles } from "@material-ui/styles";
@@ -40,16 +36,7 @@ export const SearchComponent = (props: Props) => {
   const classes = useStyles();
 
   return (
-    <div
-      className={classes.paper}
-      // sx={{
-      //   background: " rgb(248, 250, 252)",
-      //   borderRadius: "12px",
-      //   p: "0 4px",
-      //   display: "flex",
-      //   alignItems: "center",
-      // }}
-    >
+    <div className={classes.paper}>
       <IconButton
         type="button"
         sx={{ color: "rgb(94, 53, 177)", p: "10px" }}
@@ -62,19 +49,7 @@ export const SearchComponent = (props: Props) => {
         placeholder="Search "
         onChange={(e) => onInputUpdate(e.target.value)}
       />
-      <IconButton
-        sx={{
-          borderRadius: "8px",
-          width: "34px",
-          height: "34px",
-          background: "rgb(237, 231, 246)",
-          color: "rgb(94, 53, 177)",
-          marginRight: "10px",
-        }}
-        aria-label="menu"
-      >
-        <TuneIcon />
-      </IconButton>
+
       {clear && setOpen && (
         <IconButton
           sx={{

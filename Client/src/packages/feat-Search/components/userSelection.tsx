@@ -60,7 +60,10 @@ export const UserSelection = (props: {
       />
       {users.length ? (
         users.map((user) => (
-          <StyledLink onClick={() => handelCklick(user.intraId, user.userName)}>
+          <StyledLink
+            key={user.intraId}
+            onClick={() => handelCklick(user.intraId, user.userName)}
+          >
             <StyledUserCard forBlocked={forBlocked}>
               <Avatar
                 sx={{ height: 60, width: 60 }}

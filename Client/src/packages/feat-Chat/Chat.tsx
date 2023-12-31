@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { getBlacklist, getUserFriends } from "../feat-Account/components";
 
 const ChatBox = () => {
-  const { chat } = useAppSelector((state) => state);
+  const chat = useAppSelector((state) => state.chat);
 
   if (chat.currentConversation?.type === "direct") {
     return <DirectBox />;
@@ -23,8 +23,12 @@ const ChatBox = () => {
     );
 };
 export const Chat = () => {
-  const { displayUserActions } = useAppSelector((state) => state.core);
-  const { discussionsDisplay } = useAppSelector((state) => state.chat);
+  const displayUserActions = useAppSelector(
+    (state) => state.core.displayUserActions
+  );
+  const discussionsDisplay = useAppSelector(
+    (state) => state.chat.discussionsDisplay
+  );
   const { isMobile } = useSize();
   const dispatch = useAppDispatch();
   useEffect(() => {

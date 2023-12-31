@@ -12,7 +12,13 @@ import {
   Settings,
 } from "@mui/icons-material";
 
-import { Drawer, FriendRequestsNotifications, ListComponent, ListNav, PopperComponent } from "..";
+import {
+  Drawer,
+  FriendRequestsNotifications,
+  ListComponent,
+  ListNav,
+  PopperComponent,
+} from "..";
 import { useSize } from "../../hooks";
 import { useAppDispatch, useAppSelector } from "../../../redux";
 import { setDisplayNavbar } from "../../../CoreSlice";
@@ -96,7 +102,9 @@ const NotificationPopper = ({
       {friendRequests.length != 0 ? (
         <FriendRequestsNotifications friendRequests={friendRequests} />
       ) : (
-        <Typography sx={{p:1, color: purple[700]}}  variant="body1">You don't have any Friend requests</Typography>
+        <Typography sx={{ p: 1, color: purple[700] }} variant="body1">
+          You don't have any Friend requests
+        </Typography>
       )}
     </>
   );
@@ -255,7 +263,9 @@ export const Header = () => {
           </>
         )}
         <Right>
-          {RightMenu.map((item: MenuTabs) => item.render)}
+          {RightMenu.map((item: MenuTabs) => (
+            <div key={item.id}>{item.render}</div>
+          ))}
           <Logout
             id="logout"
             className={classes.iconBase}

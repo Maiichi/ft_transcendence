@@ -24,7 +24,7 @@ const AchievemetsCard = (props: {
       {achivs.map(
         (achiv, index) =>
           index < 9 && (
-            <Achiv>
+            <Achiv key={index}>
               <img
                 style={{
                   width: "40px",
@@ -32,9 +32,7 @@ const AchievemetsCard = (props: {
                 }}
                 alt="logoAchiv"
                 src={
-                  achiv.geted
-                    ? `/images/${achiv.logo}`
-                    : `/images/blocked.png`
+                  achiv.geted ? `/images/${achiv.logo}` : `/images/blocked.png`
                 }
               />
               <Tooltip
@@ -43,9 +41,7 @@ const AchievemetsCard = (props: {
                 leaveDelay={200}
                 arrow
               >
-                <p>
-                  {achiv.geted ? achiv.name.slice(0, 6) : "locked"}
-                </p>
+                <p>{achiv.geted ? achiv.name.slice(0, 6) : "locked"}</p>
               </Tooltip>
             </Achiv>
           )
