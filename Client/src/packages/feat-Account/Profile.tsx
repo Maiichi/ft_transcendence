@@ -22,7 +22,6 @@ const Profile = () => {
   const intraId = useAppSelector((state) => state.auth.user.intraId);
   const block = useAppSelector((state) => state.block);
   const uid: number = params.uid ? parseInt(params.uid) : intraId;
-  console.log(uid);
   const isOwner: boolean = intraId === uid;
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
@@ -30,25 +29,22 @@ const Profile = () => {
     ({ profile }) =>
       profile.isLoading || profile.lead.isLoading || profile.matchs.isLoading
   );
-
   const user = profileStates.gamer.user;
+
   useEffect(() => {
+    dispatch(getBlacklist());
     dispatch(getuserasgamer(uid));
     dispatch(getLeaderboard());
-    dispatch(getBlacklist());
   }, [uid]);
-  if (
-    (!user && isLoading) ||
-    isBlockedByYou(uid, block) ||
-    isBlockedByYou(uid, block)
-  ) {
+
+  if (isBlockedByYou(uid, block) || isBlockedYou(uid, block)) {
     navigate("/");
     return null;
   }
 
   return (
     <>
-      {!isLoading ? (
+      {isLoading || !user ? (
         <Loading />
       ) : (
         <ProfileCards>

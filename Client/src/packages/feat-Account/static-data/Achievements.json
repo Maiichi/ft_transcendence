@@ -1,56 +1,50 @@
 {
   "1": {
-    "name": "dual Maked",
-    "logo": "First_matchMaking_dual.png",
-    "discription": "play First dual matchMaking.",
-    "geted" : 1
+    "name": "first_dual_game",
+    "logo": "First_dual.png",
+    "discription": "play First dual.",
+    "geted": 0
   },
   "2": {
-    "name": "jungle Maked",
-    "logo": "First_matchMaking_Messyjungle.png",
-    "discription": "palay First Messy jungle matchMaking.",
-    "geted" : 1
+    "name": "first_messy-jungle_game",
+    "logo": "First_Messyjungle.png",
+    "discription": "palay First Messy jungle.",
+    "geted": 0
   },
   "3": {
-    "name": "jungle Invite",
-    "logo": "First_invite_friend_in_Messy_jungle.png",
-    "discription": "invite and play by invite friend in Messy jungle.",
-    "geted" : 1
-  },
-  "4": {
-    "name": "dual Invite",
-    "logo": "First_invite_friend_in_dual.png",
-    "discription": "invite and play by invite friend in dual.",
-    "geted" : 1
-  },
-  "5": {
-    "name": "Perfect Serve",
+    "name": "five_wins",
     "logo": "five_BB.png",
     "discription": "Score 5 aces in a dual game.",
-    "geted" : 1
+    "geted": 0
+  },
+  "4": {
+    "name": "ten_games",
+    "logo": "Rally_Master.png",
+    "discription": "Complete a rally of 10 or more hits.",
+    "geted": 0
+  },
+  "5": {
+    "name": "hundred_games",
+    "logo": "Rally_Master.png",
+    "discription": "Complete a rally of 100 or more hits.",
+    "geted": 0
   },
   "6": {
-    "name": "Rally Master",
-    "logo": "Rally_Master.png",
-    "discription": "Complete a rally of 20 or more hits.",
-    "geted" : 1
-  },
-  "7": {
-    "name": "full Win",
+    "name": "max_win",
     "logo": "full_win.png",
     "discription": "Win a game with a score of full-0.",
-    "geted" : 1
+    "geted": 0
   },
-  "8": {
+  "70": {
     "name": "Top Score",
     "logo": "Top_Score.png",
     "discription": "Top Score in the leaderboard.",
-    "geted" : 1
+    "geted": 0
   },
-  "9": {
+  "80": {
     "name": "Underdog Victory",
     "logo": "Underdog_Victory.png",
     "discription": "Win a game against a player with a higher rank.",
-    "geted" : 1
+    "geted": 0
   }
 }

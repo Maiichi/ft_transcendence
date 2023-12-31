@@ -15,17 +15,16 @@ type userType = {
 
 // TODO: should be formal
 type unformalData = {
-  gamer: gamerType;
   user: userType;
   matchHistory: MatchHistoryType[];
-  achievement: AchievementType[];
+  achievement: { name: string }[];
 };
 
 type gamerType = {
   user: userType;
-  totalmatch: 21;
-  wins: 13;
-  achivs: 7;
+  totalmatch: number;
+  wins: number;
+  achivs: number;
   rank: number;
 };
 
@@ -43,7 +42,6 @@ type AchievementType = {
   name: string;
   logo: string;
   discription: string;
-  geted: number;
 };
 
 type GameslogType = Array<MatchHistoryType>;
@@ -66,7 +64,7 @@ type MatchHistoryType = {
 export interface ProfileState {
   isLoading: boolean;
   gamer: gamerType;
-  achievement: AchievementType[];
+  achievement: { name: string }[];
   matchs: {
     matchsHistory: GameslogType;
     isLoading: boolean;
@@ -77,15 +75,6 @@ export interface ProfileState {
   };
 }
 
-type RelationShipType =
-  | "notfriend"
-  | "friend"
-  | "blocked"
-  | "blockedMe"
-  | "requested"
-  | "requester"
-  | "self";
-
 export type {
   AddLoading,
   gamerType,
@@ -95,5 +84,4 @@ export type {
   GameslogType,
   userType,
   unformalData,
-  RelationShipType,
 };

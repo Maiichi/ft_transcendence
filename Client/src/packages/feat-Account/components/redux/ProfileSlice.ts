@@ -29,11 +29,13 @@ const profileSlice = createSlice({
         getuserasgamer.fulfilled,
         (state, action: PayloadAction<unformalData>) => {
           state.gamer = {
-            ...action.payload.gamer,
-            user: action.payload.user?.message,
+            user: action.payload.user.message,
+            totalmatch: 43,
+            wins: 43,
+            achivs: 43,
+            rank: 43,
           };
           state.achievement = action.payload.achievement;
-          state.matchs.matchsHistory = action.payload.matchHistory;
           state.isLoading = false;
         }
       )

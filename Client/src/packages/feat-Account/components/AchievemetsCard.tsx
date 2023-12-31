@@ -4,9 +4,13 @@ import { AchievementType } from "./statsType";
 
 const AchievemetsCard = (props: {
   userName: string;
-  achivs: AchievementType[];
+  achivs: { name: string }[];
 }) => {
   const { userName, achivs } = props;
+  const achivlist: AchievementType[] = Object.values(
+    require("../static-data/Achievements.json")
+  );
+
   return (
     <Achievemets>
       <Text
@@ -21,35 +25,32 @@ const AchievemetsCard = (props: {
       >
         {`${userName.slice(0, 8)}'s Achievements`}
       </Text>
-      {achivs.map(
-        (achiv, index) =>
-          index < 9 && (
-            <Achiv>
-              <img
-                style={{
-                  width: "40px",
-                  height: "40px",
-                }}
-                alt="logoAchiv"
-                src={
-                  achiv.geted
-                    ? `/images/${achiv.logo}`
-                    : `/images/blocked.png`
-                }
-              />
-              <Tooltip
-                title={achiv.geted ? achiv.name : "paly to get more"}
-                enterDelay={500}
-                leaveDelay={200}
-                arrow
-              >
-                <p>
-                  {achiv.geted ? achiv.name.slice(0, 6) : "locked"}
-                </p>
-              </Tooltip>
-            </Achiv>
-          )
-      )}
+      {achivlist.map((achiv, index) => {
+        const getted: boolean = !!achivs.some(
+          ({ name }) => name === achiv.name
+        );
+        if (index > 9) return <></>;
+        return (
+          <Achiv>
+            <img
+              style={{
+                width: "40px",
+                height: "40px",
+              }}
+              alt="logoAchiv"
+              src={getted ? `/images/${achiv.logo}` : `/images/blocked.png`}
+            />
+            <Tooltip
+              title={getted ? achiv.name : "paly to get more"}
+              enterDelay={500}
+              leaveDelay={200}
+              arrow
+            >
+              <p>{getted ? achiv.name.slice(0, 6) : "locked"}</p>
+            </Tooltip>
+          </Achiv>
+        );
+      })}
     </Achievemets>
   );
 };
