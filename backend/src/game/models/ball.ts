@@ -29,11 +29,8 @@ class Ball {
   }
 
   public move(): void {
-    // console.log('ball move function')
     this._x += this._xdirection * this._mvAmount;
     this._y += this._ydirection * this._mvAmount;
-    // console.log('x ==', this._x);
-    // console.log('y ==', this._y);
 
   }
 
@@ -113,7 +110,6 @@ class Ball {
       this._y - Constants.BALL_RADIUS <=
         paddle.getY() + Constants.PADDLE_HEIGHT + Constants.PADDLE_BORDER_RADIUS
     ) {
-      console.log('middle paddle collision');
       this._xdirection *= -1;
       return true;
     }

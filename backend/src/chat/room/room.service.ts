@@ -51,7 +51,6 @@ export class RoomService {
           updatedAt: true,
         },
       });
-    // console.log('room == ', JSON.stringify(room));
     if (!room)
       throw new WsException(
         `roomId ${roomId} does not exist`,
@@ -115,7 +114,6 @@ export class RoomService {
             success: false,
             message: error.message,
         };
-        console.log(response);
         return response;
     }
 }
@@ -277,7 +275,6 @@ export class RoomService {
       throw new WsException(
         `userId = ${userId} does not exist !`,
       );
-    // console.log("user ==" + JSON.stringify(user));
     const roomExist =
       await this.getRoomByName(name);
     if (roomExist)
@@ -370,8 +367,6 @@ export class RoomService {
     // retrive the room created
     const retrivedRoom =
       await this.chatService.getRoom(newRoom.id);
-    // console.log(`${user.userName} has created a ${newRoom.name} room`);
-    // console.log("retrived room =", JSON.stringify(retrivedRoom));
     return {
       dataMembership: retrivedRoom,
       dataRoom: roomCreated,
@@ -400,9 +395,6 @@ export class RoomService {
 
     // Check if the user is an admin in the room
     const isAdmin = await this.isAdmin(userId,room.id);
-    console.log(
-      'isAdmin ==' + JSON.stringify(isAdmin),
-    );
     if (!isAdmin) {
       throw new WsException(
         `User with intraId ${userId} is not an admin in the room`,
@@ -460,7 +452,6 @@ export class RoomService {
         'id field is required !',
       );
     const room = await this.getRoomById(body.id);
-    // console.log("ROOM ==" + JSON.stringify(room));
     if (!room)
       throw new WsException(
         `room ${body.id} not found`,
@@ -469,7 +460,6 @@ export class RoomService {
       userId,
       room.id,
     );
-    // console.log("isMem in join === " + isMember)
     if (isMember)
       throw new WsException(
         `user is already member on the room`,
@@ -542,19 +532,9 @@ export class RoomService {
           updatedAt: true,
         },
       });
-    // console.log('joinedRoom Members ==', JSON.stringify(joinedRoom));
     // retrive the room created
     const retrivedRoom =
       await this.chatService.getRoom(room.id);
-    // console.log("join room service");
-    // console.log('retrivedRoom (back)', JSON.stringify(retrivedRoom));
-    // console.log('aji lhna',
-    //     {dataMembership: retrivedRoom,
-    //     dataRoom: joinedRoom}
-    // )
-    console.log(
-      `${userId} has joined the room ${room.name}`,
-    );
     return {
       dataMembership: retrivedRoom,
       dataRoom: joinedRoom,
@@ -604,9 +584,6 @@ export class RoomService {
         },
       });
 
-    console.log(
-      `${user.userName} has left ${room.name} room`,
-    );
     return updatedMembership;
   }
 
@@ -621,7 +598,6 @@ export class RoomService {
     const room = await this.getRoomById(
       body.roomId,
     );
-    // console.log("ROOM ==" + JSON.stringify(room));
     if (!room)
       throw new WsException(
         `room ${body.roomId} not found`,
@@ -630,7 +606,6 @@ export class RoomService {
     const user = await this.userService.getUser(
       body.userId,
     );
-    // console.log("USER == " + JSON.stringify(user));
     if (!user)
       throw new WsException(
         `userId = ${body.userId} does not exist !`,
@@ -670,7 +645,6 @@ export class RoomService {
           isAdmin: true,
         },
       });
-    console.log('Admin setted successfully');
     return {roomId: room.id, userId: user.intraId};
   }
 
@@ -696,7 +670,6 @@ export class RoomService {
       throw new WsException(`adminId (kicker) = ${adminId} does not exist !`);
     // check if the user that will be kicked is exists
     const user = await this.userService.getUser(userId);
-    // console.log("USER == " + JSON.stringify(user));
     if (!user)
       throw new WsException(`userId = ${body.userId} does not exist !`);
     // check if the user that will be kicked is a member in the room or not
@@ -722,9 +695,6 @@ export class RoomService {
         id: membership.id,
       },
     });
-    console.log(
-      `${user.userName} has been kicked successfully from ${room.name}`,
-    );
     return {
       roomId: roomId,
       userId: userId
@@ -736,7 +706,6 @@ export class RoomService {
     if (!body)
       throw new WsException('some fields are missed !!');
     const room = await this.getRoomById(roomId);
-    // console.log("ROOM ==" + JSON.stringify(room));
     if (!room)
       throw new WsException(`room ${roomId} not found`);
     const muter =
@@ -745,7 +714,6 @@ export class RoomService {
       throw new WsException(`adminId (muter) = ${adminId} does not exist !`);
     // check if the user in the body exists
     const user = await this.userService.getUser(userId);
-    // console.log("USER == " + JSON.stringify(user));
     if (!user)
       throw new WsException(`userId = ${body.userId} does not exist !`);
     const membership = await this.chatService.getMembership(userId,room.id);
@@ -764,15 +732,12 @@ export class RoomService {
     
 
     const now = new Date();
-    console.log('now ==', now);
     const isMuted = await this.isMuted(now ,membership.timeMute);
-    console.log('isMuted ==', isMuted);
     if (isMuted)
       throw new WsException(`This user is already muted. Wait until his muted time ends.`);
     // calculate time mute based on the DTO 
     // i have added 60 for the GMT+1
     const endMutedTime = addMinutes(now,timeMute + 60);
-    console.log('endMutedTime = ' + endMutedTime);
     await this.prisma.membership.update({
         where: {
           id: membership.id,
@@ -781,7 +746,6 @@ export class RoomService {
           timeMute: endMutedTime,
         },
       });
-    console.log('User muted successfully');
     return ({
       roomId: roomId,
       userId: userId,
@@ -819,7 +783,6 @@ export class RoomService {
           isBanned : true,
         }
       });
-      console.log('User banned successfully');
       return ({roomId: roomId, userId: userId});
 
   }
@@ -853,7 +816,6 @@ export class RoomService {
           isBanned : false,
         }
       });
-      console.log('User unBanned successfully');
       return ({roomId: roomId, userId: userId});
 
   }
@@ -923,7 +885,6 @@ export class RoomService {
           },
       });
       const retrivedRoom = await this.chatService.getRoom(room.id);
-      console.log(`${userId} has been added the room ${room.name}`);
       return {
           dataMembership: retrivedRoom,
           dataRoom: joinedRoom,
@@ -962,7 +923,6 @@ export class RoomService {
           isAdmin: false
         }
       });
-      console.log('admin is Unsetted successfully');
       return ({
         userId: userId,
         roomId: roomId
@@ -1015,22 +975,6 @@ export class RoomService {
       });
     return isMember ? true : false;
   }
-  // isMuted
-  // async isMuted(userId: number, roomId: number) {
-  //   const muteTime =
-  //     await this.prisma.membership.findFirst({
-  //       where: {
-  //         userId: userId,
-  //         roomId: roomId,
-  //       },
-  //       select: {
-  //         timeMute: true,
-  //       },
-  //     });
-  //   const date = new Date();
-  //   console.log('date ==', date);
-  //   return (new Date(muteTime.timeMute) > date) ? true : false;
-  // }
 
   async isMuted(dateNow: Date, muteTime)
   {

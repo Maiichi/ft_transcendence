@@ -61,7 +61,6 @@ export class MessageService
                 },
             },
         });
-        console.log('cons ===' , JSON.stringify(conversation));
         // If a conversation doesn't exist, create a new one
         if (!conversation) 
         {
@@ -87,7 +86,6 @@ export class MessageService
             },
         });
         const retreivedConversation = await this.getRetrivedConvesation(conversation.id, sender.intraId);
-        console.log(`${sender.userName} has sent this message : "${message.content}" , to ${receiver.userName}`)
         return retreivedConversation;
    }
 
@@ -143,16 +141,11 @@ export class MessageService
        if(!sender)
            throw new WsException(`(sender) userId = ${userId} does not exist !`);
        const room = await this.roomService.getRoomById(body.roomId);
-       // console.log("ROOM ==" + JSON.stringify(room));
        if (!room)
            throw new WsException(`room ${body.roomId} not found`);
        const membership = await this.chatService.getMembership(sender.intraId, room.id);
        if (!membership)
            throw new WsException(`no membership between ${sender.userName} and ${room.id}`);
-        //TODO:  need to be checked !!!!!
-    //    const isMuted = await this.roomService.isMuted(sender.intraId, room.id);
-    //    if (isMuted)
-    //        throw new WsException(`You're muted for ${membership.timeMute} please wait until it finishs`);
        // check block system
        let conversation = await this.prisma.conversation.findUnique({
            where: {
@@ -197,7 +190,6 @@ export class MessageService
                chat: { connect: {id: conversation.id }}
            }
        });
-       console.log(`${sender.userName} has sent this message : "${message.content}" , to room ${room.name}`)
        return message;
    }
 
@@ -205,7 +197,6 @@ export class MessageService
     async getRoomConversation(roomId: number, user: User, res: Response)
     {
         const room = await this.roomService.getRoomById(roomId);
-        // console.log("room ==" + JSON.stringify(room))
         if (!room)
             throw new NotFoundException(`room Id ${roomId} does not exist`)
         const membership = await this.chatService.getMembership(user.intraId, room.id);
@@ -216,12 +207,8 @@ export class MessageService
             throw new NotFoundException("this room has no conversation yet");
         // getRoomParticipants
         const roomParticipants = await this.getRoomParticipants(room.id);
-        // console.log("room participants == " + JSON.stringify(roomParticipants));
         const userBlocked = await this.getBlackListByUserId(user.intraId);
-        // console.log("userBlocked = " + JSON.stringify(userBlocked));
-        // console.log("User authenticated = " + user.intraId);
         const roomMessages = await this.getRoomMessages(roomConversation.id, user.intraId);
-        // console.log("room Messages = " + JSON.stringify(roomMessages));
         return res.json({
             status: 200,
             data: roomMessages
@@ -249,7 +236,6 @@ export class MessageService
                 }
            }
        });
-    //    console.log("rooms ,", JSON.stringify(rooms))
        return res.json({
            status: 200,
            data: rooms
@@ -265,8 +251,6 @@ export class MessageService
                 id: conversationId
             }
         });
-        // if (!conversation)
-        //         throw new NotFoundException(`no Convesation found with id = ${conversationId}`)
         return conversation;
    }
 
@@ -310,8 +294,6 @@ export class MessageService
                conversation : true
            }
        });
-    //    if (!roomConversation)
-    //        console.log("this room has no conversation")
        return roomConversation.conversation;
    }
 
@@ -360,7 +342,6 @@ export class MessageService
                 },
             },
         });
-        // console.log("back: messages == ", JSON.stringify(messages));
         return messages;
     }
 
@@ -398,88 +379,6 @@ export class MessageService
         });
         return getMyBlackList;
     }
-/***************************************** CONVERSATION  ***********************************************/
-
-    // async getUserDirectConversations(userId: number, res: Response)
-    // {
-    //     const user = await this.prisma.user.findUnique({
-    //         where : {
-    //             intraId: userId
-    //         },
-    //         select : {
-    //             conversations : {
-    //                 where : {
-    //                     type: 'direct',
-    //                 },
-    //                 select : {
-    //                     id: true,
-    //                     createdAt: true,
-    //                     updatedAt: true,
-    //                     type: true,
-    //                     messages: {
-    //                         select: {
-    //                             content: true,
-    //                             createdAt: true,
-    //                         },
-    //                         orderBy: {
-    //                             createdAt: 'desc',
-    //                         },
-    //                         take: 1, // Retrieve only the last message
-    //                     },
-    //                     participants : {
-    //                         where : {
-    //                             NOT : {
-    //                                 intraId : userId
-    //                             }
-    //                         },
-    //                         select : {
-    //                             userName: true,
-    //                             firstName: true,
-    //                             lastName: true,
-    //                             status: true,
-    //                             avatar_url: true,
-    //                             intraId: true,
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     });
-
-    //     const conversationsData = [];
-    //     for (const conversation of user?.conversations || []) {
-    //         // const lastMessage = conversation.messages[0];
-    //         // console.log("lastMessage (back) ", lastMessage);
-    
-    //         const conversationData = {
-    //             id: conversation.id,
-    //             createdAt: conversation.createdAt,
-    //             updatedAt: conversation.updatedAt,
-    //             type: conversation.type,
-    //             lastMessage: {
-    //                 content: conversation.messages[0].content,
-    //                 createdAt: conversation.messages[0].createdAt,
-    //             },
-    //             receiver: {
-    //                 intraId: conversation.participants[0].intraId,
-    //                 userName: conversation.participants[0].userName,
-    //                 firstName: conversation.participants[0].firstName,
-    //                 lastName: conversation.participants[0].lastName,
-    //                 status: conversation.participants[0].status,
-    //                 avatar_url: conversation.participants[0].avatar_url,
-    //             }
-    //         };
-    
-    //         conversationsData.push(conversationData);
-    //     }
-    //     // console.log("conv (back) ", JSON.stringify(conversationsData));
-    //     return res.json({
-    //         data: conversationsData
-    //     });
-        
-
-    //     // res.send({data: conversations});
-    // }
 
     async getUserDirectConversations(userId: number, res: Response) {
         const user = await this.prisma.user.findUnique({

@@ -79,34 +79,6 @@ export class ChatGateway
     private gameService: GameService
   ) {}
 
-  printClients() {
-    console.log('users connected {');
-    this.connectedClients.forEach(
-      (value, key) => {
-        console.log(
-          'socketId = ' +
-            key +
-            ' || username = ' +
-            value.userName,
-        );
-      },
-    );
-    console.log('}');
-  }
-
-  printClientSockets() {
-    console.log('user sockets {');
-    this.userSockets.forEach((value, key) => {
-      console.log(
-        'user = ' +
-          key +
-          ' || socketID = ' +
-          value,
-      );
-    });
-    console.log('}');
-  }
-
   private deleteUserSockets(intraId: number) {
     const sockets = this.userSockets.get(intraId);
     if (sockets) {
@@ -119,22 +91,7 @@ export class ChatGateway
       });
       this.userSockets.delete(intraId);
     }
-    console.log(
-      'userSockets == ',
-      this.userSockets,
-    );
   }
-
-  // deleteUserSingleSocket()
-
-  // deleteUserDisconnected(intraId: number)
-  // {
-  //     this.connectedClients.forEach((mapUser, mapId) => {
-  //         if (mapUser.intraId === intraId) {
-  //           this.connectedClients.delete(mapId);
-  //         }
-  //     });
-  // }
 
   private deleteUserDisconnected(
     intraId: number,
@@ -152,11 +109,6 @@ export class ChatGateway
       this.connectedClients.delete(socketId);
     });
   }
-
-  // disconnectAllUserSocket(intraId: number)
-  // {
-
-  // }
 
   private findUserByClientSocketId(
     clientId: string,
@@ -206,19 +158,8 @@ export class ChatGateway
       this.server.emit('userConnected', {
         userId: client.id,
       });
-      // this.printClients();
-      console.log(
-        user.userName +
-          ' is Connected ' +
-          client.id,
-      );
-      // this.printClients();
-      // this.printClientSockets();
     } catch (error) {
       client.disconnect();
-      console.error(
-        'Client disconnected due to invalid authorization',
-      );
       const response = {
         success: false,
         message: error.message,
@@ -262,11 +203,6 @@ export class ChatGateway
         // Other cleanup tasks for disconnection
         this.connectedClients.delete(client.id);
         client.disconnect();
-        console.log(
-          user.userName +
-            ' is Disconnected ' +
-            client.id,
-        );
       } else {
         throw new WsException(
           `cannot find the user`,
@@ -308,7 +244,6 @@ export class ChatGateway
             .emit('newRoom', roomData.dataRoom);
         });
     } catch (error) {
-      console.error(error.message);
       client.emit('roomCreationError', {
         message: error.message,
       });
@@ -374,10 +309,6 @@ export class ChatGateway
       client.emit('updateRoomError', {
         message: error.message,
       });
-      // if (error instanceof NotFoundException)
-      //     console.log("Room not found:", error.message);
-      // else
-      console.error(error.message);
     }
   }
 
@@ -457,7 +388,6 @@ export class ChatGateway
       client.emit('roomJoinError', {
         message: error.message,
       });
-      console.error(error.message);
     }
   }
 
@@ -521,9 +451,6 @@ export class ChatGateway
       client.emit('leaveRoomError', {
         message: error.message,
       });
-      console.error(
-        'leaveRoom error =' + error.message,
-      );
     }
   }
 
@@ -603,10 +530,6 @@ export class ChatGateway
       client.emit('addUserToRoomError', {
         message: error.message,
       });
-      console.error(
-        'addUserToRoomError ==',
-        error.message,
-      );
     }
   }
 
@@ -653,9 +576,6 @@ export class ChatGateway
       client.emit('setRoomAdminError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
   // remove Channel Admins
@@ -701,9 +621,6 @@ export class ChatGateway
       client.emit('unSetRoomAdminError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
   // ban member
@@ -758,9 +675,6 @@ export class ChatGateway
       client.emit('banMemberError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
   // unBan member
@@ -820,9 +734,6 @@ export class ChatGateway
       client.emit('unBanMemberError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
 
@@ -882,9 +793,6 @@ export class ChatGateway
       client.emit('kickMemberError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
 
@@ -927,9 +835,6 @@ export class ChatGateway
       client.emit('muteMemberError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
 
@@ -954,10 +859,6 @@ export class ChatGateway
         // Remove the user from connectedClients
         this.connectedClients.delete(client.id);
 
-        console.log(
-          user.userName +
-            ' has logged out from all tabs',
-        );
       } else {
         throw new WsException(
           `Cannot find the user`,
@@ -1069,9 +970,6 @@ export class ChatGateway
       client.emit('sendMessageToUserError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
 
@@ -1134,9 +1032,6 @@ export class ChatGateway
       client.emit('sendMessageToRoomError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
 
@@ -1178,9 +1073,6 @@ export class ChatGateway
       client.emit('blockUserError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
 
@@ -1214,9 +1106,6 @@ export class ChatGateway
       client.emit('unBlockUserError', {
         message: error.message,
       });
-      console.error(
-        'Subs error =' + error.message,
-      );
     }
   }
 
@@ -1259,9 +1148,6 @@ export class ChatGateway
       client.emit('sendFriendRequestError', {
         message: error.message,
       });
-      console.error(
-        'send error = ' + error.message,
-      );
     }
   }
 
@@ -1328,9 +1214,6 @@ export class ChatGateway
       client.emit('acceptFriendRequestError', {
         message: error.message,
       });
-      console.error(
-        'accept error = ' + error.message,
-      );
     }
   }
 
@@ -1386,9 +1269,6 @@ export class ChatGateway
       client.emit('acceptFriendRequestError', {
         message: error.message,
       });
-      console.error(
-        'accept error = ' + error.message,
-      );
     }
   }
 
@@ -1398,13 +1278,11 @@ export class ChatGateway
     @MessageBody() body: any,
   ) {
     try {
-      console.log('Invite To Game (gateway)');
       const currentUser = this.findUserByClientSocketId(client.id);
       await this.gameService.handleInviteUserToGame(currentUser.intraId, body.invitedId);
       const invitedSockets : string[] = this.userSockets.get(body.invitedId);
       const receiver = await this.userService.getUserInfos(body.invitedId);
       const sender = await this.userService.getUserInfos(currentUser.intraId);
-      console.log(invitedSockets);
       if (invitedSockets)
         invitedSockets.forEach((socketId) => {
           this.server.to(socketId).emit('gameInvitationReceived', {
@@ -1417,9 +1295,6 @@ export class ChatGateway
       client.emit('gameInvitationReceivedError', {
         message: error.message,
       });
-      console.log(
-        'send error = ' + error.message,
-      );
     }
   }
 
@@ -1429,8 +1304,6 @@ export class ChatGateway
     @MessageBody() body: any,
   ) {
     try {
-        console.log('acceptGameInvite');
-        console.log("body -- ", body);
         const currentUser =
         this.findUserByClientSocketId(client.id);
         const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
@@ -1442,7 +1315,6 @@ export class ChatGateway
             })
           });
         // this.server.to(client.id).emit('gameInvitationAccepted');
-        console.log("currentUser (BACK): ", currentUser);
         inviterSockets.forEach((socketId) => {
           this.server.to(socketId).emit('opponentAcceptGameInvite', {
             data : currentUser
@@ -1452,9 +1324,6 @@ export class ChatGateway
       client.emit('gameInvitationAcceptedError', {
         message: error.message,
       });
-      console.log(
-        'send error = ' + error.message,
-      );
     }
   }
   @SubscribeMessage('declineGameInvite')
@@ -1463,7 +1332,6 @@ export class ChatGateway
     @MessageBody() body: any,
   ) {
     try {
-        console.log('declineGameInvite');
         let inviter;
         const currentUser = this.findUserByClientSocketId(client.id);
         const invitedSockets : string[] = this.userSockets.get(currentUser.intraId);
@@ -1475,7 +1343,6 @@ export class ChatGateway
           invitedSockets.forEach((socketId) => {
             this.server.to(socketId).emit('gameInvitationDeclined')
           });
-          console.log(inviterSockets);
         inviterSockets.forEach((socketId) => {
           this.server.to(socketId).emit('opponentDeclineGameInvite', {
             data : invited.intraId,
@@ -1494,9 +1361,6 @@ export class ChatGateway
       client.emit('gameInvitationDeclinedError', {
         message: error.message,
       });
-      console.log(
-        'send error = ' + error.message,
-      );
     }
   }
 }

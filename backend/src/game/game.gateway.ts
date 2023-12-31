@@ -52,19 +52,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     return null;
   }
-  
-  private printPlayerSockets() {
-    console.log('player sockets {');
-    this.playerSockets.forEach((value, key) => {
-      console.log(
-        'player = ' +
-          key +
-          ' || socketID = ' +
-          value
-      );
-    });
-    console.log('}');
-  }
 
 
   async handleConnection(client: Socket) {
@@ -82,23 +69,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         this.playerSockets.set(user.intraId, []);
       }
       this.playerSockets.get(user.intraId).push(client.id);
-      console.log(user.userName + ' (GAMER) is Connected ' + client.id);
-      this.printPlayerSockets();
     } catch (error) {
       client.disconnect();
-      console.log('Gamer disconnected due to invalid authorization');
       const response = {
         success: false,
         message: error.message,
       };
-      console.log(response);
       return response;
     }
   }
 
   handleDisconnect(client: Socket) {
-    // this.logger.log(`Client disconnected: ${client.id}`);
-    console.log("handleDisconnect");
     const intraId = this.getUserIdFromSocketId(client.id);
     if (intraId)
     {
@@ -122,12 +103,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         this.playerSockets.set(intraId, updatedSockets);
      
       client.disconnect();
-      console.log(`--------Gamer disconnected: ${client.id}`);
-      this.printPlayerSockets();
-    }
-    else
-    {
-      console.log('intraId not found');
     }
   }
 
@@ -207,12 +182,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   
   private async _startNewGame(socketsArr: Socket[], payload: any) {
-    console.log('----------------- start Game -----------------');
     let countdown = 5; // 5 seconds countdown
-    // console.log(socketsArr);
       let interval = setInterval(() => {
         socketsArr.forEach((socket) => {
-          // console.log(socket.id)
           this.server
           .to(socket.id)
           .emit('countdown', countdown);
@@ -223,7 +195,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         if (countdown < 0) {
           clearInterval(interval);
           socketsArr.forEach((socket) => {
-            // console.log('socketId === ', socket.id);
             this.gameService.updateUserStatusInGame(
               this.getUserIdFromSocketId(socket.id), true);
           });
@@ -235,7 +206,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
               payload === 'triple',
             ),
           );
-          // console.log("game :" ,this.games.at(0));
         }
       }, 1000);
     
@@ -268,12 +238,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     if (isInQueue) {
       const message = `You're already in a queue. Cannot join again.`;
-      console.log(message);
       this.server.to(client.id).emit('joinQueueError', message);
       return;
     }
-
-    console.log(`Client ${client.id} joined queue`);
     if (payload === 'dual') {
       if (this.normalGameQueue.length === 0) {
         this.normalGameQueue.push(client);
@@ -283,7 +250,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     
         // Check if the existing user is not in the blacklist of the joining user
         if (!blacklist.includes(existingUserId)) {
-          console.log('Game starting...');
           this.normalGameQueue.push(client);
           await this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
         } else {
@@ -325,7 +291,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
      
       if (this.unique.has(client)) {
-        // console.log('unique ==', this.unique);
         const message = `You cannot join again.`;
         // need to emit an event to tell the user that he's already in the queue.
         this.server.to(client.id).emit('joinQueueError', message);
@@ -339,11 +304,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
       if (isInQueue) {
         const message = `You're already in a queue. Cannot join again.`;
-        // console.log(message);
         this.server.to(client.id).emit('joinQueueError', message);
         return;
       }
-      console.log(` ----------- Client ${client.id} joined queue invitation`);
       if (payload === 'dual') {
         if (this.invitationGameQueue.push(client) > 1)
           this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'dual');
@@ -353,7 +316,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'triple');
       }
     } catch (error) {
-      console.log('error join_queue_match_invitaion == ', error);
       client.emit('joinQueueError' , error);
     }
   }

@@ -18,7 +18,6 @@ export class ChatService {
           // isBanned: false,
         },
       });
-    // console.log("mem ==", JSON.stringify(memberShip));
     return memberShip;
   }
 
@@ -66,45 +65,4 @@ export class ChatService {
       });
     return room;
   }
-  // async getSingleMembership(userId: number, roomId: number)
-  // {
-  //     const memberShip = await this.prisma.membership.findFirst({
-  //         where: {
-  //             userId: userId,
-  //             roomId: roomId,
-  //             isBanned: false
-  //         },
-  //         select : {
-  //             room : {
-  //                 select : {
-  //                     id: true,
-  //                     conversation : true,
-  //                     members: {
-  //                         select: {
-  //                             isAdmin: true,
-  //                             isBanned: true,
-  //                             isMute: true,
-  //                             isOwner: true,
-  //                             user: {
-  //                                 select : {
-  //                                     firstName: true,
-  //                                     lastName: true,
-  //                                     userName: true,
-  //                                 }
-  //                             }
-  //                         }
-  //                     },
-  //                     name: true,
-  //                     createdAt: true,
-  //                     updatedAt: true,
-  //                     password: true,
-  //                     type: true,
-  //                 }
-  //             },
-  //             id: true
-  //         }
-  //     })
-  //     console.log("mem ==", JSON.stringify(memberShip));
-  //     return memberShip;
-  // }
 }

@@ -119,8 +119,7 @@ export class AuthService
                 token : token
             })
         } catch (error) {
-            // The user is not authenticated.
-            console.log(error)
+
         }
     }
 
