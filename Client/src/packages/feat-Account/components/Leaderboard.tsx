@@ -23,6 +23,7 @@ import {
   Root,
 } from "../styles";
 import { useSize } from "../../../core/utils/hooks";
+import { IconButton } from "@mui/material";
 
 const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
   const navigate = useNavigate();
@@ -84,12 +85,13 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                     />
                   )}
                   {primary && (
-                    <Button
+                    <IconButton
+                    size="large"
+                    color="secondary"
                       onClick={() =>
                         navigate(`/account/profile/${player.userId}`)
                       }
-                      startIcon={<AccountCircleIcon />}
-                    />
+                    ><AccountCircleIcon/></IconButton>
                   )}
                 </Player>
               )
