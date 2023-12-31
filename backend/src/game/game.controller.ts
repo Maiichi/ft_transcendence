@@ -46,11 +46,11 @@ export class GameController {
         }
     }
 
-    @Get('/achievements')
-    async getUserAchievements(@Res() response, @GetUser() user:User)
+    @Get('/:id_user/achievements')
+    async getUserAchievements(@Res() response,@Param('id_user') targetUser: number)
     {
         try {
-            return await this.gameService.getUserAchievement(response, user.intraId);
+            return await this.gameService.getUserAchievement(response, Number(targetUser));
         } catch (error) {
             response.send({error: error.message});
         }

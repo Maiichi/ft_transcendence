@@ -35,7 +35,14 @@ import {
 import { IconHolder } from "../../feat-Chat/components/style";
 import { BlockUserModal } from "../../feat-Chat/components/modals/BlockUserModal";
 import { Action } from "../../feat-Chat/components/types";
-import { inviteToGame, setCurrentTab, setGameStep, setInviteFromChat, setInviteSent, setInvited } from "../../feat-Game/redux/GameSlice";
+import {
+  inviteToGame,
+  setCurrentTab,
+  setGameStep,
+  setInviteFromChat,
+  setInviteSent,
+  setInvited,
+} from "../../feat-Game/redux/GameSlice";
 import { STEPS } from "../../feat-Game/utils/constants";
 const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
   const { gamer, isOwner } = props;
@@ -112,19 +119,20 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
         );
         break;
       case "play":
-        dispatch(inviteToGame({
-          invitedId : selectedUser.intraId,
-          inviterId : gamer.user.intraId,
-          gameMode: "dual"
-        }));
-         // TODO:  need a check (inGame)
-        if (selectedUser.status === "ONLINE")
-        {
+        dispatch(
+          inviteToGame({
+            invitedId: selectedUser.intraId,
+            inviterId: gamer.user.intraId,
+            gameMode: "dual",
+          })
+        );
+        // TODO:  need a check (inGame)
+        if (selectedUser.status === "ONLINE") {
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
-          navigate('/');
+          navigate("/");
           dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
@@ -278,9 +286,6 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
               )}
             </div>
           </div>
-          <Grow prograssShow="circular">
-            <CircularProgressBar progress={gamer.rank} />
-          </Grow>
         </div>
         <div
           style={{
@@ -302,9 +307,7 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
             {"Achievements"} <br /> <span> {gamer.achivs} </span>
           </Text>
         </div>
-        <Grow prograssShow="linear">
-          <LinearDeterminate progress={gamer.rank} />
-        </Grow>
+        <LinearDeterminate progress={gamer.rank} />
       </div>
     </Usercard>
   );

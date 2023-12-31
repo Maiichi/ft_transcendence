@@ -6,8 +6,7 @@ import { I_User, SearchComponent, useAppDispatch, useAppSelector } from "../../.
 import { Socket } from "socket.io-client";
 
 import { getUserFriends } from "../../feat-Account/components/redux/friendThunk";
-import { STEPS } from "../utils/constants";
-import { inviteToGame, setCurrentTab, setGameStep, setInviteSent, setInvited } from "../redux/GameSlice";
+import { inviteToGame, setCurrentTab, setInviteSent, setInvited } from "../redux/GameSlice";
 
 export const OponentComponent = (props: { onUserSelect: (user: I_User) => void }) => {
   const {onUserSelect} = props;
@@ -68,7 +67,8 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
 
   const handleChallengePlayer = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (selectUser)
+    console.log("selectedUser == ", selectUser);
+    if (selectUser && !selectUser.inGame && selectUser.status === 'ONLINE')
     {
       if (socket)
       { 
@@ -80,8 +80,6 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
         dispatch(setInviteSent(true));
         dispatch(setInvited(selectUser));
         dispatch(setCurrentTab(true));
-        // dispatch(setGameStep(STEPS.WAITING_QUEUE));
-        // dispatch(setInvited)
       }
     }
     handleClose();
