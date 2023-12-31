@@ -123,7 +123,6 @@ export const MatchLoading: React.FC<GameStepComponentProps> = ({
     // const user = useAppSelector((state) => state.auth.user);
     const dispatch = useAppDispatch();
     const handleCancel = () => {
-        console.log("client id == ", socket?.id);
         socket?.emit('cancelGame');
         // onReset();
         dispatch(resetGameState());

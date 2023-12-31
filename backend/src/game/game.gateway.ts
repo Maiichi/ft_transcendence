@@ -13,6 +13,7 @@ import { Logger } from '@nestjs/common';
 import Game from './models/game';
 import Player from './models/player';
 import { UserService } from 'src/user/user.service';
+import { BlacklistService } from 'src/user/blacklist/blacklist.service';
 
 @WebSocketGateway({
   namespace: "game",
@@ -25,6 +26,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   constructor(
     private readonly gameService: GameService,
     private userService: UserService,
+    private blacklistService: BlacklistService,
     private jwtService: JwtService,
     ) {}
 
@@ -36,7 +38,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   private unique: Set<Socket> = new Set();
   private playerSockets = new Map<number, string[]>();
   private normalGameQueue: Socket[] = [];
+  private separateNormalGameQueue: Socket[] = [];
   private tripleGameQueue: Socket[] = [];
+  private separateTripleGameQueue: Socket[] = [];
   private invitationGameQueue : Socket[] = [];
   private games: Game[] = [];
 
@@ -185,7 +189,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   private async _removeOverGame(game: Game) {
-    console.log("over Game");
     const sockets = game.getSockets();
     sockets.forEach((socket) => {
       if (this.getUserIdFromSocketId(socket.id))
@@ -199,13 +202,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.unique.delete(sockets[0]);
     this.unique.delete(sockets[1]);
     await this._storeGame(game);
-    // await this.gameService.saveAchievement();
-    // console.log('heeeere 1');
     this.games.splice(this.games.indexOf(game), 1);
-    // console.log('heeeere 2');
-    // console.log('removeOverGame : ' + game.getId());
-    // this.logger.log(`number of current games: ${this.games.length}`);
-    // console.log(`number of current games: ${this.games.length}`);
   }
 
   
@@ -260,6 +257,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return;
     }
     this.unique.add(client);
+
+    const blacklist = await this.blacklistService.getBlacklistUsers(this.getUserIdFromSocketId(client.id));
    
     // check if the user is another queue;
     const isInQueue = 
@@ -276,17 +275,41 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     console.log(`Client ${client.id} joined queue`);
     if (payload === 'dual') {
-      console.log('normalGameQueue ==', this.normalGameQueue.length);
-      if (this.normalGameQueue.push(client) > 1)
-        await this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
+      if (this.normalGameQueue.length === 0) {
+        this.normalGameQueue.push(client);
+      } else if (this.normalGameQueue.length === 1) {
+        const existingUser = this.normalGameQueue[0];
+        const existingUserId = this.getUserIdFromSocketId(existingUser.id);
+    
+        // Check if the existing user is not in the blacklist of the joining user
+        if (!blacklist.includes(existingUserId)) {
+          console.log('Game starting...');
+          this.normalGameQueue.push(client);
+          await this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
+        } else {
+          // Join the new user in the separate queue
+          if (this.separateNormalGameQueue.push(client) > 1)
+            await this._startNewGame([this.separateNormalGameQueue.shift(), this.separateNormalGameQueue.shift()], 'dual');
+        }
+      }
     }
     else if (payload === 'triple') {
-      console.log('tripleGameQueue ==', this.normalGameQueue.length);
-      if (this.tripleGameQueue.push(client) > 1)
-      await this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
+      if (this.tripleGameQueue.length === 0) {
+        this.tripleGameQueue.push(client);
+      } else if (this.tripleGameQueue.length === 1) {
+        const existingUser = this.tripleGameQueue[0];
+        const existingUserId = this.getUserIdFromSocketId(existingUser.id);
+        // Check if the existing user is not in the blacklist of the joining user
+        if (!blacklist.includes(existingUserId)) {
+          this.tripleGameQueue.push(client);
+          await this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
+        } else {
+          // Join the new user in the separate queue
+          if (this.separateTripleGameQueue.push(client) > 1)
+            await this._startNewGame([this.separateTripleGameQueue.shift(), this.separateTripleGameQueue.shift()], 'triple');
+        }
+      }
     }
-    
-
   }
   
 	@SubscribeMessage('join_queue_match_invitaion')
@@ -345,15 +368,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('cancelGame')
   async cancelGame(client: Socket) {
     // Remove the user from all queues
-    console.log("client id == ", client.id);
     this.removeFromQueue(client, this.normalGameQueue);
     this.removeFromQueue(client, this.tripleGameQueue);
     this.removeFromQueue(client, this.invitationGameQueue);
+    this.removeFromQueue(client, this.separateNormalGameQueue);
+    this.removeFromQueue(client, this.separateTripleGameQueue);
     // this.removeFromQueue(client, this.unique);
     if (this.unique.has(client)) {
       this.unique.delete(client);
     }
-    console.log("player removed from queue");
-    console.log("matchmaking queue (remove) ", this.normalGameQueue.length);
   }
 }
