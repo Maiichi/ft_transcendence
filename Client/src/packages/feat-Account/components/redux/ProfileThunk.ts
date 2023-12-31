@@ -10,7 +10,7 @@ const getAchievements = createAsyncThunk(
     try {
       const token = (getState() as RootState).auth.token;
       const getedAchivs: Array<{ name: string }> = await apiRequest(
-        `/game/achievements`,
+        `/game/${uid}/achievements`,
         {
           method: "GET",
           headers: {
