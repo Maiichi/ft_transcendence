@@ -18,7 +18,7 @@ import {
 import { useSize } from "../../../core/utils/hooks";
 import { IconButton } from "@mui/material";
 
-const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
+const Leaderboard = ({ primary }: { primary: 'primary' | undefined }) => {
   const navigate = useNavigate();
   const { isTab, isMobile } = useSize();
   const dispatch = useAppDispatch();
@@ -61,7 +61,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
                     primary={player.winRate}
                     secondary={`WinRate`}
                   />
-                  {isMobile || (
+                  {!isMobile && (
                     <ListItemText primary={player.wins} secondary={`Wins`} />
                   )}
                   {primary && !isTab && (
