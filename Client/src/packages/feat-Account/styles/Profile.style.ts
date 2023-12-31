@@ -2,10 +2,6 @@ import styled, { css } from "styled-components";
 
 const Grow = styled.div<{ prograssShow: "circular" | "linear" }>`
   display: ${(props) => (props.prograssShow === "linear" ? "none" : "inline")};
-  @media (max-width: 1200px) {
-    display: ${(props) =>
-      props.prograssShow === "circular" ? "none" : "inline"};
-  }
 `;
 const cardstyle = css`
   margin: 2%;

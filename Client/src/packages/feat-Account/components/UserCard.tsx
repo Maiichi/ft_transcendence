@@ -286,9 +286,6 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
               )}
             </div>
           </div>
-          <Grow prograssShow="circular">
-            <CircularProgressBar progress={gamer.rank} />
-          </Grow>
         </div>
         <div
           style={{
@@ -310,9 +307,7 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
             {"Achievements"} <br /> <span> {gamer.achivs} </span>
           </Text>
         </div>
-        <Grow prograssShow="linear">
-          <LinearDeterminate progress={gamer.rank} />
-        </Grow>
+        <LinearDeterminate progress={gamer.rank} />
       </div>
     </Usercard>
   );

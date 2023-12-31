@@ -12,7 +12,7 @@ import {
   getBlacklist,
 } from "./components";
 import { ProfileCards } from "./styles";
-import { isBlockedByYou } from "../feat-Chat/components/utils";
+import { isBlockedByYou, isBlockedYou } from "../feat-Chat/components/utils";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -29,17 +29,18 @@ const Profile = () => {
     ({ profile }) =>
       profile.isLoading || profile.lead.isLoading || profile.matchs.isLoading
   );
-
   const user = profileStates.gamer.user;
+
   useEffect(() => {
+    dispatch(getBlacklist());
     dispatch(getuserasgamer(uid));
     dispatch(getLeaderboard());
-    dispatch(getBlacklist());
   }, [uid]);
+
   if (
-    (!user && isLoading) ||
     isBlockedByYou(uid, block) ||
-    isBlockedByYou(uid, block)
+    isBlockedYou(uid, block) ||
+    (isLoading && !user)
   ) {
     navigate("/");
     return null;
@@ -47,7 +48,7 @@ const Profile = () => {
 
   return (
     <>
-      {!isLoading ? (
+      {!isLoading || !user ? (
         <Loading />
       ) : (
         <ProfileCards>

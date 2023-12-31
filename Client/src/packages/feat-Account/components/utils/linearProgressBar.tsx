@@ -6,8 +6,8 @@ const LinearDeterminate = ({ progress = 0 }) => {
     <Box sx={{ width: "100%", mt: 2, mb: 1 }}>
       <LinearProgress
         color="secondary"
-        variant="buffer"
-        sx={{ borderRadius: "10px", m: "0 2px", height: "10px", }}
+        variant="determinate"
+        sx={{ borderRadius: "10px", m: "0 2px", height: "10px" }}
         value={progress}
       />
     </Box>

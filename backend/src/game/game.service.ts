@@ -30,7 +30,6 @@ export class GameService {
     // stroe the game in the database
     async saveGame(body: any) 
     {
-        console.log("body === ", body);
         
         const players = await this.prisma.user.findMany({
             where: {
@@ -58,6 +57,7 @@ export class GameService {
 
     async saveAchievement(userId: number, type: string)
     {
+        console.log("saave achiev-------------------------------------")
         const gamesDual = await this.prisma.game.findMany({
             where: {
                 type : 'dual',
@@ -324,7 +324,8 @@ export class GameService {
                 ],
             },
         });
-        if (maxWin.id)
+        console.log("-------------------- max wins == ", JSON.stringify(maxWin));
+        if (maxWin)
             await this.storeAchievement(userId, 'max_win');
     } 
     

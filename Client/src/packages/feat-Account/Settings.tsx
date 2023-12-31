@@ -1,8 +1,4 @@
-import {
-  Alert,
-  Avatar,
-  TextField,
-} from "@mui/material";
+import { Alert, Avatar, TextField } from "@mui/material";
 import { useState } from "react";
 import styled from "styled-components";
 import {
@@ -207,10 +203,8 @@ export const AccountSettings = () => {
             id="username"
             label="Username"
             variant="outlined"
-            defaultValue={auth.user.userName}
             error={!!inputError}
             value={textInput}
-            // variant="standard"
             placeholder="Username"
             onChange={handleInputChange}
             helperText={inputError}

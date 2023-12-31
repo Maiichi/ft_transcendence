@@ -56,6 +56,8 @@ const GameInvitationModal = () => {
   const displayGameInviteModal = useAppSelector(
     (state) => state.core.displayGameInvitation
   );
+
+  // properties for modal
   const [open, setOpen] = useState(false);
   const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
     undefined
