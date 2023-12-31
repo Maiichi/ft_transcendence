@@ -48,13 +48,14 @@ const VerifyOtp: React.FC<any> = ({ open, setOpen, action }) => {
                 onChange={handleOtpChange}
                 error={!!verifyError}
                 errorMessage={verifyError}
+                
             />
             <ButtonHolder>
                 <Button
                     style={{marginTop: '10px', textAlign: 'center'}}
                     type="submit"
                     variant="contained"
-                    color="primary"
+                    color="secondary"
                     onClick={handleOtpSubmit}
                     disabled={otpCode.length != 6}
                 >

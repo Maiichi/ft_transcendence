@@ -91,16 +91,12 @@ const NotificationPopper = ({
 }: {
   friendRequests: I_User[];
 }) => {
-  const dispatch = useAppDispatch();
-
-  console.log("friendRequests : ", friendRequests);
-
   return (
     <>
       {friendRequests.length != 0 ? (
         <FriendRequestsNotifications friendRequests={friendRequests} />
       ) : (
-        <>You haven't any Friend requests</>
+        <Typography sx={{p:1, color: purple[700]}}  variant="body1">You don't have any Friend requests</Typography>
       )}
     </>
   );
@@ -142,9 +138,7 @@ export const Header = () => {
   const friendRequests: I_User[] = useAppSelector(
     (state) => state.friends.friendRequests
   );
-  const navigate = useNavigate();
 
-  const isAuthenticated = useAuthentication();
   useEffect(() => {}, [activeTab]);
 
   const handleClose = (e: any) => {
