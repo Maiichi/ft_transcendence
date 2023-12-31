@@ -34,17 +34,5 @@
     "logo": "full_win.png",
     "discription": "Win a game with a score of full-0.",
     "geted": 0
-  },
-  "70": {
-    "name": "Top Score",
-    "logo": "Top_Score.png",
-    "discription": "Top Score in the leaderboard.",
-    "geted": 0
-  },
-  "80": {
-    "name": "Underdog Victory",
-    "logo": "Underdog_Victory.png",
-    "discription": "Win a game against a player with a higher rank.",
-    "geted": 0
   }
 }

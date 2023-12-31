@@ -6,6 +6,7 @@ import {
   leaderboardType,
   unformalData,
 } from "../statsType";
+import { Achievemets } from "../../styles";
 
 const initialState: ProfileState =
   require("../../static-data/initialStates.json").profile;
@@ -28,14 +29,12 @@ const profileSlice = createSlice({
       .addCase(
         getuserasgamer.fulfilled,
         (state, action: PayloadAction<unformalData>) => {
-          state.gamer = {
-            user: action.payload.user.message,
-            totalmatch: 43,
-            wins: 43,
-            achivs: 43,
-            rank: 43,
-          };
           state.achievement = action.payload.achievement;
+          state.gamer = {
+            ...state.gamer,
+            user: action.payload.user?.message,
+            achivs: action.payload.achievement?.length,
+          };
           state.isLoading = false;
         }
       )
@@ -43,6 +42,16 @@ const profileSlice = createSlice({
         getLeaderboard.fulfilled,
         (state, action: PayloadAction<leaderboardType>) => {
           state.lead.leaderboard = action.payload;
+          const wins =
+            state.lead.leaderboard.find(
+              (player) => player.name === state.gamer?.user?.userName
+            )?.wins ?? 0;
+          const rank = state.matchs?.matchsHistory?.length??0 ;
+          state.gamer = {
+            ...state.gamer,
+            wins: wins,
+            rank: rank,
+          };
           state.lead.isLoading = false;
         }
       )
@@ -65,6 +74,10 @@ const profileSlice = createSlice({
               match.score2
             );
           });
+          state.gamer = {
+            ...state.gamer,
+            totalmatch: state.matchs.matchsHistory.length,
+          };
           state.matchs.isLoading = false;
         }
       )
