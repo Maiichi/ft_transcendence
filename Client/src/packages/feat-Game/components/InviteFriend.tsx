@@ -11,6 +11,7 @@ import { InviteUserToGame } from "./InviteGame";
 import { useState } from "react";
 import { setCurrentTab, setGameStep } from "../redux/GameSlice";
 import { Instructions } from "./Instructions";
+import { deepPurple } from "@mui/material/colors";
 
 const StyledCard = styled.div`
   width: 100%;
@@ -152,7 +153,7 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
                     </StyledCardDescription>
                 </StyledCardHeader>
                 <StyledCardContent>
-          <ButtonComponent title="Invite a Friend" onClick={handleInviteSent} />
+          <ButtonComponent style={{ width: '100%'}} title="Invite a Friend" onClick={handleInviteSent} />
 
           <OrSeparatorContainer>
             <SeparatorLine />
@@ -160,6 +161,7 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
           </OrSeparatorContainer>
 
           <ButtonComponent
+          style={{ width: '100%'}}
             title="Go to Matchmaking"
             variant="contained"
             onClick={handleJoinQueue}
@@ -167,8 +169,8 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
         </StyledCardContent>
         <StyledCardFooter>
           <ButtonComponent
-            style={{}}
-            variant="contained"
+            style={{ width: '100%', backgroundColor: deepPurple[50] }}
+            variant="text"
             title="Back to Mode selection"
             onClick={onReset}
           />

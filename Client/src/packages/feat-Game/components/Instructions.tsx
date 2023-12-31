@@ -1,3 +1,4 @@
+import { deepPurple } from "@mui/material/colors";
 import React from "react";
 import styled from "styled-components";
 
@@ -20,7 +21,7 @@ const Tooltip = styled.div`
     visibility: hidden;
     width: 360px;
     line-height: 150%;
-    background-color: #3b82f6;
+    background-color: ${ deepPurple[300]};
     color: #fff;
     text-align: center;
     border-radius: 6px;

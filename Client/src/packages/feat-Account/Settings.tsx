@@ -188,6 +188,7 @@ export const AccountSettings = () => {
           ) : (
             <Button
               component="label"
+              color="secondary"
               variant="contained"
               startIcon={selectedImage ? <CheckCircle /> : <CloudUploadIcon />}
             >
@@ -205,6 +206,7 @@ export const AccountSettings = () => {
           <H5>The informations can be edited</H5>
           <TextField
             sx={{ margin: "10px 0px", width: "80%" }}
+            color="secondary"
             required
             id="username"
             label="Username"
@@ -222,7 +224,7 @@ export const AccountSettings = () => {
           <ButtonForm
             type="submit"
             variant="contained"
-            color="primary"
+            color="secondary"
             onClick={handleSubmit}
             disabled={!textInput || !!inputError}
           >
