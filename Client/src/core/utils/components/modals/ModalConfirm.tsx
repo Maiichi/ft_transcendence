@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import { deepPurple } from "@mui/material/colors";
 import styled from "styled-components";
 
 export const ModalConfirm = (props: {
@@ -20,15 +21,19 @@ export const ModalConfirm = (props: {
         <Button
           variant="outlined"
           sx={{
-            color: "#eaf0ec",
+            color: deepPurple[900],
             background:
-              "linear-gradient( 180deg, rgba(87,87,87,1) 0%, rgba(44,44,44,1) 100% )",
+             deepPurple[100],
           }}
           onClick={handleClose}
         >
           {closeTitle ? closeTitle : 'Cancel'}
         </Button>
-        <Button variant="contained" color="error" onClick={handleClick}>
+        <Button  sx={{
+            color: deepPurple[100],
+            background:
+            deepPurple[700],
+          }} variant="contained" color="error" onClick={handleClick}>
             {confirmTitle ? confirmTitle : 'Confirm'}
         </Button>
       </ModalFooter>

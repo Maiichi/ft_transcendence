@@ -6,6 +6,7 @@ import { ButtonComponent, useAppDispatch } from "../../../core";
 import { setGameMode, setGameStep } from "../redux/GameSlice";
 import dualMapImage from "../images/DUAL_MAP.jpeg";
 import tripleMapImage from "../images/TRIPLE_MAP.jpeg";
+import { deepPurple } from "@mui/material/colors";
 import { Instructions } from "./Instructions";
 
 const MAPS = [
@@ -64,7 +65,7 @@ type CardProps = {
 const Card = styled.div<CardProps>`
   background: #fdfdfd; // Slightly off-white background
   border: ${(props) =>
-    `3px solid ${props.isSelected ? "#60a5fa" : "transparent"}`};
+    `3px solid ${props.isSelected ? `${deepPurple[300]}` : "transparent"}`};
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); // Enhanced box-shadow for depth
   border-radius: 12px;
   padding: 1.5rem;
@@ -77,7 +78,7 @@ const Card = styled.div<CardProps>`
   box-sizing: border-box; // Include padding and border in the width
 
   &:hover {
-    border-color: #60a5fa;
+    border-color: ${deepPurple[700]};
     transform: translateY(-5px);
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
   }

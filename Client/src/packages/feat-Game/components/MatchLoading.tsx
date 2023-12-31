@@ -1,10 +1,9 @@
 import styled, { keyframes } from "styled-components";
-import { GameState, GameStepComponentProps } from "../utils/types";
+import { GameStepComponentProps } from "../utils/types";
 import { useAppDispatch, useAppSelector } from "../../../core";
-import { STEPS } from "../utils/constants";
-import { useEffect } from "react";
 import { resetGameState } from "../redux/GameSlice";
 import { Instructions } from "./Instructions";
+import { deepPurple } from "@mui/material/colors";
 
 interface SkeletonProps {
     width?: string;
@@ -98,12 +97,12 @@ const StyledButton = styled.button`
     border-radius: 9999px;
     border: 2px solid #d1d5db;
     background-color: transparent;
-    color: #007bff;
+    color: ${deepPurple[900]};
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
     &:hover {
-        background-color: #007bff;
+        background-color: ${deepPurple[300]};
         color: white;
     }
 `;
@@ -125,7 +124,7 @@ const TitleContainer = styled.div`
 
 export const MatchLoading: React.FC<GameStepComponentProps> = ({ socket }) => {
     const countdown = useAppSelector((state) => state.game.countdown);
-    // const user = useAppSelector((state) => state.auth.user);
+    const avatar_url = useAppSelector((state) => state.auth.user.avatar_url);
     const dispatch = useAppDispatch();
     const handleCancel = () => {
         console.log("client id == ", socket?.id);
@@ -146,7 +145,7 @@ export const MatchLoading: React.FC<GameStepComponentProps> = ({ socket }) => {
             </TitleContainer>
 
             <AvatarContainer>
-                <StyledAvatar src="https://via.placeholder.com/50x50" />
+                <StyledAvatar src={avatar_url} />
                 <XIcon
                     viewBox="0 0 24 24"
                     stroke="currentColor"

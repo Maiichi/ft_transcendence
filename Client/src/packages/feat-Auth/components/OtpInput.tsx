@@ -70,6 +70,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
                         id={`otp-input-${index}`}
                         variant="outlined"
                         size="small"
+                        color="secondary"
                         type="text"
                         value={digit}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
