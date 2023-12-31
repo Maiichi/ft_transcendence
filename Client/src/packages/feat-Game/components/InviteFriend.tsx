@@ -10,7 +10,7 @@ import { STEPS } from "../utils/constants";
 import { InviteUserToGame } from "./InviteGame";
 import { useState } from "react";
 import { setCurrentTab, setGameStep } from "../redux/GameSlice";
-import { Button } from "@mui/material";
+import { Instructions } from "./Instructions";
 
 const StyledCard = styled.div`
   width: 100%;
@@ -84,64 +84,74 @@ const OrText = styled.span`
   font-weight: bold;
 `;
 
+const TitleContainer = styled.div`
+    display: flex;
+    gap: 20px;
+    align-items: center;
+`;
+
 export const InviteFriend: React.FC<GameStepComponentProps> = ({
   socket,
   onReset,
 }) => {
-  const gameMode = useAppSelector((state) => state.game.gameMode);
-  const dispatch = useAppDispatch();
+    const gameMode = useAppSelector((state) => state.game.gameMode);
+    const dispatch = useAppDispatch();
 
-  // properties for modal
-  const [open, setOpen] = useState(false);
-  const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
-    undefined
-  );
-  const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
-  const handleClickModal = (
-    childModal: JSX.Element,
-    closeType?: "auto" | "click"
-  ) => {
-    setCloseType(closeType);
-    setOpen(true);
-    setChildModal(childModal);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+    // properties for modal
+    const [open, setOpen] = useState(false);
+    const [closeType, setCloseType] = useState<"auto" | "click" | undefined>(
+        undefined
+    );
+    const [ChildModal, setChildModal] = useState<JSX.Element>(<></>);
+    const handleClickModal = (
+        childModal: JSX.Element,
+        closeType?: "auto" | "click"
+    ) => {
+        setCloseType(closeType);
+        setOpen(true);
+        setChildModal(childModal);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    };
 
-  const handleInviteSent = () => {
-    socket &&
-      handleClickModal(
-        <InviteUserToGame
-          selectedUser={null}
-          socket={socket}
-          handleClose={handleClose}
-        />
-      );
-  };
-  const handleJoinQueue = () => {
-    if (socket) {
-      socket.emit("join_queue_match", gameMode);
-    }
-    dispatch(setGameStep(STEPS.WAITING_QUEUE));
-    dispatch(setCurrentTab(true));
-  };
-  return (
-    <>
-      <ModalComponent
-        open={open}
-        ChildComponent={ChildModal}
-        handleClose={handleClose}
-        closeType={closeType}
-      />
-      <StyledCard>
-        <StyledCardHeader>
-          <StyledCardTitle>Game Invitation</StyledCardTitle>
-          <StyledCardDescription>
-            Choose your next action before the game starts.
-          </StyledCardDescription>
-        </StyledCardHeader>
-        <StyledCardContent>
+    const handleInviteSent = () => {
+        socket &&
+            handleClickModal(
+                <InviteUserToGame
+                    selectedUser={null}
+                    socket={socket}
+                    handleClose={handleClose}
+                />
+            );
+    };
+    const handleJoinQueue = () => {
+        if (socket) {
+            socket.emit("join_queue_match", gameMode);
+        }
+        dispatch(setGameStep(STEPS.WAITING_QUEUE));
+        dispatch(setCurrentTab(true));
+    };
+    return (
+        <>
+            <ModalComponent
+                open={open}
+                ChildComponent={ChildModal}
+                handleClose={handleClose}
+                closeType={closeType}
+            />
+            <StyledCard>
+                <StyledCardHeader>
+                    <TitleContainer>
+                        <Instructions currentStep="inviteFriend" />
+                        <StyledCardTitle>Game Invitation</StyledCardTitle>
+                    </TitleContainer>
+
+                    <StyledCardDescription>
+                        Choose your next action before the game starts.
+                    </StyledCardDescription>
+                </StyledCardHeader>
+                <StyledCardContent>
           <ButtonComponent title="Invite a Friend" onClick={handleInviteSent} />
 
           <OrSeparatorContainer>
@@ -162,8 +172,8 @@ export const InviteFriend: React.FC<GameStepComponentProps> = ({
             title="Back to Mode selection"
             onClick={onReset}
           />
-        </StyledCardFooter>
-      </StyledCard>
-    </>
-  );
+                </StyledCardFooter>
+            </StyledCard>
+        </>
+    );
 };

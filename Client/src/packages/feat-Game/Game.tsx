@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import React, { useEffect, useRef, useState } from "react";
 import { GameMode, GameState, GameStepComponentProps } from "./utils/types";
 import {
@@ -18,6 +19,21 @@ import {
 } from "../../core";
 import { useNavigate } from "react-router-dom";
 import { resetGameState, setCountdown, setGameStep } from "./redux/GameSlice";
+import { Instructions } from "./components/Instructions";
+
+const Title = styled.h1`
+    font-size: 2rem; // Tailwind's text-4xl
+    font-weight: bold; // Tailwind's font-bold
+    text-align: center;
+    flex-grow: 1; // Title takes up maximum space
+`;
+const TitleContainer = styled.div`
+    display: flex;
+    justify-content: center; // Center the contents
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem; // Space below the title container
+`;
 
 export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -78,7 +94,10 @@ export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
 
   return (
     <div>
-      <br />
+            <TitleContainer>
+                <Instructions currentStep="game" />
+                <Title>Show off your skills !</Title>
+            </TitleContainer>
       <GameCanvas frame={frame} gameMode={gameMode} />
       {isEnd && (
         <>
