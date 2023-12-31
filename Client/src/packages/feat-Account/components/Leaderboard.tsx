@@ -114,7 +114,7 @@ const Leaderboard = ({ primary = true }: { primary?: boolean }) => {
             </h3>
           </div>
           {primary && (
-            <Button variant="contained" onClick={() => navigate("/game")}>
+            <Button variant="contained" onClick={() => navigate("/")}>
               P l a y
             </Button>
           )}

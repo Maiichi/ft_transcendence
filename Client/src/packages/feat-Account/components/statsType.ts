@@ -43,7 +43,7 @@ type AchievementType = {
   name: string;
   logo: string;
   discription: string;
-  progress: number;
+  geted: number;
 };
 
 type GameslogType = Array<MatchHistoryType>;

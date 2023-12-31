@@ -24,8 +24,8 @@ export const InvitationGameModal = (props :
         handleClose();
         dispatch(setCurrentTab(true));
         dispatch(acceptGameInvitation({inviterId: inviter.intraId}));
-        if (location.pathname !== "/game")
-            navigate('/game');
+        if (location.pathname !== "/")
+            navigate('/');
     };
 
     const handleDeclineGameInvitation = () => {

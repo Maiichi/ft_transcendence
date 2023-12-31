@@ -1,92 +1,56 @@
 {
-  "A": {
-    "name": "First Serve",
-    "logo": "five_BB.png",
-    "discription": "Win your first game in the multiplayer mode.",
-    "progress" : 100
+  "1": {
+    "name": "dual Maked",
+    "logo": "First_matchMaking_dual.png",
+    "discription": "play First dual matchMaking.",
+    "geted" : 1
   },
-  "B": {
+  "2": {
+    "name": "jungle Maked",
+    "logo": "First_matchMaking_Messyjungle.png",
+    "discription": "palay First Messy jungle matchMaking.",
+    "geted" : 1
+  },
+  "3": {
+    "name": "jungle Invite",
+    "logo": "First_invite_friend_in_Messy_jungle.png",
+    "discription": "invite and play by invite friend in Messy jungle.",
+    "geted" : 1
+  },
+  "4": {
+    "name": "dual Invite",
+    "logo": "First_invite_friend_in_dual.png",
+    "discription": "invite and play by invite friend in dual.",
+    "geted" : 1
+  },
+  "5": {
     "name": "Perfect Serve",
     "logo": "five_BB.png",
-    "discription": "Score five aces in a single game.",
-    "progress" : 0
+    "discription": "Score 5 aces in a dual game.",
+    "geted" : 1
   },
-  "C": {
+  "6": {
     "name": "Rally Master",
-    "logo": "medal_A.png",
-    "discription": "Complete a rally of 20 or more hits in a single point.",
-    "progress" : 32
+    "logo": "Rally_Master.png",
+    "discription": "Complete a rally of 20 or more hits.",
+    "geted" : 1
   },
-  "D": {
-    "name": "Speed Demon",
-    "logo": "medal_A.png",
-    "discription": "Score a point with a shot that exceeds a certain speed (e.g., 100 mph).",
-    "progress" : 100
+  "7": {
+    "name": "full Win",
+    "logo": "full_win.png",
+    "discription": "Win a game with a score of full-0.",
+    "geted" : 1
   },
-  "E": {
-    "name": "Accuracy Ace",
-    "logo": "medal_A.png",
-    "discription": "Win a game without missing a single shot.",
-    "progress" : 66
+  "8": {
+    "name": "Top Score",
+    "logo": "Top_Score.png",
+    "discription": "Top Score in the leaderboard.",
+    "geted" : 1
   },
-  "F": {
-    "name": "Shutout",
-    "logo": "medal_A.png",
-    "discription": "Win a game with a score of 11-0.",
-    "progress" : 100
-  },
-  "J": {
-    "name": "Comeback Kid",
-    "logo": "medal_A.png",
-    "discription": "Win a game after trailing by a certain number of points (e.g., 5-10).",
-    "progress" : 32
-  },
-  "H": {
-    "name": "Win Streak",
-    "logo": "five_B.png",
-    "discription": "Win five games in a row in multiplayer mode.",
-    "progress" : 32
-  },
-  "I": {
-    "name": "Top Spin",
-    "logo": "five_B.png",
-    "discription": "Use topspin to score points in a game.",
-    "progress" : 100
-  },
-  "G": {
+  "9": {
     "name": "Underdog Victory",
-    "logo": "five_B.png",
+    "logo": "Underdog_Victory.png",
     "discription": "Win a game against a player with a higher rank.",
-    "progress" : 32
-  },
-  "K": {
-    "name": "Tournament Champion",
-    "logo": "five_B.png",
-    "discription": "Win a specific number of tournaments in a row.",
-    "progress" : 100
-  },
-  "L": {
-    "name": "Quick Reflexes",
-    "logo": "five_B.png",
-    "discription": "Score a point within the first five seconds of a game.",
-    "progress" : 32
-  },
-  "M": {
-    "name": "Ball Control",
-    "logo": "five_BB.png",
-    "discription": "Win a game without letting the ball touch the net.",
-    "progress" : 32
-  },
-  "N": {
-    "name": "Spin Doctor",
-    "logo": "five_BB.png",
-    "discription": "Score points using a variety of spin shots in a single game.",
-    "progress" : 100
-  },
-  "O": {
-    "name": "Online Rivalry",
-    "logo": "five_BB.png",
-    "discription": "Defeat the same player multiple times in online matches.",
-    "progress" : 32
+    "geted" : 1
   }
 }

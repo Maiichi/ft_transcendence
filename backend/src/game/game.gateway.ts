@@ -179,25 +179,27 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       winnerId: winnerId,
       players: playersIds,
     });
-
+    // save the achievement
+    await this.gameService.saveAchievement(playersIds[0], game.getGameType());
+    await this.gameService.saveAchievement(playersIds[1], game.getGameType());
   }
 
   private async _removeOverGame(game: Game) {
-    
     console.log("over Game");
     const sockets = game.getSockets();
     sockets.forEach((socket) => {
-      this.server.to(socket.id).emit('gameEnds');
       if (this.getUserIdFromSocketId(socket.id))
       {
         this.gameService.updateUserStatusInGame(
           this.getUserIdFromSocketId(socket.id), 
           false);
       }
+        this.server.to(socket.id).emit('gameEnds');
     });
     this.unique.delete(sockets[0]);
     this.unique.delete(sockets[1]);
     await this._storeGame(game);
+    // await this.gameService.saveAchievement();
     // console.log('heeeere 1');
     this.games.splice(this.games.indexOf(game), 1);
     // console.log('heeeere 2');
