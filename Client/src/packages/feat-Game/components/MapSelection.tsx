@@ -6,6 +6,7 @@ import { ButtonComponent, useAppDispatch } from "../../../core";
 import { setGameMode, setGameStep } from "../redux/GameSlice";
 import dualMapImage from "../images/DUAL_MAP.jpeg";
 import tripleMapImage from "../images/TRIPLE_MAP.jpeg";
+import { Instructions } from "./Instructions";
 
 const MAPS = [
   {
@@ -41,9 +42,10 @@ const MainContainer = styled.main`
 `;
 
 const Title = styled.h1`
-  font-size: 2rem; // Tailwind's text-4xl
-  font-weight: bold; // Tailwind's font-bold
-  text-align: center;
+    font-size: 2rem; // Tailwind's text-4xl
+    font-weight: bold; // Tailwind's font-bold
+    text-align: center;
+    flex-grow: 1; // Title takes up maximum space
 `;
 
 const CardsContainer = styled.div`
@@ -112,47 +114,53 @@ const CardImage = styled.img`
 `;
 
 const ButtonContainer = styled.div`
-  display: flex;
-  gap: 10px;
+    display: flex;
+    gap: 10px;
+`;
+
+const TitleContainer = styled.div`
+    display: flex;
+    justify-content: center; // Center the contents
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem; // Space below the title container
 `;
 
 export const MapSelection: React.FC<GameStepComponentProps> = () => {
-  const dispatch = useAppDispatch();
-  const [selectedMapId, setSelectedMapId] = useState<string>(MODES.DUAL);
+    const dispatch = useAppDispatch();
+    const [selectedMapId, setSelectedMapId] = useState<string>(MODES.DUAL);
 
-  const handleCardClick = (mapId: string) => {
-    setSelectedMapId(mapId);
-    dispatch(setGameMode(mapId));
-  };
+    const handleCardClick = (mapId: string) => {
+        setSelectedMapId(mapId);
+        dispatch(setGameMode(mapId));
+    };
 
-  const handleMapSelected = () => {
-    dispatch(setGameStep(STEPS.INVITE_FRIEND));
-  };
+    const handleMapSelected = () => {
+        dispatch(setGameStep(STEPS.INVITE_FRIEND));
+    };
 
-  const handleOpenManual = () => {
-    console.log("open game manual");
-  };
-
-  return (
-    <MainContainer>
-      <Title>Select Your Map</Title>
-      <CardsContainer>
-        {MAPS.map((element) => (
-          <Card
-            key={element.id}
-            onClick={() => handleCardClick(element.id)}
-            isSelected={element.id === selectedMapId}
-          >
-            <CardTitle>{element.title}</CardTitle>
-            <CardDescription>{element.description}</CardDescription>
-            <CardImage src={element.imageUrl} alt={element.title} />
-          </Card>
-        ))}
-      </CardsContainer>
-      <ButtonContainer>
+    return (
+        <MainContainer>
+            <TitleContainer>
+                <Instructions currentStep="mapSelection" />
+                <Title>Select Your Map</Title>
+            </TitleContainer>
+            <CardsContainer>
+                {MAPS.map((element) => (
+                    <Card
+                        key={element.id}
+                        onClick={() => handleCardClick(element.id)}
+                        isSelected={element.id === selectedMapId}
+                    >
+                        <CardTitle>{element.title}</CardTitle>
+                        <CardDescription>{element.description}</CardDescription>
+                        <CardImage src={element.imageUrl} alt={element.title} />
+                    </Card>
+                ))}
+            </CardsContainer>
+            <ButtonContainer>
         <ButtonComponent onClick={handleMapSelected} title="Submit" />
-        <ButtonComponent onClick={handleOpenManual} title="How to play" />
-      </ButtonContainer>
-    </MainContainer>
-  );
+            </ButtonContainer>
+        </MainContainer>
+    );
 };
