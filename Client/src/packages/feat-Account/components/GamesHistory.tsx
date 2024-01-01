@@ -61,7 +61,7 @@ const GamesHistory = () => {
             </TableHead>
             <TableBody>
               {matchs?.map((match, index) => (
-                <Row match={match} />
+                <Row key={`match${index}`} match={match} />
               ))}
             </TableBody>
           </Table>

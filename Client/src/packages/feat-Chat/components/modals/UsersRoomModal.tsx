@@ -93,7 +93,7 @@ export const UsersRoom = ({
         >
           {filtredMembers.length != 0 ? (
             filtredMembers.map((user, index) => (
-              <>
+              <div key={index}>
                 <ListItem alignItems="flex-start" key={index}>
                   <ListItemButton
                     sx={{ borderRadius: "10px" }}
@@ -107,7 +107,7 @@ export const UsersRoom = ({
                     />
                   </ListItemButton>
                 </ListItem>
-              </>
+              </div>
             ))
           ) : (
             <NotFound>No user Found</NotFound>

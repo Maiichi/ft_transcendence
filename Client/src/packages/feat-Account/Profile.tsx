@@ -21,10 +21,13 @@ const Profile = () => {
 
   const intraId = useAppSelector((state) => state.auth.user.intraId);
   const block = useAppSelector((state) => state.block);
-  const uid: number = params.uid ? parseInt(params.uid) : intraId;
+  const uid: number = params.uid ? parseInt(params.uid, 10) : intraId;
   const isOwner: boolean = intraId === uid;
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
+  const profileError: string | null = useAppSelector(
+    (state) => state.profile.error
+  );
   const isLoading: boolean = !useAppSelector(
     ({ profile }) =>
       profile.isLoading || profile.lead.isLoading || profile.matchs.isLoading
@@ -32,19 +35,22 @@ const Profile = () => {
   const user = profileStates.gamer.user;
 
   useEffect(() => {
+    if (Number.isNaN(uid)) {
+      navigate("/account/profile");
+      return;
+    }
     dispatch(getBlacklist());
     dispatch(getuserasgamer(uid));
     dispatch(getLeaderboard());
   }, [uid]);
 
-  if (
-    isBlockedByYou(uid, block) ||
-    isBlockedYou(uid, block) ||
-    (isLoading && !user)
-  ) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    if (
+      (block && (isBlockedByYou(uid, block) || isBlockedYou(uid, block))) ||
+      profileError
+    )
+      navigate("/");
+  }, [block, profileError]);
 
   return (
     <>

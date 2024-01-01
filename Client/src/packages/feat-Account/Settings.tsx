@@ -38,19 +38,22 @@ export const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
 export const AccountSettings = () => {
   const auth = useAppSelector((state) => state.auth);
+
   const dispatch = useAppDispatch();
   const [textInput, setTextInput] = useState(auth.user.userName);
   const [inputError, setInputError] = useState("");
 
   // Check if the input contains only alphanumeric characters
-  const isValid = (value: string) => /^[a-zA-Z0-9]*$/.test(value);
+  const isValid = (value: string) => /^[a-zA-Z0-9]{4,10}$/.test(value);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
 
     setTextInput(inputValue);
     !isValid(inputValue)
-      ? setInputError("Invalid characters in username.")
+      ? setInputError(
+          "The username should contain only 4 to 10 alphanumeric characters."
+        )
       : setInputError("");
   };
 
@@ -64,8 +67,6 @@ export const AccountSettings = () => {
           user: null,
         })
       );
-    } else {
-      setInputError("Invalid characters in username.");
     }
   };
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -203,11 +204,11 @@ export const AccountSettings = () => {
             id="username"
             label="Username"
             variant="outlined"
-            error={!!inputError}
+            error={!!inputError || !!auth.error}
             value={textInput}
             placeholder="Username"
             onChange={handleInputChange}
-            helperText={inputError}
+            helperText={inputError || auth.error}
           />
           <TwoFactorSetup twoFactorActivate={auth.user.twoFactorActivate} />
           <Divider />
