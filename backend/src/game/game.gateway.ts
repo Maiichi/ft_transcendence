@@ -79,14 +79,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     const intraId = this.getUserIdFromSocketId(client.id);
     if (intraId)
     {
       const game = this.games.find((_game) => _game.hasSocket(client));
       if (game) {
-        this.gameService.updateUserStatusInGame(intraId, false);
+        await this.gameService.updateUserStatusInGame(intraId, false);
         game.handlePlayerDisconnect(client);
+        await this.userService.updateUserInQueue(intraId, false);
         // game.stop();
       }
       const socketsOfPlayer = this.playerSockets.get(intraId) || [];
@@ -97,11 +98,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (updatedSockets.length === 0)
       {
         this.gameService.updateUserStatusInGame(intraId, false);
+        await this.userService.updateUserInQueue(intraId, false);
         this.playerSockets.delete(intraId);
       }
       else
         this.playerSockets.set(intraId, updatedSockets);
-     
+      
       client.disconnect();
     }
   }
@@ -165,12 +167,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   private async _removeOverGame(game: Game) {
     const sockets = game.getSockets();
-    sockets.forEach((socket) => {
+    sockets.forEach(async (socket) => {
       if (this.getUserIdFromSocketId(socket.id))
       {
-        this.gameService.updateUserStatusInGame(
+        await this.gameService.updateUserStatusInGame(
           this.getUserIdFromSocketId(socket.id), 
           false);
+        await this.userService.updateUserInQueue(
+          this.getUserIdFromSocketId(socket.id),
+          false
+        );
+
       }
         this.server.to(socket.id).emit('gameEnds');
     });
@@ -183,6 +190,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   
   private async _startNewGame(socketsArr: Socket[], payload: any) {
     let countdown = 5; // 5 seconds countdown
+    console.log("length == ", socketsArr.length);
       let interval = setInterval(() => {
         socketsArr.forEach((socket) => {
           this.server
@@ -194,9 +202,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
         if (countdown < 0) {
           clearInterval(interval);
-          socketsArr.forEach((socket) => {
-            this.gameService.updateUserStatusInGame(
+          socketsArr.forEach(async (socket) => {
+             await this.gameService.updateUserStatusInGame(
               this.getUserIdFromSocketId(socket.id), true);
+             await this.userService.updateUserInQueue(
+              this.getUserIdFromSocketId(socket.id), false)
           });
           this.games.push(
             new Game(
@@ -231,10 +241,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const blacklist = await this.blacklistService.getBlacklistUsers(this.getUserIdFromSocketId(client.id));
    
     // check if the user is another queue;
-    const isInQueue = 
-      this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
-      this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
-      this.invitationGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
+     // TODO: add handle check if is in the separate Queue;
+    const isInQueue = await this.gameService.checkIsInQueue(userId);
 
     if (isInQueue) {
       const message = `You're already in a queue. Cannot join again.`;
@@ -244,6 +252,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (payload === 'dual') {
       if (this.normalGameQueue.length === 0) {
         this.normalGameQueue.push(client);
+        await this.userService.updateUserInQueue(userId, true);
       } else if (this.normalGameQueue.length === 1) {
         const existingUser = this.normalGameQueue[0];
         const existingUserId = this.getUserIdFromSocketId(existingUser.id);
@@ -251,28 +260,40 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         // Check if the existing user is not in the blacklist of the joining user
         if (!blacklist.includes(existingUserId)) {
           this.normalGameQueue.push(client);
+          await this.userService.updateUserInQueue(userId, true);
           await this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
         } else {
           // Join the new user in the separate queue
           if (this.separateNormalGameQueue.push(client) > 1)
+          {
+            await this.userService.updateUserInQueue(userId, true);
             await this._startNewGame([this.separateNormalGameQueue.shift(), this.separateNormalGameQueue.shift()], 'dual');
+          }
         }
       }
+      // console.log("join Queue == ")
+      // console.log("normalQueue === ", this.normalGameQueue.length);
+      // console.log("separateNormalQueue === ", this.separateNormalGameQueue.length);
     }
     else if (payload === 'triple') {
       if (this.tripleGameQueue.length === 0) {
         this.tripleGameQueue.push(client);
+        await this.userService.updateUserInQueue(userId, true);
       } else if (this.tripleGameQueue.length === 1) {
         const existingUser = this.tripleGameQueue[0];
         const existingUserId = this.getUserIdFromSocketId(existingUser.id);
         // Check if the existing user is not in the blacklist of the joining user
         if (!blacklist.includes(existingUserId)) {
           this.tripleGameQueue.push(client);
+          await this.userService.updateUserInQueue(userId, true);
           await this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
         } else {
           // Join the new user in the separate queue
           if (this.separateTripleGameQueue.push(client) > 1)
+          {
+            await this.userService.updateUserInQueue(userId, true);
             await this._startNewGame([this.separateTripleGameQueue.shift(), this.separateTripleGameQueue.shift()], 'triple');
+          }
         }
       }
     }
@@ -297,10 +318,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         return;
       }
       this.unique.add(client);
-      const isInQueue = 
-        this.normalGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) ||
-        this.tripleGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId) || 
-        this.invitationGameQueue.some(player => this.getUserIdFromSocketId(player.id) === userId);
+      // TODO: add handle remove from the separate Queue;
+      const isInQueue = await this.gameService.checkIsInQueue(userId);
 
       if (isInQueue) {
         const message = `You're already in a queue. Cannot join again.`;
@@ -308,12 +327,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         return;
       }
       if (payload === 'dual') {
+        if (this.invitationGameQueue.length === 0)
+          await this.userService.updateUserInQueue(userId, true);
         if (this.invitationGameQueue.push(client) > 1)
+        {
+          await this.userService.updateUserInQueue(userId, true);
           this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'dual');
+        }
       }
       if (payload === 'triple') {
+        if (this.invitationGameQueue.length === 0)
+          await this.userService.updateUserInQueue(userId, true);
         if (this.invitationGameQueue.push(client) > 1)
+        {
+          await this.userService.updateUserInQueue(userId, true);
           this._startNewGame([this.invitationGameQueue.shift(), this.invitationGameQueue.shift()], 'triple');
+        }
       }
     } catch (error) {
       client.emit('joinQueueError' , error);
@@ -335,6 +364,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     this.removeFromQueue(client, this.invitationGameQueue);
     this.removeFromQueue(client, this.separateNormalGameQueue);
     this.removeFromQueue(client, this.separateTripleGameQueue);
+    await this.userService.updateUserInQueue(this.getUserIdFromSocketId(client.id), false);
     // this.removeFromQueue(client, this.unique);
     if (this.unique.has(client)) {
       this.unique.delete(client);

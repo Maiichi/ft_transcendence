@@ -66,20 +66,24 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
 
   const handleChallengePlayer = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (selectUser && !selectUser.inGame && selectUser.status === 'ONLINE')
-    {
-      if (socket)
-      { 
+    if (socket)
+    { 
+      if (selectUser)
+      {
         dispatch(inviteToGame({
           invitedId : selectUser.intraId,
           inviterId : user.intraId,
           gameMode  : gameMode,
         }));
-        dispatch(setInviteSent(true));
-        dispatch(setInvited(selectUser));
-        dispatch(setCurrentTab(true));
+        if (!selectUser.inGame && selectUser.status === 'ONLINE' && !selectUser.inQueue)
+        {
+          dispatch(setInviteSent(true));
+          dispatch(setInvited(selectUser));
+          dispatch(setCurrentTab(true));
+        }
       }
     }
+   
     handleClose();
   }
 

@@ -6,4 +6,5 @@ export interface I_User {
   status: string;
   avatar_url?: string;
   inGame: boolean;
+  inQueue: boolean;
 }
