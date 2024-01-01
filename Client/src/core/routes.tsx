@@ -13,6 +13,7 @@ import { Search } from "../packages/feat-Search/Search";
 import { Layout } from "./utils";
 import { NotFoundError } from "./utils/components/errors";
 import { LandingPage } from "../packages/feat-landing";
+import { Navigate } from 'react-router-dom'
 
 export interface Route {
   path: string;
@@ -115,5 +116,13 @@ export const routes: Route[] = [
     element: <Login />,
     errorElement: <NotFoundError />,
     requireAuth: false,
+  },
+  {
+    path: "*",
+    element: (
+      <Navigate to="/"/>
+    ),
+    errorElement: <NotFoundError />,
+    requireAuth: true,
   },
 ];
