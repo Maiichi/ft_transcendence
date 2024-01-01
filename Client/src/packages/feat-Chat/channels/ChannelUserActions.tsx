@@ -316,8 +316,8 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         color={color}
         status={status}
       >
-        {ChannelIcons.map((icon: Action, index) => (
-          <div key={index}>
+        {ChannelIcons.map((icon: Action) => (
+          <>
             {checkConstraints(user.intraId, selectedUser.intraId, icon) && (
               <IconHolder
                 onClick={() =>
@@ -332,11 +332,11 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
                 {icon.name}
               </IconHolder>
             )}
-          </div>
+          </>
         ))}
         <Divider sx={{ width: "80%", margin: "6px auto" }} />
-        {ActionsArr.map((icon, index) => (
-          <div key={index}>
+        {ActionsArr.map((icon) => (
+          <>
             {checkUserActionsConstraints(icon, selectedUser.intraId) && (
               <IconHolder
                 onClick={() => handleClickAction(icon.type, selectedUser)}
@@ -345,7 +345,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
                 {icon.name}
               </IconHolder>
             )}
-          </div>
+          </>
         ))}
       </Actions>
     </>

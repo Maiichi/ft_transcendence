@@ -23,7 +23,7 @@ export const ChannelBoxContent = () => {
     const messageData = {
       roomId: roomId,
       senderId: user.intraId,
-      content: messageContent.trim(),
+      content: messageContent,
     };
     if (messageContent.length) dispatch(sendMessageToRoom(messageData));
     setMessageContent("");
@@ -68,12 +68,7 @@ export const ChannelBoxContent = () => {
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}
           />
-          <ChatSubmitButtom
-            type="submit"
-            disabled={messageContent.trim() === ""}
-          >
-            Send
-          </ChatSubmitButtom>
+          <ChatSubmitButtom type="submit">Send</ChatSubmitButtom>
         </ChatBoxBottom>
       )}
     </>

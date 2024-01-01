@@ -38,8 +38,9 @@ const getUser = createAsyncThunk(
         },
       });
       return userresponse;
-    } catch (error: any) {
-      throw error.response.data.message;
+    } catch (error) {
+      console.error("error user fetching", error);
+      throw error;
     }
   }
 );
@@ -52,7 +53,7 @@ const getuserasgamer = createAsyncThunk(
         getMatchHistory({ userID: uid, primary: false })
       );
       const _achievement = await dispatch(getAchievements(uid));
-      const _user: any = await dispatch(getUser(uid));
+      const _user = await dispatch(getUser(uid));
       dispatch(getLeaderboard());
 
       const result: unformalData = {
@@ -60,12 +61,9 @@ const getuserasgamer = createAsyncThunk(
         matchHistory: _matchHistory.payload as GameslogType,
         achievement: _achievement.payload as { name: string }[],
       };
-      if (_user.error)
-        throw _user.error
       return result;
     } catch (error) {
-      console.error("error gamer fetchinggdfgdfgdfgdfdfg", error);
-  
+      console.error("error gamer fetching", error);
       throw error;
     }
   }
