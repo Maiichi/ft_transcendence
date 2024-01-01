@@ -21,8 +21,6 @@ interface Field {
   required?: boolean;
   hidden?: boolean;
   dependencies?: Array<Dependencie>;
-  regexPattern?: RegExp;
-  errMessage?: string;
 }
 interface Dependencie {
   field: string;
@@ -63,9 +61,14 @@ export const CreateChannelModal = (props: Props) => {
       label: "Channel name",
       type: "text",
       holder: "new channel",
-      errMessage:
-        "The name should contain only 4 to 10 alphanumeric characters.",
-      regexPattern: /^[a-zA-Z0-9]{4,10}$/,
+    },
+    {
+      name: "description",
+      value: channelConversation?.description,
+      required: false,
+      label: "Channel Description (optional)",
+      type: "text",
+      holder: "channel description",
     },
     {
       name: "type",
@@ -93,8 +96,6 @@ export const CreateChannelModal = (props: Props) => {
       label: "Password",
       type: "password",
       holder: "password",
-      regexPattern: /^.{4,10}$/,
-      errMessage: "Password length should be between 4 and 10 characters.",
     },
   ];
   const initialValues = {
@@ -107,20 +108,17 @@ export const CreateChannelModal = (props: Props) => {
     const errors: any = {};
 
     fields.forEach((field: Field) => {
-      const value = values[field.name];
       if (
         (!Object.keys(values).includes(field.name) &&
           (field.required ||
             (field.dependencies &&
               checkRequiredDependencies(values, field.dependencies)))) ||
-        (field.required && value == "")
+        (field.required && values[field.name] == "")
       )
         errors[field.name] = `${field.label} is required`;
-      else if (field.regexPattern && value && !field.regexPattern.test(value)) {
-        errors[field.name] = field.errMessage || `${field.label} is invalid `;
+      else if (channelConversation) {
       }
     });
-    console.log(errors);
     return errors;
   };
   const checkHiddenDependencies = (

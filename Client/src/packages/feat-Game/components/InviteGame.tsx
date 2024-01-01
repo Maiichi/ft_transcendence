@@ -66,6 +66,7 @@ export const InviteUserToGame = (props: { handleClose: () => void, selectedUser:
 
   const handleChallengePlayer = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log("selectedUser == ", selectUser);
     if (selectUser && !selectUser.inGame && selectUser.status === 'ONLINE')
     {
       if (socket)

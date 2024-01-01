@@ -15,9 +15,9 @@ import HideSourceIcon from "@mui/icons-material/HideSource";
 import { blockState } from "../../feat-Account/components/redux/blockSlice";
 import { I_User } from "../../../core";
 export const changeMessageLength = (message: string) => {
-  if (message.length > 20) {
-    message = message.substring(0, 15);
-    return message + " ... ";
+  if (message.length > 60) {
+    message = message.substring(0, 60);
+    return message + "...";
   }
   return message;
 };

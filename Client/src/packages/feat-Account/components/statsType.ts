@@ -63,7 +63,6 @@ type MatchHistoryType = {
 
 export interface ProfileState {
   isLoading: boolean;
-  error: string | null;
   gamer: gamerType;
   achievement: { name: string }[];
   matchs: {

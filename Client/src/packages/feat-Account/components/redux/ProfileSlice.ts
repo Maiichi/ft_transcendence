@@ -46,7 +46,7 @@ const profileSlice = createSlice({
             state.lead.leaderboard.find(
               (player) => player.name === state.gamer?.user?.userName
             )?.wins ?? 0;
-          const rank = state.matchs?.matchsHistory?.length ?? 0;
+          const rank = state.matchs?.matchsHistory?.length??0 ;
           state.gamer = {
             ...state.gamer,
             wins: wins,
@@ -81,9 +81,8 @@ const profileSlice = createSlice({
           state.matchs.isLoading = false;
         }
       )
-      .addCase(getuserasgamer.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(getuserasgamer.rejected, (state) => {
         state.isLoading = false;
-        state.error = "user not found";
       })
       .addCase(getLeaderboard.rejected, (state) => {
         state.lead.isLoading = false;
