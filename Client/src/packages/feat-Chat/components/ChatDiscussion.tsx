@@ -50,9 +50,13 @@ export const ChatDiscussion = () => {
     dispatch(getMemberships());
     dispatch(getDirectConversations());
   }, []);
+
+  // console.log("channels == ", channels);
   const filteredRooms = channels.memberships.filter((item: I_Room) =>
     item.name.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
+
+  // console.log("channelsMemberships == ", channels.memberships);
 
   const filteredConversations = directMessage.conversations.filter(
     (discussion: any) =>
