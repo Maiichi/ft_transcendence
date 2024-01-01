@@ -221,6 +221,20 @@ export class GameService {
 
     /* this function it's used in  the chatGateway (global Gateway) 
         it main goal is to check if the user is online and not in a game to receive a gameInvite otherwise it will not sent to him */
+    
+    async checkIsInQueue(userId: number)
+    {
+        const isInQueue = await this.prisma.user.findUnique({
+            where: {
+                intraId: userId
+            },
+            select : {
+                inQueue: true,
+            }
+        })
+        return isInQueue.inQueue;
+    }
+
     async handleInviteUserToGame(senderId: number, receiverId: number)
     {
         const sender = await this.userService.getUser(senderId);
@@ -256,9 +270,31 @@ export class GameService {
             }
         });
 
-        if (isSenderInGame.inGame)
-        throw new WsException(`You cant invite ${receiver.firstName} ${receiver.lastName}, you're playing a game currently`);
+        const isSenderInQueue = await this.prisma.user.findUnique({
+            where: {
+                intraId: sender.intraId
+            },
+            select : {
+                inQueue: true
+            }
+        });
 
+        const isReceiverInQueue = await this.prisma.user.findUnique({
+            where: {
+                intraId: receiver.intraId
+            },
+            select : {
+                inQueue: true
+            }
+        });
+
+
+        if (isSenderInGame.inGame)
+            throw new WsException(`You cant invite ${receiver.firstName} ${receiver.lastName}, you're playing a game currently`);
+        if (isSenderInQueue.inQueue)
+            throw new WsException(`You cant invite ${receiver.firstName} ${receiver.lastName}, you're already in Queue`);
+        if (isReceiverInQueue.inQueue)
+            throw new WsException(`You cant invite ${receiver.firstName} ${receiver.lastName}, he's already in a queue`);
         if (isReceiverOnline.status !== "ONLINE")
             throw new WsException(`${receiver.firstName} ${receiver.lastName} is Offline, you can't send a game invitation`);
         if (isReceiverOnline.status === "ONLINE" && isReceiverInGame.inGame)

@@ -87,14 +87,14 @@ export const UserActionInDirectConversation = ({
         navigate(`/account/profile/${selectedUser.intraId}`);
         break;
       case "play":
-        if (selectedUser.status === "ONLINE" && !selectedUser.inGame) {
-          dispatch(
-            inviteToGame({
-              invitedId: selectedUser.intraId,
-              inviterId: currentUser.intraId,
-              gameMode: "dual",
-            })
-          );
+        dispatch(
+          inviteToGame({
+            invitedId: selectedUser.intraId,
+            inviterId: currentUser.intraId,
+            gameMode: "dual",
+          })
+        );
+        if (selectedUser.status === "ONLINE" && !selectedUser.inGame && !selectedUser.inQueue) {
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));

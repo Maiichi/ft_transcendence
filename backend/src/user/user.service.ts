@@ -42,6 +42,7 @@ export class UserService {
                 avatar_url: true,
                 status: true,
                 inGame: true,
+                
             }
         });
         if (!user)
@@ -296,6 +297,24 @@ export class UserService {
             throw new NotFoundException(`userId ${userId} not found`)
     }
 
+    async updateUserInQueue(userId: number, value: boolean)
+    {
+        const user = await this.getUser(userId);
+        if (user)
+        {
+            await this.prisma.user.update({
+                where: {
+                    intraId: userId
+                },
+                data : {
+                    inQueue: value
+                }
+            })
+        }
+        else 
+            throw new NotFoundException(`userId ${userId} not found`)
+    }
+
     /* get User firends */
     async getFriends(userId: number, res: Response)
     {
@@ -315,6 +334,8 @@ export class UserService {
                         firstName: true,
                         userName: true,
                         status: true,
+                        inGame: true,
+                        inQueue: true,
                     }
                 }
             }
