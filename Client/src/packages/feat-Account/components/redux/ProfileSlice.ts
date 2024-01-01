@@ -81,8 +81,9 @@ const profileSlice = createSlice({
           state.matchs.isLoading = false;
         }
       )
-      .addCase(getuserasgamer.rejected, (state) => {
+      .addCase(getuserasgamer.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
+        state.error = 'action.payload.data.message';
       })
       .addCase(getLeaderboard.rejected, (state) => {
         state.lead.isLoading = false;

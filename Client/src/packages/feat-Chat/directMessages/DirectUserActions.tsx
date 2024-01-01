@@ -217,17 +217,18 @@ export const UserActionInDirectConversation = ({
         status={"Available"}
         avatar_url={selectedUser.avatar_url}
       >
-        {ActionsArr.map((icon) => (
-          <>
+        {ActionsArr.map((icon,index) => (
+          <div key={index}>
             {checkUserActionsConstraints(icon, selectedUser.intraId) && (
               <IconHolder
+               
                 onClick={() => handleClickAction(icon.type, selectedUser)}
               >
                 {icon.component}
                 {icon.name}
               </IconHolder>
             )}
-          </>
+          </div>
         ))}
       </Actions>
     </>
