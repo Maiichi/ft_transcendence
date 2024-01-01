@@ -30,7 +30,7 @@ model User {
   Messages          Message[]
   blockedByMe       Blacklist[]    @relation("BlockedByMe")
   blockedMe         Blacklist[]    @relation("BlockedMe")
-
+  inQueue          Boolean         @default(false)
   sentRequests     FriendRequest[] @relation("senderRequests")
   receivedRequests FriendRequest[] @relation("receiverRequests")
   friends          User[]          @relation("friends")

@@ -438,6 +438,8 @@ export class MessageService
                                 status: true,
                                 avatar_url: true,
                                 intraId: true,
+                                inGame: true,
+                                inQueue: true
                             },
                         },
                     },
@@ -464,6 +466,8 @@ export class MessageService
                         lastName: conversation.participants[0].lastName,
                         status: conversation.participants[0].status,
                         avatar_url: conversation.participants[0].avatar_url,
+                        inGame: conversation.participants[0].inGame,
+                        inQueue: conversation.participants[0].inQueue,
                     },
                 };
 

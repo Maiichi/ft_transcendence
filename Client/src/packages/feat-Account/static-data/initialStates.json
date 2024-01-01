@@ -1,6 +1,7 @@
 {
   "profile": {
     "isLoading": false,
+    "error": null,
     "gamer": {
       "user": null,
       "totalmatch": 0,

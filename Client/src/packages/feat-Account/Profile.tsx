@@ -10,6 +10,7 @@ import {
   MatchsHistoryCard,
   UserCard,
   getBlacklist,
+  setToNoError,
 } from "./components";
 import { ProfileCards } from "./styles";
 import { isBlockedByYou, isBlockedYou } from "../feat-Chat/components/utils";
@@ -21,10 +22,14 @@ const Profile = () => {
 
   const intraId = useAppSelector((state) => state.auth.user.intraId);
   const block = useAppSelector((state) => state.block);
-  const uid: number = params.uid ? parseInt(params.uid) : intraId;
+  const paramuid: number = params.uid ? parseInt(params.uid, 10) : intraId;
+  const uid: number = Number.isNaN(paramuid) ? intraId : paramuid;
   const isOwner: boolean = intraId === uid;
 
   const profileStates: ProfileState = useAppSelector((state) => state.profile);
+  const profileError: string | null = useAppSelector(
+    (state) => state.profile.error
+  );
   const isLoading: boolean = !useAppSelector(
     ({ profile }) =>
       profile.isLoading || profile.lead.isLoading || profile.matchs.isLoading
@@ -37,14 +42,15 @@ const Profile = () => {
     dispatch(getLeaderboard());
   }, [uid]);
 
-  if (
-    isBlockedByYou(uid, block) ||
-    isBlockedYou(uid, block) ||
-    (isLoading && !user)
-  ) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    if (
+      (block && (isBlockedByYou(uid, block) || isBlockedYou(uid, block))) ||
+      profileError || Number.isNaN(paramuid) || /[^0-9]/.test(params.uid??'')
+    ) {
+      dispatch(setToNoError());
+      navigate("/");
+    }
+  }, [block, profileError]);
 
   return (
     <>

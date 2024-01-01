@@ -71,7 +71,7 @@ export const NewDirectMessage = (props: {
     if (selectUser && messageContent) {
       const messageData = {
         receiverId: selectUser.intraId,
-        content: messageContent,
+        content: messageContent.trim(),
       };
       dispatch(createDirectConversation(messageData));
     }
@@ -117,7 +117,9 @@ export const NewDirectMessage = (props: {
           />
           <ModalFooter>
             <CancelButton onClick={closeModal}>Cancel</CancelButton>
-            <CreateButton type="submit">Send</CreateButton>
+            <CreateButton type="submit" disabled={messageContent.trim() === ""}>
+              Send
+            </CreateButton>
           </ModalFooter>
         </form>
       </ModalBody>

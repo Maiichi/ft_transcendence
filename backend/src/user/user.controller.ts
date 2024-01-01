@@ -44,6 +44,7 @@ export class UserController
         try {
             return this.userService.getUserByIntraId(parseInt(id),res);
         } catch (error) {
+            console.log("SDsasdf : ",error)
             return res.send({error : error});
         }   
     }

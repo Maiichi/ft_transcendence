@@ -126,13 +126,13 @@ const UserCard = (props: { gamer: gamerType; isOwner: boolean }) => {
           })
         );
         // TODO:  need a check (inGame)
-        if (selectedUser.status === "ONLINE") {
+        if (selectedUser.status === "ONLINE" && !selectedUser.inGame && !selectedUser.inQueue) {
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
           dispatch(setInviteFromChat(true));
           navigate("/");
-          dispatch(setGameStep(STEPS.WAITING_QUEUE));
+          // dispatch(setGameStep(STEPS.WAITING_QUEUE));
         }
         break;
       case "sendFriendRequest":

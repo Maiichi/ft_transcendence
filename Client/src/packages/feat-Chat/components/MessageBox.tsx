@@ -18,7 +18,7 @@ interface Props {
 export const MessageBox = ({ own, data }: Props) => {
   const Message = own ? MessageBoxOwn : MessageBoxWrapper;
   const MessageContent = own ? MessageBoxOwnText : MessageText;
-
+  const MessageBottom = own ? OwnDate : Date;
   return (
     <Message key={data.createdAt}>
       <MessageTop>
@@ -57,14 +57,20 @@ const MessageText = styled.p`
   border-radius: 20px;
   background-color: rgb(122, 83, 199);
   color: white;
-  max-width: 500px;
+  max-width: 600px;
+  overflow-wrap: break-word;
+  width: max-content;
 `;
 
-const MessageBottom = styled.div`
+const OwnDate = styled.div`
   font-size: 12px;
   text-align: right;
 `;
-
+const Date = styled.div`
+  font-size: 12px;
+  text-align: left;
+  margin-left: 15px;
+`;
 const MessageBoxOwn = styled(MessageBoxWrapper)`
   align-items: flex-end;
 `;
@@ -72,4 +78,7 @@ const MessageBoxOwn = styled(MessageBoxWrapper)`
 const MessageBoxOwnText = styled(MessageText)`
   background-color: lightgray;
   color: black;
+  overflow-wrap: break-word;
+  width: max-content;
+  max-width: 600px;
 `;

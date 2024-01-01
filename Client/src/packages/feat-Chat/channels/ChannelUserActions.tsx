@@ -153,7 +153,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
           })
         );
         // TODO:  need a check (inGame)
-        if (selectedUser.status === "ONLINE") {
+        if (selectedUser.status === "ONLINE" && !selectedUser.inGame && !selectedUser.inQueue) {
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));
@@ -316,8 +316,8 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
         color={color}
         status={status}
       >
-        {ChannelIcons.map((icon: Action) => (
-          <>
+        {ChannelIcons.map((icon: Action, index) => (
+          <div key={index}>
             {checkConstraints(user.intraId, selectedUser.intraId, icon) && (
               <IconHolder
                 onClick={() =>
@@ -332,11 +332,11 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
                 {icon.name}
               </IconHolder>
             )}
-          </>
+          </div>
         ))}
         <Divider sx={{ width: "80%", margin: "6px auto" }} />
-        {ActionsArr.map((icon) => (
-          <>
+        {ActionsArr.map((icon, index) => (
+          <div key={index}>
             {checkUserActionsConstraints(icon, selectedUser.intraId) && (
               <IconHolder
                 onClick={() => handleClickAction(icon.type, selectedUser)}
@@ -345,7 +345,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
                 {icon.name}
               </IconHolder>
             )}
-          </>
+          </div>
         ))}
       </Actions>
     </>

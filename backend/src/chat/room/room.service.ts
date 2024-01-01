@@ -1041,6 +1041,8 @@ export class RoomService {
                       intraId: true,
                       avatar_url: true,
                       status: true,
+                      inGame: true,
+                      inQueue: true
                     },
                   },
                 },

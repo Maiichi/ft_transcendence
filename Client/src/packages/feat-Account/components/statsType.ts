@@ -11,6 +11,7 @@ type userType = {
   avatar_url: string;
   status: "ONLINE" | "OFFLINE";
   inGame: boolean;
+  inQueue: boolean;
 } & Record<string, any>;
 
 // TODO: should be formal
@@ -63,6 +64,7 @@ type MatchHistoryType = {
 
 export interface ProfileState {
   isLoading: boolean;
+  error: string | null;
   gamer: gamerType;
   achievement: { name: string }[];
   matchs: {

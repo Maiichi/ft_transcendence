@@ -19,6 +19,7 @@ import { GameslogType, MatchHistoryType, getMatchHistory } from ".";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import { Container } from "../styles";
 import { useSize } from "../../../core/utils/hooks";
+import { convertDateTime } from "../../feat-Chat/components/utils";
 
 const GamesHistory = () => {
   const dispatch = useAppDispatch();
@@ -56,12 +57,12 @@ const GamesHistory = () => {
                 <TableCell align="center">Score</TableCell>
                 <TableCell />
                 <TableCell align="center">player2</TableCell>
-                {isMobile || <TableCell />}
+                {!isMobile && <TableCell />}
               </TableRow>
             </TableHead>
             <TableBody>
               {matchs?.map((match, index) => (
-                <Row match={match} />
+                <Row key={`match${index}`} match={match} />
               ))}
             </TableBody>
           </Table>
@@ -77,13 +78,8 @@ function Row(props: { match: MatchHistoryType }) {
   const { isMobile, isTab } = useSize();
   if (match.Players.length !== 2) return null; /// never applied
   function GridContainerPlayer({ left = false }) {
-    return (
-      <Grid
-        container={!isTab}
-        spacing={3}
-        sx={{ gap: "10%" }}
-        direction={left ? "row" : "row-reverse"}
-      >
+    const child = (
+      <>
         <Grid item xs={3}>
           <Avatar alt="pop" src={match.Players[left ? 1 : 0].avatar_url} />
         </Grid>
@@ -92,10 +88,25 @@ function Row(props: { match: MatchHistoryType }) {
             {match.Players[left ? 1 : 0].userName.slice(0, 8)}
           </Typography>
         </Grid>
-      </Grid>
+      </>
+    );
+    return (
+      <>
+        {isTab ? (
+          <Grid sx={{ gap: "10%" }}>{child}</Grid>
+        ) : (
+          <Grid
+            container
+            spacing={3}
+            sx={{ gap: "10%" }}
+            direction={left ? "row" : "row-reverse"}
+          >
+            {child}
+          </Grid>
+        )}
+      </>
     );
   }
-
   return (
     <Fragment>
       <TableRow
@@ -113,7 +124,7 @@ function Row(props: { match: MatchHistoryType }) {
         <TableCell align="center">
           <GridContainerPlayer />
         </TableCell>
-        {isMobile || (
+        {!isMobile && (
           <TableCell align="right">
             <IconButton size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
@@ -124,10 +135,13 @@ function Row(props: { match: MatchHistoryType }) {
       <TableRow>
         <TableCell sx={{ p: 0 }} colSpan={6}>
           <Collapse in={open} unmountOnExit sx={{}}>
-            <Typography variant="body1" sx={{ textAlign: "center" }}>
-              {`At ${match.createdAt}`}
+            <Typography
+              variant="body1"
+              sx={{ textAlign: "center", width: "70%", pl: "7%" }}
+            >
+              {`At ${convertDateTime(match.createdAt)}`}
               <br />
-              {`${match.Players[0].userName} play with ${match.Players[1].userName}`}
+              {`${match.Players[0].userName.slice(0,8)} play with ${match.Players[1].userName.slice(0,8)}`}
               <br /> {` on a ${match.type} match!`}
             </Typography>
           </Collapse>

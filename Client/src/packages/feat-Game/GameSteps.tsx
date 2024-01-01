@@ -64,7 +64,6 @@ export const GameSteps: React.FC = () => {
 
 
   const isCurrentTab = useAppSelector((state) => state.game.currentTab);
-
   // Define emitEvent function
   const emitEvent = (event: string, data?: any) => {
     if (socket) {
@@ -117,7 +116,7 @@ export const GameSteps: React.FC = () => {
       dispatch(setGameStep(STEPS.WAITING_QUEUE));
       emitEvent("join_queue_match_invitaion", gameMode);
     }
-  }, [isCurrentTab, isInviteReceived, inviter, socketReady]);
+  }, [isCurrentTab, isInviteReceived, inviter,  socketReady]);
 
   // this event is for the inviter {from ChatComponent}
 
