@@ -179,7 +179,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         );
 
       }
-        this.server.to(socket.id).emit('gameEnds');
+      this.server.to(socket.id).emit('gameEnds');
+
     });
     this.unique.delete(sockets[0]);
     this.unique.delete(sockets[1]);
@@ -190,7 +191,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   
   private async _startNewGame(socketsArr: Socket[], payload: any) {
     let countdown = 5; // 5 seconds countdown
-    console.log("length == ", socketsArr.length);
       let interval = setInterval(() => {
         socketsArr.forEach((socket) => {
           this.server
@@ -243,7 +243,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     // check if the user is another queue;
      // TODO: add handle check if is in the separate Queue;
     const isInQueue = await this.gameService.checkIsInQueue(userId);
-
     if (isInQueue) {
       const message = `You're already in a queue. Cannot join again.`;
       this.server.to(client.id).emit('joinQueueError', message);
@@ -251,8 +250,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     if (payload === 'dual') {
       if (this.normalGameQueue.length === 0) {
-        this.normalGameQueue.push(client);
         await this.userService.updateUserInQueue(userId, true);
+        this.normalGameQueue.push(client);
       } else if (this.normalGameQueue.length === 1) {
         const existingUser = this.normalGameQueue[0];
         const existingUserId = this.getUserIdFromSocketId(existingUser.id);
@@ -264,6 +263,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           await this._startNewGame([this.normalGameQueue.shift(), this.normalGameQueue.shift()], 'dual');
         } else {
           // Join the new user in the separate queue
+          await this.userService.updateUserInQueue(userId, true);
           if (this.separateNormalGameQueue.push(client) > 1)
           {
             await this.userService.updateUserInQueue(userId, true);
@@ -271,14 +271,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           }
         }
       }
-      // console.log("join Queue == ")
-      // console.log("normalQueue === ", this.normalGameQueue.length);
-      // console.log("separateNormalQueue === ", this.separateNormalGameQueue.length);
     }
     else if (payload === 'triple') {
       if (this.tripleGameQueue.length === 0) {
-        this.tripleGameQueue.push(client);
         await this.userService.updateUserInQueue(userId, true);
+        this.tripleGameQueue.push(client);
       } else if (this.tripleGameQueue.length === 1) {
         const existingUser = this.tripleGameQueue[0];
         const existingUserId = this.getUserIdFromSocketId(existingUser.id);
@@ -289,6 +286,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           await this._startNewGame([this.tripleGameQueue.shift(), this.tripleGameQueue.shift()], 'triple');
         } else {
           // Join the new user in the separate queue
+          await this.userService.updateUserInQueue(userId, true);
           if (this.separateTripleGameQueue.push(client) > 1)
           {
             await this.userService.updateUserInQueue(userId, true);
