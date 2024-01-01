@@ -3,7 +3,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Choose the storage solution you want to use
 import { combineReducers } from "redux";
 import authSlice from "../../packages/feat-Auth/components/authSlice";
-import decryptionTransform from "../../packages/feat-Auth/decryptionTransform";
+import authTransform from "../../packages/feat-Auth/authTransform";
 import coreSlice from "../CoreSlice";
 import SocketMiddleware from "../socket/socketMiddleware";
 import socketSlice from "../socket/socketSlice";
@@ -39,7 +39,7 @@ const persistConfig = {
   key: "root", // Key to access your storage
   storage,
   whitelist: ["auth"],
-  transforms: [decryptionTransform], // Use the custom transform
+  transforms: [authTransform], // Use the custom transform
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

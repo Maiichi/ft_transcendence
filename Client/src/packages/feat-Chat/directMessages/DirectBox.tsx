@@ -26,7 +26,7 @@ export const DirectBox = () => {
     if (messageContent) {
       const messageData = {
         receiverId: conversations[index].receiver.intraId,
-        content: messageContent,
+        content: messageContent.trim(),
       };
       dispatch(createDirectConversation(messageData));
       setMessageContent("");
@@ -67,7 +67,9 @@ export const DirectBox = () => {
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}
           />
-          <ChatSubmitButtom>Send</ChatSubmitButtom>
+          <ChatSubmitButtom disabled={messageContent.trim() === ""}>
+            Send
+          </ChatSubmitButtom>
         </ChatBoxBottom>
       </ChatBox>
     </>
