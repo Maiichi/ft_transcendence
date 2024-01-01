@@ -153,7 +153,7 @@ export const UserActionsInRoom = ({ handleClosePopper }: UserActionsProps) => {
           })
         );
         // TODO:  need a check (inGame)
-        if (selectedUser.status === "ONLINE") {
+        if (selectedUser.status === "ONLINE" && !selectedUser.inGame && !selectedUser.inQueue) {
           dispatch(setInviteSent(true));
           dispatch(setInvited(selectedUser));
           dispatch(setCurrentTab(true));

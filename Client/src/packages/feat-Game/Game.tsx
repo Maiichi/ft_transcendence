@@ -17,7 +17,7 @@ import {
   useSize,
 } from "../../core";
 import { useNavigate } from "react-router-dom";
-import { resetGameState } from "./redux/GameSlice";
+import { resetGameState, setCountdown, setCurrentTab } from "./redux/GameSlice";
 import { Instructions } from "./components/Instructions";
 
 const Title = styled.h1`
@@ -87,6 +87,8 @@ export const Game: React.FC<GameStepComponentProps> = ({ socket }) => {
   };
   onEvent("gameEnds", () => {
     setIsEnd(true);
+    dispatch(setCurrentTab(false));
+    dispatch(setCountdown(null));
   });
 
   return (

@@ -11,6 +11,7 @@ type userType = {
   avatar_url: string;
   status: "ONLINE" | "OFFLINE";
   inGame: boolean;
+  inQueue: boolean;
 } & Record<string, any>;
 
 // TODO: should be formal

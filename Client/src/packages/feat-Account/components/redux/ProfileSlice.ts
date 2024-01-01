@@ -87,7 +87,8 @@ const profileSlice = createSlice({
       )
       .addCase(getuserasgamer.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
-        state.error = "action.payload.data.message";
+        state.error = "user not found";
+
       })
       .addCase(getLeaderboard.rejected, (state) => {
         state.lead.isLoading = false;
