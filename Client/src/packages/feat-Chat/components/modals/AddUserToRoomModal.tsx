@@ -78,7 +78,7 @@ export const AddUserToRoomModal = (props: Props) => {
                 key={item.intraId}
                 onClick={() => handleClickOnUser(item)}
               >
-                <Avatar />
+                <Avatar src={item.avatar_url} />
                 {item.firstName} {item.lastName}
               </UserList>
             ))

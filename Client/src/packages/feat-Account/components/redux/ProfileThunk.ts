@@ -60,12 +60,9 @@ const getuserasgamer = createAsyncThunk(
         matchHistory: _matchHistory.payload as GameslogType,
         achievement: _achievement.payload as { name: string }[],
       };
-      if (_user.error)
-        throw _user.error
+      if (_user.error) throw _user.error;
       return result;
     } catch (error) {
-      console.error("error gamer fetchinggdfgdfgdfgdfdfg", error);
-  
       throw error;
     }
   }

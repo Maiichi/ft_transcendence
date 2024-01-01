@@ -120,7 +120,6 @@ export const CreateChannelModal = (props: Props) => {
         errors[field.name] = field.errMessage || `${field.label} is invalid `;
       }
     });
-    console.log(errors);
     return errors;
   };
   const checkHiddenDependencies = (
