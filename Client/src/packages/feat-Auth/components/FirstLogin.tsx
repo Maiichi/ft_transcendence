@@ -107,22 +107,22 @@ const FirstLogin = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const isValid = (value: string) => /^[a-zA-Z0-9]*$/.test(value);
+  const isValid = (value: string) => /^[a-zA-Z0-9]{4,10}$/.test(value);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
 
     setTextInput(inputValue);
     !isValid(inputValue)
-      ? setInputError("Invalid characters in username.")
+      ? setInputError(
+          "The username should contain only 4 to 10 alphanumeric characters."
+        )
       : setInputError("");
   };
 
   const handleSubmit = () => {
     if (isValid(textInput)) {
       handleNext();
-    } else {
-      setInputError("Invalid characters in username.");
     }
   };
   const handelFinish = () => {
@@ -137,7 +137,6 @@ const FirstLogin = () => {
     );
     setTimeout(() => {
       if (isfirstLogin) {
-        setInputError("userName reserved!");
         setActiveStep(0);
       }
     }, 100);
@@ -151,13 +150,13 @@ const FirstLogin = () => {
       Content: (
         <Stack direction="column" spacing={2}>
           <TextField
-            error={!!inputError}
+            error={!!inputError || !!auth.error}
             value={textInput}
             color="secondary"
             variant="standard"
             placeholder="Username"
             onChange={handleInputChange}
-            helperText={inputError}
+            helperText={inputError || auth.error}
           />
           <Button
             type="submit"
