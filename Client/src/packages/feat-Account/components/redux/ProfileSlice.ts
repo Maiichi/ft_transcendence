@@ -6,7 +6,6 @@ import {
   leaderboardType,
   unformalData,
 } from "../statsType";
-import { Achievemets } from "../../styles";
 
 const initialState: ProfileState =
   require("../../static-data/initialStates.json").profile;
@@ -14,11 +13,16 @@ const initialState: ProfileState =
 const profileSlice = createSlice({
   name: "profile",
   initialState,
-  reducers: {},
+  reducers: {
+    setToNoError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getuserasgamer.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(getLeaderboard.pending, (state) => {
         state.lead.isLoading = true;
@@ -84,6 +88,7 @@ const profileSlice = createSlice({
       .addCase(getuserasgamer.rejected, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.error = "user not found";
+
       })
       .addCase(getLeaderboard.rejected, (state) => {
         state.lead.isLoading = false;
@@ -94,6 +99,6 @@ const profileSlice = createSlice({
   },
 });
 
-export const {} = profileSlice.actions;
+export const { setToNoError } = profileSlice.actions;
 /** in rootReducer = combineReducers as LeaderBoard */
 export default profileSlice.reducer;
