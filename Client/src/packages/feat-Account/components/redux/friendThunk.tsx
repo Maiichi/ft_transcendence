@@ -15,7 +15,6 @@ export const getUserFriends = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      console.log("error in friendsThunk", error);
       throw error;
     }
   }

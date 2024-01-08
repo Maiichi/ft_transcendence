@@ -65,6 +65,7 @@ export const roomSlice = createSlice({
       state.messages = action.payload.messages;
     },
     removeMemberFromRoom: (state, action: PayloadAction<any>) => {
+      
       const { userId, roomId } = action.payload;
       const isMembershipFound: I_Room | undefined = state.memberships.find(
         (membership: I_Room) => membership.id === roomId
@@ -168,16 +169,23 @@ export const roomSlice = createSlice({
       const roomIndex = state.memberships.findIndex(
         (item) => item.id === roomId
       );
-      const userIndex = state.memberships[roomIndex].members.findIndex(
-        (member) => member.user.intraId === userId
-      );
-      // Calculate the time to mute
-      const currentTime = new Date();
+      if (roomIndex !== -1)
+      {
+        const userIndex = state.memberships[roomIndex].members.findIndex(
+          (member) => member.user.intraId === userId
+        );
+        if (userIndex !== -1)
+        {
+          // Calculate the time to mute
+          const currentTime = new Date();
+    
+          const minutesToMute = new Date(
+            currentTime.getTime() + (timeMute + 60) * 60000
+          ); // Con
+          state.memberships[roomIndex].members[userIndex].timeMute = minutesToMute;
+        }
 
-      const minutesToMute = new Date(
-        currentTime.getTime() + (timeMute + 60) * 60000
-      ); // Con
-      state.memberships[roomIndex].members[userIndex].timeMute = minutesToMute;
+      }
     },
     kickMember: (state, action: PayloadAction<any>) => {
       state.isLoading = false;
@@ -187,10 +195,15 @@ export const roomSlice = createSlice({
       const roomIndex = state.memberships.findIndex(
         (item) => item.id === roomId
       );
-      const userIndex = state.memberships[roomIndex].members.findIndex(
-        (member) => member.user.intraId === userId
-      );
-      state.memberships[roomIndex].members.splice(userIndex, 1);
+      console.log("roomIndex == ", roomIndex);
+      if (roomIndex !== -1)
+      {
+        const userIndex = state.memberships[roomIndex].members.findIndex(
+          (member) => member.user.intraId === userId
+        );
+        if (userIndex)
+          state.memberships[roomIndex].members.splice(userIndex, 1);
+      }
     },
   },
   extraReducers: (builder) => {
