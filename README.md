@@ -119,7 +119,7 @@ docker-compose up --build
 
 <details>
   <summary>show diagram</summary>
-    <img src="https://github.com/Maiichi/ft_transcendence/blob/develop/images/use_case_diagram.png" alt="diagram" height="1080" width="580" />
+    <img src="https://github.com/Maiichi/ft_transcendence/blob/develop/images/use_case_diagram.png" alt="diagram" height="1080" width="800" />
   </details>
 
 
