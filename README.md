@@ -97,17 +97,17 @@ docker-compose up --build
 
   <details>
   <summary>Profile page</summary>
-  ![profile](/readme_additions/profile.png)
+     <img src="https://github.com/Maiichi/ft_transcendence/blob/develop/images/profile_.png" alt="profile" height="580" width="1080" />
   </details>
 
   <details>
   <summary>Chat page</summary>
-  ![chat](/readme_additions/chat.png)
+    <img src="https://github.com/Maiichi/ft_transcendence/blob/develop/images/chat_.png" alt="chat" height="1000" width="1080" />
   </details>
 
   <details>
   <summary>Game page</summary>
-  ![game](/readme_additions/chat.png)
+    <img src="https://github.com/Maiichi/ft_transcendence/blob/develop/images/game_.png" alt="game" height="580" width="1080" />
   </details>
 
 
@@ -117,7 +117,10 @@ docker-compose up --build
 
 ### Use case diagram
 
-
+<details>
+  <summary>show diagram</summary>
+    <img src="https://github.com/Maiichi/ft_transcendence/blob/develop/images/use_case_diagram.png" alt="diagram" height="1080" width="580" />
+  </details>
 
 
 ## Contributing
