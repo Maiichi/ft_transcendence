@@ -512,7 +512,11 @@ export class ChatGateway
             .to(value)
             .emit(
               'roomJoined',
-              joinedRoom.dataMembership,
+              {
+                data: joinedRoom.dataMembership,
+                successMsg: `You have been added to ${joinedRoom.dataMembership.name}`
+              }
+              
             );
         });
       }

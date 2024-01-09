@@ -130,7 +130,7 @@ const SocketMiddleware: Middleware = ({ getState, dispatch }) => {
             dispatch(setRoomLeaved(data));
           });
           socket.on("roomJoined", (data) => {
-            dispatch(addMembership(data));
+            dispatch(addMembership(data.data));
             OpenSnackbar(data.successMsg, 'success');
           });
           socket.on("userJoinRoom", (data) => {

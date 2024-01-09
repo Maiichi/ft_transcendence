@@ -29,7 +29,8 @@ export const searchSlice = createSlice({
     },
     setRoomJoined: (state, action) => {
       state.rooms.map((item: I_Room_Search) => {
-        if (item.id == action.payload.id) item.members = action.payload.members;
+        if (item.id == action.payload.id) 
+          item.members = action.payload.members;
       });
     },
     setRoomLeaved: (state, action) => {
